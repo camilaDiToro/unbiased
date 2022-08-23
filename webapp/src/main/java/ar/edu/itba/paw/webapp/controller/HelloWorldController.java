@@ -6,6 +6,8 @@ import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ public class HelloWorldController {
     private final UserService us;
 
     @Autowired
-    public HelloWorldController(final UserService us){
+    public HelloWorldController(@Qualifier("userServiceImpl") final UserService us){
         this.us = us;
     }
 
@@ -50,14 +52,14 @@ public class HelloWorldController {
         return new ModelAndView("redirect:/profile/"+user.getId());
     }
 
-    @RequestMapping(value = "/profile/{userId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm){
         final ModelAndView mav = new ModelAndView("profile");
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         return mav;
     }
 
-    @RequestMapping(value = "/profile/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
     public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors){
         if(errors.hasErrors()){
             return profile(userId, userProfileForm);
@@ -71,5 +73,11 @@ public class HelloWorldController {
         final ModelAndView mav = new ModelAndView("byebye");
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         return mav;
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public ModelAndView userNotFound()    {
+        return new ModelAndView("404");
     }
 }

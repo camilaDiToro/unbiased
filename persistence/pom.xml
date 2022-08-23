@@ -19,9 +19,9 @@
       <artifactId>spring-context</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>ar.edu.itba.paw</groupId>
       <artifactId>interfaces</artifactId>
-      <version>${project.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

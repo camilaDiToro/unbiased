@@ -30,20 +30,20 @@
       <artifactId>jstl</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>ar.edu.itba.paw</groupId>
       <artifactId>interfaces</artifactId>
-      <version>${project.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>ar.edu.itba.paw</groupId>
       <artifactId>service</artifactId>
-      <version>${project.version}</version>
+      <version>${project.parent.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>      ${project.groupId}</groupId>
+      <groupId>ar.edu.itba.paw</groupId>
       <artifactId>persistence</artifactId>
-      <version>${project.version}</version>
+      <version>${project.parent.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -77,6 +77,26 @@
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.logback-extensions</groupId>
+      <artifactId>logback-ext-spring</artifactId>
     </dependency>
   </dependencies>
 
