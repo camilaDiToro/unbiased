@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 public class HelloWorldController {
@@ -60,7 +61,7 @@ public class HelloWorldController {
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
-    public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors){
+    public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
         if(errors.hasErrors()){
             return profile(userId, userProfileForm);
         }

@@ -1,16 +1,16 @@
 package ar.edu.itba.paw.webapp.form;
 
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UserProfileForm {
 
-    private CommonsMultipartFile image;
+    private MultipartFile image;
 
-    public CommonsMultipartFile getImage() {
+    public MultipartFile getImage() {
         return image;
     }
 
-    public void setImage(CommonsMultipartFile image) {
+    public void setImage(MultipartFile image) {
         this.image = image;
     }
 }
