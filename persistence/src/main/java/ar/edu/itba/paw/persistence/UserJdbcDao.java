@@ -19,36 +19,35 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("userid"), rs.getString("username"), rs.getString("password"));
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("email"), rs.getLong("data_id"));
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("userid");
+        jdbcInsert = new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("user_id");
     }
 
     @Override
     public Optional<User> getUserById(long id) {
-        List<User> query= jdbcTemplate.query("SELECT * FROM Users WHERE userid = ?",
+        List<User> query= jdbcTemplate.query("SELECT * FROM Users WHERE user_id = ?",
                 new Object[] { id }, ROW_MAPPER);
         return query.stream().findFirst();
     }
 
     @Override
-    public User create(String username, String password) {
+    public User create(String email) {
 
         final Map<String, Object> userData = new HashMap<>();
-        userData.put("username", username);
-        userData.put("password", password);
+        userData.put("email", email);
 
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
-        return new User(userId, username, password);
+        return new User(userId, email, null);
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return jdbcTemplate.query("SELECT * FROM Users WHERE username = ?",
-                new Object[] { username }, ROW_MAPPER).stream().findFirst();
+    public Optional<User> findByEmail(String email) {
+        return jdbcTemplate.query("SELECT * FROM Users WHERE email = ?",
+                new Object[] { email }, ROW_MAPPER).stream().findFirst();
     }
 
     public List<User> getAll(int page){

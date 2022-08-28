@@ -8,9 +8,9 @@
 <c:url value="/create" var="postUrl"/>
 <form:form modelAttribute="registerForm" action="${postUrl}" method="post" >
     <div>
-        <form:errors path="username" element="p" cssStyle="color: red"/>
-        <form:label path="username">Username:</form:label>
-        <form:input type="text" path="username"/>
+        <form:errors path="email" element="p" cssStyle="color: red"/>
+        <form:label path="email">Email:</form:label>
+        <form:input type="text" path="email"/>
     </div>
     <div>
         <form:errors path="password" element="p" cssStyle="color: red"/>

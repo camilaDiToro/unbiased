@@ -26,8 +26,7 @@ import static org.junit.Assert.*;
 public class UserJdbcDaoTest {
 
     private static final String USER_TABLE = "users";
-    private static final String USERNAME = "juan";
-    private static final String PASSWORD = "1234";
+    private static final String EMAIL = "juan@gmail.com";
 
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
@@ -49,11 +48,11 @@ public class UserJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         // 2. ejercitacion
-        User user = userDao.create(USERNAME, PASSWORD);
+        User user = userDao.create(EMAIL);
 
         // 3. validaciones
         assertNotNull(user);
-        assertEquals(USERNAME, user.getUsername());
+        assertEquals(EMAIL, user.getEmail());
         assertEquals(1,JdbcTestUtils.countRowsInTable(jdbcTemplate,USER_TABLE));
     }
 
@@ -76,13 +75,12 @@ public class UserJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         final Map<String, Object> userData = new HashMap<>();
-        userData.put("username", USERNAME);
-        userData.put("password", PASSWORD);
+        userData.put("username", EMAIL);
         Number key = jdbcInsert.executeAndReturnKey(userData);
 
         Optional<User> mayBeUser = userDao.getUserById(key.longValue());
 
         assertTrue(mayBeUser.isPresent());
-        assertEquals(USERNAME, mayBeUser.get().getUsername());
+        assertEquals(EMAIL, mayBeUser.get().getEmail());
     }
 }

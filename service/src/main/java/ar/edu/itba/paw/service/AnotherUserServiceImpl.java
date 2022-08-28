@@ -24,12 +24,12 @@ public class AnotherUserServiceImpl implements UserService {
         }
 
         @Override
-        public User create(String username, String password) {
-            return userDao.create(username, password);
+        public User create(String email) {
+            return userDao.create(email);
         }
 
         @Override
-        public Optional<User> findByUsername(String username) {
-            return userDao.findByUsername(username);
+        public Optional<User> findByEmail(String email) {
+            return userDao.findByEmail(email);
         }
 }

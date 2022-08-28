@@ -16,7 +16,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class UserServiceImplTest {
 
     private static final String USERNAME = "user1";
-    private static final String PASSWORD = "password1";
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -25,11 +24,11 @@ public class UserServiceImplTest {
 
     @Test
     public void testCreateUser(){
-        User user = new User(1, USERNAME, PASSWORD);
-        Mockito.when(userDao.create(Mockito.anyString(), Mockito.anyString())).thenReturn(user);
+        User user = new User(1, USERNAME, null);
+        Mockito.when(userDao.create(Mockito.anyString())).thenReturn(user);
 
         try{
-            User u = userService.create(USERNAME,PASSWORD);
+            User u = userService.create(USERNAME);
         }catch (Exception e){
             Assert.fail("unexpected error during operation create user");
         }

@@ -4,7 +4,7 @@
 
 <html>
 <body>
-<h2><spring:message code="views.profile.title" arguments="${user.username}" htmlEscape="true"/></h2>
+<h2><spring:message code="views.profile.title" arguments="${user.email}" htmlEscape="true"/></h2>
 <h4><spring:message code="views.profile.desc" arguments="${user.id}" htmlEscape="true"/></h4>
 
 <form:form modelAttribute="userProfileForm" method="post" enctype="multipart/form-data" acceptCharset="utf-8">

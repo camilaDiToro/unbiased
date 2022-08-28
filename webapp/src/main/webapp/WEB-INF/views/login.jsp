@@ -6,7 +6,7 @@
 <c:url value="/login" var="loginUrl" />
 <form action="${loginUrl}" method="post"> <! -- enctype="application/x-www-form-urlencoded" -->
     <div>
-        <label for="username">Username: </label>
+        <label for="username">Email: </label>
         <input id="username" name="username" type="text"/>
     </div>
     <div>

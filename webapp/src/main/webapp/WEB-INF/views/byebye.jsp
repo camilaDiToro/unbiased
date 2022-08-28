@@ -2,6 +2,6 @@
 
 <html>
 <body>
-<h2>Goodbye <c:out value="${user.username}"/>!</h2>
+<h2>Goodbye <c:out value="${user.email}"/>!</h2>
 </body>
 </html>

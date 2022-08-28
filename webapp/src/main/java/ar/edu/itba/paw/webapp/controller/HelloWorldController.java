@@ -49,7 +49,7 @@ public class HelloWorldController {
         if(errors.hasErrors()){
             return createForm(userForm);
         }
-        final User user = us.create(userForm.getUsername(), userForm.getPassword());
+        final User user = us.create(userForm.getEmail());
         return new ModelAndView("redirect:/profile/"+user.getId());
     }
 

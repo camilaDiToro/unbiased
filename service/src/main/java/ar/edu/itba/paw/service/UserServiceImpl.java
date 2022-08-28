@@ -27,13 +27,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(String username, String password) {
+    public User create(String email) {
         //return userDao.create(username, passwordEncoder.encode(password));
-        return userDao.create(username, password);
+        return userDao.create(email);
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return userDao.findByUsername(username);
+    public Optional<User> findByEmail(String email) {
+        return userDao.findByEmail(email);
     }
 }
