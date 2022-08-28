@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS news (
     title             VARCHAR(200)    NOT NULL,
     subtitle          VARCHAR(200)    NOT NULL,
     creator           INTEGER         NOT NULL,
-    creation_date     TIMESTAMP       DEFAULT now(),
+    creation_date     TIMESTAMP       NOT NULL,
     image_id          INTEGER         ,
 
     FOREIGN KEY (image_id) REFERENCES image(image_id) ON DELETE SET NULL,

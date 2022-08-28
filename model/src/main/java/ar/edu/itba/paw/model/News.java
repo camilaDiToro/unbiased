@@ -11,7 +11,7 @@ public class News {
 
 
     public News(NewsBuilder builder) {
-        this.newsId = builder.imageId;
+        this.newsId = builder.newsId;
         this.creator = builder.creator;
         this.imageId = builder.imageId;
         this.body = builder.body;
@@ -49,17 +49,18 @@ public class News {
     }
 
     public static class NewsBuilder {
-        private final long newsId, creator;
+        private final long creator;
+        private long newsId;
         private final String body, title, subtitle;
-        private long imageId;
+        private Long imageId;
         private LocalDateTime creationDate;
 
-        public NewsBuilder(long newsId, long creator, String body, String title, String subtitle) {
-            this.newsId = newsId;
+        public NewsBuilder(long creator, String body, String title, String subtitle) {
             this.creator = creator;
             this.body = body;
             this.title = title;
             this.subtitle = subtitle;
+            this.creationDate = LocalDateTime.now();
         }
 
         public NewsBuilder imageId(Long imageId){
@@ -69,6 +70,11 @@ public class News {
 
         public NewsBuilder creationDate(LocalDateTime creationDate){
             this.creationDate = creationDate;
+            return this;
+        }
+
+        public NewsBuilder newsId(long newsId){
+            this.newsId = newsId;
             return this;
         }
 
@@ -83,6 +89,34 @@ public class News {
                 throw new NullPointerException("The property subtitle must not be null");
             }
             return new News(this);
+        }
+
+        public long getCreator() {
+            return creator;
+        }
+
+        public long getNewsId() {
+            return newsId;
+        }
+
+        public String getBody() {
+            return body;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getSubtitle() {
+            return subtitle;
+        }
+
+        public Long getImageId() {
+            return imageId;
+        }
+
+        public LocalDateTime getCreationDate() {
+            return creationDate;
         }
     }
 }

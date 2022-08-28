@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,6 +17,13 @@ import javax.validation.Valid;
 
 @Controller
 public class NewsController {
+
+    private final NewsService newsService;
+
+    @Autowired
+    public NewsController(final NewsService newsService){
+        this.newsService = newsService;
+    }
 
 
     @RequestMapping(value = "/news/create", method = RequestMethod.GET)
@@ -28,14 +38,11 @@ public class NewsController {
             return createNewsForm(createNewsFrom);
         }
 
-        //printing parameters to check they are working properly
-        System.out.println(createNewsFrom.getTitle());
-        System.out.println(createNewsFrom.getSubtitle());
-        System.out.println(createNewsFrom.getCreatorEmail());
-        System.out.println(createNewsFrom.getBody());
+        //TODO: find or create user with email createNewsFrom.getCreatorEmail()
+        // 0 is just to start
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(1, createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-        //Create news instad of user, need to implement news service.
-        //final User user = us.create(userForm.getEmail());
+        final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/successfullycreated");
     }
 
