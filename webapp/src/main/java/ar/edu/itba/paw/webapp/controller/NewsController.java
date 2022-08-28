@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,12 @@ import javax.validation.Valid;
 public class NewsController {
 
     private final NewsService newsService;
+    private final UserService userService;
 
     @Autowired
-    public NewsController(final NewsService newsService){
+    public NewsController(final NewsService newsService, final UserService userService){
         this.newsService = newsService;
+        this.userService = userService;
     }
 
 
@@ -38,9 +41,8 @@ public class NewsController {
             return createNewsForm(createNewsFrom);
         }
 
-        //TODO: find or create user with email createNewsFrom.getCreatorEmail()
-        // 0 is just to start
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(1, createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        final User user = userService.createIfNotExists(createNewsFrom.getCreatorEmail());
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
         final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/successfullycreated");

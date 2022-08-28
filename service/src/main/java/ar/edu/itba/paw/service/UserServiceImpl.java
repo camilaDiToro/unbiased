@@ -33,6 +33,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User createIfNotExists(String email) {
+        return userDao.createIfNotExists(email);
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
         return userDao.findByEmail(email);
     }
