@@ -4,12 +4,15 @@ import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,7 +47,7 @@ public class NewsController {
         }
 
         final User user = userService.createIfNotExists(createNewsFrom.getCreatorEmail());
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle())
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle())
                 .image(createNewsFrom.getImage().getBytes());
 
         final News news = newsService.create(newsBuilder);
@@ -54,6 +57,13 @@ public class NewsController {
     @RequestMapping(value = "/news/successfullycreated", method = RequestMethod.GET)
     public ModelAndView newsSuccessfullyCreated(){
         final ModelAndView mav = new ModelAndView("news_successfully_created");
+        return mav;
+    }
+
+    @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
+    public ModelAndView profile(@PathVariable("newsId") long newsId){
+        final ModelAndView mav = new ModelAndView("show_news");
+        mav.addObject("news",newsService.getById(newsId).orElseThrow(UserNotFoundException::new));
         return mav;
     }
 

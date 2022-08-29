@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 
 public class News {
 
-    private final long newsId, creator;
+    private final long newsId;
+    private final User creator;
     private final byte[] image;
     private final String body, title, subtitle;
     private final LocalDateTime creationDate;
@@ -24,7 +25,7 @@ public class News {
         return newsId;
     }
 
-    public long getCreator() {
+    public User getCreator() {
         return creator;
     }
 
@@ -49,13 +50,13 @@ public class News {
     }
 
     public static class NewsBuilder {
-        private final long creator;
+        private final User creator;
         private long newsId;
         private final String body, title, subtitle;
         private byte[] image;
         private LocalDateTime creationDate;
 
-        public NewsBuilder(long creator, String body, String title, String subtitle) {
+        public NewsBuilder(User creator, String body, String title, String subtitle) {
             this.creator = creator;
             this.body = body;
             this.title = title;
@@ -91,7 +92,7 @@ public class News {
             return new News(this);
         }
 
-        public long getCreator() {
+        public User getCreator() {
             return creator;
         }
 
