@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 public class NewsController {
@@ -36,13 +37,18 @@ public class NewsController {
     }
 
     @RequestMapping(value = "/news/create", method = RequestMethod.POST)
-    public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom, final BindingResult errors){
+    public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
+                                     final BindingResult errors) throws IOException {
         if(errors.hasErrors()){
             return createNewsForm(createNewsFrom);
         }
 
         final User user = userService.createIfNotExists(createNewsFrom.getCreatorEmail());
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle())
+                .image(createNewsFrom.getImage().getBytes());
+
+        System.out.println(createNewsFrom.getImage().getBytes());
+        System.out.println(createNewsFrom.getImage());
 
         final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/successfullycreated");

@@ -31,9 +31,8 @@ CREATE TABLE IF NOT EXISTS news (
     subtitle          VARCHAR(200)    NOT NULL,
     creator           INTEGER         NOT NULL,
     creation_date     TIMESTAMP       NOT NULL,
-    image_id          INTEGER         ,
+    image             BYTEA         ,
 
-    FOREIGN KEY (image_id) REFERENCES image(image_id) ON DELETE SET NULL,
     FOREIGN KEY (creator) REFERENCES users(user_id) ON DELETE SET NULL
 );
 

@@ -1,11 +1,15 @@
 package ar.edu.itba.paw.webapp.form;
 
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
 public class CreateNewsForm {
 
     private String title;
     private String subtitle;
     private String body;
     private String creatorEmail;
+    private CommonsMultipartFile image;
 
 
     public String getTitle() {
@@ -38,5 +42,13 @@ public class CreateNewsForm {
 
     public void setCreatorEmail(String creatorEmail) {
         this.creatorEmail = creatorEmail;
+    }
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(CommonsMultipartFile image) {
+        this.image = image;
     }
 }

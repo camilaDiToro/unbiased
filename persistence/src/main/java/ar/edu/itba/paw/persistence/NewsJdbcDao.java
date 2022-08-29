@@ -32,7 +32,8 @@ public class NewsJdbcDao implements NewsDao{
         newsData.put("subtitle",newsBuilder.getSubtitle());
         newsData.put("creator", newsBuilder.getCreator());
         newsData.put("creation_date",newsBuilder.getCreationDate());
-        newsData.put("image_id", newsBuilder.getImageId());
+        System.out.println("Image" + newsBuilder.getImage());
+        newsData.put("image", newsBuilder.getImage());
 
         final long newsId = jdbcInsert.executeAndReturnKey(newsData).longValue();
         return newsBuilder.newsId(newsId).build();
