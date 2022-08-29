@@ -15,17 +15,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 </head>
 
-<body><nav class="navbar navbar-dark navbar-expand-sm bg-primary text-white">
+<body><nav style="display: flex" class="navbar navbar-dark navbar-expand-sm bg-primary text-white">
 
-    <div class="container-fluid">
-        <a class="navbar-brand text-info" href="#">
+    <div style="display: flex" class="container-fluid" style="border: solid red">
+        <a class="navbar-brand text-info " href="#">
             unbiased
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <!-- Links -->
-        <ul class="navbar-nav">
+        <%--<ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" href="#">Link 1</a>
             </li>
@@ -35,7 +35,15 @@
             <li class="nav-item">
                 <a class="nav-link" href="#">Link 3</a>
             </li>
-        </ul>
+        </ul>--%>
+
+        <div class="d-flex">
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0 text-info border-info" type="submit">Buscar</button>
+            </form>
+        </div>
     </div>
+
 
 </nav>

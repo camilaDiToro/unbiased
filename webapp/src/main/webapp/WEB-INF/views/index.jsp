@@ -2,16 +2,27 @@
 <html>
 <%@include file="../../resources/navbar.jsp" %>
 <div class="container-lg">
-    <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg">
-        <li class="nav-item">
-            <a class="nav-link active rounded-pill bg-secondary" aria-current="page" href="#">Active</a>
+    <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
+    <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
+    <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
+
+            <li class="nav-item">
+                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'Top' ? activeClasses : inactiveClasses}"/>" aria-current="page" href="Top">Top</a>
+            </li>
+            <li class="nav-item" >
+                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'New' ? activeClasses : inactiveClasses}"/>" href="New">New</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'For me' ? activeClasses : inactiveClasses}"/>" href="For me">For me</a>
+            </li>
+        <li class="nav-item ml-auto">
+            <a href="./createArticle">
+            <button type="button" class="btn btn-info">
+                Create article
+            </button></a>
         </li>
-        <li class="nav-item" >
-            <a class="nav-link rounded-pill text-secondary" href="#">Link</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link rounded-pill text-secondary" href="#">Link</a>
-        </li>
+
+
     </ul>
     <ul class="my-2 nav justify-content-center text-light p-2">
         <li class="nav-item">
