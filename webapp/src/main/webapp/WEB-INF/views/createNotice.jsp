@@ -18,9 +18,9 @@
 </head>
 
 <body>
-<nav class="navbar navbar-dark navbar-expand-sm bg-primary text-white">
+<nav style="display: flex" class="navbar navbar-dark navbar-expand-sm bg-primary text-white">
 
-    <div class="container-fluid">
+    <div style="display: flex" class="container-fluid" style="border: solid red">
         <a class="navbar-brand text-info " href="#">
             unbiased
         </a>
@@ -28,7 +28,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <!-- Links -->
-        <ul class="navbar-nav">
+        <%--<ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" href="#">Link 1</a>
             </li>
@@ -38,32 +38,18 @@
             <li class="nav-item">
                 <a class="nav-link" href="#">Link 3</a>
             </li>
-        </ul>
-    </div>
-</nav>
+        </ul>--%>
 
-<%--
-<div style="border: solid red; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; flex-direction: column}">
-
-    <div style="border: solid red; display: flex">
-
-        hola mundo
-        &lt;%&ndash;<div class="input-group mb-3" style="display: flex; width: 50%; flex-direction: row">
-            <input type="text" class="form-control" placeholder="titulo" aria-label="Indicar titulo">
+        <div class="d-flex">
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0 text-info border-info" type="submit">Buscar</button>
+            </form>
         </div>
-
-        <div class="input-group mb-3" style="display: flex; width: 50%; flex-direction: row">
-            <input type="text" class="form-control" placeholder="titulo" aria-label="Indicar titulo">
-        </div>&ndash;%&gt;
-
     </div>
 
-    <div style="border: solid red; display: flex">
-        hola mundo2
-    </div>
 
-</div>
---%>
+</nav>
 
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%">
 
@@ -91,6 +77,11 @@
         <div class="form-group">
             <label for="exampleInputEmail1">Direccion de Email</label>
             <input type="email" class="form-control" id="exampleInputEmail1">
+        </div>
+
+        <div class="form-group">
+            <label for="FormControlFile">Imagen de la noticia</label>
+            <input type="file" class="form-control-file" id="FormControlFile">
         </div>
 
         <div style="width: 100%; display: flex; justify-content: end">
