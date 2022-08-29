@@ -49,6 +49,11 @@ public class News {
         return creationDate;
     }
 
+    public boolean hasImage(){
+        System.out.println(image);
+        return image!=null && image.length != 0;
+    }
+
     public static class NewsBuilder {
         private final User creator;
         private long newsId;
