@@ -18,7 +18,7 @@
 <body><nav style="display: flex" class="navbar navbar-dark navbar-expand-sm bg-primary text-white">
 
     <div style="display: flex" class="container-fluid" style="border: solid red">
-        <a class="navbar-brand text-info " href="#">
+        <a class="navbar-brand text-info " href="/webapp_war_exploded">
             unbiased
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
