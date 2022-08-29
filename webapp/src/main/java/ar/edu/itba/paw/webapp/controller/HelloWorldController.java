@@ -76,6 +76,12 @@ public class HelloWorldController {
         return mav;
     }
 
+    @RequestMapping("/createNotice")
+    public ModelAndView CreateNotice(){
+        final ModelAndView mav = new ModelAndView("createNotice");
+        return mav;
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView userNotFound()    {
