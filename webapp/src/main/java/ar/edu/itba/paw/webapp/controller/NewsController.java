@@ -47,9 +47,6 @@ public class NewsController {
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle())
                 .image(createNewsFrom.getImage().getBytes());
 
-        System.out.println(createNewsFrom.getImage().getBytes());
-        System.out.println(createNewsFrom.getImage());
-
         final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/successfullycreated");
     }
