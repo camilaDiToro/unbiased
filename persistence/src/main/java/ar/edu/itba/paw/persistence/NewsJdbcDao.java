@@ -9,9 +9,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Repository
@@ -22,12 +20,12 @@ public class NewsJdbcDao implements NewsDao{
     private final UserDao userDao;
 
     private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
-            new News.NewsBuilder(   new User(rs.getLong("creator"), rs.getString("email"), rs.getLong("data_id")),
+            new News.NewsBuilder(   new User(rs.getLong("creator"), 0L/*rs.getLong("data_id")*/), // TODO: corregir esto
                                     rs.getString("body"),
                                     rs.getString("title"),
                                     rs.getString("subtitle"))
                                     .newsId(rs.getLong("news_id"))
-                                    .image(rs.getBytes("image"))
+                                    .image(rs.getBytes("image_id"))
                                     .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
                                     .build();
 
@@ -52,6 +50,17 @@ public class NewsJdbcDao implements NewsDao{
 
         final long newsId = jdbcInsert.executeAndReturnKey(newsData).longValue();
         return newsBuilder.newsId(newsId).build();
+    }
+
+    @Override
+    public List<News> getNews() {
+//        List<News> news = new ArrayList<>();
+//        news.add(new News.NewsBuilder(new User(0L,"", 0L),  "BODY", "Title 1", "Subtitle 1").build());
+//        news.add(new News.NewsBuilder(new User(0L,"", 0L),  "This is a short card.", "Card title", "Subtitle 2").build());
+//        news.add(new News.NewsBuilder(new User(0L,"", 0L),  "This is a longer card with supporting text below as a natural lead-in to additional content.", "Card title 3", "Subtitle 3").build());
+//        news.add(new News.NewsBuilder(new User(0L,"", 0L),  "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.", "Card title 4", "Subtitle 4").build());
+
+        return jdbcTemplate.query("SELECT * FROM news",NEWS_ROW_MAPPER);
     }
 
     @Override

@@ -5,6 +5,8 @@ import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,6 +17,11 @@ public class NewsServiceImpl implements NewsService{
     @Autowired
     public NewsServiceImpl(NewsDao newsDao) {
         this.newsDao = newsDao;
+    }
+
+    @Override
+    public List<News> getNews() {
+        return newsDao.getNews();
     }
 
     @Override
