@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -20,10 +21,12 @@ import java.io.IOException;
 public class HelloWorldController {
 
     private final UserService us;
+    private final NewsService ns;
 
     @Autowired
-    public HelloWorldController(@Qualifier("userServiceImpl") final UserService us){
+    public HelloWorldController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns){
         this.us = us;
+        this.ns = ns;
     }
 
     @RequestMapping("/")
@@ -36,6 +39,7 @@ public class HelloWorldController {
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         mav.addObject("orderBy", orderBy);
+        mav.addObject("news", ns.getNews());
         return mav;
     }
 

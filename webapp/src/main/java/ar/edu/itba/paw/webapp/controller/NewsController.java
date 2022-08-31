@@ -16,6 +16,7 @@ import javax.validation.Valid;
 public class NewsController {
 
 
+
     @RequestMapping(value = "/news/create", method = RequestMethod.GET)
     public ModelAndView createNewsForm(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
         final ModelAndView mav = new ModelAndView("create_news");
