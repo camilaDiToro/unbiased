@@ -17,7 +17,7 @@
                 <a class="nav-link rounded-pill <c:out value = "${orderBy == 'For me' ? activeClasses : inactiveClasses}"/>" href="For me">For me</a>
             </li>
         <li class="nav-item ml-auto">
-            <a href="./createArticle">
+            <a href="./create_article">
             <button type="button" class="btn btn-info">
                 Create article
             </button></a>

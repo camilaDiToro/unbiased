@@ -30,11 +30,9 @@ public class NewsController {
         this.userService = userService;
     }
 
-
-
-    @RequestMapping(value = "/news/create", method = RequestMethod.GET)
-    public ModelAndView createNewsForm(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
-        final ModelAndView mav = new ModelAndView("create_news");
+    @RequestMapping("/create_article")
+    public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
+        final ModelAndView mav = new ModelAndView("create_article");
         return mav;
     }
 
@@ -42,7 +40,7 @@ public class NewsController {
     public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
                                      final BindingResult errors) throws IOException {
         if(errors.hasErrors()){
-            return createNewsForm(createNewsFrom);
+            return createArticle(createNewsFrom);
         }
 
         final User user = userService.createIfNotExists(createNewsFrom.getCreatorEmail());
