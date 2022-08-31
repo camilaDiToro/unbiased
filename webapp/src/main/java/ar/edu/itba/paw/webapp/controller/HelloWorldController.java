@@ -82,11 +82,11 @@ public class HelloWorldController {
         return mav;
     }
 
-    @RequestMapping("/createArticle")
+    /*@RequestMapping("/createArticle")
     public ModelAndView CreateArticle(){
         final ModelAndView mav = new ModelAndView("createArticle");
         return mav;
-    }
+    }*/
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)

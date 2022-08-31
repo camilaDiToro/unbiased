@@ -74,4 +74,27 @@ public class NewsController {
         return newsService.getById(newsId).orElseThrow(UserNotFoundException::new).getImage();
     }
 
+    @RequestMapping(value = "/createArticle", method = {RequestMethod.GET})
+    public ModelAndView CreateArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
+        final ModelAndView mav = new ModelAndView("createArticle");
+        return mav;
+    }
+
+    @RequestMapping(value = "/createArticle", method = RequestMethod.POST)
+    public ModelAndView postArticle(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
+                                     final BindingResult errors) throws IOException {
+        if(errors.hasErrors()){
+            return createNewsForm(createNewsFrom);
+        }
+
+        final User user = userService.createIfNotExists(createNewsFrom.getCreatorEmail());
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+
+        if(createNewsFrom.getImage()!=null)
+            newsBuilder.image(createNewsFrom.getImage().getBytes());
+
+        final News news = newsService.create(newsBuilder);
+        return new ModelAndView("redirect:/news/successfullycreated");
+    }
+
 }
