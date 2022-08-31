@@ -2,12 +2,12 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.User;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
     Optional<User> getUserById(long id);
     User create(String email);
+    User createIfNotExists(String email);
     Optional<User> findByEmail(String email);
 }

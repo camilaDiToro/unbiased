@@ -12,6 +12,10 @@ public class User {
         this.dataId = dataId;
     }
 
+    public User(long id, Long dataId) {
+        this(id, null, dataId);
+    }
+
     public long getId() {
         return id;
     }

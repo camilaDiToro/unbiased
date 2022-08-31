@@ -45,6 +45,15 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
+    public User createIfNotExists(String email) {
+        Optional<User> user = findByEmail(email);
+        if(user.isPresent()){
+            return user.get();
+        }
+        return create(email);
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
         return jdbcTemplate.query("SELECT * FROM Users WHERE email = ?",
                 new Object[] { email }, ROW_MAPPER).stream().findFirst();

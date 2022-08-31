@@ -1,13 +1,8 @@
-CREATE TABLE IF NOT EXISTS image(
-     image_id       SERIAL      PRIMARY KEY,
-     bytes          BYTEA       NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS user_data (
     data_id        SERIAL          PRIMARY KEY,
     username       VARCHAR(50)     UNIQUE NOT NULL,
     pass           VARCHAR(200)    NOT NULL,
-    image_id       INTEGER         ,
+    image          BYTEA         ,
     FOREIGN KEY (image_id) REFERENCES image (image_id) ON DELETE SET NULL
 );
 
@@ -30,10 +25,9 @@ CREATE TABLE IF NOT EXISTS news (
     title             VARCHAR(200)    NOT NULL,
     subtitle          VARCHAR(200)    NOT NULL,
     creator           INTEGER         NOT NULL,
-    creation_date     TIMESTAMP       DEFAULT now(),
-    image_id          INTEGER         ,
+    creation_date     TIMESTAMP       NOT NULL,
+    image             BYTEA         ,
 
-    FOREIGN KEY (image_id) REFERENCES image(image_id) ON DELETE SET NULL,
     FOREIGN KEY (creator) REFERENCES users(user_id) ON DELETE SET NULL
 );
 

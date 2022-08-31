@@ -4,16 +4,17 @@ import java.time.LocalDateTime;
 
 public class News {
 
-    private final long newsId, creator;
-    private final Long imageId;
+    private final long newsId;
+    private final User creator;
+    private final byte[] image;
     private final String body, title, subtitle;
     private final LocalDateTime creationDate;
 
 
     public News(NewsBuilder builder) {
-        this.newsId = builder.imageId;
+        this.newsId = builder.newsId;
         this.creator = builder.creator;
-        this.imageId = builder.imageId;
+        this.image = builder.image;
         this.body = builder.body;
         this.title = builder.title;
         this.subtitle = builder.subtitle;
@@ -24,12 +25,12 @@ public class News {
         return newsId;
     }
 
-    public long getCreator() {
+    public User getCreator() {
         return creator;
     }
 
-    public Long getImageId() {
-        return imageId;
+    public byte[] getImage() {
+        return image;
     }
 
     public String getBody() {
@@ -48,27 +49,38 @@ public class News {
         return creationDate;
     }
 
+    public boolean hasImage(){
+        System.out.println(image);
+        return image!=null && image.length != 0;
+    }
+
     public static class NewsBuilder {
-        private final long newsId, creator;
+        private final User creator;
+        private long newsId;
         private final String body, title, subtitle;
-        private long imageId;
+        private byte[] image;
         private LocalDateTime creationDate;
 
-        public NewsBuilder(long newsId, long creator, String body, String title, String subtitle) {
-            this.newsId = newsId;
+        public NewsBuilder(User creator, String body, String title, String subtitle) {
             this.creator = creator;
             this.body = body;
             this.title = title;
             this.subtitle = subtitle;
+            this.creationDate = LocalDateTime.now();
         }
 
-        public NewsBuilder imageId(Long imageId){
-            this.imageId = imageId;
+        public NewsBuilder image(byte[] image){
+            this.image = image;
             return this;
         }
 
         public NewsBuilder creationDate(LocalDateTime creationDate){
             this.creationDate = creationDate;
+            return this;
+        }
+
+        public NewsBuilder newsId(long newsId){
+            this.newsId = newsId;
             return this;
         }
 
@@ -83,6 +95,34 @@ public class News {
                 throw new NullPointerException("The property subtitle must not be null");
             }
             return new News(this);
+        }
+
+        public User getCreator() {
+            return creator;
+        }
+
+        public long getNewsId() {
+            return newsId;
+        }
+
+        public String getBody() {
+            return body;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getSubtitle() {
+            return subtitle;
+        }
+
+        public byte[] getImage() {
+            return image;
+        }
+
+        public LocalDateTime getCreationDate() {
+            return creationDate;
         }
     }
 }

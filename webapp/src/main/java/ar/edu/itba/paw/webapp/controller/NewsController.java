@@ -1,19 +1,34 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import ar.edu.itba.paw.webapp.form.UserProfileForm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 public class NewsController {
+
+    private final NewsService newsService;
+    private final UserService userService;
+
+    @Autowired
+    public NewsController(final NewsService newsService, final UserService userService){
+        this.newsService = newsService;
+        this.userService = userService;
+    }
 
 
 
@@ -24,19 +39,19 @@ public class NewsController {
     }
 
     @RequestMapping(value = "/news/create", method = RequestMethod.POST)
-    public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom, final BindingResult errors){
+    public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
+                                     final BindingResult errors) throws IOException {
         if(errors.hasErrors()){
             return createNewsForm(createNewsFrom);
         }
 
-        //printing parameters to check they are working properly
-        System.out.println(createNewsFrom.getTitle());
-        System.out.println(createNewsFrom.getSubtitle());
-        System.out.println(createNewsFrom.getCreatorEmail());
-        System.out.println(createNewsFrom.getBody());
+        final User user = userService.createIfNotExists(createNewsFrom.getCreatorEmail());
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-        //Create news instad of user, need to implement news service.
-        //final User user = us.create(userForm.getEmail());
+        if(createNewsFrom.getImage()!=null)
+            newsBuilder.image(createNewsFrom.getImage().getBytes());
+
+        final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/successfullycreated");
     }
 
@@ -44,6 +59,20 @@ public class NewsController {
     public ModelAndView newsSuccessfullyCreated(){
         final ModelAndView mav = new ModelAndView("news_successfully_created");
         return mav;
+    }
+
+    @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
+    public ModelAndView profile(@PathVariable("newsId") long newsId){
+        final ModelAndView mav = new ModelAndView("show_news");
+        mav.addObject("news",newsService.getById(newsId).orElseThrow(UserNotFoundException::new));
+        return mav;
+    }
+
+    @RequestMapping( value = "/news/{newsId:[0-9]+}/image", method = {RequestMethod.GET},
+            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @ResponseBody
+    public byte[] newsImage(@PathVariable(value = "newsId") long newsId) {
+        return newsService.getById(newsId).orElseThrow(UserNotFoundException::new).getImage();
     }
 
 }
