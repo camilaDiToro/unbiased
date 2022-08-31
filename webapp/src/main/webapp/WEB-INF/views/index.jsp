@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <html>
-<%@include file="../../resources/navbar.jsp" %>
+<%@ include file="../../resources/navbar.jsp" %>
 <div class="container-lg">
     <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
     <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
@@ -44,7 +44,7 @@
                     <div class="card h-100">
                         <img src="<c:url value="/resources/img_1.jpeg"/>" class="card-img-top" alt="...">
                         <div class="card-body">
-                            <h5 class="card-title"><c:out value="${article.title}"/></h5>
+                            <a href="<c:url value="/news/${article.newsId}"/>"><h5 class="card-title"><c:out value="${article.title}"/></h5></a>
                             <h6 class="card-subtitle py-1"><c:out value="${article.subtitle}"/></h6>
                             <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>
                         </div>

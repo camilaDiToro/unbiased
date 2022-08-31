@@ -33,6 +33,7 @@ public class NewsController {
     @RequestMapping("/create_article")
     public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
         final ModelAndView mav = new ModelAndView("create_article");
+        mav.addObject("pageTitle", "Create article");
         return mav;
     }
 
@@ -62,7 +63,9 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("newsId") long newsId){
         final ModelAndView mav = new ModelAndView("show_news");
-        mav.addObject("news",newsService.getById(newsId).orElseThrow(UserNotFoundException::new));
+        News news = newsService.getById(newsId).orElseThrow(UserNotFoundException::new);
+        mav.addObject("news",news);
+        mav.addObject("pageTitle", news.getTitle());
         return mav;
     }
 

@@ -41,6 +41,7 @@ public class HelloWorldController {
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         mav.addObject("orderBy", orderBy);
         mav.addObject("news", ns.getNews());
+        mav.addObject("pageTitle", "Homepage");
         return mav;
     }
 
