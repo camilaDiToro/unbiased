@@ -27,9 +27,15 @@ public class HelloWorldController {
     }
 
     @RequestMapping("/")
-    public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId){
+    public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
+        return new ModelAndView("redirect:/Top");
+    }
+
+    @RequestMapping("/{orderBy}")
+    public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId, @PathVariable("orderBy") final String orderBy){
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        mav.addObject("orderBy", orderBy);
         return mav;
     }
 
@@ -73,6 +79,12 @@ public class HelloWorldController {
     public ModelAndView goodbyeWorld(final long userId){
         final ModelAndView mav = new ModelAndView("byebye");
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        return mav;
+    }
+
+    @RequestMapping("/createArticle")
+    public ModelAndView CreateArticle(){
+        final ModelAndView mav = new ModelAndView("createArticle");
         return mav;
     }
 
