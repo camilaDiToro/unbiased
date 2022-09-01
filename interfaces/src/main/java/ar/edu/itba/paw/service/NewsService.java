@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface NewsService {
 
-    List<News> getNews();
+    List<News> getNews(int page);
     News create(News.NewsBuilder newsBuilder);
     Optional<News> getById(long id);
-
+    int getTotalPagesAllNews();
 }

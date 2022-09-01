@@ -40,8 +40,9 @@ public class HelloWorldController {
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         mav.addObject("orderBy", orderBy);
-        mav.addObject("news", ns.getNews());
-        mav.addObject("pageTitle", "Homepage");
+        //TODO: asking for the first page, add pagging
+        System.out.println(ns.getTotalPagesAllNews());
+        mav.addObject("news", ns.getNews(1));
         return mav;
     }
 
@@ -61,7 +62,7 @@ public class HelloWorldController {
         if(errors.hasErrors()){
             return createForm(userForm);
         }
-        final User user = us.create(userForm.getEmail());
+        final User user = us.create(new User.UserBuilder(userForm.getEmail()));
         return new ModelAndView("redirect:/profile/"+user.getId());
     }
 

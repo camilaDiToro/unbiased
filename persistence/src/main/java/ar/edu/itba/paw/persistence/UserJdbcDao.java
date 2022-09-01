@@ -19,7 +19,7 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("email"), rs.getLong("data_id"));
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id")).build();
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {
@@ -35,22 +35,22 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public User create(String email) {
+    public User create(User.UserBuilder userBuilder) {
 
         final Map<String, Object> userData = new HashMap<>();
-        userData.put("email", email);
-
+        userData.put("email", userBuilder.getEmail());
+        userData.put("status", userBuilder.getStatus().getStatus());
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
-        return new User(userId, email, null);
+        return userBuilder.userId(userId).build();
     }
 
     @Override
-    public User createIfNotExists(String email) {
-        Optional<User> user = findByEmail(email);
+    public User createIfNotExists(User.UserBuilder userBuilder) {
+        Optional<User> user = findByEmail(userBuilder.getEmail());
         if(user.isPresent()){
             return user.get();
         }
-        return create(email);
+        return create(userBuilder);
     }
 
     @Override

@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NewsDao {
-    List<News> getNews();
+
+    List<News> getNews(int page);
+    int getTotalPagesAllNews();
     News create(News.NewsBuilder newsBuilder);
     Optional<News> getById(long id);
 }
