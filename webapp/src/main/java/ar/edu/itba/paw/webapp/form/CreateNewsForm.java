@@ -3,11 +3,21 @@ package ar.edu.itba.paw.webapp.form;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class CreateNewsForm {
 
+    @Size(min=1, max=100)
+    @Pattern(regexp="[a-zA-Z][a-zA-Z0-9]*")
     private String title;
+    @Pattern(regexp="[a-zA-Z][a-zA-Z0-9]*")
     private String subtitle;
+    @Size(min=1)
+    @Pattern(regexp="[a-zA-Z][a-zA-Z0-9]*")
     private String body;
+    @Size(min=6, max=100)
+    @Pattern(regexp="[a-zA-Z][a-zA-Z0-9]*")
     private String creatorEmail;
     private CommonsMultipartFile image;
 

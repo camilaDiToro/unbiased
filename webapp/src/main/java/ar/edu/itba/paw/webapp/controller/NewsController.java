@@ -75,7 +75,7 @@ public class NewsController {
     }
 
     @RequestMapping(value = "/createArticle", method = {RequestMethod.GET})
-    public ModelAndView CreateArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
+    public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
         final ModelAndView mav = new ModelAndView("createArticle");
         return mav;
     }
@@ -84,7 +84,7 @@ public class NewsController {
     public ModelAndView postArticle(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
                                      final BindingResult errors) throws IOException {
         if(errors.hasErrors()){
-            return createNewsForm(createNewsFrom);
+            return createArticle(createNewsFrom);
         }
 
         final User user = userService.createIfNotExists(createNewsFrom.getCreatorEmail());
