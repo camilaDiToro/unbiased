@@ -35,12 +35,12 @@ public class HelloWorldController {
         return new ModelAndView("redirect:/Top");
     }
 
-    @RequestMapping("/{orderBy}")
-    public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        final ModelAndView mav = new ModelAndView("index");
-        mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
-        return mav;
-    }
+//    @RequestMapping("/{orderBy}")
+//    public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId){
+//        final ModelAndView mav = new ModelAndView("index");
+//        mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
+//        return mav;
+//    }
 
     @RequestMapping("/{orderBy}")
     public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId, @PathVariable("orderBy") final String orderBy, @RequestParam(name = "page", defaultValue = "1") final int page){
