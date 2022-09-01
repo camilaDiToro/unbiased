@@ -36,17 +36,22 @@ public class HelloWorldController {
     }
 
     @RequestMapping("/{orderBy}")
+    public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId){
+        final ModelAndView mav = new ModelAndView("index");
+        mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        return mav;
+    }
+
+    @RequestMapping("/{orderBy}")
     public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId, @PathVariable("orderBy") final String orderBy, @RequestParam(name = "page", defaultValue = "1") final int page){
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         mav.addObject("orderBy", orderBy);
-        //TODO: asking for the first page, add pagging
-//        System.out.println(ns.getTotalPagesAllNews());
-//        mav.addObject("totalPages", ns.getTotalPagesAllNews());
 
-        mav.addObject("totalPages", 5);
+        mav.addObject("totalPages", ns.getTotalPagesAllNews());
         mav.addObject("page", page);
         mav.addObject("news", ns.getNews(page));
+        // TODO: return appropiate paging based on orderBy value
         return mav;
     }
 
