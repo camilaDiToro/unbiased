@@ -36,6 +36,11 @@
             <a class="nav-link " href="#">Link</a>
         </li>
     </ul>
+    <c:if test="${query != ''}">
+        <div class="m-4">
+            <a href="<c:url value="/${orderBy}"/>">Cancelar filtro: "${query}"</a>
+        </div>
+    </c:if>
     <div class="container-fluid">
         <div class="row row-cols-1 row-cols-md-3">
             <c:set var="maxLength" value="${100}"/>

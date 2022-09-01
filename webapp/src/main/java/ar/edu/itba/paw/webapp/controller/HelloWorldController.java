@@ -4,7 +4,6 @@ import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
-import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +42,17 @@ public class HelloWorldController {
 //    }
 
     @RequestMapping("/{orderBy}")
-    public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId, @PathVariable("orderBy") final String orderBy, @RequestParam(name = "page", defaultValue = "1") final int page){
+    public ModelAndView helloWorld(
+                                    @PathVariable("orderBy") final String orderBy,
+                                    @RequestParam(name = "page", defaultValue = "1") final int page,
+                                    @RequestParam(name = "query", defaultValue = "") final String query){
         final ModelAndView mav = new ModelAndView("index");
-        mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         mav.addObject("orderBy", orderBy);
 
         mav.addObject("totalPages", ns.getTotalPagesAllNews());
         mav.addObject("page", page);
-        mav.addObject("news", ns.getNews(page));
-        // TODO: return appropiate paging based on orderBy value
+        mav.addObject("news", ns.getNews(page));  // TODO: return appropiate paging based on orderBy value
+        mav.addObject("query", query);
         return mav;
     }
 
@@ -97,6 +98,7 @@ public class HelloWorldController {
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         return mav;
     }
+
 
 
 
