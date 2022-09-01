@@ -19,8 +19,6 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final String MOCK_PASSWORD = "1234";
-
     private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id")).build();
 
     @Autowired
@@ -41,7 +39,7 @@ public class UserJdbcDao implements UserDao {
 
         final Map<String, Object> userData = new HashMap<>();
         userData.put("email", userBuilder.getEmail());
-        userData.put("pass", MOCK_PASSWORD);
+        userData.put("status", userBuilder.getStatus().getStatus());
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
         return userBuilder.userId(userId).build();
     }

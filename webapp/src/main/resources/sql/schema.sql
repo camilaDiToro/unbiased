@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS users(
     user_id        SERIAL         PRIMARY KEY,
     email          VARCHAR(100)   UNIQUE NOT NULL,
     username       VARCHAR(50)    UNIQUE ,
-    pass           VARCHAR(200)   NOT NULL,
+    pass           VARCHAR(200)   ,
+    status         TEXT           NOT NULL,
     image_id       INTEGER        ,
     FOREIGN KEY (image_id) REFERENCES image (image_id) ON DELETE SET NULL
 );

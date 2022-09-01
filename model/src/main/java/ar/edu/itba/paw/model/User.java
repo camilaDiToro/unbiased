@@ -4,7 +4,7 @@ public class User {
 
     private final long userId, imageId;
     private final String email, username, pass;
-
+    private final UserStatus status;
 
     public User(User.UserBuilder userBuilder) {
         this.userId = userBuilder.userId;
@@ -12,6 +12,7 @@ public class User {
         this.imageId = userBuilder.imageId;
         this.username = userBuilder.username;
         this.pass = userBuilder.pass;
+        this.status = userBuilder.status;
     }
 
     public long getId() {
@@ -34,16 +35,22 @@ public class User {
         return pass;
     }
 
+    public UserStatus getStatus() {
+        return status;
+    }
+
     public static class UserBuilder{
         private long userId, imageId;
         private final String email;
         private String username, pass;
+        private UserStatus status;
 
         public UserBuilder(String email){
             if(email == null){
                 throw new NullPointerException("User email must not be null");
             }
             this.email = email;
+            status = UserStatus.UNREGISTERED;
         }
 
         public UserBuilder userId(long userId){
@@ -60,8 +67,10 @@ public class User {
             this.username = username;
             return this;
         }
+
         public UserBuilder pass(String pass){
             this.pass = pass;
+            status = UserStatus.REGISTERED;
             return this;
         }
 
@@ -87,6 +96,10 @@ public class User {
 
         public String getPass() {
             return pass;
+        }
+
+        public UserStatus getStatus() {
+            return status;
         }
     }
 
