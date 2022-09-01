@@ -13,7 +13,7 @@
     <img src="<c:url value="/resources/images/default-news-image.png"/>"/>
 </c:if>
 <c:if test="${news.hasImage()}">
-    <img src="<c:url value="/news/${newsId}/image"/>" class="user-section-img"/>
+    <img src="<c:url value="/news/${news.imageId}/image"/>" class="user-section-img"/>
 </c:if>
 
 </body>

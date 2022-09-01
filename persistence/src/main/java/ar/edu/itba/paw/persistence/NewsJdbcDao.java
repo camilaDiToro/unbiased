@@ -24,7 +24,7 @@ public class NewsJdbcDao implements NewsDao{
                                     rs.getString("title"),
                                     rs.getString("subtitle"))
                                     .newsId(rs.getLong("news_id"))
-                                    .image(rs.getBytes("image_id"))
+                                    .imageId(rs.getObject("image_id") == null ? null : rs.getLong("image_id"))
                                     .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
                                     .build();
 
@@ -45,7 +45,7 @@ public class NewsJdbcDao implements NewsDao{
         newsData.put("subtitle",newsBuilder.getSubtitle());
         newsData.put("creator", newsBuilder.getCreatorId());
         newsData.put("creation_date",newsBuilder.getCreationDate());
-        newsData.put("image", newsBuilder.getImage());
+        newsData.put("image_id", newsBuilder.getImageId());
 
         final long newsId = jdbcInsert.executeAndReturnKey(newsData).longValue();
         return newsBuilder.newsId(newsId).build();

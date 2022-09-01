@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class News {
 
     private final long newsId, creatorId;
-    private final byte[] image;
+    private final Long imageId;
     private final String body, title, subtitle;
     private final LocalDateTime creationDate;
 
@@ -13,7 +13,7 @@ public class News {
     public News(NewsBuilder builder) {
         this.newsId = builder.newsId;
         this.creatorId = builder.creatorId;
-        this.image = builder.image;
+        this.imageId = builder.imageId;
         this.body = builder.body;
         this.title = builder.title;
         this.subtitle = builder.subtitle;
@@ -28,8 +28,8 @@ public class News {
         return creatorId;
     }
 
-    public byte[] getImage() {
-        return image;
+    public Long getImageId() {
+        return imageId;
     }
 
     public String getBody() {
@@ -49,15 +49,14 @@ public class News {
     }
 
     public boolean hasImage(){
-        System.out.println(image);
-        return image!=null && image.length != 0;
+        return imageId!=null ;
     }
 
     public static class NewsBuilder {
         private final long creatorId;
         private long newsId;
+        private Long imageId;
         private final String body, title, subtitle;
-        private byte[] image;
         private LocalDateTime creationDate;
 
         public NewsBuilder(long creatorId, String body, String title, String subtitle) {
@@ -68,8 +67,8 @@ public class News {
             this.creationDate = LocalDateTime.now();
         }
 
-        public NewsBuilder image(byte[] image){
-            this.image = image;
+        public NewsBuilder imageId(Long imageId){
+            this.imageId = imageId;
             return this;
         }
 
@@ -116,8 +115,8 @@ public class News {
             return subtitle;
         }
 
-        public byte[] getImage() {
-            return image;
+        public long getImageId() {
+            return imageId;
         }
 
         public LocalDateTime getCreationDate() {
