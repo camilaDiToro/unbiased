@@ -19,7 +19,7 @@
 
         <div>
             <form:errors path="title" element="p" cssStyle="color: red"/>
-            <form:label path="Titulo">Title:</form:label>
+            <form:label path="title">Titulo</form:label>
             <div class="form-group">
                 <div class="input-group mb-3">
                     <form:input placeholder="Este es un ejemplo del titulo" cssClass="form-control"  type="text" path="title"/>
@@ -49,7 +49,6 @@
             </div>
         </div>
 
-
         <div>
             <form:errors path="creatorEmail" element="p" cssStyle="color: red"/>
             <form:label path="creatorEmail">Direccion de Email:</form:label>
@@ -64,6 +63,55 @@
             <label for="FormControlFile">Imagen de la noticia</label>
             <input type="file" class="form-control-file" id="FormControlFile">
         </div>--%>
+
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Elegir categoria
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="checkPolitics">
+                    <label class="form-check-label" for="checkPolitics">
+                        Politica
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="checkEconomy">
+                    <label class="form-check-label" for="checkEconomy">
+                        Economia
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="checkSports">
+                    <label class="form-check-label" for="checkSports">
+                        Deportes
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="checkTourism">
+                    <label class="form-check-label" for="checkTourism">
+                        Turismo
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="checkEntertainment">
+                    <label class="form-check-label" for="checkEntertainment">
+                        Espectaculo
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="checkTecnology">
+                    <label class="form-check-label" for="checkTecnology">
+                        Tecnologia
+                    </label>
+                </div>
+            </div>
+        </div>
 
         <div style="width: 100%; display: flex; justify-content: end">
             <button class="btn btn-primary" type="submit">Guardar</button>
