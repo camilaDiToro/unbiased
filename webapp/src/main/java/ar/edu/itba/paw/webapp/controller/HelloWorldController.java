@@ -40,7 +40,9 @@ public class HelloWorldController {
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         mav.addObject("orderBy", orderBy);
-        mav.addObject("news", ns.getNews());
+        //TODO: asking for the first page, add pagging
+        System.out.println(ns.getTotalPagesAllNews());
+        mav.addObject("news", ns.getNews(1));
         return mav;
     }
 

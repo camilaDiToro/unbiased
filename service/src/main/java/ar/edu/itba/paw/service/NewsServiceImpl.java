@@ -20,8 +20,8 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public List<News> getNews() {
-        return newsDao.getNews();
+    public List<News> getNews(int page) {
+        return newsDao.getNews(page);
     }
 
     @Override
@@ -32,5 +32,10 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public Optional<News> getById(long id) {
         return newsDao.getById(id);
+    }
+
+    @Override
+    public int getTotalPagesAllNews() {
+        return newsDao.getTotalPagesAllNews();
     }
 }
