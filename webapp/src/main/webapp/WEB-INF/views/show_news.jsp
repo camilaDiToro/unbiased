@@ -10,12 +10,12 @@
 
         <h1 class="text-xl-left"><c:out value="${news.title}"/></h1>
         <hr/>
-        <img src="<c:url value="/resources/img_1.jpeg"/>" class="float-sm-right w-50"/>
+        <img src="<c:url value="/resources/img_1.jpeg"/>" class="float-sm-right w-50 m-4"/>
         <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
         <p>Fecha: <c:out value="${news.creationDate}"/></p>
-        <p>Creador <c:out value="${news.creator.email}"/></p>
+        <p>Creador <c:out value="${news.creatorId}"/></p>
 
-        <p><c:out value="${news.body}"/></p>
+        <p class="text-justify"><c:out value="${news.body}"/></p>
 
 
 <%--        <c:if test="${news.hasImage()}">--%>

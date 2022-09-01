@@ -58,5 +58,25 @@
 </div>
 <h2>Hi <c:out value="${user.email}"/>!</h2>
 <h4>The user's id is <c:out value="${user.id}"/>!</h4>
+<nav class="d-flex justify-content-center align-items-center">
+    <ul class="pagination">
+        <c:if test = "${page > 1}">
+            <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
+            <c:param name = "page" value = "1"/>
+            </c:url>">First</a></li>
+        </c:if>
+
+        <c:forEach var = "i" begin = "${page - 1 >= 1 ? page - 1 : 1}" end = "${page + 1 <= totalPages ? page+1 : totalPages}">
+            <li class="page-item"><a class="page-link ${i == page ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
+            <c:param name = "page" value = "${i}"/>
+            </c:url>"><c:out value="${i}"/></a></li>
+        </c:forEach>
+        <c:if test = "${page < totalPages}">
+            <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
+            <c:param name = "page" value = "${totalPages}"/>
+            </c:url>">Last</a></li>
+        </c:if>
+    </ul>
+</nav>
 </body>
 </html>
