@@ -60,7 +60,7 @@ public class HelloWorldController {
         if(errors.hasErrors()){
             return createForm(userForm);
         }
-        final User user = us.create(userForm.getEmail());
+        final User user = us.create(new User.UserBuilder(userForm.getEmail()));
         return new ModelAndView("redirect:/profile/"+user.getId());
     }
 

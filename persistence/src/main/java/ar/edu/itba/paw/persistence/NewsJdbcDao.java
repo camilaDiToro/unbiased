@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,7 +19,7 @@ public class NewsJdbcDao implements NewsDao{
     private final UserDao userDao;
 
     private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
-            new News.NewsBuilder(   new User(rs.getLong("creator"), 0L/*rs.getLong("data_id")*/), // TODO: corregir esto
+            new News.NewsBuilder(   rs.getLong("creator"),
                                     rs.getString("body"),
                                     rs.getString("title"),
                                     rs.getString("subtitle"))
@@ -44,7 +43,7 @@ public class NewsJdbcDao implements NewsDao{
         newsData.put("body",newsBuilder.getBody());
         newsData.put("title", newsBuilder.getTitle());
         newsData.put("subtitle",newsBuilder.getSubtitle());
-        newsData.put("creator", newsBuilder.getCreator().getId());
+        newsData.put("creator", newsBuilder.getCreatorId());
         newsData.put("creation_date",newsBuilder.getCreationDate());
         newsData.put("image", newsBuilder.getImage());
 
@@ -65,7 +64,7 @@ public class NewsJdbcDao implements NewsDao{
 
     @Override
     public Optional<News> getById(long id) {
-        return jdbcTemplate.query("SELECT * FROM ((users LEFT OUTER JOIN user_data on user_data.data_id = users.data_id) JOIN news ON user_id = creator) WHERE news_id = ?",
+        return jdbcTemplate.query("SELECT * FROM news WHERE news_id = ?",
                 new Object[] { id }, NEWS_ROW_MAPPER).stream().findFirst();
     }
 }

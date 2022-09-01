@@ -27,14 +27,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(String email) {
+    public User create(User.UserBuilder userBuilder) {
         //return userDao.create(username, passwordEncoder.encode(password));
-        return userDao.create(email);
+        return userDao.create(userBuilder);
     }
 
     @Override
-    public User createIfNotExists(String email) {
-        return userDao.createIfNotExists(email);
+    public User createIfNotExists(User.UserBuilder userBuilder) {
+        return userDao.createIfNotExists(userBuilder);
     }
 
     @Override

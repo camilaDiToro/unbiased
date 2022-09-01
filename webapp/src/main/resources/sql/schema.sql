@@ -1,22 +1,20 @@
-CREATE TABLE IF NOT EXISTS user_data (
-    data_id        SERIAL          PRIMARY KEY,
-    username       VARCHAR(50)     UNIQUE NOT NULL,
-    pass           VARCHAR(200)    NOT NULL,
-    image          BYTEA         ,
-    FOREIGN KEY (image_id) REFERENCES image (image_id) ON DELETE SET NULL
+CREATE TABLE IF NOT EXISTS image(
+    image_id        SERIAL          PRIMARY KEY,
+    bytes           BYTEA           NOT NULL
 );
 
-
 CREATE TABLE IF NOT EXISTS users(
-    user_id         SERIAL         PRIMARY KEY,
-    email           VARCHAR(100)   UNIQUE NOT NULL,
-    data_id         INTEGER        DEFAULT NULL,
-    FOREIGN KEY (data_id) REFERENCES user_data(data_id) ON DELETE CASCADE
+    user_id        SERIAL         PRIMARY KEY,
+    email          VARCHAR(100)   UNIQUE NOT NULL,
+    username       VARCHAR(50)    UNIQUE ,
+    pass           VARCHAR(200)   NOT NULL,
+    image_id       INTEGER        ,
+    FOREIGN KEY (image_id) REFERENCES image (image_id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS category(
     category_id    SERIAL         PRIMARY KEY,
-    description     VARCHAR(50)    UNIQUE NOT NULL
+    description    VARCHAR(50)    UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS news (
@@ -26,7 +24,7 @@ CREATE TABLE IF NOT EXISTS news (
     subtitle          VARCHAR(200)    NOT NULL,
     creator           INTEGER         NOT NULL,
     creation_date     TIMESTAMP       NOT NULL,
-    image             BYTEA         ,
+    image_id          INTEGER         ,
 
     FOREIGN KEY (creator) REFERENCES users(user_id) ON DELETE SET NULL
 );

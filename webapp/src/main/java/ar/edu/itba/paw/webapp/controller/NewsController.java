@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.exceptions.NewsNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -43,11 +44,14 @@ public class NewsController {
             return createArticle(createNewsFrom);
         }
 
-        final User user = userService.createIfNotExists(createNewsFrom.getCreatorEmail());
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        final User.UserBuilder userBuilder = new User.UserBuilder(createNewsFrom.getCreatorEmail());
+        final User user = userService.createIfNotExists(userBuilder);
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-        if(createNewsFrom.getImage()!=null)
-            newsBuilder.image(createNewsFrom.getImage().getBytes());
+        if(createNewsFrom.getImage()!=null){
+            // TODO: Crear la imagen en la bd
+            // TODO: Cargar el id de la imagen newsBuilder.image(createNewsFrom.getImage().getBytes());
+        }
 
         final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/successfullycreated");
@@ -62,7 +66,11 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("newsId") long newsId){
         final ModelAndView mav = new ModelAndView("show_news");
-        mav.addObject("news",newsService.getById(newsId).orElseThrow(UserNotFoundException::new));
+
+        //TODO: check if there is a better way of doing this.
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        mav.addObject("news", news);
+        mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(UserNotFoundException::new));
         return mav;
     }
 
@@ -70,7 +78,7 @@ public class NewsController {
             produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @ResponseBody
     public byte[] newsImage(@PathVariable(value = "newsId") long newsId) {
-        return newsService.getById(newsId).orElseThrow(UserNotFoundException::new).getImage();
+        return newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getImage();
     }
 
 }
