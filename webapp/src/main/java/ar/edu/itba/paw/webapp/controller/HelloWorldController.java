@@ -49,9 +49,9 @@ public class HelloWorldController {
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("orderBy", orderBy);
 
-        mav.addObject("totalPages", ns.getTotalPagesAllNews());
+        mav.addObject("totalPages", ns.getTotalPagesAllNews(query));
         mav.addObject("page", page);
-        mav.addObject("news", ns.getNews(page));  // TODO: return appropiate paging based on orderBy value
+        mav.addObject("news", ns.getNews(page, query));  // TODO: return appropiate paging based on orderBy value
         mav.addObject("query", query);
         return mav;
     }

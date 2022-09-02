@@ -63,6 +63,29 @@ public class NewsJdbcDao implements NewsDao{
         return rowsCount/PAGE_SIZE + 1;
     }
 
+    @Override
+    public List<News> getNews(int page, String query) {
+        List<News> news =  jdbcTemplate.query("SELECT * FROM news WHERE LOWER(title) LIKE ? LIMIT ? OFFSET ? ", new Object[]{"%" + query.toLowerCase() + "%", PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
+//        List<News> result = new ArrayList<>();
+//        for (News article : news) {
+//            Set<String> fields = new HashSet<>(Arrays.asList(article.getBody(), article.getTitle(), article.getSubtitle()));
+//            for (String field : fields) {
+//                if (field.toLowerCase().contains(query.toLowerCase())) {
+//                    result.add(article);
+//                    break;
+//                }
+//            }
+//        }
+
+        return news;
+    }
+
+    @Override
+    public int getTotalPagesAllNews(String query) {
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?" , new Object[]{"%" + query.toLowerCase() + "%"},ROW_COUNT_MAPPER).stream().findFirst().get();
+        return rowsCount/PAGE_SIZE + 1;
+    }
+
 
     @Override
     public Optional<News> getById(long id) {

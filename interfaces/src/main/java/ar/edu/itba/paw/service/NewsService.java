@@ -11,4 +11,8 @@ public interface NewsService {
     News create(News.NewsBuilder newsBuilder);
     Optional<News> getById(long id);
     int getTotalPagesAllNews();
+
+   List<News> getNews(int page, String query);
+
+    int getTotalPagesAllNews(String query);
 }

@@ -38,4 +38,14 @@ public class NewsServiceImpl implements NewsService{
     public int getTotalPagesAllNews() {
         return newsDao.getTotalPagesAllNews();
     }
+
+    @Override
+    public List<News> getNews(int page, String query) {
+        return newsDao.getNews(page, query);
+    }
+
+    @Override
+    public int getTotalPagesAllNews(String query) {
+        return newsDao.getTotalPagesAllNews(query);
+    }
 }
