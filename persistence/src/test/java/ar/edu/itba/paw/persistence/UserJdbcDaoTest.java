@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-
+@Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class UserJdbcDaoTest {
@@ -31,6 +32,8 @@ public class UserJdbcDaoTest {
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
     private UserJdbcDao userDao;
+
+    User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
 
     @Autowired
     private DataSource ds;
@@ -45,15 +48,15 @@ public class UserJdbcDaoTest {
     @Test
     public void testCreateUser(){
         // 1. precondiciones
-        /*JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         // 2. ejercitacion
-        User user = userDao.create(EMAIL);
+        User user = userDao.create(usBuilder);
 
         // 3. validaciones
         assertNotNull(user);
         assertEquals(EMAIL, user.getEmail());
-        assertEquals(1,JdbcTestUtils.countRowsInTable(jdbcTemplate,USER_TABLE));*/
+        assertEquals(1,JdbcTestUtils.countRowsInTable(jdbcTemplate,USER_TABLE));
     }
 
     @Test
