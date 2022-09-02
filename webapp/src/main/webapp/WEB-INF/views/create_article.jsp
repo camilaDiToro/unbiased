@@ -14,7 +14,7 @@
 <body>
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;" class="h-auto p-5">
 
-    <c:url value="/createArticle" var="postUrl"/>
+    <c:url value="/create_article" var="postUrl"/>
     <form:form modelAttribute="createNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
 
         <div>

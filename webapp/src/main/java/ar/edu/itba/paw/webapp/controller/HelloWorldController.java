@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,12 @@ import java.io.IOException;
 public class HelloWorldController {
 
     private final UserService us;
+    private final NewsService ns;
 
     @Autowired
-    public HelloWorldController(@Qualifier("userServiceImpl") final UserService us){
+    public HelloWorldController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns){
         this.us = us;
+        this.ns = ns;
     }
 
     @RequestMapping("/")
@@ -36,6 +40,9 @@ public class HelloWorldController {
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         mav.addObject("orderBy", orderBy);
+        //TODO: asking for the first page, add pagging
+        System.out.println(ns.getTotalPagesAllNews());
+        mav.addObject("news", ns.getNews(1));
         return mav;
     }
 
@@ -55,7 +62,7 @@ public class HelloWorldController {
         if(errors.hasErrors()){
             return createForm(userForm);
         }
-        final User user = us.create(userForm.getEmail());
+        final User user = us.create(new User.UserBuilder(userForm.getEmail()));
         return new ModelAndView("redirect:/profile/"+user.getId());
     }
 
@@ -81,12 +88,6 @@ public class HelloWorldController {
         mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
         return mav;
     }
-
-    /*@RequestMapping("/createArticle")
-    public ModelAndView CreateArticle(){
-        final ModelAndView mav = new ModelAndView("createArticle");
-        return mav;
-    }*/
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)

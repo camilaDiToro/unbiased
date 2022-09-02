@@ -14,10 +14,9 @@ public class CreateNewsForm {
     @Pattern(regexp="[a-zA-Z][a-zA-Z0-9]*")
     private String subtitle;
     @Size(min=1)
-    @Pattern(regexp="[a-zA-Z][a-zA-Z0-9]*")
+    @Pattern(regexp="[a-zA-Z][a-zA-Z0-9.]*")
     private String body;
-    @Size(min=6, max=100)
-    @Pattern(regexp="[a-zA-Z][a-zA-Z0-9]*")
+
     private String creatorEmail;
     private CommonsMultipartFile image;
 
