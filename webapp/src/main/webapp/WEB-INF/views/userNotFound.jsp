@@ -2,10 +2,10 @@
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <html>
 <%@ include file="../../resources/navbar.jsp" %>
-<div class="d-flex align-items-center justify-content-center h-100">
+<div class="d-flex align-items-center justify-content-center h-75">
     <div class="text-center">
         <h1 class="display-1 fw-bold">404</h1>
-        <p class="fs-1"> <span class="text-info">Oops!</span> Page not found.</p>
+        <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> Page not found.</p>
         <p class="lead">
             The user you're looking for doesn't exist.
         </p>
