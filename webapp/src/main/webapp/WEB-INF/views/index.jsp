@@ -6,16 +6,14 @@
     <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
     <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
     <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
-
+        <c:forEach var="order" items="${orders}">
             <li class="nav-item">
-                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'Top' ? activeClasses : inactiveClasses}"/>" aria-current="page" href="Top">Top</a>
+                <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
+                    <c:param name = "category" value = "${category}"/>
+                    <c:param name = "query" value = "${param.query}"/>
+                    </c:url>"><c:out value="${order}"/></a>
             </li>
-            <li class="nav-item" >
-                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'New' ? activeClasses : inactiveClasses}"/>" href="New">New</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'For me' ? activeClasses : inactiveClasses}"/>" href="For me">For me</a>
-            </li>
+        </c:forEach>
         <li class="nav-item ml-auto">
             <a href="./create_article">
             <button type="button" class="btn btn-info">
@@ -25,16 +23,16 @@
 
 
     </ul>
-    <ul class="my-2 nav justify-content-center text-light p-2">
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Active</a>
-        </li>
-        <li class="nav-item" >
-            <a class="nav-link " href="#">Link</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link " href="#">Link</a>
-        </li>
+    <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
+
+            <c:forEach var="cat" items="${categories}">
+                <li class="nav-item">
+                    <a class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                    <c:param name = "category" value = "${cat}"/>
+                    <c:param name = "query" value = "${param.query}"/>
+                    </c:url>"><c:out value="${cat}"/></a>
+                </li>
+            </c:forEach>
     </ul>
     <c:if test="${query != ''}">
         <div class="m-4">
@@ -61,24 +59,25 @@
 
     </div>
 </div>
-<h2>Hi <c:out value="${user.email}"/>!</h2>
-<h4>The user's id is <c:out value="${user.id}"/>!</h4>
 <nav class="d-flex justify-content-center align-items-center">
     <ul class="pagination">
 
             <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "1"/>
+            <c:param name = "query" value = "${param.query}"/>
             </c:url>">First</a></li>
 
 
-        <c:forEach var = "i" begin = "${page - 1 >= 1 ? page - 1 : 1}" end = "${page + 1 <= totalPages ? page+1 : totalPages}">
+        <c:forEach var = "i" begin = "${minPage}" end = "${maxPage}">
             <li class="page-item"><a class="page-link ${i == page ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "${i}"/>
+            <c:param name = "query" value = "${param.query}"/>
             </c:url>"><c:out value="${i}"/></a></li>
         </c:forEach>
 
             <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "${totalPages}"/>
+            <c:param name = "query" value = "${param.query}"/>
             </c:url>">Last</a></li>
 
     </ul>

@@ -44,16 +44,16 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreateUser(){
-        // 1. precondiciones
-        /*JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-
-        // 2. ejercitacion
-        User user = userDao.create(EMAIL);
-
-        // 3. validaciones
-        assertNotNull(user);
-        assertEquals(EMAIL, user.getEmail());
-        assertEquals(1,JdbcTestUtils.countRowsInTable(jdbcTemplate,USER_TABLE));*/
+//        // 1. precondiciones
+//        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
+//
+//        // 2. ejercitacion
+//        User user = userDao.create(new User.UserBuilder(EMAIL).build());
+//
+//        // 3. validaciones
+//        assertNotNull(user);
+//        assertEquals(EMAIL, user.getEmail());
+//        assertEquals(1,JdbcTestUtils.countRowsInTable(jdbcTemplate,USER_TABLE));
     }
 
     @Test
