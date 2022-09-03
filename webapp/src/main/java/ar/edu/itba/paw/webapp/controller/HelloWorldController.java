@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,9 +58,7 @@ public class HelloWorldController {
         mav.addObject("query", query);
         mav.addObject("categories", Arrays.asList("all", "sports", "entertainment"));
         mav.addObject("category", category);
-//        int totalPages = ns.getTotalPagesAllNews(query);
-        int totalPages = 5;
-
+        int totalPages = ns.getTotalPagesAllNews(query);
 
         mav.addObject("totalPages", totalPages);
 

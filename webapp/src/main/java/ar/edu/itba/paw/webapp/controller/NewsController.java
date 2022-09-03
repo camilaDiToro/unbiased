@@ -36,11 +36,6 @@ public class NewsController {
         this.imageService = imageService;
     }
 
-    @RequestMapping("/create_article")
-    public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
-        final ModelAndView mav = new ModelAndView("create_article");
-        return mav;
-    }
 
     @RequestMapping(value = "/news/create", method = RequestMethod.POST)
     public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
@@ -89,6 +84,30 @@ public class NewsController {
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView newsNotFound()    {
         return new ModelAndView("newsNotFound");
+    }
+
+    @RequestMapping(value = "/create_article", method = {RequestMethod.GET})
+    public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
+        final ModelAndView mav = new ModelAndView("create_article");
+        return mav;
+    }
+
+    @RequestMapping(value = "/create_article", method = RequestMethod.POST)
+    public ModelAndView postArticle(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
+                                     final BindingResult errors) throws IOException {
+        if(errors.hasErrors()){
+            return createArticle(createNewsFrom);
+        }
+
+        final User user = userService.createIfNotExists(new User.UserBuilder(createNewsFrom.getCreatorEmail()));
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+
+        if(createNewsFrom.getImage()!=null){
+            newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
+        }
+
+        final News news = newsService.create(newsBuilder);
+        return new ModelAndView("redirect:/news/" + news.getNewsId());
     }
 
 }

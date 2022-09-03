@@ -1,13 +1,30 @@
 package ar.edu.itba.paw.webapp.form;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class CreateNewsForm {
 
+    @NotNull
+    @NotBlank
+    @Length(max=100)
     private String title;
+    @NotNull
+    @NotBlank
     private String subtitle;
+    @NotNull
+    @NotBlank
     private String body;
+
+    @Email(regexp = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$")
+    // source: https://www.w3resource.com/javascript/form/email-validation.php
     private String creatorEmail;
     private CommonsMultipartFile image;
 

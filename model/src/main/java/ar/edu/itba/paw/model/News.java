@@ -115,7 +115,7 @@ public class News {
             return subtitle;
         }
 
-        public long getImageId() {
+        public Long getImageId() {
             return imageId;
         }
 
