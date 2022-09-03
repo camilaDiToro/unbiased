@@ -57,14 +57,14 @@ public class NewsController {
         }
 
         final News news = newsService.create(newsBuilder);
-        return new ModelAndView("redirect:/news/successfullycreated");
+        return new ModelAndView("redirect:/news/" + news.getNewsId());
     }
 
-    @RequestMapping(value = "/news/successfullycreated", method = RequestMethod.GET)
-    public ModelAndView newsSuccessfullyCreated(){
-        final ModelAndView mav = new ModelAndView("news_successfully_created");
-        return mav;
-    }
+//    @RequestMapping(value = "/news/successfullycreated", method = RequestMethod.GET)
+//    public ModelAndView newsSuccessfullyCreated(){
+//        final ModelAndView mav = new ModelAndView("news_successfully_created");
+//        return mav;
+//    }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("newsId") long newsId){

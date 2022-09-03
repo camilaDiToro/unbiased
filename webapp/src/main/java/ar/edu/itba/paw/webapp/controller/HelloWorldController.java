@@ -49,7 +49,6 @@ public class HelloWorldController {
                                     @RequestParam(name = "category", defaultValue = "all") final String category){
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("orderBy", orderBy);
-
         mav.addObject("totalPages", ns.getTotalPagesAllNews(query));
         mav.addObject("page", page);
         mav.addObject("news", ns.getNews(page, query));  // TODO: return appropiate paging based on orderBy value
