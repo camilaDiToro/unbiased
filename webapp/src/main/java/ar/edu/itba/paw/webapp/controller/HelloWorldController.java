@@ -16,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 @Controller
 public class HelloWorldController {
@@ -31,7 +33,7 @@ public class HelloWorldController {
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        return new ModelAndView("redirect:/Top");
+        return new ModelAndView("redirect:/top");
     }
 
 //    @RequestMapping("/{orderBy}")
@@ -48,11 +50,13 @@ public class HelloWorldController {
                                     @RequestParam(name = "query", defaultValue = "") final String query,
                                     @RequestParam(name = "category", defaultValue = "all") final String category){
         final ModelAndView mav = new ModelAndView("index");
+        mav.addObject("orders", Arrays.asList("top", "new", "for me"));
         mav.addObject("orderBy", orderBy);
         mav.addObject("totalPages", ns.getTotalPagesAllNews(query));
         mav.addObject("page", page);
         mav.addObject("news", ns.getNews(page, query));  // TODO: return appropiate paging based on orderBy value
         mav.addObject("query", query);
+        mav.addObject("categories", Arrays.asList("all", "sports", "entertainment"));
         mav.addObject("category", category);
 
         return mav;

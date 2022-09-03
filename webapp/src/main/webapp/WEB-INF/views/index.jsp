@@ -6,16 +6,14 @@
     <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
     <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
     <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
+        <c:forEach var="order" items="${orders}">
+            <li class="nav-item">
+                <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
+                    <c:param name = "category" value = "${category}"/>
 
-            <li class="nav-item">
-                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'Top' ? activeClasses : inactiveClasses}"/>" aria-current="page" href="Top">Top</a>
+                    </c:url>"><c:out value="${order}"/></a>
             </li>
-            <li class="nav-item" >
-                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'New' ? activeClasses : inactiveClasses}"/>" href="New">New</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'For me' ? activeClasses : inactiveClasses}"/>" href="For me">For me</a>
-            </li>
+        </c:forEach>
         <li class="nav-item ml-auto">
             <a href="./create_article">
             <button type="button" class="btn btn-info">
@@ -26,21 +24,14 @@
 
     </ul>
     <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
-        <li class="nav-item">
-            <a class="nav-link <c:out value = "${category == 'all' ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
-            <c:param name = "category" value = "all"/>
-            </c:url>">All</a>
-        </li>
-        <li class="nav-item" >
-            <a class="nav-link <c:out value = "${category == 'sports' ? 'active': ''}"/>" href="<c:url value = "/${orderBy}">
-            <c:param name = "category" value = "sports"/>
-            </c:url>">Sports</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link <c:out value = "${category == 'entertainment' ? 'active': ''}"/>" href="<c:url value = "/${orderBy}">
-            <c:param name = "category" value = "entertainment"/>
-            </c:url>">Entertainment</a>
-        </li>
+
+            <c:forEach var="cat" items="${categories}">
+                <li class="nav-item">
+                    <a class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                    <c:param name = "category" value = "${cat}"/>
+                    </c:url>"><c:out value="${cat}"/></a>
+                </li>
+            </c:forEach>
     </ul>
     <c:if test="${query != ''}">
         <div class="m-4">
