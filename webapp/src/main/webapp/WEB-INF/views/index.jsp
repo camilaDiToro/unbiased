@@ -10,7 +10,7 @@
             <li class="nav-item">
                 <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
                     <c:param name = "category" value = "${category}"/>
-
+                    <c:param name = "query" value = "${param.query}"/>
                     </c:url>"><c:out value="${order}"/></a>
             </li>
         </c:forEach>
@@ -29,6 +29,7 @@
                 <li class="nav-item">
                     <a class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
+                    <c:param name = "query" value = "${param.query}"/>
                     </c:url>"><c:out value="${cat}"/></a>
                 </li>
             </c:forEach>
@@ -63,17 +64,20 @@
 
             <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "1"/>
+            <c:param name = "query" value = "${param.query}"/>
             </c:url>">First</a></li>
 
 
         <c:forEach var = "i" begin = "${minPage}" end = "${maxPage}">
             <li class="page-item"><a class="page-link ${i == page ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "${i}"/>
+            <c:param name = "query" value = "${param.query}"/>
             </c:url>"><c:out value="${i}"/></a></li>
         </c:forEach>
 
             <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "${totalPages}"/>
+            <c:param name = "query" value = "${param.query}"/>
             </c:url>">Last</a></li>
 
     </ul>

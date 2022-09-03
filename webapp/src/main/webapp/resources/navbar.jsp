@@ -40,7 +40,7 @@
         </ul>--%>
 
         <div class="d-flex">
-            <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/Top"/>">
+            <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/top"/>">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" id="query" name="query"/>
                 <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Buscar</button>
             </form>
