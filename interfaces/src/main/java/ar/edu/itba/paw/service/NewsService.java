@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
 
 import java.util.List;
@@ -11,8 +12,8 @@ public interface NewsService {
     News create(News.NewsBuilder newsBuilder);
     Optional<News> getById(long id);
     int getTotalPagesAllNews();
-
    List<News> getNews(int page, String query);
-
     int getTotalPagesAllNews(String query);
+    List<News> getNewsByCategory(int page, Category category);
+    int getTotalPagesCategory(int page, Category category);
 }

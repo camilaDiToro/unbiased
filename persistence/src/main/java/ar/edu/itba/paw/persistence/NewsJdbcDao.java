@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +17,7 @@ public class NewsJdbcDao implements NewsDao{
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final CategoryDao categoryDao;
 
     private static final int PAGE_SIZE = 9;
 
@@ -32,9 +34,10 @@ public class NewsJdbcDao implements NewsDao{
     private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("newsCount");
 
     @Autowired
-    public NewsJdbcDao(final DataSource dataSource){
+    public NewsJdbcDao(final DataSource dataSource, final CategoryDao categoryDao){
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("news").usingGeneratedKeyColumns("news_id");
+        this.categoryDao = categoryDao;
     }
 
     @Override
@@ -49,6 +52,11 @@ public class NewsJdbcDao implements NewsDao{
         newsData.put("image_id", newsBuilder.getImageId());
 
         final long newsId = jdbcInsert.executeAndReturnKey(newsData).longValue();
+
+        for(Category c : newsBuilder.getCategories()){
+            categoryDao.addCategoryToNews(newsId, c);
+        }
+
         return newsBuilder.newsId(newsId).build();
     }
 
@@ -65,24 +73,15 @@ public class NewsJdbcDao implements NewsDao{
 
     @Override
     public List<News> getNews(int page, String query) {
-        List<News> news =  jdbcTemplate.query("SELECT * FROM news WHERE LOWER(title) LIKE ? LIMIT ? OFFSET ? ", new Object[]{"%" + query.toLowerCase() + "%", PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
-//        List<News> result = new ArrayList<>();
-//        for (News article : news) {
-//            Set<String> fields = new HashSet<>(Arrays.asList(article.getBody(), article.getTitle(), article.getSubtitle()));
-//            for (String field : fields) {
-//                if (field.toLowerCase().contains(query.toLowerCase())) {
-//                    result.add(article);
-//                    break;
-//                }
-//            }
-//        }
-
+        List<News> news =  jdbcTemplate.query("SELECT * FROM news WHERE LOWER(title) LIKE ? LIMIT ? OFFSET ? ",
+                new Object[]{"%" + query.toLowerCase() + "%", PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
         return news;
     }
 
     @Override
     public int getTotalPagesAllNews(String query) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?" , new Object[]{"%" + query.toLowerCase() + "%"},ROW_COUNT_MAPPER).stream().findFirst().get();
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?" ,
+                new Object[]{"%" + query.toLowerCase() + "%"},ROW_COUNT_MAPPER).stream().findFirst().get();
         return rowsCount/PAGE_SIZE + 1;
     }
 
@@ -91,5 +90,18 @@ public class NewsJdbcDao implements NewsDao{
     public Optional<News> getById(long id) {
         return jdbcTemplate.query("SELECT * FROM news WHERE news_id = ?",
                 new Object[] { id }, NEWS_ROW_MAPPER).stream().findFirst();
+    }
+
+    @Override
+    public List<News> getNewsByCategory(int page, Category category) {
+        return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN news_category WHERE category_id = ? LIMIT ? OFFSET ?",
+                new Object[]{category.getId(), PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
+    }
+
+    @Override
+    public int getTotalPagesCategory(int page, Category category) {
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?" ,
+                new Object[]{category.getId()},ROW_COUNT_MAPPER).stream().findFirst().get();
+        return rowsCount/PAGE_SIZE + 1;
     }
 }

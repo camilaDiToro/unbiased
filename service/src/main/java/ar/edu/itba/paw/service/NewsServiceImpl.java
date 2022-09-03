@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,15 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public int getTotalPagesAllNews(String query) {
         return newsDao.getTotalPagesAllNews(query);
+    }
+
+    @Override
+    public List<News> getNewsByCategory(int page, Category category) {
+        return newsDao.getNewsByCategory(page,category);
+    }
+
+    @Override
+    public int getTotalPagesCategory(int page, Category category) {
+        return newsDao.getTotalPagesCategory(page,category);
     }
 }

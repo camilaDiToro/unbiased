@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.ImageService;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 public class NewsController {
@@ -51,6 +53,8 @@ public class NewsController {
         final User.UserBuilder userBuilder = new User.UserBuilder(createNewsFrom.getCreatorEmail());
         final User user = userService.createIfNotExists(userBuilder);
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+
+        //newsBuilder.addCategory(Category.POLITICS);
 
         if(createNewsFrom.getImage()!=null){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
