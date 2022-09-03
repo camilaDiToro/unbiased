@@ -58,9 +58,7 @@ public class HelloWorldController {
         mav.addObject("query", query);
         mav.addObject("categories", Arrays.asList("all", "sports", "entertainment"));
         mav.addObject("category", category);
-//        int totalPages = ns.getTotalPagesAllNews(query);
-        int totalPages = 5;
-
+        int totalPages = ns.getTotalPagesAllNews(query);
 
         mav.addObject("totalPages", totalPages);
 

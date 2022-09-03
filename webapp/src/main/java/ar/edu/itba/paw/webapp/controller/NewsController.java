@@ -107,7 +107,7 @@ public class NewsController {
         }
 
         final News news = newsService.create(newsBuilder);
-        return new ModelAndView("redirect:/news/successfullycreated");
+        return new ModelAndView("redirect:/news/" + news.getNewsId());
     }
 
 }
