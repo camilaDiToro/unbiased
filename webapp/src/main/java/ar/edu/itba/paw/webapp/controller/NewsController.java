@@ -12,6 +12,7 @@ import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -82,6 +83,12 @@ public class NewsController {
     @ResponseBody
     public byte[] newsImage(@PathVariable(value = "imageId") long imageId) {
          return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
+    }
+
+    @ExceptionHandler(NewsNotFoundException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public ModelAndView newsNotFound()    {
+        return new ModelAndView("newsNotFound");
     }
 
 }

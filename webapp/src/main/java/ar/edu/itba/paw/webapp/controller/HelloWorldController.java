@@ -43,7 +43,7 @@ public class HelloWorldController {
 //        return mav;
 //    }
 
-    @RequestMapping("/{orderBy}")
+    @RequestMapping("/{orderBy:top|new|for me}")
     public ModelAndView helloWorld(
                                     @PathVariable("orderBy") final String orderBy,
                                     @RequestParam(name = "page", defaultValue = "1") final int page,
@@ -57,8 +57,7 @@ public class HelloWorldController {
         mav.addObject("query", query);
         mav.addObject("categories", Arrays.asList("all", "sports", "entertainment"));
         mav.addObject("category", category);
-//        int totalPages = ns.getTotalPagesAllNews(query);
-        int totalPages = 5;
+        int totalPages = ns.getTotalPagesAllNews(query);
 
         mav.addObject("totalPages", totalPages);
 
@@ -132,6 +131,6 @@ public class HelloWorldController {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView userNotFound()    {
-        return new ModelAndView("404");
+        return new ModelAndView("userNotFound");
     }
 }
