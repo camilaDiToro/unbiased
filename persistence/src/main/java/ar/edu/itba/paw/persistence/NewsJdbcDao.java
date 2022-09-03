@@ -103,7 +103,7 @@ public class NewsJdbcDao implements NewsDao{
     }
 
     @Override
-    public int getTotalPagesCategory(int page, Category category) {
+    public int getTotalPagesCategory(Category category) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?" ,
                 new Object[]{category.getId()},ROW_COUNT_MAPPER).stream().findFirst().get();
         return rowsCount/PAGE_SIZE + 1;

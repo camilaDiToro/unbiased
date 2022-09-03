@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.NewsService;
@@ -35,7 +36,7 @@ public class HelloWorldController {
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        return new ModelAndView("redirect:/top");
+        return new ModelAndView("redirect:/TOP");
     }
 
 //    @RequestMapping("/{orderBy}")
@@ -45,21 +46,31 @@ public class HelloWorldController {
 //        return mav;
 //    }
 
-    @RequestMapping("/{orderBy:top|new|for me}")
+    @RequestMapping("/{orderBy:TOP|NEW}")
     public ModelAndView helloWorld(
-                                    @PathVariable("orderBy") final String orderBy,
-                                    @RequestParam(name = "page", defaultValue = "1") final int page,
-                                    @RequestParam(name = "query", defaultValue = "") final String query,
-                                    @RequestParam(name = "category", defaultValue = "all") final String category){
+            @PathVariable("orderBy") final String orderBy,
+            @RequestParam(name = "page", defaultValue = "1") final int page,
+            @RequestParam(name = "query", defaultValue = "") final String query,
+            @RequestParam(name = "category", defaultValue = "ALL") final String category){
         final ModelAndView mav = new ModelAndView("index");
-        mav.addObject("orders", Arrays.asList("top", "new", "for me"));
+        mav.addObject("orders", NewsOrder.values());
         mav.addObject("orderBy", orderBy);
         mav.addObject("page", page);
-        mav.addObject("news", ns.getNews(page, query, NewsOrder.NEW));  // TODO: return appropiate paging based on orderBy value
         mav.addObject("query", query);
-        mav.addObject("categories", Arrays.asList("all", "sports", "entertainment"));
-        mav.addObject("category", category);
-        int totalPages = ns.getTotalPagesAllNews(query);
+        mav.addObject("categories", Category.values());
+        int totalPages;
+
+        if (category.equals("ALL")) {
+            mav.addObject("category", category);
+            totalPages = ns.getTotalPagesAllNews(query);
+            mav.addObject("news", ns.getNews(page, query, NewsOrder.valueOf(orderBy)));
+        }
+        else {
+            Category catObject = Category.valueOf(category);
+            mav.addObject("category", catObject);
+            totalPages = ns.getTotalPagesCategory(catObject);
+            mav.addObject("news", ns.getNewsByCategory(page, catObject, NewsOrder.valueOf(orderBy)));
+        }
 
         mav.addObject("totalPages", totalPages);
 
