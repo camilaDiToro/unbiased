@@ -52,12 +52,33 @@ public class HelloWorldController {
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("orders", Arrays.asList("top", "new", "for me"));
         mav.addObject("orderBy", orderBy);
-        mav.addObject("totalPages", ns.getTotalPagesAllNews(query));
         mav.addObject("page", page);
         mav.addObject("news", ns.getNews(page, query));  // TODO: return appropiate paging based on orderBy value
         mav.addObject("query", query);
         mav.addObject("categories", Arrays.asList("all", "sports", "entertainment"));
         mav.addObject("category", category);
+//        int totalPages = ns.getTotalPagesAllNews(query);
+        int totalPages = 5;
+
+        mav.addObject("totalPages", totalPages);
+
+        int minPage = 1;
+        if (page - 2 >= 1)
+            minPage = page - 2;
+        else if (page - 1 >= 1)
+            minPage = page - 1;
+        mav.addObject("minPage",minPage);
+
+
+        int maxPage = page;
+        if (page + 2 <= totalPages) {
+            maxPage = page + 2;
+        }
+        else if (page + 1 <= totalPages)
+            maxPage = page + 1;
+
+        mav.addObject("maxPage",maxPage);
+
 
         return mav;
     }

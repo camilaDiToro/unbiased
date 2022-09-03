@@ -66,7 +66,7 @@
             </c:url>">First</a></li>
 
 
-        <c:forEach var = "i" begin = "${page - 1 >= 1 ? page - 1 : 1}" end = "${page + 1 <= totalPages ? page+1 : totalPages}">
+        <c:forEach var = "i" begin = "${minPage}" end = "${maxPage}">
             <li class="page-item"><a class="page-link ${i == page ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "${i}"/>
             </c:url>"><c:out value="${i}"/></a></li>
