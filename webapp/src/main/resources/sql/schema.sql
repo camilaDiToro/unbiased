@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS news (
     subtitle          VARCHAR(200)    NOT NULL,
     creator           INTEGER         NOT NULL,
     creation_date     TIMESTAMP       NOT NULL,
+    accesses          INTEGER         NOT NULL DEFAULT 0,
     image_id          INTEGER         ,
 
     FOREIGN KEY (creator) REFERENCES users(user_id) ON DELETE SET NULL

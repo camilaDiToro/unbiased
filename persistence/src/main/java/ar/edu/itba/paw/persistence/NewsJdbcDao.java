@@ -51,6 +51,7 @@ public class NewsJdbcDao implements NewsDao{
         newsData.put("creator", newsBuilder.getCreatorId());
         newsData.put("creation_date",newsBuilder.getCreationDate());
         newsData.put("image_id", newsBuilder.getImageId());
+        newsData.put("accesses", 0);
 
         final long newsId = jdbcInsert.executeAndReturnKey(newsData).longValue();
 
@@ -63,7 +64,7 @@ public class NewsJdbcDao implements NewsDao{
 
     @Override
     public List<News> getNews(int page, NewsOrder ns) {
-        return jdbcTemplate.query("SELECT * FROM news ORDER BY " +  ns.getQuery() + "LIMIT ? OFFSET ?", new Object[]{PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM news ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ?", new Object[]{PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
     }
 
     @Override
@@ -89,8 +90,10 @@ public class NewsJdbcDao implements NewsDao{
 
     @Override
     public Optional<News> getById(long id) {
-        return jdbcTemplate.query("SELECT * FROM news WHERE news_id = ?",
+        Optional<News> news =  jdbcTemplate.query("SELECT * FROM news WHERE news_id = ?",
                 new Object[] { id }, NEWS_ROW_MAPPER).stream().findFirst();
+        jdbcTemplate.update("UPDATE news SET accesses = accesses + 1 WHERE news_id = ?",id);
+        return news;
     }
 
     @Override
