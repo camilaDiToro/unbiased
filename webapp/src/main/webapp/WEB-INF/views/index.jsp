@@ -25,15 +25,21 @@
 
 
     </ul>
-    <ul class="my-2 nav justify-content-center text-light p-2">
+    <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Active</a>
+            <a class="nav-link <c:out value = "${category == 'all' ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+            <c:param name = "category" value = "all"/>
+            </c:url>">All</a>
         </li>
         <li class="nav-item" >
-            <a class="nav-link " href="#">Link</a>
+            <a class="nav-link <c:out value = "${category == 'sports' ? 'active': ''}"/>" href="<c:url value = "/${orderBy}">
+            <c:param name = "category" value = "sports"/>
+            </c:url>">Sports</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link " href="#">Link</a>
+            <a class="nav-link <c:out value = "${category == 'entertainment' ? 'active': ''}"/>" href="<c:url value = "/${orderBy}">
+            <c:param name = "category" value = "entertainment"/>
+            </c:url>">Entertainment</a>
         </li>
     </ul>
     <c:if test="${query != ''}">
@@ -61,8 +67,6 @@
 
     </div>
 </div>
-<h2>Hi <c:out value="${user.email}"/>!</h2>
-<h4>The user's id is <c:out value="${user.id}"/>!</h4>
 <nav class="d-flex justify-content-center align-items-center">
     <ul class="pagination">
 

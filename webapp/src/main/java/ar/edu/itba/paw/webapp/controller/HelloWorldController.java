@@ -45,7 +45,8 @@ public class HelloWorldController {
     public ModelAndView helloWorld(
                                     @PathVariable("orderBy") final String orderBy,
                                     @RequestParam(name = "page", defaultValue = "1") final int page,
-                                    @RequestParam(name = "query", defaultValue = "") final String query){
+                                    @RequestParam(name = "query", defaultValue = "") final String query,
+                                    @RequestParam(name = "category", defaultValue = "all") final String category){
         final ModelAndView mav = new ModelAndView("index");
         mav.addObject("orderBy", orderBy);
 
@@ -53,6 +54,8 @@ public class HelloWorldController {
         mav.addObject("page", page);
         mav.addObject("news", ns.getNews(page, query));  // TODO: return appropiate paging based on orderBy value
         mav.addObject("query", query);
+        mav.addObject("category", category);
+
         return mav;
     }
 
