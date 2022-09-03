@@ -17,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 @Controller
 public class HelloWorldController {
@@ -32,17 +34,54 @@ public class HelloWorldController {
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        return new ModelAndView("redirect:/Top");
+        return new ModelAndView("redirect:/top");
     }
 
-    @RequestMapping("/{orderBy}")
-    public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId, @PathVariable("orderBy") final String orderBy){
+//    @RequestMapping("/{orderBy}")
+//    public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId){
+//        final ModelAndView mav = new ModelAndView("index");
+//        mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
+//        return mav;
+//    }
+
+    @RequestMapping("/{orderBy:top|new|for me}")
+    public ModelAndView helloWorld(
+                                    @PathVariable("orderBy") final String orderBy,
+                                    @RequestParam(name = "page", defaultValue = "1") final int page,
+                                    @RequestParam(name = "query", defaultValue = "") final String query,
+                                    @RequestParam(name = "category", defaultValue = "all") final String category){
         final ModelAndView mav = new ModelAndView("index");
-        mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        mav.addObject("orders", Arrays.asList("top", "new", "for me"));
         mav.addObject("orderBy", orderBy);
-        //TODO: asking for the first page, add pagging
-        System.out.println(ns.getTotalPagesAllNews());
-        mav.addObject("news", ns.getNews(1));
+        mav.addObject("page", page);
+        mav.addObject("news", ns.getNews(page, query));  // TODO: return appropiate paging based on orderBy value
+        mav.addObject("query", query);
+        mav.addObject("categories", Arrays.asList("all", "sports", "entertainment"));
+        mav.addObject("category", category);
+//        int totalPages = ns.getTotalPagesAllNews(query);
+        int totalPages = 5;
+
+
+        mav.addObject("totalPages", totalPages);
+
+        int minPage = 1;
+        if (page - 2 >= 1)
+            minPage = page - 2;
+        else if (page - 1 >= 1)
+            minPage = page - 1;
+        mav.addObject("minPage",minPage);
+
+
+        int maxPage = page;
+        if (page + 2 <= totalPages) {
+            maxPage = page + 2;
+        }
+        else if (page + 1 <= totalPages)
+            maxPage = page + 1;
+
+        mav.addObject("maxPage",maxPage);
+
+
         return mav;
     }
 
@@ -89,9 +128,12 @@ public class HelloWorldController {
         return mav;
     }
 
+
+
+
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView userNotFound()    {
-        return new ModelAndView("404");
+        return new ModelAndView("userNotFound");
     }
 }

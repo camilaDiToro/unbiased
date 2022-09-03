@@ -1,3 +1,4 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%--
   Created by IntelliJ IDEA.
   User: khcatino
@@ -6,7 +7,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <head>
-    <title>unbiased - Home Page</title>
+<title>
+<c:out value="unbiased - Homepage"/></title>
     <link rel="icon" type="image/png" href="<c:url value="/resources/unbiased-logo-circle.png"/>">
     <link href="<c:url value="/resources/bootstrap.min.css"/>" rel="stylesheet">
     <%--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">--%>
@@ -38,8 +40,8 @@
         </ul>--%>
 
         <div class="d-flex">
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/top"/>">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" id="query" name="query"/>
                 <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Buscar</button>
             </form>
         </div>
