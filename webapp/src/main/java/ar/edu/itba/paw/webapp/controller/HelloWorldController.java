@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
@@ -51,7 +52,7 @@ public class HelloWorldController {
 
         mav.addObject("totalPages", ns.getTotalPagesAllNews(query));
         mav.addObject("page", page);
-        mav.addObject("news", ns.getNews(page, query));  // TODO: return appropiate paging based on orderBy value
+        mav.addObject("news", ns.getNews(page, query, NewsOrder.NEW));  // TODO: return appropiate paging based on orderBy value
         mav.addObject("query", query);
         return mav;
     }

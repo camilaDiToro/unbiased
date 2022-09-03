@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
+import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
@@ -56,7 +57,7 @@ public class NewsController {
 
         //newsBuilder.addCategory(Category.POLITICS);
 
-        if(createNewsFrom.getImage()!=null){
+        if(createNewsFrom.getImage()!=null && createNewsFrom.getImage().getBytes().length!=0){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
@@ -67,6 +68,11 @@ public class NewsController {
     @RequestMapping(value = "/news/successfullycreated", method = RequestMethod.GET)
     public ModelAndView newsSuccessfullyCreated(){
         final ModelAndView mav = new ModelAndView("news_successfully_created");
+        List<News> l = newsService.getNewsByCategory(1, Category.ECONOMICS, NewsOrder.NEW);
+
+        for(News n : l){
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + n.getTitle() + " " + n.getCreationDate());
+        }
         return mav;
     }
 

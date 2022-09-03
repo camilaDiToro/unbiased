@@ -1,8 +1,7 @@
 package ar.edu.itba.paw.model;
 
 public enum Category {
-    TOP("TOP"),
-    NEW("NUEVO"),
+
     TOURISM("TURISMO"),
     SHOW("ESPECTÁCULO"),
     POLITICS("POLÍTICA"),

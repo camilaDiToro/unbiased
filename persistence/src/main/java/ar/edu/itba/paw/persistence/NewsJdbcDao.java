@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
+import ar.edu.itba.paw.model.NewsOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -61,8 +62,8 @@ public class NewsJdbcDao implements NewsDao{
     }
 
     @Override
-    public List<News> getNews(int page) {
-        return jdbcTemplate.query("SELECT * FROM news LIMIT ? OFFSET ?", new Object[]{PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
+    public List<News> getNews(int page, NewsOrder ns) {
+        return jdbcTemplate.query("SELECT * FROM news ORDER BY " +  ns.getQuery() + "LIMIT ? OFFSET ?", new Object[]{PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
     }
 
     @Override
@@ -72,8 +73,8 @@ public class NewsJdbcDao implements NewsDao{
     }
 
     @Override
-    public List<News> getNews(int page, String query) {
-        List<News> news =  jdbcTemplate.query("SELECT * FROM news WHERE LOWER(title) LIKE ? LIMIT ? OFFSET ? ",
+    public List<News> getNews(int page, String query, NewsOrder ns) {
+        List<News> news =  jdbcTemplate.query("SELECT * FROM news WHERE LOWER(title) LIKE ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
                 new Object[]{"%" + query.toLowerCase() + "%", PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
         return news;
     }
@@ -93,8 +94,8 @@ public class NewsJdbcDao implements NewsDao{
     }
 
     @Override
-    public List<News> getNewsByCategory(int page, Category category) {
-        return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN news_category WHERE category_id = ? LIMIT ? OFFSET ?",
+    public List<News> getNewsByCategory(int page, Category category, NewsOrder ns) {
+        return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN news_category WHERE category_id = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
                 new Object[]{category.getId(), PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
     }
 

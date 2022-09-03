@@ -2,6 +2,7 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
+import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public List<News> getNews(int page) {
-        return newsDao.getNews(page);
+    public List<News> getNews(int page, NewsOrder newsOrder) {
+        return newsDao.getNews(page, newsOrder);
     }
 
     @Override
@@ -41,8 +42,8 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public List<News> getNews(int page, String query) {
-        return newsDao.getNews(page, query);
+    public List<News> getNews(int page, String query, NewsOrder newsOrder) {
+        return newsDao.getNews(page, query, newsOrder);
     }
 
     @Override
@@ -51,8 +52,8 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public List<News> getNewsByCategory(int page, Category category) {
-        return newsDao.getNewsByCategory(page,category);
+    public List<News> getNewsByCategory(int page, Category category, NewsOrder newsOrder) {
+        return newsDao.getNewsByCategory(page,category,newsOrder);
     }
 
     @Override
