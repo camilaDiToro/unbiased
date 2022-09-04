@@ -75,13 +75,16 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testGetUserByIdUserExists(){
+        //precondicion
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        final Map<String, Object> userData = new HashMap<>();
-        userData.put("username", EMAIL);
-        Number key = jdbcInsert.executeAndReturnKey(userData);
+        //ejercitacion
+//        final Map<String, Object> userData = new HashMap<>();
+//        userData.put("username", EMAIL);
+//        Number key = jdbcInsert.executeAndReturnKey(userData);
+        User us = userDao.create(usBuilder);
 
-        Optional<User> mayBeUser = userDao.getUserById(key.longValue());
+        Optional<User> mayBeUser = userDao.getUserById(us.getId());
 
         assertTrue(mayBeUser.isPresent());
         assertEquals(EMAIL, mayBeUser.get().getEmail());

@@ -8,7 +8,9 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 
 @Repository
@@ -26,7 +28,7 @@ public class NewsJdbcDao implements NewsDao{
                                     rs.getString("subtitle"))
                                     .newsId(rs.getLong("news_id"))
                                     .imageId(rs.getObject("image_id") == null ? null : rs.getLong("image_id"))
-                                    .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
+                                    .creationDate(rs.getObject("creation_date", LocalDateTime.class))
                                     .build();
 
     private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("newsCount");
