@@ -69,29 +69,9 @@
                 Elegir categoria
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="checkPolitics">
-                    <label class="form-check-label" for="checkPolitics">
-                        Politica
-                    </label>
-                </div>
 
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="checkEconomy">
-                    <label class="form-check-label" for="checkEconomy">
-                        Economia
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="checkSports">
-                    <label class="form-check-label" for="checkSports">
-                        Deportes
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <%--<input class="form-check-input" type="checkbox" value="" id="checkTourism">--%>
+                        <%--<input class="form-check-input" type="checkbox" value="" id="checkTourism">--%>
                     <form:checkbox path="categories" value="TURISMO" id="checkTourism"/>
                     <label class="form-check-label" for="checkTourism">
                         Turismo
@@ -99,14 +79,35 @@
                 </div>
 
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="checkEntertainment">
+                    <form:checkbox path="categories" value="ESPECTÁCULO" id="checkEntertainment"/>
                     <label class="form-check-label" for="checkEntertainment">
                         Espectaculo
                     </label>
                 </div>
 
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="checkTecnology">
+                    <form:checkbox path="categories" value="POLÍTICA" id="checkPolitics"/>
+                    <label class="form-check-label" for="checkPolitics">
+                        Politica
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <form:checkbox path="categories" value="ECONOMÍA" id="checkEconomy"/>
+                    <label class="form-check-label" for="checkEconomy">
+                        Economia
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <form:checkbox path="categories" value="DEPORTES" id="checkSports"/>
+                    <label class="form-check-label" for="checkSports">
+                        Deportes
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <form:checkbox path="categories" value="TECNOLOGÍA" id="checkTecnology"/>
                     <label class="form-check-label" for="checkTecnology">
                         Tecnologia
                     </label>
