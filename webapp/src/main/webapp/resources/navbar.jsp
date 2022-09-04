@@ -41,8 +41,7 @@
 
         <div class="d-flex">
             <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP"/>">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" id="query" name="query"/>
-                <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Buscar</button>
+                <input style="height: 30px; padding-left: 35px; background-image: url('<c:url value="/resources/images/lupa.png"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="form-control mr-sm-2 btn-outline-info text-white bg-primary" type="search" placeholder="Search" id="query" name="query"/>
             </form>
         </div>
     </div>
