@@ -14,7 +14,7 @@
 <body>
 
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
-    <a href="./top">
+    <a href="./TOP">
     <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%">
     </a>
 </div>
