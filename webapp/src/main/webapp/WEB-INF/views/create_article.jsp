@@ -12,7 +12,13 @@
 <html>
 <%@include file="../../resources/navbar.jsp" %>
 <body>
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: center;" class="h-auto p-5">
+
+<div style="position: absolute ; margin-left: 4%; margin-top: 2%">
+    <a href="./top">
+    <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%">
+    </a>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center" class="h-auto p-5">
 
     <c:url value="/create_article" var="postUrl"/>
     <form:form modelAttribute="createNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
