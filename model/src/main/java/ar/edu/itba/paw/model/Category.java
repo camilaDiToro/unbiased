@@ -19,6 +19,10 @@ public enum Category {
         return description;
     }
 
+    public String toString() {
+        return getDescription();
+    }
+
     public long getId() {
         return ordinal();
     }

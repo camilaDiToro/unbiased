@@ -16,5 +16,7 @@ public interface NewsService {
    List<News> getNews(int page, String query, NewsOrder ns);
     int getTotalPagesAllNews(String query);
     List<News> getNewsByCategory(int page, Category category, NewsOrder ns);
-    int getTotalPagesCategory(int page, Category category);
+    int getTotalPagesCategory(Category category);
+
+    List<Category> getNewsCategory(News news);
 }

@@ -72,6 +72,7 @@ public class NewsController {
         //TODO: check if there is a better way of doing this.
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         mav.addObject("news", news);
+        mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
         return mav;
     }

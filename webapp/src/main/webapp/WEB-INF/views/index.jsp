@@ -10,7 +10,7 @@
             <li class="nav-item">
                 <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
                     <c:param name = "category" value = "${category}"/>
-                    <c:param name = "query" value = "${param.query}"/>
+                    <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
                     </c:url>"><c:out value="${order}"/></a>
             </li>
         </c:forEach>
@@ -23,17 +23,23 @@
 
 
     </ul>
-    <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
-
+    <c:if test="${query == ''}">
+        <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
+            <li class="nav-item">
+                <a class="text-capitalize nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                    <c:param name = "query" value = "${param.query}"/>
+                    </c:url>">ALL</a>
+            </li>
             <c:forEach var="cat" items="${categories}">
                 <li class="nav-item">
-                    <a class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                    <a class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
-                    <c:param name = "query" value = "${param.query}"/>
+
                     </c:url>"><c:out value="${cat}"/></a>
                 </li>
             </c:forEach>
-    </ul>
+        </ul>
+    </c:if>
     <c:if test="${query != ''}">
         <div class="m-4">
             <a href="<c:url value="/${orderBy}"/>">Cancelar filtro: "${query}"</a>

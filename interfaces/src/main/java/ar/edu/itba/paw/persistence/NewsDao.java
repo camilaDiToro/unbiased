@@ -16,5 +16,7 @@ public interface NewsDao {
     News create(News.NewsBuilder newsBuilder);
     Optional<News> getById(long id);
     List<News> getNewsByCategory(int page, Category category, NewsOrder ns);
-    int getTotalPagesCategory(int page, Category category);
+    int getTotalPagesCategory(Category category);
+
+    List<Category> getNewsCategory(News news);
 }
