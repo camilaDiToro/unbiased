@@ -5,6 +5,13 @@
 <html>
 <%@include file="../../resources/navbar.jsp" %>
 <body>
+
+<div style="position: absolute ; margin-left: 4%; margin-top: 2%">
+    <a href="../TOP">
+        <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%">
+    </a>
+</div>
+
 <div class="d-flex align-items-center justify-content-center w-100 py-4">
     <div class="h-auto w-75">
 
