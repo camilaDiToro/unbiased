@@ -32,6 +32,9 @@ public class NewsJdbcDao implements NewsDao{
                                     .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
                                     .build();
 
+    private static final RowMapper<Category> CATEGORIES_ROW_MAPPER = (rs, rowNum) ->
+            Category.getById(rs.getLong("category_id"));
+
     private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("newsCount");
 
     @Autowired
@@ -80,6 +83,8 @@ public class NewsJdbcDao implements NewsDao{
         return news;
     }
 
+
+
     @Override
     public int getTotalPagesAllNews(String query) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?" ,
@@ -100,6 +105,13 @@ public class NewsJdbcDao implements NewsDao{
     public List<News> getNewsByCategory(int page, Category category, NewsOrder ns) {
         return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN news_category WHERE category_id = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
                 new Object[]{category.getId(), PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
+    }
+
+    @Override
+    public List<Category> getNewsCategory(News news) {
+        List<Category> categories =  jdbcTemplate.query("SELECT category_id FROM news NATURAL JOIN news_category WHERE news_id = ?",
+                new Object[]{news.getNewsId()},CATEGORIES_ROW_MAPPER);
+        return categories;
     }
 
     @Override

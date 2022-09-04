@@ -17,4 +17,6 @@ public interface NewsDao {
     Optional<News> getById(long id);
     List<News> getNewsByCategory(int page, Category category, NewsOrder ns);
     int getTotalPagesCategory(Category category);
+
+    List<Category> getNewsCategory(News news);
 }

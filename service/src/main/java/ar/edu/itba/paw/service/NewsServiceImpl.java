@@ -60,4 +60,9 @@ public class NewsServiceImpl implements NewsService{
     public int getTotalPagesCategory(Category category) {
         return newsDao.getTotalPagesCategory(category);
     }
+
+    @Override
+    public List<Category> getNewsCategory(News news) {
+        return newsDao.getNewsCategory(news);
+    }
 }
