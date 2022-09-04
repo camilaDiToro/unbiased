@@ -51,8 +51,6 @@ public class NewsController {
         final User user = userService.createIfNotExists(userBuilder);
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-        //newsBuilder.addCategory(Category.POLITICS);
-
         if(createNewsFrom.getImage()!=null && createNewsFrom.getImage().getBytes().length!=0){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
@@ -106,6 +104,12 @@ public class NewsController {
 
         final User user = userService.createIfNotExists(new User.UserBuilder(createNewsFrom.getCreatorEmail()));
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+
+        //newsBuilder.addCategory(Category.POLITICS);
+
+        for(String category : createNewsFrom.getCategories()){
+            newsBuilder.addCategory(Category.getByDescription(category));
+        }
 
         if(createNewsFrom.getImage()!=null){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));

@@ -53,6 +53,8 @@ public class News {
         return creationDate;
     }
 
+    public Collection<Category> getCategories() { return categories; }
+
     public boolean hasImage(){
         return imageId!=null ;
     }

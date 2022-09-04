@@ -36,4 +36,13 @@ public enum Category {
         return null;
     }
 
+    public static Category getByDescription(String description){
+        for (Category c : Category.values()) {
+            if (c.getDescription().equals(description) ) {
+                return c;
+            }
+        }
+        return null;
+    }
+
 }
