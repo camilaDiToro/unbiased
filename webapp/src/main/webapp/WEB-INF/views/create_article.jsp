@@ -91,7 +91,8 @@
                 </div>
 
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="checkTourism">
+                    <%--<input class="form-check-input" type="checkbox" value="" id="checkTourism">--%>
+                    <form:checkbox path="categories" value="TURISMO" id="checkTourism"/>
                     <label class="form-check-label" for="checkTourism">
                         Turismo
                     </label>

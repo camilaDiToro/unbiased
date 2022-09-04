@@ -17,6 +17,11 @@
 
         <p class="text-justify"><c:out value="${news.body}"/></p>
 
+        <%--<c:forEach var="category" items="${news.categories}">
+            <p>
+                <c:out value="${category}"/>
+            </p>
+        </c:forEach>--%>
 
 <%--        <c:if test="${news.hasImage()}">--%>
 <%--        <img src="<c:url value="/news/${newsId}/image"/>" class="user-section-img"/>--%>
