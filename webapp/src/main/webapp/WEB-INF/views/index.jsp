@@ -53,7 +53,7 @@
             <c:forEach var="article" items="${news}">
                 <div class="col mb-4">
                     <div class="card h-100">
-                        <img src="<c:url value="/resources/img_1.jpeg"/>" class="card-img-top" alt="...">
+                        <img src="<c:url value="/resources/stock_photo.jpeg"/>" class="card-img-top" alt="...">
                         <div class="card-body">
                             <a href="<c:url value="/news/${article.newsId}"/>"><h5 class="card-title"><c:out value="${article.title}"/></h5></a>
                             <h6 class="card-subtitle py-1"><c:out value="${article.subtitle}"/></h6>
