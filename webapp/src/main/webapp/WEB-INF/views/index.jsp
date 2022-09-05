@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
 <html>
 <%@ include file="../../resources/navbar.jsp" %>
 <div class="container-lg">
@@ -17,7 +19,7 @@
         <li class="nav-item ml-auto">
             <a href="./create_article">
             <button type="button" class="btn btn-info">
-                Create article
+                <spring:message code="home.createArticle.button"/>
             </button></a>
         </li>
 
@@ -71,7 +73,7 @@
             <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "1"/>
             <c:param name = "query" value = "${param.query}"/>
-            </c:url>">First</a></li>
+            </c:url>"><spring:message code="home.pagination.first"/></a></li>
 
 
         <c:forEach var = "i" begin = "${minPage}" end = "${maxPage}">
@@ -84,7 +86,7 @@
             <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "${totalPages}"/>
             <c:param name = "query" value = "${param.query}"/>
-            </c:url>">Last</a></li>
+            </c:url>"><spring:message code="home.pagination.last"/></a></li>
 
     </ul>
 </nav>
