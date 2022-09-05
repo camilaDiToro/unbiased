@@ -9,19 +9,16 @@ public enum Category {
     SPORTS("categories.sports"),
     TECHNOLOGY("categories.technology");
 
-    private final String description;
+    private final String interCode;
 
-    Category(String description) {
-        this.description = description;
+    Category(String interCode) {
+        this.interCode = interCode;
     }
 
-    public String getDescription() {
-        return description;
+    public String getInterCode() {
+        return interCode;
     }
 
-    public String toString() {
-        return getDescription();
-    }
 
     public long getId() {
         return ordinal();
@@ -36,9 +33,9 @@ public enum Category {
         return null;
     }
 
-    public static Category getByDescription(String description){
+    public static Category getByInterCode(String description){
         for (Category c : Category.values()) {
-            if (c.getDescription().equals(description) ) {
+            if (c.getInterCode().equals(description) ) {
                 return c;
             }
         }

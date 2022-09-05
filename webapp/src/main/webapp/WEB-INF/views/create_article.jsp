@@ -78,49 +78,14 @@
                 <spring:message code="createArticle.category.choose"/>
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-
-                <div class="form-check">
-                        <%--<input class="form-check-input" type="checkbox" value="" id="checkTourism">--%>
-                    <form:checkbox path="categories" value="categories.tourism" id="checkTourism"/>
-                    <label class="form-check-label" for="checkTourism">
-                        <spring:message code="categories.tourism"/>
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.entertainment" id="checkEntertainment"/>
-                    <label class="form-check-label" for="checkEntertainment">
-                        <spring:message code="categories.entertainment"/>
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.politics" id="checkPolitics"/>
-                    <label class="form-check-label" for="checkPolitics">
-                        <spring:message code="categories.politics"/>
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.economics" id="checkEconomy"/>
-                    <label class="form-check-label" for="checkEconomy">
-                        <spring:message code="categories.economics"/>
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.sports" id="checkSports"/>
-                    <label class="form-check-label" for="checkSports">
-                        <spring:message code="categories.sports"/>
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.technology" id="checkTecnology"/>
-                    <label class="form-check-label" for="checkTecnology">
-                        <spring:message code="categories.technology"/>
-                    </label>
-                </div>
+                <c:forEach var="category" items="${categories}">
+                    <div class="form-check">
+                        <form:checkbox path="categories" value="${category.interCode}" id="${category.interCode}"/>
+                        <label class="form-check-label" for="${category.interCode}">
+                            <spring:message code="${category.interCode}"/>
+                        </label>
+                    </div>
+                </c:forEach>
             </div>
         </div>
 

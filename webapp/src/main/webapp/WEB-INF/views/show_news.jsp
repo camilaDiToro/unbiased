@@ -25,7 +25,7 @@
         <div style="margin-top: 20px">
             <c:forEach var="category" items="${categories}">
                 <p>
-                    <span class="badge badge-pill badge-info"><spring:message code="${category.toString()}"/></span>
+                    <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
                 </p>
             </c:forEach>
         </div>

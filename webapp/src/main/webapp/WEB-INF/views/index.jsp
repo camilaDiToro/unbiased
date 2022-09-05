@@ -13,7 +13,7 @@
                 <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
                     <c:param name = "category" value = "${category}"/>
                     <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
-                    </c:url>"><c:out value="${order}"/></a>
+                    </c:url>"><spring:message code="${order.interCode}"/></a>
             </li>
         </c:forEach>
         <li class="nav-item ml-auto">
@@ -37,7 +37,7 @@
                     <a class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
 
-                    </c:url>"><spring:message code="${cat.toString()}"/></a>
+                    </c:url>"><spring:message code="${cat.interCode}"/></a>
                 </li>
             </c:forEach>
         </ul>

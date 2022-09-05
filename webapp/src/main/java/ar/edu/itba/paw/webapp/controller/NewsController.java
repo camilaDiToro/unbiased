@@ -2,17 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.NewsNotFoundException;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
-import ar.edu.itba.paw.webapp.form.UserForm;
-import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 @Controller
 public class NewsController {
@@ -55,7 +50,6 @@ public class NewsController {
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
-        newsService.getNewsByCategory(1,Category.ECONOMICS, NewsOrder.TOP);
 
         final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/" + news.getNewsId());
@@ -95,6 +89,7 @@ public class NewsController {
     @RequestMapping(value = "/create_article", method = {RequestMethod.GET})
     public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
         final ModelAndView mav = new ModelAndView("create_article");
+        mav.addObject("categories", Category.values());
         return mav;
     }
 
@@ -111,7 +106,7 @@ public class NewsController {
         //newsBuilder.addCategory(Category.POLITICS);
 
         for(String category : createNewsFrom.getCategories()){
-            newsBuilder.addCategory(Category.getByDescription(category));
+            newsBuilder.addCategory(Category.getByInterCode(category));
         }
 
         if(createNewsFrom.getImage()!=null){
