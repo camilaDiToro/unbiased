@@ -20,7 +20,7 @@
         <img src="<c:url value="/resources/img_1.jpeg"/>" class="float-sm-right w-50 m-4"/>
         <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
         <p class="text-sm-left text-secondary"><c:out value="${news.creationDate}"/></p>
-        <b><spring:message code="showNews.createdBy"/><c:out value="${news.creatorId}"/></b>
+        <b><spring:message code="showNews.createdBy"/><c:out value=" "/><c:out value="${user.username != null ? user.username : user.email}"/></b>
 
         <div style="margin-top: 20px">
             <c:forEach var="category" items="${categories}">
