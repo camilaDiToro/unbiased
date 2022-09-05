@@ -51,8 +51,6 @@ public class NewsController {
         final User user = userService.createIfNotExists(userBuilder);
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-        //newsBuilder.addCategory(Category.POLITICS);
-
         if(createNewsFrom.getImage()!=null && createNewsFrom.getImage().getBytes().length!=0){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
@@ -76,6 +74,7 @@ public class NewsController {
         //TODO: check if there is a better way of doing this.
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         mav.addObject("news", news);
+        mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
         return mav;
     }
@@ -108,6 +107,12 @@ public class NewsController {
 
         final User user = userService.createIfNotExists(new User.UserBuilder(createNewsFrom.getCreatorEmail()));
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+
+        //newsBuilder.addCategory(Category.POLITICS);
+
+        for(String category : createNewsFrom.getCategories()){
+            newsBuilder.addCategory(Category.getByDescription(category));
+        }
 
         if(createNewsFrom.getImage()!=null){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));

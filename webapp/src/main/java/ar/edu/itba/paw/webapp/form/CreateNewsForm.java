@@ -28,6 +28,16 @@ public class CreateNewsForm {
     private String creatorEmail;
     private CommonsMultipartFile image;
 
+    private String[] categories;
+
+
+    public String[] getCategories() {
+        return categories;
+    }
+
+    public void setCategories(String[] categories) {
+        this.categories = categories;
+    }
 
     public String getTitle() {
         return title;

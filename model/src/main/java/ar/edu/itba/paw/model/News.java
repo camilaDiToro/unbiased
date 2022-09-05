@@ -11,7 +11,7 @@ public class News {
     private final Long imageId;
     private final String body, title, subtitle;
     private final LocalDateTime creationDate;
-    private final Collection<Category> categories;
+//    private final Collection<Category> categories;
 
 
     public News(NewsBuilder builder) {
@@ -22,7 +22,7 @@ public class News {
         this.title = builder.title;
         this.subtitle = builder.subtitle;
         this.creationDate = builder.creationDate;
-        this.categories = builder.categories;
+//        this.categories = builder.categories;
     }
 
     public long getNewsId() {
@@ -52,6 +52,8 @@ public class News {
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
+
+//    public Collection<Category> getCategories() { return categories; }
 
     public boolean hasImage(){
         return imageId!=null ;
