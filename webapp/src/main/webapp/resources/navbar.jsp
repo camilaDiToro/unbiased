@@ -48,8 +48,5 @@
                 <input style="height: 30px; padding-left: 35px; background-image: url('<c:url value="/resources/images/lupa.png"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="form-control mr-sm-2 btn-outline-info text-white bg-primary" type="search" placeholder="${searchPlaceholder}" id="query" name="query"/>
             </form>
         </div>
-
     </div>
-
-
 </nav>
