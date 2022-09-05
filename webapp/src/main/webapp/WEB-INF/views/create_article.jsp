@@ -25,10 +25,11 @@
 
         <div>
             <form:errors path="title" element="p" cssStyle="color: red"/>
-            <form:label path="title">Titulo</form:label>
+            <form:label path="title"><spring:message code="createArticle.title"/></form:label>
             <div class="form-group">
                 <div class="input-group mb-3">
-                    <form:input placeholder="Este es un ejemplo del titulo" cssClass="form-control"  type="text" path="title"/>
+                    <spring:message code="createArticle.title.placeholder" var="titlePlaceholder" />
+                    <form:input placeholder="${titlePlaceholder}" cssClass="form-control"  type="text" path="title"/>
                 </div>
             </div>
         </div>
@@ -36,10 +37,11 @@
 
         <div>
             <form:errors path="subtitle" element="p" cssStyle="color: red"/>
-            <form:label path="subtitle">Descripcion</form:label>
+            <form:label path="subtitle"><spring:message code="createArticle.description"/></form:label>
             <div class="form-group">
                 <div class="input-group mb-3">
-                    <form:input type="text" path="subtitle" cssClass="form-control" placeholder="Esto es un ejemplo de la descripcion de una notia"/>
+                    <spring:message code="createArticle.description.placeholder"  var="descPlaceholder" />
+                    <form:input type="text" path="subtitle" cssClass="form-control" placeholder="${descPlaceholder}"/>
                 </div>
             </div>
         </div>
@@ -47,7 +49,7 @@
 
         <div>
             <form:errors path="body" element="p" cssStyle="color: red"/>
-            <form:label path="body">Cuerpo de la noticia</form:label>
+            <form:label path="body"><spring:message code="createArticle.body"/></form:label>
             <div class="form-group">
                 <div class="input-group">
                     <form:textarea type="text" path="body" cssClass="form-control"/>
@@ -57,9 +59,10 @@
 
         <div>
             <form:errors path="creatorEmail" element="p" cssStyle="color: red"/>
-            <form:label path="creatorEmail">Direccion de Email:</form:label>
+            <form:label path="creatorEmail"><spring:message code="createArticle.email"/></form:label>
             <div class="form-group">
-                <form:input placeholder="ejemplo@ejemplo.com" type="email" cssClass="form-control" path="creatorEmail"/>
+                <spring:message code="createArticle.email.placeholder"  var="emailPlaceholder" />
+                <form:input placeholder="${emailPlaceholder}" type="email" cssClass="form-control" path="creatorEmail"/>
             </div>
         </div>
 
@@ -72,7 +75,7 @@
 
         <div class="dropdown">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Elegir categoria
+                <spring:message code="createArticle.category.choose"/>
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
@@ -80,49 +83,49 @@
                         <%--<input class="form-check-input" type="checkbox" value="" id="checkTourism">--%>
                     <form:checkbox path="categories" value="TURISMO" id="checkTourism"/>
                     <label class="form-check-label" for="checkTourism">
-                        Turismo
+                        <spring:message code="categories.tourism"/>
                     </label>
                 </div>
 
                 <div class="form-check">
                     <form:checkbox path="categories" value="ESPECTÁCULO" id="checkEntertainment"/>
                     <label class="form-check-label" for="checkEntertainment">
-                        Espectaculo
+                        <spring:message code="categories.entertainment"/>
                     </label>
                 </div>
 
                 <div class="form-check">
                     <form:checkbox path="categories" value="POLÍTICA" id="checkPolitics"/>
                     <label class="form-check-label" for="checkPolitics">
-                        Politica
+                        <spring:message code="categories.politics"/>
                     </label>
                 </div>
 
                 <div class="form-check">
                     <form:checkbox path="categories" value="ECONOMÍA" id="checkEconomy"/>
                     <label class="form-check-label" for="checkEconomy">
-                        Economia
+                        <spring:message code="categories.economics"/>
                     </label>
                 </div>
 
                 <div class="form-check">
                     <form:checkbox path="categories" value="DEPORTES" id="checkSports"/>
                     <label class="form-check-label" for="checkSports">
-                        Deportes
+                        <spring:message code="categories.sports"/>
                     </label>
                 </div>
 
                 <div class="form-check">
                     <form:checkbox path="categories" value="TECNOLOGÍA" id="checkTecnology"/>
                     <label class="form-check-label" for="checkTecnology">
-                        Tecnologia
+                        <spring:message code="categories.technology"/>
                     </label>
                 </div>
             </div>
         </div>
 
         <div style="width: 100%; display: flex; justify-content: end">
-            <button class="btn btn-primary" type="submit">Guardar</button>
+            <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
         </div>
     </form:form>
 
