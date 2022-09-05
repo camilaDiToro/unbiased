@@ -20,12 +20,12 @@
         <img src="<c:url value="/resources/img_1.jpeg"/>" class="float-sm-right w-50 m-4"/>
         <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
         <p class="text-sm-left text-secondary"><c:out value="${news.creationDate}"/></p>
-        <b>Hecho por: <c:out value="${news.creatorId}"/></b>
+        <b><spring:message code="showNews.createdBy"/><c:out value="${news.creatorId}"/></b>
 
         <div style="margin-top: 20px">
             <c:forEach var="category" items="${categories}">
                 <p>
-                    <span class="badge badge-pill badge-info"><c:out value="${category}"/></span>
+                    <span class="badge badge-pill badge-info"><spring:message code="${category.toString()}"/></span>
                 </p>
             </c:forEach>
         </div>

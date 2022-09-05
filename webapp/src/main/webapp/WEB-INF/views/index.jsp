@@ -30,14 +30,14 @@
             <li class="nav-item">
                 <a class="text-capitalize nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "query" value = "${param.query}"/>
-                    </c:url>">ALL</a>
+                    </c:url>"><spring:message code="categories.all"/></a>
             </li>
             <c:forEach var="cat" items="${categories}">
                 <li class="nav-item">
                     <a class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
 
-                    </c:url>"><c:out value="${cat}"/></a>
+                    </c:url>"><spring:message code="${cat.toString()}"/></a>
                 </li>
             </c:forEach>
         </ul>

@@ -2,12 +2,12 @@ package ar.edu.itba.paw.model;
 
 public enum Category {
 
-    TOURISM("TURISMO"),
-    SHOW("ESPECTÁCULO"),
-    POLITICS("POLÍTICA"),
-    ECONOMICS("ECONOMÍA"),
-    SPORTS("DEPORTES"),
-    TECHNOLOGY("TECNOLOGÍA");
+    TOURISM("categories.tourism"),
+    SHOW("categories.entertainment"),
+    POLITICS("categories.politics"),
+    ECONOMICS("categories.economics"),
+    SPORTS("categories.sports"),
+    TECHNOLOGY("categories.technology");
 
     private final String description;
 

@@ -81,42 +81,42 @@
 
                 <div class="form-check">
                         <%--<input class="form-check-input" type="checkbox" value="" id="checkTourism">--%>
-                    <form:checkbox path="categories" value="TURISMO" id="checkTourism"/>
+                    <form:checkbox path="categories" value="categories.tourism" id="checkTourism"/>
                     <label class="form-check-label" for="checkTourism">
                         <spring:message code="categories.tourism"/>
                     </label>
                 </div>
 
                 <div class="form-check">
-                    <form:checkbox path="categories" value="ESPECTÁCULO" id="checkEntertainment"/>
+                    <form:checkbox path="categories" value="categories.entertainment" id="checkEntertainment"/>
                     <label class="form-check-label" for="checkEntertainment">
                         <spring:message code="categories.entertainment"/>
                     </label>
                 </div>
 
                 <div class="form-check">
-                    <form:checkbox path="categories" value="POLÍTICA" id="checkPolitics"/>
+                    <form:checkbox path="categories" value="categories.politics" id="checkPolitics"/>
                     <label class="form-check-label" for="checkPolitics">
                         <spring:message code="categories.politics"/>
                     </label>
                 </div>
 
                 <div class="form-check">
-                    <form:checkbox path="categories" value="ECONOMÍA" id="checkEconomy"/>
+                    <form:checkbox path="categories" value="categories.economics" id="checkEconomy"/>
                     <label class="form-check-label" for="checkEconomy">
                         <spring:message code="categories.economics"/>
                     </label>
                 </div>
 
                 <div class="form-check">
-                    <form:checkbox path="categories" value="DEPORTES" id="checkSports"/>
+                    <form:checkbox path="categories" value="categories.sports" id="checkSports"/>
                     <label class="form-check-label" for="checkSports">
                         <spring:message code="categories.sports"/>
                     </label>
                 </div>
 
                 <div class="form-check">
-                    <form:checkbox path="categories" value="TECNOLOGÍA" id="checkTecnology"/>
+                    <form:checkbox path="categories" value="categories.technology" id="checkTecnology"/>
                     <label class="form-check-label" for="checkTecnology">
                         <spring:message code="categories.technology"/>
                     </label>
