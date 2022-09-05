@@ -58,6 +58,7 @@ public class HelloWorldController {
         mav.addObject("page", page);
         mav.addObject("query", query);
         mav.addObject("categories", Category.values());
+        mav.addObject("pageTitle", query.equals("") ? "Home" : "Search");
         int totalPages;
 
         if (category.equals("ALL")) {

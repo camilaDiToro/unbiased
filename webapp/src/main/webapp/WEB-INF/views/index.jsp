@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
+<c:set var="pageTitle" scope="request" value="${pageTitle}"/>
 <%@ include file="../../resources/navbar.jsp" %>
 <div class="container-lg">
     <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>

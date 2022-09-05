@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
+<c:set var="pageTitle" scope="request" value="${news.title}"/>
 <%@include file="../../resources/navbar.jsp" %>
 <body>
 

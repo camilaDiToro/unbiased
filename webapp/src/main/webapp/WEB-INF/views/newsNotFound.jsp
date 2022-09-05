@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
+<c:set var="pageTitle" scope="request" value="News not found"/>
 <%@ include file="../../resources/navbar.jsp" %>
 <div class="d-flex align-items-center justify-content-center h-75">
     <div class="text-center">

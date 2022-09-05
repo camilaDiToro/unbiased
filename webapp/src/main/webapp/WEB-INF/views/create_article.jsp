@@ -10,6 +10,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <html>
+<c:set var="pageTitle" scope="request" value="Create"/>
 <%@include file="../../resources/navbar.jsp" %>
 <body>
 
