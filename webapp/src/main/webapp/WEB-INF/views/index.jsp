@@ -44,7 +44,7 @@
     </c:if>
     <c:if test="${query != ''}">
         <div class="m-4">
-            <a href="<c:url value="/${orderBy}"/>">Cancelar filtro: "${query}"</a>
+            <a href="<c:url value="/${orderBy}"/>"><spring:message code="search.filter"/> <c:out value=": \"${query}\""/></a>
         </div>
     </c:if>
     <div class="container-fluid">
