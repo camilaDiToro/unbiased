@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS news (
     news_id           SERIAL          PRIMARY KEY,
     body              TEXT            NOT NULL,
     title             VARCHAR(200)    NOT NULL,
-    subtitle          VARCHAR(200)    NOT NULL,
+    subtitle          VARCHAR(400)    NOT NULL,
     creator           INTEGER         NOT NULL,
     creation_date     TIMESTAMP       NOT NULL,
     accesses          INTEGER         NOT NULL DEFAULT 0,

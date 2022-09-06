@@ -14,10 +14,11 @@ public class CreateNewsForm {
 
     @NotNull
     @NotBlank
-    @Length(max=100)
+    @Length(max=200)
     private String title;
     @NotNull
     @NotBlank
+    @Length(max=400)
     private String subtitle;
     @NotNull
     @NotBlank
