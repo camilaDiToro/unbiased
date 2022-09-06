@@ -94,10 +94,21 @@ public class NewsController {
         return new ModelAndView("newsNotFound");
     }
 
-    @RequestMapping(value = "/create_article", method = {RequestMethod.GET})
+
+    @RequestMapping(value = "/create_article", method = RequestMethod.GET)
     public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
         final ModelAndView mav = new ModelAndView("create_article");
         mav.addObject("categories", Category.values());
+        mav.addObject("validate", false);
+
+        return mav;
+    }
+
+    private ModelAndView createArticleAndValidate(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm, final BindingResult errors){
+        final ModelAndView mav = new ModelAndView("create_article");
+        mav.addObject("categories", Category.values());
+        mav.addObject("errors", errors);
+        mav.addObject("validate", true);
         return mav;
     }
 
@@ -105,7 +116,7 @@ public class NewsController {
     public ModelAndView postArticle(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
                                      final BindingResult errors) throws IOException {
         if(errors.hasErrors()){
-            return createArticle(createNewsFrom);
+            return createArticleAndValidate(createNewsFrom, errors);
         }
 
         final User user = userService.createIfNotExists(new User.UserBuilder(createNewsFrom.getCreatorEmail()));
