@@ -6,7 +6,6 @@ import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
-import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +18,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 @Controller
-public class HelloWorldController {
+public class HomeController {
 
     private final UserService us;
     private final NewsService ns;
 
     @Autowired
-    public HelloWorldController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns){
+    public HomeController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns){
         this.us = us;
         this.ns = ns;
     }
