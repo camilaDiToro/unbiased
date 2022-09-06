@@ -10,6 +10,7 @@ import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.NewsNotFoundException;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 
 @Controller
 public class NewsController {
@@ -67,6 +72,9 @@ public class NewsController {
 
         //TODO: check if there is a better way of doing this.
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        Locale locale = LocaleContextHolder.getLocale();
+        mav.addObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
+                .withLocale( locale)));
         mav.addObject("news", news);
         mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
