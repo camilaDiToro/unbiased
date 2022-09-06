@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -47,7 +48,7 @@ public class NewsJdbcDao implements NewsDao{
         newsData.put("title", newsBuilder.getTitle());
         newsData.put("subtitle",newsBuilder.getSubtitle());
         newsData.put("creator", newsBuilder.getCreatorId());
-        newsData.put("creation_date",newsBuilder.getCreationDate());
+        newsData.put("creation_date", Timestamp.valueOf(newsBuilder.getCreationDate()));
         newsData.put("image_id", newsBuilder.getImageId());
 
         final long newsId = jdbcInsert.executeAndReturnKey(newsData).longValue();

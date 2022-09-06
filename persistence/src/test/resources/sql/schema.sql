@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS image(
     );
 
 CREATE TABLE IF NOT EXISTS users(
-                                    user_id        SERIAL         PRIMARY KEY,
-                                    email          VARCHAR(100)   UNIQUE NOT NULL,
+    user_id        SERIAL         PRIMARY KEY,
+    email          VARCHAR(100)   UNIQUE NOT NULL,
     username       VARCHAR(50)    UNIQUE ,
     pass           VARCHAR(200)   ,
     status         TEXT           NOT NULL,
@@ -20,9 +20,9 @@ CREATE TABLE IF NOT EXISTS category(
     );
 
 CREATE TABLE IF NOT EXISTS news (
-                                    news_id           SERIAL          PRIMARY KEY,
-                                    body              TEXT            NOT NULL,
-                                    title             VARCHAR(200)    NOT NULL,
+    news_id           SERIAL          PRIMARY KEY,
+    body              TEXT            NOT NULL,
+    title             VARCHAR(200)    NOT NULL,
     subtitle          VARCHAR(200)    NOT NULL,
     creator           INTEGER         NOT NULL,
     creation_date     TIMESTAMP       NOT NULL,

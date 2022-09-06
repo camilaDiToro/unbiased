@@ -71,11 +71,12 @@ public class NewsJdbcDaoTest{
 
         // 2. ejercitacion
         User user = getMockUser();
-        //Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        //Optional<User> mayBeUser = userDao.getUserById(user.getId());
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
 
         // 3. validaciones
+        assertNotNull(user);
         assertNotNull(news);
         assertEquals(TITTLE, news.getTitle());
         assertEquals(BODY, news.getBody());
