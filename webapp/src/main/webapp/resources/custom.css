@@ -3,3 +3,7 @@
     height: 15vw;
     object-fit: cover;
 }
+
+.min-vh-65 {
+    min-height: 64vh; !important
+}
