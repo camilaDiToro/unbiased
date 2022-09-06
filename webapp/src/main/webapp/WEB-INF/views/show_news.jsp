@@ -4,9 +4,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <c:set var="pageTitle" scope="request" value="${news.title}"/>
-<%@include file="../../resources/navbar.jsp" %>
+<%@include file="../../resources/head.jsp" %>
 <body>
-
+<%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
     <a href="../TOP">
         <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%">
