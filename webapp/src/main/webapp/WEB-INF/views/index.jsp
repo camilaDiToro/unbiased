@@ -95,29 +95,31 @@
             </div>
         </c:if>
     </div>
-    <nav class="d-flex justify-content-center align-items-center">
-        <ul class="pagination">
+    <c:if test="${not empty news}">
+        <nav class="d-flex justify-content-center align-items-center">
+            <ul class="pagination">
 
-            <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
+                <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "1"/>
             <c:param name = "query" value = "${param.query}"/>
             </c:url>"><spring:message code="home.pagination.first"/></a></li>
 
 
-            <c:forEach var = "i" begin = "${minPage}" end = "${maxPage}">
-                <li class="page-item"><a class="page-link ${i == page ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
+                <c:forEach var = "i" begin = "${minPage}" end = "${maxPage}">
+                    <li class="page-item"><a class="page-link ${i == page ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "${i}"/>
             <c:param name = "query" value = "${param.query}"/>
             </c:url>"><c:out value="${i}"/></a></li>
-            </c:forEach>
+                </c:forEach>
 
-            <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
+                <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "${totalPages}"/>
             <c:param name = "query" value = "${param.query}"/>
             </c:url>"><spring:message code="home.pagination.last"/></a></li>
 
-        </ul>
-    </nav>
+            </ul>
+        </nav>
+    </c:if>
 </div>
 </body>
 </html>
