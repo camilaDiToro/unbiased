@@ -14,6 +14,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import static org.junit.Assert.*;
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
+@Transactional
 public class UserJdbcDaoTest {
 
     private static final String USER_TABLE = "users";
