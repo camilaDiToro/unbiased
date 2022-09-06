@@ -3,16 +3,16 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<c:set var="pageTitle" scope="request" value="News not found"/>
-<%@ include file="../../resources/navbar.jsp" %>
+<c:set var="pageTitle" scope="request" value="User not found"/>
+<%@ include file="../../../resources/navbar.jsp" %>
 <div class="d-flex align-items-center justify-content-center h-75">
     <div class="text-center">
         <h1 class="display-1 fw-bold">404</h1>
-        <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> Page not found.</p>
+        <p class="fs-1"> <span class="text-info font-weight-bold"><spring:message code="genericError.ops"/></span> <spring:message code="genericError.message.404"/></p>
         <p class="lead">
             <spring:message code="error.articlNotFound"/>
         </p>
-        <a href="<c:url value="/"/>" class="btn btn-primary">Go Home</a>
+        <a href="<c:url value="/"/>" class="btn btn-primary"><spring:message code="genericError.button.goHome"/></a>
     </div>
 </div>
 </body>
