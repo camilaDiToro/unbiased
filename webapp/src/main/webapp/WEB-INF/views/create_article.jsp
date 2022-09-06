@@ -16,9 +16,7 @@
 <body>
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
-    <a href="./TOP">
-    <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%">
-    </a>
+    <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%" data-toggle="modal" data-target="#exampleModal">
 </div>
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center" class="h-auto p-5">
 
@@ -99,6 +97,30 @@
             <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
         </div>
     </form:form>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Descartar cambios?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Si haces click en "Aceptar" se descartaran todos los cambios hechos en el formulario.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <a href="./TOP">
+                        <button type="button" class="btn btn-primary">Aceptar</button>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
