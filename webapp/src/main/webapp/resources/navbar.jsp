@@ -22,7 +22,7 @@
 <body><nav style="display: flex" class="navbar navbar-dark navbar-expand-sm bg-primary text-white">
 
     <div style="display: flex" class="container-fluid" style="border: solid red">
-        <a class="navbar-brand  " href="/webapp_war_exploded">
+        <a class="navbar-brand  " href="<c:url value="/TOP"/>">
             <img src="<c:url value="/resources/unbiased_navbar.png"/>" height="35" alt="" class="d-inline-block align-middle mr-2">
             <span class="text-info">unbiased</span>
         </a>
