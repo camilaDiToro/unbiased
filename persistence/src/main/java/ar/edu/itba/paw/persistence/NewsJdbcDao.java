@@ -73,7 +73,7 @@ public class NewsJdbcDao implements NewsDao{
     @Override
     public int getTotalPagesAllNews() {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news" , ROW_COUNT_MAPPER).stream().findFirst().get();
-        return rowsCount/PAGE_SIZE + 1;
+        return (int) Math.ceil(rowsCount/PAGE_SIZE);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class NewsJdbcDao implements NewsDao{
     public int getTotalPagesAllNews(String query) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?" ,
                 new Object[]{"%" + query.toLowerCase() + "%"},ROW_COUNT_MAPPER).stream().findFirst().get();
-        return rowsCount/PAGE_SIZE + 1;
+        return (int) Math.ceil(rowsCount/PAGE_SIZE);
     }
 
 
@@ -118,6 +118,6 @@ public class NewsJdbcDao implements NewsDao{
     public int getTotalPagesCategory(Category category) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?" ,
                 new Object[]{category.getId()},ROW_COUNT_MAPPER).stream().findFirst().get();
-        return rowsCount/PAGE_SIZE + 1;
+        return (int) Math.ceil(rowsCount/PAGE_SIZE);
     }
 }
