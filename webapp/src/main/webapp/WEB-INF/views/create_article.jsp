@@ -103,18 +103,18 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Descartar cambios?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"><spring:message code="createArticle.modal.question"/></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    Si haces click en "Aceptar" se descartaran todos los cambios hechos en el formulario.
+                    <spring:message code="createArticle.modal.msg"/>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="createArticle.modal.cancel"/></button>
                     <a href="./TOP">
-                        <button type="button" class="btn btn-primary">Aceptar</button>
+                        <button type="button" class="btn btn-primary"><spring:message code="createArticle.modal.accept"/></button>
                     </a>
 
                 </div>
