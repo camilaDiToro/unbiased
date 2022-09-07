@@ -76,6 +76,8 @@ public class HomeController {
         mav.addObject("page", page);
         mav.addObject("totalPages", totalPages);
 
+
+
         int minPage = 1;
         if (page - 2 >= 1)
             minPage = page - 2;
