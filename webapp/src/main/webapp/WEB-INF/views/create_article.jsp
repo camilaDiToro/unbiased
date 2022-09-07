@@ -79,7 +79,7 @@
             <input type="file" class="form-control-file" id="FormControlFile">
         </div>--%>
 
-        <div class="dropdown">
+        <div class="dropdown" id="categories-dropdown">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <spring:message code="createArticle.category.choose"/>
             </button>
