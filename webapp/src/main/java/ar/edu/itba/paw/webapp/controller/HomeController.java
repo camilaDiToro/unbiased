@@ -20,13 +20,13 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 @Controller
-public class HelloWorldController {
+public class HomeController {
 
     private final UserService us;
     private final NewsService ns;
 
     @Autowired
-    public HelloWorldController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns){
+    public HomeController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns){
         this.us = us;
         this.ns = ns;
     }
@@ -46,30 +46,34 @@ public class HelloWorldController {
     @RequestMapping("/{orderBy:TOP|NEW}")
     public ModelAndView helloWorld(
             @PathVariable("orderBy") final String orderBy,
-            @RequestParam(name = "page", defaultValue = "1") final int page,
+            @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "query", defaultValue = "") final String query,
             @RequestParam(name = "category", defaultValue = "ALL") final String category){
         final ModelAndView mav = new ModelAndView("index");
+
         mav.addObject("orders", NewsOrder.values());
         mav.addObject("orderBy", orderBy);
-        mav.addObject("page", page);
         mav.addObject("query", query);
         mav.addObject("categories", Category.values());
         mav.addObject("pageTitle", query.equals("") ? "Home" : "Search");
         int totalPages;
+        page = page <= 0 ? 1 : page;
 
         if (category.equals("ALL")) {
             mav.addObject("category", category);
             totalPages = ns.getTotalPagesAllNews(query);
+            page = page > totalPages ? totalPages : page;
             mav.addObject("news", ns.getNews(page, query, NewsOrder.valueOf(orderBy)));
         }
         else {
             Category catObject = Category.valueOf(category);
             mav.addObject("category", catObject);
             totalPages = ns.getTotalPagesCategory(catObject);
+            page = page > totalPages ? totalPages : page;
             mav.addObject("news", ns.getNewsByCategory(page, catObject, NewsOrder.valueOf(orderBy)));
         }
 
+        mav.addObject("page", page);
         mav.addObject("totalPages", totalPages);
 
 
@@ -90,8 +94,6 @@ public class HelloWorldController {
             maxPage = page + 1;
 
         mav.addObject("maxPage",maxPage);
-
-
         return mav;
     }
 
@@ -127,7 +129,6 @@ public class HelloWorldController {
         if(errors.hasErrors()){
             return profile(userId, userProfileForm);
         }
-        System.out.println("aaaa" + userProfileForm.getImage().getBytes());
         return new ModelAndView("redirect:/profile/"+userId);
     }
 
@@ -144,6 +145,6 @@ public class HelloWorldController {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView userNotFound()    {
-        return new ModelAndView("userNotFound");
+        return new ModelAndView("errors/userNotFound");
     }
 }

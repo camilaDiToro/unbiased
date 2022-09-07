@@ -55,7 +55,7 @@
         </c:if>
         <c:if test="${empty news}" >
             <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1">
-                <h2 class="fw-normal">Sorry!</h2>
+                <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
                     <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
                 <p class="lead">
                     <c:if test="${query == '' && category.toString() != 'ALL'}">

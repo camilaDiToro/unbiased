@@ -91,7 +91,7 @@ public class NewsController {
     @ExceptionHandler(NewsNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView newsNotFound()    {
-        return new ModelAndView("newsNotFound");
+        return new ModelAndView("errors/newsNotFound");
     }
 
 
