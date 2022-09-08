@@ -13,6 +13,11 @@
 <html>
 <c:set var="pageTitle" scope="request" value="Create"/>
 <%@include file="../../resources/head.jsp" %>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script>
+        var simplemde = new SimpleMDE({ element: document.getElementById("body-text") });
+</script>
 <body>
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
@@ -53,7 +58,7 @@
             <form:label path="body"><spring:message code="createArticle.body"/></form:label>
             <div class="form-group">
                 <div class="input-group">
-                    <form:textarea type="text" path="body" cssClass="form-control ${validate && errors != null && errors.getFieldErrorCount('body') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
+                    <form:textarea id="body-text" type="text" path="body" cssClass="form-control ${validate && errors != null && errors.getFieldErrorCount('body') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
                     <form:errors path="body" element="p" cssClass="invalid-feedback"/>
 
                 </div>

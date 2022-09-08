@@ -5,6 +5,7 @@
 <html>
 <c:set var="pageTitle" scope="request" value="${news.title}"/>
 <%@include file="../../resources/head.jsp" %>
+<link href="<c:url value="/resources/custom.css"/>" rel="stylesheet">
 <body>
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
@@ -31,7 +32,7 @@
             </c:forEach>
         </div>
 
-        <p class="text-justify"><c:out value="${news.body}"/></p>
+        <p class="article-body"><c:out value="${news.body}"/></p>
 
 <%--        <c:if test="${news.hasImage()}">--%>
 <%--        <img src="<c:url value="/news/${newsId}/image"/>" class="user-section-img"/>--%>

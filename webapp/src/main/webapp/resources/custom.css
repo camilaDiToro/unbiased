@@ -7,3 +7,9 @@
 .min-vh-65 {
     min-height: 64vh; !important
 }
+
+.article-body {
+    word-break: break-all; !important
+    white-space: normal; !important
+    text-align: justify; !important
+}
