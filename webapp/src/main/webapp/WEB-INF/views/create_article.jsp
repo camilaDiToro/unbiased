@@ -15,9 +15,7 @@
 <%@include file="../../resources/head.jsp" %>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<script>
-        var simplemde = new SimpleMDE({ element: document.getElementById("body-text") });
-</script>
+
 <body>
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
@@ -57,12 +55,15 @@
         <div>
             <form:label path="body"><spring:message code="createArticle.body"/></form:label>
             <div class="form-group">
-                <div class="input-group">
-                    <form:textarea id="body-text" type="text" path="body" cssClass="form-control ${validate && errors != null && errors.getFieldErrorCount('body') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
-                    <form:errors path="body" element="p" cssClass="invalid-feedback"/>
-
-                </div>
+                <form:textarea id="body-text" type="text" path="body" cssClass="form-control ${validate && errors != null && errors.getFieldErrorCount('body') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
+                <form:errors path="body" element="p" cssClass="invalid-feedback"/>
             </div>
+<%--            <div class="form-group">--%>
+<%--                <div class="input-group">--%>
+<%--                    --%>
+
+<%--                </div>--%>
+<%--            </div>--%>
         </div>
 
         <div>
@@ -102,7 +103,9 @@
             <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
         </div>
     </form:form>
-
+    <script>
+        var simplemde = new SimpleMDE({ element: document.getElementById("body-text") });
+    </script>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">

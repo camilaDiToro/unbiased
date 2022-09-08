@@ -19,7 +19,7 @@
 
         <h1 class="text-xl-center"><c:out value="${news.title}"/></h1>
         <hr/>
-        <img src="<c:url value="/resources/stock_photo.webp"/>" class="float-sm-right w-50 m-4"/>
+        <img src="<c:url value="/resources/stock_photo.webp"/>" class="w-50 m-4 rounded mx-auto d-block img-thumbnail"/>
         <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
         <p class="text-sm-left text-secondary"><c:out value="${date}"/></p>
         <b><spring:message code="showNews.createdBy"/><c:out value=" "/><c:out value="${user.username != null ? user.username : user.email}"/></b>
@@ -32,7 +32,13 @@
             </c:forEach>
         </div>
 
-        <p class="article-body"><c:out value="${news.body}"/></p>
+<%--        <p class="article-body"><c:out value="${news.body}"/></p>--%>
+
+        <div class="d-flex w-100 justify-content-center align-items-center">
+            <div class="article-body">
+                <c:out value="${news.body}" escapeXml="false"/>
+            </div>
+        </div>
 
 <%--        <c:if test="${news.hasImage()}">--%>
 <%--        <img src="<c:url value="/news/${newsId}/image"/>" class="user-section-img"/>--%>

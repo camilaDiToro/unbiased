@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
+import ar.edu.itba.paw.model.ParseMarkdownToHTML;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
@@ -40,25 +41,27 @@ public class NewsController {
     }
 
 
-    @RequestMapping(value = "/news/create", method = RequestMethod.POST)
-    public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
-                                     final BindingResult errors) throws IOException {
-        if(errors.hasErrors()){
-            return createArticle(createNewsFrom);
-        }
-
-        final User.UserBuilder userBuilder = new User.UserBuilder(createNewsFrom.getCreatorEmail());
-        final User user = userService.createIfNotExists(userBuilder);
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
-
-        if(createNewsFrom.getImage()!=null && createNewsFrom.getImage().getBytes().length!=0){
-            newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
-        }
-
-
-        final News news = newsService.create(newsBuilder);
-        return new ModelAndView("redirect:/news/" + news.getNewsId());
-    }
+//    @RequestMapping(value = "/news/create", method = RequestMethod.POST)
+//    public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
+//                                     final BindingResult errors) throws IOException {
+//        if(errors.hasErrors()){
+//            return createArticle(createNewsFrom);
+//        }
+//
+//
+//
+//        final User.UserBuilder userBuilder = new User.UserBuilder(createNewsFrom.getCreatorEmail());
+//        final User user = userService.createIfNotExists(userBuilder);
+//        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+//
+//        if(createNewsFrom.getImage()!=null && createNewsFrom.getImage().getBytes().length!=0){
+//            newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
+//        }
+//
+//
+//        final News news = newsService.create(newsBuilder);
+//        return new ModelAndView("redirect:/news/" + news.getNewsId());
+//    }
 
 //    @RequestMapping(value = "/news/successfullycreated", method = RequestMethod.GET)
 //    public ModelAndView newsSuccessfullyCreated(){
@@ -119,10 +122,12 @@ public class NewsController {
             return createArticleAndValidate(createNewsFrom, errors);
         }
 
-        final User user = userService.createIfNotExists(new User.UserBuilder(createNewsFrom.getCreatorEmail()));
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        String htmlBody = ParseMarkdownToHTML.convertMarkdownToHTML(createNewsFrom.getBody());
+        // TODO: hacer un validador para que rechaze cualquier texto de tipo html en el body.
 
-        //newsBuilder.addCategory(Category.POLITICS);
+        final User user = userService.createIfNotExists(new User.UserBuilder(createNewsFrom.getCreatorEmail()));
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), htmlBody, createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+
 
         for(String category : createNewsFrom.getCategories()){
             newsBuilder.addCategory(Category.getByInterCode(category));

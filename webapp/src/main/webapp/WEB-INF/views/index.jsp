@@ -84,7 +84,7 @@
                                 <div class="card-body">
                                     <a href="<c:url value="/news/${article.newsId}"/>"><h5 class="card-title"><c:out value="${article.title}"/></h5></a>
                                     <h6 class="card-subtitle py-1"><c:out value="${article.subtitle}"/></h6>
-                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>
+<%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
                                 </div>
                             </div>
                         </div>

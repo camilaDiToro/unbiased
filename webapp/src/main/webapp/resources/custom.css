@@ -8,8 +8,29 @@
     min-height: 64vh; !important
 }
 
-.article-body {
+.article-body p {
     word-break: break-all; !important
     white-space: normal; !important
     text-align: justify; !important
 }
+
+.article-body  {
+    width: 65%;
+}
+
+.article-body h1{
+    font-size: 36px;
+}
+
+.article-body h2{
+    font-size: 30px;
+}
+
+.article-body h3{
+    font-size: 24px;
+}
+
+.article-body h4{
+    font-size: 20px;
+}
+
