@@ -113,7 +113,8 @@ public class HomeController {
         if(errors.hasErrors()){
             return createForm(userForm);
         }
-        final User user = us.create(new User.UserBuilder(userForm.getEmail()));
+        User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
+        final User user = us.create(userBuilder);
         return new ModelAndView("redirect:/profile/"+user.getId());
     }
 
