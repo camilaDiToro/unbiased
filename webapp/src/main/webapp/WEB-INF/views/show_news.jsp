@@ -16,15 +16,14 @@
 
 <div class="d-flex align-items-center justify-content-center w-100 py-4">
     <div class="h-auto w-75">
-
         <h1 class="text-xl-center"><c:out value="${news.title}"/></h1>
         <hr/>
         <img src="<c:url value="/resources/stock_photo.webp"/>" class="w-50 m-4 rounded mx-auto d-block img-thumbnail"/>
         <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
         <p class="text-sm-left text-secondary"><c:out value="${date}"/></p>
         <b><spring:message code="showNews.createdBy"/><c:out value=" "/><c:out value="${user.username != null ? user.username : user.email}"/></b>
-
-        <div style="margin-top: 20px">
+        <p class="text-sm-left text-secondary">20 min read</p>
+        <div style="margin-top: 20px" class="w-50 d-flex flex-wrap">
             <c:forEach var="category" items="${categories}">
                 <p>
                     <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>

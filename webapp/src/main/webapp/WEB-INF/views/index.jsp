@@ -80,12 +80,73 @@
                     <c:forEach var="article" items="${news}">
                         <div class="col mb-4">
                             <div class="card h-100">
-                                <img src="<c:url value="/resources/stock_photo.webp"/>" class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <a href="<c:url value="/news/${article.newsId}"/>"><h5 class="card-title"><c:out value="${article.title}"/></h5></a>
-                                    <h6 class="card-subtitle py-1"><c:out value="${article.subtitle}"/></h6>
-<%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
+                                <div class="d-flex w-100 flex-column">
+                                    <div class="d-flex w-100">
+                                        <div class="w-10 d-flex flex-column align-items-center m-3">
+                                            <svg fill="#ff4500" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 14h4v7a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-7h4a1.001 1.001 0 0 0 .781-1.625l-8-10c-.381-.475-1.181-.475-1.562 0l-8 10A1.001 1.001 0 0 0 4 14z"></path></svg>
+                                            <div>25</div>
+                                            <svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.901 10.566A1.001 1.001 0 0 0 20 10h-4V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v7H4a1.001 1.001 0 0 0-.781 1.625l8 10a1 1 0 0 0 1.562 0l8-10c.24-.301.286-.712.12-1.059z"></path></svg>
+                                        </div>
+                                        <div class="card-body-home">
+                                            <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>
+                                            <a href="<c:url value="/news/${article.newsId}"/>"><h5 ><c:out value="${article.title}"/></h5></a>
+                                            <h6 class="card-subtitle py-1"><c:out value="${article.subtitle}"/></h6>
+                                                <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
+
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between p-2">
+                                        <div class="d-flex w-75 align-items-center">
+                                            <img class="rounded-circle w-25 object-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+                                            <div class="text-secondary card-name-text">Nombre Apellido</div>
+                                        </div>
+                                        <div class="d-flex" role="group">
+
+                                            <button type="button" class="btn btn-sm btn-outline-primary m-1">
+                                                <svg width="24px" height="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                                     viewBox="0 0 212.045 212.045" fill="currentColor" stroke="currentColor" xml:space="preserve">
+<path d="M167.871,0H44.84C34.82,0,26.022,8.243,26.022,18v182c0,3.266,0.909,5.988,2.374,8.091c1.752,2.514,4.573,3.955,7.598,3.954
+	c2.86,0,5.905-1.273,8.717-3.675l55.044-46.735c1.7-1.452,4.142-2.284,6.681-2.284c2.538,0,4.975,0.832,6.68,2.288l54.86,46.724
+	c2.822,2.409,5.657,3.683,8.512,3.683c4.828,0,9.534-3.724,9.534-12.045V18C186.022,8.243,177.891,0,167.871,0z"/>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+                                                    <g>
+                                                    </g>
+</svg>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary m-1"><svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 4H5a2 2 0 0 0-2 2v15l3.467-2.6a2 2 0 0 1 1.2-.4H19a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg></button>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <img src="<c:url value="/resources/stock_photo.webp"/>" class="card-img-bottom" alt="...">
+
                             </div>
                         </div>
                     </c:forEach>
