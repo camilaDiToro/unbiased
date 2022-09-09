@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class News {
 
@@ -53,7 +54,25 @@ public class News {
         return creationDate;
     }
 
-//    public Collection<Category> getCategories() { return categories; }
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof News))
+            return false;
+
+        News aux = (News) obj;
+
+        if (aux.equals(this))
+            return true;
+
+        return newsId == aux.newsId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(newsId);
+    }
+
+    //    public Collection<Category> getCategories() { return categories; }
 
     public boolean hasImage(){
         return imageId!=null ;
@@ -140,5 +159,7 @@ public class News {
         public Collection<Category> getCategories() {
             return categories;
         }
+
+
     }
 }

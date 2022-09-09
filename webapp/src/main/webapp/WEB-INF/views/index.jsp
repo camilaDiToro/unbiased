@@ -53,7 +53,7 @@
                 <a href="<c:url value="/${orderBy}"/>"><spring:message code="search.filter"/> <c:out value=": \"${query}\""/></a>
             </div>
         </c:if>
-        <c:if test="${empty news}" >
+        <c:if test="${empty newsMap}" >
             <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1">
                 <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
                     <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
@@ -73,11 +73,11 @@
                 </p>
             </div>
         </c:if>
-        <c:if test="${!empty news}">
+        <c:if test="${!empty newsMap}">
             <div class="container-fluid">
                 <div class="row row-cols-1 row-cols-md-3">
                     <c:set var="maxLength" value="${100}"/>
-                    <c:forEach var="article" items="${news}">
+                    <c:forEach var="article" items="${newsMap.keySet()}">
                         <div class="col mb-4">
                             <div class="card h-100">
                                 <div class="d-flex w-100 flex-column">
@@ -91,6 +91,7 @@
                                             <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>
                                             <a href="<c:url value="/news/${article.newsId}"/>"><h5 ><c:out value="${article.title}"/></h5></a>
                                             <h6 class="card-subtitle py-1"><c:out value="${article.subtitle}"/></h6>
+                                            <p class="text-sm-left text-secondary"><c:out value="${newsMap.get(article)}"/> min read</p>
                                                 <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
                                         </div>
@@ -156,7 +157,7 @@
             </div>
         </c:if>
     </div>
-    <c:if test="${not empty news}">
+    <c:if test="${not empty newsMap}">
         <nav class="d-flex justify-content-center align-items-center">
             <ul class="pagination">
 

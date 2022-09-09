@@ -22,7 +22,7 @@
         <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
         <p class="text-sm-left text-secondary"><c:out value="${date}"/></p>
         <b><spring:message code="showNews.createdBy"/><c:out value=" "/><c:out value="${user.username != null ? user.username : user.email}"/></b>
-        <p class="text-sm-left text-secondary">20 min read</p>
+        <p class="text-sm-left text-secondary"><c:out value="${timeToRead}"/> min read</p>
         <div style="margin-top: 20px" class="w-50 d-flex flex-wrap">
             <c:forEach var="category" items="${categories}">
                 <p>

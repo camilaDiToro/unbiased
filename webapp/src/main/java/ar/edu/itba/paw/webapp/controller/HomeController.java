@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.NewsOrder;
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
@@ -18,6 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class HomeController {
@@ -59,19 +60,29 @@ public class HomeController {
         int totalPages;
         page = page <= 0 ? 1 : page;
 
+        List<News> news;
+
         if (category.equals("ALL")) {
             mav.addObject("category", category);
             totalPages = ns.getTotalPagesAllNews(query);
             page = page > totalPages ? totalPages : page;
-            mav.addObject("news", ns.getNews(page, query, NewsOrder.valueOf(orderBy)));
+            news =  ns.getNews(page, query, NewsOrder.valueOf(orderBy));
         }
         else {
             Category catObject = Category.valueOf(category);
             mav.addObject("category", catObject);
             totalPages = ns.getTotalPagesCategory(catObject);
             page = page > totalPages ? totalPages : page;
-            mav.addObject("news", ns.getNewsByCategory(page, catObject, NewsOrder.valueOf(orderBy)));
+            news =  ns.getNewsByCategory(page, catObject, NewsOrder.valueOf(orderBy));
         }
+
+        Map<News, Integer> newsMap = new HashMap<>();
+
+        for (News article : news) {
+            newsMap.put(article, TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(article.getBody())));
+        }
+
+        mav.addObject("newsMap", newsMap);
 
         mav.addObject("page", page);
         mav.addObject("totalPages", totalPages);

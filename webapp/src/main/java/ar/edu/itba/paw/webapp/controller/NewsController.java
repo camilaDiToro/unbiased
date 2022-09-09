@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.ParseMarkdownToHTML;
+import ar.edu.itba.paw.model.TextUtils;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
@@ -81,6 +81,7 @@ public class NewsController {
         mav.addObject("news", news);
         mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
+        mav.addObject("timeToRead", TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(news.getBody())));
         return mav;
     }
 
@@ -122,7 +123,7 @@ public class NewsController {
             return createArticleAndValidate(createNewsFrom, errors);
         }
 
-        String htmlBody = ParseMarkdownToHTML.convertMarkdownToHTML(createNewsFrom.getBody());
+        String htmlBody = TextUtils.convertMarkdownToHTML(createNewsFrom.getBody());
         // TODO: hacer un validador para que rechaze cualquier texto de tipo html en el body.
 
         final User user = userService.createIfNotExists(new User.UserBuilder(createNewsFrom.getCreatorEmail()));
