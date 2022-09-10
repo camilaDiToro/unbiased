@@ -14,7 +14,7 @@
     </a>
 </div>
 
-<div class="d-flex align-items-center justify-content-center w-100 py-4">
+<div class="d-flex align-items-center  justify-content-center w-100 py-4">
     <div class="h-auto w-75">
         <h1 class="text-xl-center"><c:out value="${news.title}"/></h1>
         <hr/>
