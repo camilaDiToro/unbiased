@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,16 @@ public class HomeController {
 
         mav.addObject("page", page);
         mav.addObject("totalPages", totalPages);
+
+        User user = new User.UserBuilder("messi@messi.com").username("Leo Messi").userId(1).build();
+
+        List<User> topCreators = new ArrayList<>();
+
+        for (int i=0 ; i<5 ; i++) {
+            topCreators.add(user);
+        }
+
+        mav.addObject("topCreators", topCreators);
 
 
 

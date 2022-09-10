@@ -103,4 +103,11 @@ white-space: normal;
     filter: brightness(85%);
 }
 
+.container-xxl {
+    max-width: 1500px;
+}
+
+.h-fit {
+    height: fit-content !important;
+}
 
