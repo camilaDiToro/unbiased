@@ -26,7 +26,7 @@
 }
 
 .article-body {
-    width: 65%;
+    width: 100%;
 }
 
 .object-cover {
@@ -43,7 +43,7 @@
 
 .article-body img {
     width: 100%;
-    max-height: 800px;
+    max-height: 750px;
     margin-left: auto;
     margin-right: auto;
     object-fit: cover;
@@ -66,5 +66,10 @@
 
 .article-body h4 {
     font-size: 20px;
+}
+
+.article-subtitle {
+    width: 95%;
+    color: #68717A;
 }
 
