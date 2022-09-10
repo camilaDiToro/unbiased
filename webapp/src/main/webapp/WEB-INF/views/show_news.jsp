@@ -23,12 +23,22 @@
         <p class="text-sm-left text-secondary"><c:out value="${date}"/></p>
         <b><spring:message code="showNews.createdBy"/><c:out value=" "/><c:out value="${user.username != null ? user.username : user.email}"/></b>
         <p class="text-sm-left text-secondary"><c:out value="${timeToRead}"/> min read</p>
-        <div style="margin-top: 20px" class="w-50 d-flex flex-wrap">
+        <div class="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
+            <div class="text-sm-left font-weight-bold">
+                Categories:
+            </div>
             <c:forEach var="category" items="${categories}">
-                <p>
-                    <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
-                </p>
+
+                <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
+
             </c:forEach>
+        </div>
+
+        <div class="w-50 d-flex flex-wrap align-items-center gap-1">
+            <div class="text-sm-left font-weight-bold">
+                Tags:
+            </div>
+            <span class="badge badge-pill badge-primary">Messi</span>
         </div>
 
 <%--        <p class="article-body"><c:out value="${news.body}"/></p>--%>
