@@ -17,7 +17,7 @@
 <div class="d-flex align-items-center justify-content-center w-100 py-4">
     <div class="h-auto w-75">
         <h1 class="text-xl-center"><c:out value="${news.title}"/></h1>
-        <hr  style="width:50%; margin-right:50% !important;"/>
+        <hr class="hr-style"/>
         <%--<img src="<c:url value="/resources/stock_photo.webp"/>" class="w-50 m-4 rounded mx-auto d-block img-thumbnail"/>--%>
         <img src="<c:url value="/resources/stock_photo.webp"/>" class="float-sm-right w-50 m-4"/>
         <%--<h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>--%>
