@@ -174,7 +174,11 @@
 
                 <c:forEach var="creator" items="${topCreators}">
                     <a class="m-1" href="<c:url value="/profile/${creator.id}"/>">
-                            <div class="card bg-primary text-white">
+                            <div class="card bg-primary text-white d-flex flex-row p-2 creator-card align-items-center">
+<div class="img-container">
+    <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+
+</div>
                                 <div class="card-body">${creator.username != null ? creator.username : creator.email}</div>
                             </div>
                     </a>
