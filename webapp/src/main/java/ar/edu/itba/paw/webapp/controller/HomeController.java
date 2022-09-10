@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -18,21 +19,25 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Optional;
 
 @Controller
 public class HomeController {
 
     private final UserService us;
     private final NewsService ns;
+    private final SecurityService ss;
 
     @Autowired
-    public HomeController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns){
+    public HomeController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns, SecurityService ss){
         this.us = us;
         this.ns = ns;
+        this.ss = ss;
     }
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
+        //Optional<User> mayBeUser = ss.getCurrentUser();
         return new ModelAndView("redirect:/TOP");
     }
 
