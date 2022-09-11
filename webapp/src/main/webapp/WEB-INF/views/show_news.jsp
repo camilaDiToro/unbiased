@@ -5,6 +5,8 @@
 <html>
 <c:set var="pageTitle" scope="request" value="${news.title}"/>
 <%@include file="../../resources/head.jsp" %>
+<script src="<c:url value="/resources/upvote-script.js"/>"></script>
+
 <link href="<c:url value="/resources/custom.css"/>" rel="stylesheet">
 <body>
 <%@include file="../../resources/navbar.jsp" %>
@@ -17,11 +19,12 @@
 <div class="d-flex align-items-center justify-content-center w-100 py-4">
     <div class="h-auto w-75">
         <div class="d-flex align-items-center  ">
-            <div class="w-10 d-flex flex-column align-items-center m-3 position-absolute">
-                <svg class="svg-btn" fill="${upvoted ? '#ff4500' : '#5d696a'}" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">            <path d="M4 14h4v7a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-7h4a1.001 1.001 0 0 0 .781-1.625l-8-10c-.381-.475-1.181-.475-1.562 0l-8 10A1.001 1.001 0 0 0 4 14z"></path>
-                </svg>
-                <div class="${upvoted ? 'upvoted' : (downvoted ? 'downvoted' : '')}">25</div>
-                <svg class="svg-btn" fill="${downvoted ? '#4e76db' : '#5d696a'}" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.901 10.566A1.001 1.001 0 0 0 20 10h-4V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v7H4a1.001 1.001 0 0 0-.781 1.625l8 10a1 1 0 0 0 1.562 0l8-10c.24-.301.286-.712.12-1.059z"></path></svg>
+            <div class="w-fit d-flex flex-column align-items-center m-3 position-absolute">
+                <img id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${upvoted ? '-clicked' : ''}.svg"/>"/>
+
+                <div id="rating" class="${upvoted ? 'upvoted' : (downvoted ? 'downvoted' : '')}">25</div>
+                <img id="downvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${downvoted ? '-clicked' : ''}.svg"/>"/>
+
             </div>
             <h1 class="text-xl-center mx-auto max-w-75 text-ellipsis-1 m-3"><c:out value="${news.title}"/></h1>
         </div>

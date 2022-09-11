@@ -6,6 +6,7 @@
 <html>
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
 <%@ include file="../../resources/head.jsp" %>
+<script src="<c:url value="/resources/upvote-script.js"/>"></script>
 <body>
 
 <div class="d-flex h-100 flex-column">
@@ -93,10 +94,12 @@
                                         <div class="d-flex flex-column justify-content-between w-60">
                                             <div class="d-flex w-100">
                                                 <div class="w-10 d-flex flex-column align-items-center m-3 ">
-                                                    <svg class="svg-btn" fill="${upvoted ? '#ff4500' : '#5d696a'}" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">            <path d="M4 14h4v7a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-7h4a1.001 1.001 0 0 0 .781-1.625l-8-10c-.381-.475-1.181-.475-1.562 0l-8 10A1.001 1.001 0 0 0 4 14z"></path>
-                                                    </svg>
-                                                    <div class="${upvoted ? 'upvoted' : (downvoted ? 'downvoted' : '')}">25</div>
-                                                    <svg class="svg-btn" fill="${downvoted ? '#4e76db' : '#5d696a'}" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.901 10.566A1.001 1.001 0 0 0 20 10h-4V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v7H4a1.001 1.001 0 0 0-.781 1.625l8 10a1 1 0 0 0 1.562 0l8-10c.24-.301.286-.712.12-1.059z"></path></svg>
+
+                                                        <img id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${upvoted ? '-clicked' : ''}.svg"/>"/>
+
+                                                    <div id="rating" class="${upvoted ? 'upvoted' : (downvoted ? 'downvoted' : '')}">25</div>
+                                                    <img id="downvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${downvoted ? '-clicked' : ''}.svg"/>"/>
+
                                                 </div>
                                                 <div class="card-body-home">
                                                     <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>
@@ -112,7 +115,10 @@
                                                     <div class="img-container-article">
                                                         <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
                                                     </div>
-                                                    <div class="text-secondary card-name-text text-ellipsis-1">Nombre Apellido</div>
+                                                    <a href="<c:url value="/profile/${article.creatorId}"/>">
+                                                        <div class="text-secondary card-name-text text-ellipsis-1">Nombre Apellido</div>
+
+                                                    </a>
                                                 </div>
                                                 <div class="d-flex align-items-center" role="group">
 
