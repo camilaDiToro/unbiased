@@ -108,8 +108,10 @@
                                                 </div>
                                             </div>
                                             <div class="d-flex justify-content-between p-2 w-100">
-                                                <div class="d-flex align-items-center w-auto">
-                                                    <img class="rounded-circle w-25 object-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+                                                <div class="d-flex align-items-center w-auto gap-1">
+                                                    <div class="img-container-article">
+                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+                                                    </div>
                                                     <div class="text-secondary card-name-text text-ellipsis-1">Nombre Apellido</div>
                                                 </div>
                                                 <div class="d-flex align-items-center" role="group">
