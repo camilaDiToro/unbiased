@@ -93,12 +93,12 @@
 
                                         <div class="d-flex flex-column justify-content-between w-60">
                                             <div class="d-flex w-100">
-                                                <div class="w-10 d-flex flex-column align-items-center m-3 ">
+                                                <div class="w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
 
-                                                        <img id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${upvoted ? '-clicked' : ''}.svg"/>"/>
+                                                        <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${upvoted ? '-clicked' : ''}.svg"/>"/>
 
                                                     <div id="rating" class="${upvoted ? 'upvoted' : (downvoted ? 'downvoted' : '')}">25</div>
-                                                    <img id="downvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${downvoted ? '-clicked' : ''}.svg"/>"/>
+                                                    <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${downvoted ? '-clicked' : ''}.svg"/>"/>
 
                                                 </div>
                                                 <div class="card-body-home">

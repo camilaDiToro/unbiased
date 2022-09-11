@@ -6,6 +6,10 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
+import ar.edu.itba.paw.webapp.form.VoteSubmission;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jdk.nashorn.internal.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -16,10 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class HomeController {
@@ -161,8 +162,21 @@ public class HomeController {
         return mav;
     }
 
+    @RequestMapping(value = "/change-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
+    @ResponseBody
+    public String toggleUpvote(@RequestBody String payload) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> map = mapper.readValue(payload, Map.class);
+        return String.format("{ \"upvotes\": %d, \"active\": %b }", new Random().nextInt(100), map.get("active"));
+    }
 
-
+    @RequestMapping(value = "/change-downvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
+    @ResponseBody
+    public String toggleDownvote(@RequestBody String payload) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> map = mapper.readValue(payload, Map.class);
+        return String.format("{ \"upvotes\": %d, \"active\": %b }", new Random().nextInt(100), map.get("active"));
+    }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
