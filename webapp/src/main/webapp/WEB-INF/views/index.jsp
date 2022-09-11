@@ -32,8 +32,8 @@
 
         </ul>
 
-        <div class="d-flex flex-column flex-md-row">
-                <div class="w-75">
+        <div class="d-flex flex-column flex-xl-row align-items-center ">
+            <div class="w-100 w-xl-75">
                     <c:if test="${query == ''}">
                         <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
                             <li class="nav-item">
@@ -178,7 +178,7 @@
 
 
                 </div>
-            <div class="card container w-25 w-md-25 p-4 h-auto m-2 h-fit">
+            <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start">
                 <h3 class="card-title">Top creators</h3>
 
                 <c:forEach var="creator" items="${topCreators}">

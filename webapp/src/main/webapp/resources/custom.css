@@ -153,4 +153,17 @@ white-space: normal;
     top: 10px;
     right: 10px;
 }
+@media(min-width: 1200px) {
+    .w-xl-25 {
+        width: 25% !important;
+    }
+
+    .w-xl-75 {
+        width: 75% !important;
+    }
+
+    .align-center-xl {
+        align-self: center !important;
+    }
+}
 
