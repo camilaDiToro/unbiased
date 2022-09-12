@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -40,6 +41,8 @@ public class UserJdbcDao implements UserDao {
         final Map<String, Object> userData = new HashMap<>();
         userData.put("email", userBuilder.getEmail());
         userData.put("status", userBuilder.getStatus().getStatus());
+        userData.put("pass", userBuilder.getPass());
+
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
         return userBuilder.userId(userId).build();
     }
@@ -57,6 +60,11 @@ public class UserJdbcDao implements UserDao {
     public Optional<User> findByEmail(String email) {
         return jdbcTemplate.query("SELECT * FROM Users WHERE email = ?",
                 new Object[] { email }, ROW_MAPPER).stream().findFirst();
+    }
+
+    @Override
+    public void verifyEmail(long id) {
+        jdbcTemplate.update("UPDATE users SET status = 'REGISTERED' WHERE user_id = ?", id);
     }
 
     public List<User> getAll(int page){

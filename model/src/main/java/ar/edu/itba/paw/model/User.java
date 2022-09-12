@@ -70,7 +70,7 @@ public class User {
 
         public UserBuilder pass(String pass){
             this.pass = pass;
-            status = UserStatus.REGISTERED;
+            status = UserStatus.UNABLE;
             return this;
         }
 

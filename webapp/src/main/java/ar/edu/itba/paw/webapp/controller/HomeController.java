@@ -3,7 +3,9 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -18,21 +20,28 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Optional;
 
 @Controller
 public class HomeController {
 
     private final UserService us;
     private final NewsService ns;
+    private final SecurityService ss;
+    private final EmailService es;
 
     @Autowired
-    public HomeController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns){
+    public HomeController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns, SecurityService ss, EmailService es){
         this.us = us;
         this.ns = ns;
+        this.ss = ss;
+        this.es = es;
     }
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
+        //Optional<User> mayBeUser = ss.getCurrentUser();
+        //es.sendSimpleMessage("cditoro@itba.edu.ar", "First email", "holi");
         return new ModelAndView("redirect:/TOP");
     }
 
@@ -113,7 +122,8 @@ public class HomeController {
         if(errors.hasErrors()){
             return createForm(userForm);
         }
-        final User user = us.create(new User.UserBuilder(userForm.getEmail()));
+        User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
+        final User user = us.create(userBuilder);
         return new ModelAndView("redirect:/profile/"+user.getId());
     }
 
@@ -140,7 +150,11 @@ public class HomeController {
     }
 
 
-
+    @RequestMapping("/verify_email")
+    public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
+        us.verifyUserEmail(token);
+        return new ModelAndView("email_verified");
+    }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
