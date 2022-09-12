@@ -63,6 +63,11 @@ public class UserJdbcDao implements UserDao {
                 new Object[] { email }, ROW_MAPPER).stream().findFirst();
     }
 
+    @Override
+    public void verifyEmail(long id) {
+        jdbcTemplate.update("UPDATE users SET status = 'REGISTERED' WHERE user_id = ?", id);
+    }
+
     public List<User> getAll(int page){
         return jdbcTemplate.query("SELECT * FROM Users LIMIT 10 OFFSET ?", new Object[]{(page-1)*10},ROW_MAPPER);
     }

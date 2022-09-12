@@ -35,5 +35,11 @@ CREATE TABLE IF NOT EXISTS news_category(
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE
 );
 
-
+CREATE TABLE IF NOT EXISTS email_verification_token (
+    token_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    token TEXT NOT NULL,
+    expiration_date TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
 

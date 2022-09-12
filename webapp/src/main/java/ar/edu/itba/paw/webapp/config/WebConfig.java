@@ -118,5 +118,4 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return mailSender;
     }
 
-
 }

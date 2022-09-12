@@ -3,7 +3,8 @@ package ar.edu.itba.paw.model;
 public enum UserStatus {
 
     REGISTERED("REGISTERED"),
-    UNREGISTERED("UNREGISTERED");
+    UNREGISTERED("UNREGISTERED"),
+    UNABLE("UNABLE");
 
     private final String status;
 

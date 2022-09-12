@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 
 public class VerificationToken {
 
-    private static final int EXPIRATION_DAYS = 1;
-
     private final long id;
     private final String token;
     private final long userId;
@@ -34,11 +32,23 @@ public class VerificationToken {
         return expiryDate;
     }
 
-    public static LocalDateTime newExpiryDate() {
-        return LocalDateTime.now().plusDays(EXPIRATION_DAYS);
-    }
-
     public boolean isValidToken() {
         return LocalDateTime.now().isBefore(expiryDate);
+    }
+
+    public enum Status{
+        SUCCESFULLY_VERIFIED("SUCCESFULLY_VERIFIED"),
+        EXPIRED("EXPIRED"),
+        NOT_EXISTS("NOT_EXISTS");
+
+        private final String status;
+
+        Status(String status){
+            this.status = status;
+        }
+
+        public String getStatus() {
+            return status;
+        }
     }
 }
