@@ -41,9 +41,8 @@ public class UserJdbcDao implements UserDao {
         final Map<String, Object> userData = new HashMap<>();
         userData.put("email", userBuilder.getEmail());
         userData.put("status", userBuilder.getStatus().getStatus());
-        if( userBuilder.getStatus() == UserStatus.REGISTERED){
-            userData.put("pass", userBuilder.getPass());
-        }
+        userData.put("pass", userBuilder.getPass());
+
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
         return userBuilder.userId(userId).build();
     }

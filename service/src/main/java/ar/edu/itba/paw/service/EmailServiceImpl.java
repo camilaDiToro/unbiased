@@ -55,7 +55,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendVerificationEmail(User user, VerificationToken token, Locale locale) {
         final String to = user.getEmail();
-        final String text = messageSource.getMessage("email.verification.text",null,locale) +" "+ getUrl("verifyEmail?token="+token.getToken());
+        final String text = messageSource.getMessage("email.verification.text",null,locale) +" "+ getUrl("verify_email?token="+token.getToken());
         final String subject = messageSource.getMessage("email.verification.subject",null,locale);
         sendSimpleMessage(to, subject, text);
     }

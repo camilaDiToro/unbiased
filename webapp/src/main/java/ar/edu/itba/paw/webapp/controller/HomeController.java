@@ -150,7 +150,7 @@ public class HomeController {
     }
 
 
-    @RequestMapping("/verifyemail")
+    @RequestMapping("/verify_email")
     public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
         us.verifyUserEmail(token);
         return new ModelAndView("email_verified");
