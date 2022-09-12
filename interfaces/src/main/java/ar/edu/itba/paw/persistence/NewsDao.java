@@ -18,7 +18,9 @@ public interface NewsDao {
 
     List<Category> getNewsCategory(News news);
 
-    int getUpvotes(News news);
+    int getUpvotes(Long newsId);
 
     Rating upvoteState(News news, User user);
+
+    void setRating(Long newsId, Long userId, Rating rating);
 }

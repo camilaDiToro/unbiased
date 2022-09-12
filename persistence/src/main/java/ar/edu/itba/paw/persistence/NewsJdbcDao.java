@@ -16,6 +16,8 @@ public class NewsJdbcDao implements NewsDao{
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcUpvoteInsert;
+
     private final CategoryDao categoryDao;
 
     private static final double PAGE_SIZE = 9.0;
@@ -43,6 +45,8 @@ public class NewsJdbcDao implements NewsDao{
     public NewsJdbcDao(final DataSource dataSource, final CategoryDao categoryDao){
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("news").usingGeneratedKeyColumns("news_id");
+        jdbcUpvoteInsert = new SimpleJdbcInsert(dataSource).withTableName("upvotes");
+
         this.categoryDao = categoryDao;
     }
 
@@ -127,15 +131,30 @@ public class NewsJdbcDao implements NewsDao{
     }
 
 @Override
-    public int getUpvotes(News news) {
-        int upvotes = jdbcTemplate.query("SELECT sum((upvote * 2) - 1) AS upvotes FROM upvotes where news_id = ?",
-                new Object[]{news.getNewsId()},UPVOTES_MAPPER).stream().findFirst().get();
+    public int getUpvotes(Long newsId) {
+        int upvotes = jdbcTemplate.query("SELECT sum(case when upvote=true then 1 else -1 end) AS upvotes FROM upvotes where news_id = ?",
+                new Object[]{newsId},UPVOTES_MAPPER).stream().findFirst().get();
         return upvotes;
     }
     @Override
     public Rating upvoteState(News news, User user) {
-        Optional<Boolean> rating = jdbcTemplate.query("SELECT upvote FROM upvotes WHERE user_id = ? AND news_id = ?",
+        Optional<Boolean> rating = jdbcTemplate.query("SELECT upvote AS upvote FROM upvotes WHERE user_id = ? AND news_id = ?",
                 new Object[]{user.getId(), news.getNewsId()},RATING_MAPPER).stream().findFirst();
         return rating.map(aBoolean -> aBoolean ? Rating.UPVOTE : Rating.DOWNVOTE).orElse(Rating.NO_RATING);
+    }
+    @Override
+    public void setRating(Long newsId, Long userId, Rating rating) {
+        jdbcTemplate.update("DELETE FROM upvotes WHERE user_id = ? AND news_id = ?",
+                new Object[]{userId, newsId});
+        if (rating.equals(Rating.NO_RATING))
+            return;
+
+        final Map<String,Object> ratingData = new HashMap<>();
+        ratingData.put("news_id",newsId);
+        ratingData.put("user_id", userId);
+        ratingData.put("upvote",rating.equals(Rating.UPVOTE));
+
+        jdbcUpvoteInsert.execute(ratingData);
+
     }
 }

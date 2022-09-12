@@ -1,4 +1,5 @@
 async function postData(url = '', data = {}) {
+    console.log(data)
     // Default options are marked with *
     const response = await fetch(url, {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -19,7 +20,8 @@ async function handleClick(img) {
     const src = img.src;
     const URL = img.getAttribute('url');
     console.log(img)
-    const newsId = img.parentElement.newsId;
+    const newsId = img.parentElement.getAttribute('news-id');
+    console.log(img.parentElement)
     var number;
     img.parentElement.childNodes.forEach(e => {
         if (e.id === "rating")

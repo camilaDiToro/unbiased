@@ -57,7 +57,7 @@
                             <a href="<c:url value="/${orderBy}"/>"><spring:message code="search.filter"/> <c:out value=": \"${query}\""/></a>
                         </div>
                     </c:if>
-                    <c:if test="${empty newsMap}" >
+                    <c:if test="${empty news}" >
                         <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1">
                             <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
                                 <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
@@ -77,12 +77,12 @@
                             </p>
                         </div>
                     </c:if>
-                    <c:if test="${!empty newsMap}">
+                    <c:if test="${!empty news}">
 
                     <div class="container-fluid">
                         <div class="row row-cols-1 row-cols-md-2">
                             <c:set var="maxLength" value="${100}"/>
-                            <c:forEach var="article" items="${newsMap.keySet()}">
+                            <c:forEach var="article" items="${news}">
 
 
 
@@ -94,18 +94,19 @@
                                         <div class="d-flex flex-column justify-content-between w-60">
                                             <div class="d-flex w-100">
                                                 <div class="w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
+                                                    <c:set var="rating" value="#{ratingMap.get(article.newsId)}"/>
 
-                                                        <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${upvoted ? '-clicked' : ''}.svg"/>"/>
+                                                        <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
 
-                                                    <div id="rating" class="${upvoted ? 'upvoted' : (downvoted ? 'downvoted' : '')}">25</div>
-                                                    <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${downvoted ? '-clicked' : ''}.svg"/>"/>
+                                                    <div id="rating" class="${rating}"><c:out value="${upvotesMap.get(article.newsId)}${user.id}"/></div>
+                                                    <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
                                                 </div>
                                                 <div class="card-body-home">
                                                     <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>
                                                     <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis"><c:out value="${article.subtitle}"/></h6>
-                                                    <p class="text-sm-left text-secondary mb-0"><c:out value="${newsMap.get(article)}"/> min read</p>
+                                                    <p class="text-sm-left text-secondary mb-0"><c:out value="${readTimeMap.get(article.newsId)}"/> min read</p>
                                                         <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
                                                 </div>

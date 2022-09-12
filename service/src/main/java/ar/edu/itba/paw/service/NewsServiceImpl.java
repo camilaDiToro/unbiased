@@ -65,13 +65,18 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public int getUpvotes(News news) {
-        return newsDao.getUpvotes(news);
+    public int getUpvotes(Long newsId) {
+        return newsDao.getUpvotes(newsId);
     }
     @Override
 
     public Rating upvoteState(News news, User user) {
         return newsDao.upvoteState(news, user);
+    }
+
+    @Override
+    public void setRating(Long newsId, Long userId, Rating rating) {
+        newsDao.setRating(newsId, userId, rating);
     }
 
 }

@@ -8,10 +8,8 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
-import ar.edu.itba.paw.webapp.form.VoteSubmission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -62,6 +60,7 @@ public class HomeController {
             @RequestParam(name = "category", defaultValue = "ALL") final String category){
         final ModelAndView mav = new ModelAndView("index");
 
+//        ns.setRating((long)1, (long)1, Rating.UPVOTE);
         mav.addObject("orders", NewsOrder.values());
         mav.addObject("orderBy", orderBy);
         mav.addObject("query", query);
@@ -86,23 +85,33 @@ public class HomeController {
             news =  ns.getNewsByCategory(page, catObject, NewsOrder.valueOf(orderBy));
         }
 
-        Map<News, Integer> newsMap = new HashMap<>();
+        Map<Long, Integer> readTimeMap = new HashMap<>();
+        Map<Long, Integer> upvotesMap = new HashMap<>();
+        Map<Long, Rating> ratingMap = new HashMap<>();
+
+        Optional<User> user = ss.getCurrentUser();
 
         for (News article : news) {
-            newsMap.put(article, TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(article.getBody())));
+            readTimeMap.put(article.getNewsId(), TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(article.getBody())));
+            upvotesMap.put(article.getNewsId(), ns.getUpvotes(article.getNewsId()));
+            ratingMap.put(article.getNewsId(), user.map(u -> ns.upvoteState(article, u)).orElse(Rating.NO_RATING));
         }
 
-        mav.addObject("newsMap", newsMap);
+        mav.addObject("readTimeMap", readTimeMap);
+        mav.addObject("upvotesMap", upvotesMap);
+        mav.addObject("ratingMap", ratingMap);
+
+        mav.addObject("news", news);
 
         mav.addObject("page", page);
         mav.addObject("totalPages", totalPages);
 
-        User user = new User.UserBuilder("messi@messi.com").username("Leo Messi").userId(1).build();
+        User userMessi = new User.UserBuilder("messi@messi.com").username("Leo Messi").userId(1).build();
 
         List<User> topCreators = new ArrayList<>();
 
         for (int i=0 ; i<5 ; i++) {
-            topCreators.add(user);
+            topCreators.add(userMessi);
         }
 
         mav.addObject("topCreators", topCreators);
@@ -171,20 +180,36 @@ public class HomeController {
         return mav;
     }
 
+    private String toggleHandler(String payload, Rating action) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> map = mapper.readValue(payload, Map.class);
+        final String fmt = "{ \"upvotes\": %d, \"active\": %b }";
+        final Long newsId = (Long.valueOf((String)map.get("newsId")));
+        Optional<User> maybeUser = ss.getCurrentUser();
+        boolean active;
+
+        if (maybeUser.isPresent()) {
+            active = (boolean)map.get("active");
+            User user = maybeUser.get();
+            ns.setRating(newsId,  user.getId(), active ? action : Rating.NO_RATING);
+        }
+        else {
+            active = !(boolean)map.get("active");
+        }
+        return String.format(fmt, ns.getUpvotes(newsId), active);
+    }
+
     @RequestMapping(value = "/change-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
     @ResponseBody
     public String toggleUpvote(@RequestBody String payload) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> map = mapper.readValue(payload, Map.class);
-        return String.format("{ \"upvotes\": %d, \"active\": %b }", new Random().nextInt(100), map.get("active"));
+        return toggleHandler(payload, Rating.UPVOTE);
     }
 
     @RequestMapping(value = "/change-downvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
     @ResponseBody
     public String toggleDownvote(@RequestBody String payload) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> map = mapper.readValue(payload, Map.class);
-        return String.format("{ \"upvotes\": %d, \"active\": %b }", new Random().nextInt(100), map.get("active"));
+        return toggleHandler(payload, Rating.DOWNVOTE);
+
     }
     @RequestMapping("/verify_email")
     public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
