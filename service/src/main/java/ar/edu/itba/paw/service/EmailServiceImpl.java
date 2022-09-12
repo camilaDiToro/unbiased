@@ -33,7 +33,6 @@ public class EmailServiceImpl implements EmailService {
         this.messageSource = messageSource;
     }
 
-    @Async
     public void sendSimpleMessage(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
