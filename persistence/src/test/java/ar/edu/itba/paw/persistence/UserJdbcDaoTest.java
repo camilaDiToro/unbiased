@@ -27,10 +27,8 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class UserJdbcDaoTest {
-
     private static final String USER_TABLE = "users";
     private static final String EMAIL = "juan@gmail.com";
-
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
     private UserJdbcDao userDao;
@@ -48,7 +46,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void testCreateUser(){
+    public void testCreateUser() {
         // 1. precondiciones
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
@@ -58,14 +56,13 @@ public class UserJdbcDaoTest {
         // 3. validaciones
         assertNotNull(user);
         assertEquals(EMAIL, user.getEmail());
-        assertEquals(1,JdbcTestUtils.countRowsInTable(jdbcTemplate,USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
-    public void testGetUserByIdDoesntExist(){
+    public void testGetUserByIdDoesntExist() {
 
         // 1. clear database
-        // estaria mal userDao.deleteAll();
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         //2.
@@ -76,7 +73,13 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void testGetUserByIdUserExists(){
+    public void testFailFindById() {
+        final Optional<User> usr = userDao.getUserById(80);
+        assertFalse(usr.isPresent());
+    }
+
+    @Test
+    public void testGetUserByIdUserExists() {
         //precondicion
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
@@ -91,4 +94,11 @@ public class UserJdbcDaoTest {
         assertTrue(mayBeUser.isPresent());
         assertEquals(EMAIL, mayBeUser.get().getEmail());
     }
+
+    @Test
+    public void testFailFindByEmail() {
+        final Optional<User> usr = userDao.findByEmail(EMAIL);
+        assertFalse(usr.isPresent());
+    }
+
 }

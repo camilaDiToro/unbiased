@@ -19,15 +19,15 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @Rollback
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
-public class NewsJdbcDaoTest{
+public class NewsJdbcDaoTest {
     private NewsJdbcDao newsDao;
     private UserJdbcDao userDao;
     @Autowired
@@ -41,8 +41,8 @@ public class NewsJdbcDaoTest{
     protected static final String EMAIL = "juan@gmail.com";
 
     //NEWS DATA
-    protected static final long CREATOR_ID= 1;
-    protected static final long IMAGEN_ID= 1;
+    protected static final long CREATOR_ID = 1;
+    protected static final long IMAGEN_ID = 1;
     protected static final String TITTLE = "titulo";
     protected static final String SUBTITTLE = "subtitulo";
     protected static final String BODY = "cuerpo";
@@ -50,10 +50,10 @@ public class NewsJdbcDaoTest{
     protected static LocalDateTime CREATE_TIME = LocalDateTime.now();
 
     private User getMockUser() {
-        //User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        //User user = userDao.createIfNotExists(usBuilder);
-        //return user;
-        return new User.UserBuilder(EMAIL).build();
+        User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
+        User user = userDao.createIfNotExists(usBuilder);
+        return user;
+        //return new User.UserBuilder(EMAIL).build();
     }
 
 
@@ -61,11 +61,12 @@ public class NewsJdbcDaoTest{
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(ds);
         newsDao = new NewsJdbcDao(ds);
+        userDao = new UserJdbcDao(ds);
         //insertNews(CREATOR_ID, IMAGEN_ID, BODY, TITTLE, SUBTITTLE, CREATE_TIME);
     }
 
     @Test
-    public void testCreateNews(){
+    public void testCreateNews() {
         // 1. precondiciones
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
@@ -80,7 +81,28 @@ public class NewsJdbcDaoTest{
         assertNotNull(news);
         assertEquals(TITTLE, news.getTitle());
         assertEquals(BODY, news.getBody());
-        assertEquals(1,JdbcTestUtils.countRowsInTable(jdbcTemplate,NEWS_TABLE));
+    }
+
+    @Test
+    public void testFindById() {
+        // 1. precondiciones
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+
+        // 2. ejercitacion
+        User user = getMockUser();
+        //Optional<User> mayBeUser = userDao.getUserById(user.getId());
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+
+        Optional<News> optionalNews = newsDao.getById(news.getNewsId());
+        if (optionalNews.isPresent())
+            assertEquals(news.getNewsId(), optionalNews.get().getNewsId());
+    }
+
+    @Test
+    public void testFindByIdFailure() {
+        Optional<News> news = newsDao.getById(80);
+        assertFalse(news.isPresent());
     }
 
     @Test
@@ -96,7 +118,8 @@ public class NewsJdbcDaoTest{
         List<News> newsList = newsDao.getNews(PAGE_SIZE);
 
         // 3. validaciones
-        assertEquals(1, newsList.size());
+        assertEquals(PAGE_SIZE, newsList.size());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
