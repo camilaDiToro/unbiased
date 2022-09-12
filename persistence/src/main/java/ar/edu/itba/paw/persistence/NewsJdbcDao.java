@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.NewsOrder;
+import ar.edu.itba.paw.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,7 +18,7 @@ public class NewsJdbcDao implements NewsDao{
     private final SimpleJdbcInsert jdbcInsert;
     private final CategoryDao categoryDao;
 
-    private static final int PAGE_SIZE = 9;
+    private static final double PAGE_SIZE = 9.0;
 
     private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
             new News.NewsBuilder(   rs.getLong("creator"),
@@ -36,6 +34,10 @@ public class NewsJdbcDao implements NewsDao{
             Category.getById(rs.getLong("category_id"));
 
     private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("newsCount");
+
+    private final static RowMapper<Integer> UPVOTES_MAPPER = (rs, rowNum) -> rs.getInt("upvotes");
+    private final static RowMapper<Boolean> RATING_MAPPER = (rs, rowNum) -> rs.getBoolean("upvote");
+
 
     @Autowired
     public NewsJdbcDao(final DataSource dataSource, final CategoryDao categoryDao){
@@ -73,7 +75,8 @@ public class NewsJdbcDao implements NewsDao{
     @Override
     public int getTotalPagesAllNews() {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news" , ROW_COUNT_MAPPER).stream().findFirst().get();
-        return rowsCount/PAGE_SIZE + 1;
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
     }
 
     @Override
@@ -89,7 +92,8 @@ public class NewsJdbcDao implements NewsDao{
     public int getTotalPagesAllNews(String query) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?" ,
                 new Object[]{"%" + query.toLowerCase() + "%"},ROW_COUNT_MAPPER).stream().findFirst().get();
-        return rowsCount/PAGE_SIZE + 1;
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
     }
 
 
@@ -118,6 +122,20 @@ public class NewsJdbcDao implements NewsDao{
     public int getTotalPagesCategory(Category category) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?" ,
                 new Object[]{category.getId()},ROW_COUNT_MAPPER).stream().findFirst().get();
-        return rowsCount/PAGE_SIZE + 1;
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
+    }
+
+@Override
+    public int getUpvotes(News news) {
+        int upvotes = jdbcTemplate.query("SELECT sum((upvote * 2) - 1) AS upvotes FROM upvotes where news_id = ?",
+                new Object[]{news.getNewsId()},UPVOTES_MAPPER).stream().findFirst().get();
+        return upvotes;
+    }
+    @Override
+    public Rating upvoteState(News news, User user) {
+        Optional<Boolean> rating = jdbcTemplate.query("SELECT upvote FROM upvotes WHERE user_id = ? AND news_id = ?",
+                new Object[]{user.getId(), news.getNewsId()},RATING_MAPPER).stream().findFirst();
+        return rating.map(aBoolean -> aBoolean ? Rating.UPVOTE : Rating.DOWNVOTE).orElse(Rating.NO_RATING);
     }
 }

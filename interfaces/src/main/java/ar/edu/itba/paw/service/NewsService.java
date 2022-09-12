@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.NewsOrder;
+import ar.edu.itba.paw.model.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +17,8 @@ public interface NewsService {
     int getTotalPagesCategory(Category category);
 
     List<Category> getNewsCategory(News news);
+
+    int getUpvotes(News news);
+
+    Rating upvoteState(News news, User user);
 }

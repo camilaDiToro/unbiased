@@ -33,8 +33,8 @@
 
         </ul>
 
-        <div class="d-flex flex-column flex-xl-row align-items-center ">
-            <div class="w-100 w-xl-75">
+        <div class="d-flex flex-column flex-xl-row ">
+            <div class="w-100 w-xl-75 ">
                     <c:if test="${query == ''}">
                         <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
                             <li class="nav-item">

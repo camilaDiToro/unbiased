@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.NewsOrder;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,4 +63,15 @@ public class NewsServiceImpl implements NewsService{
     public List<Category> getNewsCategory(News news) {
         return newsDao.getNewsCategory(news);
     }
+
+    @Override
+    public int getUpvotes(News news) {
+        return newsDao.getUpvotes(news);
+    }
+    @Override
+
+    public Rating upvoteState(News news, User user) {
+        return newsDao.upvoteState(news, user);
+    }
+
 }
