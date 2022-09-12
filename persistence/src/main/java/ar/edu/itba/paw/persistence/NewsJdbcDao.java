@@ -20,7 +20,7 @@ public class NewsJdbcDao implements NewsDao{
     private final SimpleJdbcInsert jdbcInsert;
     private final CategoryDao categoryDao;
 
-    private static final int PAGE_SIZE = 9;
+    private static final double PAGE_SIZE = 9.0;
 
     private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
             new News.NewsBuilder(   rs.getLong("creator"),
@@ -73,7 +73,8 @@ public class NewsJdbcDao implements NewsDao{
     @Override
     public int getTotalPagesAllNews() {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news" , ROW_COUNT_MAPPER).stream().findFirst().get();
-        return (int) Math.ceil(rowsCount/PAGE_SIZE);
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
     }
 
     @Override
@@ -89,7 +90,8 @@ public class NewsJdbcDao implements NewsDao{
     public int getTotalPagesAllNews(String query) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?" ,
                 new Object[]{"%" + query.toLowerCase() + "%"},ROW_COUNT_MAPPER).stream().findFirst().get();
-        return (int) Math.ceil(rowsCount/PAGE_SIZE);
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
     }
 
 
@@ -118,6 +120,7 @@ public class NewsJdbcDao implements NewsDao{
     public int getTotalPagesCategory(Category category) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?" ,
                 new Object[]{category.getId()},ROW_COUNT_MAPPER).stream().findFirst().get();
-        return (int) Math.ceil(rowsCount/PAGE_SIZE);
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
     }
 }
