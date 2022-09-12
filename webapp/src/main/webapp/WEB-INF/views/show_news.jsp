@@ -55,7 +55,7 @@
             </div>
 
         </div>
-<%--
+
         <form action=""  method="get">
             <label for="comment" class="form-label"><spring:message code="showNews.comments"/></label><br>
             <input type="text" class="form-control" id="comment" value="Comentario"><br>
@@ -64,7 +64,7 @@
             </button></a>
             <input type="submit" class="btn btn-info" value="Comentar">
         </form>
---%>
+
 
 <%--        <c:if test="${news.hasImage()}">--%>
 <%--        <img src="<c:url value="/news/${newsId}/image"/>" class="user-section-img"/>--%>
