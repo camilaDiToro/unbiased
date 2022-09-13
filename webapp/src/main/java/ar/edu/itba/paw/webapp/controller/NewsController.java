@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.TextUtils;
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.NewsNotFoundException;
@@ -25,6 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
+import java.util.Optional;
 
 @Controller
 public class NewsController {
@@ -33,11 +32,14 @@ public class NewsController {
     private final UserService userService;
     private final ImageService imageService;
 
+    private final SecurityService securityService;
+
     @Autowired
-    public NewsController(final NewsService newsService, final UserService userService, ImageService imageService){
+    public NewsController(final NewsService newsService, final UserService userService, ImageService imageService, SecurityService ss){
         this.newsService = newsService;
         this.userService = userService;
         this.imageService = imageService;
+        this.securityService = ss;
     }
 
 
@@ -73,12 +75,18 @@ public class NewsController {
     public ModelAndView profile(@PathVariable("newsId") long newsId){
         final ModelAndView mav = new ModelAndView("show_news");
 
+        Optional<User> maybeUser = securityService.getCurrentUser();
+
+
         //TODO: check if there is a better way of doing this.
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        mav.addObject("rating",maybeUser.map(u -> newsService.upvoteState(news, u)).orElse(Rating.NO_RATING));
+
         Locale locale = LocaleContextHolder.getLocale();
         mav.addObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
                 .withLocale( locale)));
         mav.addObject("news", news);
+        mav.addObject("upvotes", newsService.getUpvotes(news.getNewsId()));
         mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
         mav.addObject("timeToRead", TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(news.getBody())));

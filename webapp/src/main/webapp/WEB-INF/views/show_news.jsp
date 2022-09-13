@@ -19,13 +19,12 @@
 <div class="d-flex align-items-center justify-content-center w-100 py-4">
     <div class="h-auto w-75">
         <div class="d-flex align-items-center  ">
-            <div class="w-fit d-flex flex-column align-items-center m-3 position-absolute" news-id="<c:out value="${article.newsId}"/>">
-                <c:set var="upvoted" value="${news.body.length() % 3 == 0}"/>
-                <c:set var="downvoted" value="${news.body.length() % 3 == 1}"/>
-                <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${upvoted ? '-clicked' : ''}.svg"/>"/>
+            <div class="position-absolute w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${news.newsId}"/>">
 
-                <div id="rating" class="${upvoted ? 'upvoted' : (downvoted ? 'downvoted' : '')}">25</div>
-                <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${downvoted ? '-clicked' : ''}.svg"/>"/>
+                <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+
+                <div id="rating" class="${rating}"><c:out value="${upvotes}"/></div>
+                <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
             </div>
             <h1 class="text-xl-center mx-auto max-w-75 text-ellipsis-1 m-3"><c:out value="${news.title}"/></h1>
