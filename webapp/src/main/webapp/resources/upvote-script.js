@@ -16,84 +16,58 @@ async function postData(url = '', data = {}) {
     return JSON.parse(text); // parses JSON response into native JavaScript objects
 }
 
+
+
 async function handleClick(img) {
-    const src = img.src;
-    const URL = img.getAttribute('url');
-    console.log(img)
-    const newsId = img.parentElement.getAttribute('news-id');
-    console.log(img.parentElement)
-    var number;
+    const src = img.src
+    const URL = img.getAttribute('url')
+    const newsId = img.parentElement.getAttribute('news-id')
+
+    var number
     img.parentElement.childNodes.forEach(e => {
         if (e.id === "rating")
             number = e
     })
     var newSrc
-    if (src.includes('upvote')) {
-        if (src.includes('clicked')) {
-            // currently upvoted -> remove upvote
-            console.log(URL)
-            postData(URL, {active: false, newsId: newsId}).then(r => {
-                if (!r.active) {
-                    newSrc = src.replace(/-clicked/g, "");
-                    img.src = newSrc
-                    number.className = ''
-                    number.textContent = r.upvotes
-                }
-            })
-        }
-        else {
-            // currently not upvoted -> upvote
-            postData(URL, {active: true, newsId: newsId}).then(r => {
-                console.log('hhhhh' + r.active)
-                if (r.active) {
-                    const aux = src.split('.')
-                    newSrc = aux[0] + '-clicked' + '.' + aux[1]
-                    img.src = newSrc
-                    var downvote;
-                    img.parentElement.childNodes.forEach(e => {
-                        if (e.id === "downvote")
-                            downvote = e
-                    })
-                    const otherSrc = downvote.src;
-                    downvote.setAttribute('src', otherSrc.replace(/-clicked/g, ""));
-                    number.className = 'upvoted'
-                    number.textContent = r.upvotes
-                }
-            })
 
+    const removeActionAndUpdate = r => {
+        if (!r.active) {
+            newSrc = src.replace(/-clicked/g, "")
+            img.src = newSrc
+            number.className = ''
+            number.textContent = r.upvotes
         }
-
     }
+
+    const addActionAndRemoveOpposite = (r, oppositeId, numberClassname) => {
+        if (r.active) {
+            const aux = src.split('.')
+            newSrc = aux[0] + '-clicked' + '.' + aux[1]
+            img.src = newSrc
+            var arrow;
+            img.parentElement.childNodes.forEach(e => {
+                if (e.id === oppositeId)
+                    arrow = e
+            })
+            const otherSrc = arrow.src;
+            arrow.setAttribute('src', otherSrc.replace(/-clicked/g, ""));
+            number.className = numberClassname
+            number.textContent = r.upvotes
+        }
+    }
+
+    if (src.includes('clicked')) {
+        // currently upvoted -> remove upvote
+        postData(URL, {active: false, newsId: newsId}).then(removeActionAndUpdate)
+    }
+
     else {
-        if (src.includes('clicked')) {
-            // currently downvoted -> remove downvote
-            postData(URL, {active: false, newsId: newsId}).then(r => {
-                if (!r.active) {
-                    newSrc = src.replace(/-clicked/g, "");
-                    img.src = newSrc
-                    number.className = ''
-                    number.textContent = r.upvotes
-                }
-            })
+        if (src.includes('upvote')) {
+            postData(URL, {active: true, newsId: newsId}).then(r => addActionAndRemoveOpposite(r, 'downvote', 'upvoted'))
         }
         else {
-            // currently not downvoted -> downvote
-            postData(URL, {active: true, newsId: newsId}).then(r => {
-                if (r.active) {
-                    var aux = src.split('.')
-                    newSrc = aux[0] + '-clicked' + '.' + aux[1]
-                    img.src = newSrc
-                    var upvote;
-                    img.parentElement.childNodes.forEach(e => {
-                        if (e.id === "upvote")
-                            upvote = e
-                    })
-                    const otherSrc = upvote.src;
-                    upvote.setAttribute('src', otherSrc.replace(/-clicked/g, ""));
-                    number.className = 'downvoted'
-                    number.textContent = r.upvotes
-                }
-            })
+            postData(URL, {active: true, newsId: newsId}).then(r => addActionAndRemoveOpposite(r, 'upvote', 'downvoted'))
         }
     }
+
 }

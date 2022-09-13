@@ -94,11 +94,10 @@
                                         <div class="d-flex flex-column justify-content-between w-60">
                                             <div class="d-flex w-100">
                                                 <div class="w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
-                                                    <c:set var="rating" value="#{ratingMap.get(article.newsId)}"/>
+                                                    <c:set var="rating" value="${ratingMap.get(article.newsId)}"/>
 
                                                         <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
-
-                                                    <div id="rating" class="${rating}"><c:out value="${upvotesMap.get(article.newsId)}"/></div>
+                                                    <div id="rating" class="${rating.toString()}"><c:out value="${upvotesMap.get(article.newsId)}"/></div>
                                                     <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
                                                 </div>

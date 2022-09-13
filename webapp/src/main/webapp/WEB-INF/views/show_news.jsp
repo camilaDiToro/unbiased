@@ -23,7 +23,7 @@
 
                 <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
 
-                <div id="rating" class="${rating}"><c:out value="${upvotes}"/></div>
+                <div id="rating" class="${rating.toString()}"><c:out value="${upvotes}"/></div>
                 <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
             </div>
