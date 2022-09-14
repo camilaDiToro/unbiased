@@ -1,62 +1,125 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
-<%@include file="../../resources/navbar.jsp" %>
-<div class="container-lg">
-    <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
-    <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
-    <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
+<c:set var="pageTitle" scope="request" value="${pageTitle}"/>
+<%@ include file="../../resources/head.jsp" %>
+<body>
 
-            <li class="nav-item">
-                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'Top' ? activeClasses : inactiveClasses}"/>" aria-current="page" href="Top">Top</a>
-            </li>
-            <li class="nav-item" >
-                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'New' ? activeClasses : inactiveClasses}"/>" href="New">New</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link rounded-pill <c:out value = "${orderBy == 'For me' ? activeClasses : inactiveClasses}"/>" href="For me">For me</a>
-            </li>
-        <li class="nav-item ml-auto">
-            <a href="./create_article">
-            <button type="button" class="btn btn-info">
-                Create article
-            </button></a>
-        </li>
-
-
-    </ul>
-    <ul class="my-2 nav justify-content-center text-light p-2">
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Active</a>
-        </li>
-        <li class="nav-item" >
-            <a class="nav-link " href="#">Link</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link " href="#">Link</a>
-        </li>
-    </ul>
-    <div class="container-fluid">
-        <div class="row row-cols-1 row-cols-md-3">
-            <c:set var="maxLength" value="${100}"/>
-            <c:forEach var="article" items="${news}">
-                <div class="col mb-4">
-                    <div class="card h-100">
-                        <img src="<c:url value="/resources/img_1.jpeg"/>" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title"><c:out value="${article.title}"/></h5>
-                            <h6 class="card-subtitle py-1"><c:out value="${article.subtitle}"/></h6>
-                            <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>
-                        </div>
-                    </div>
-                </div>
+<div class="d-flex h-100 flex-column">
+    <%@ include file="../../resources/navbar.jsp" %>
+    <div class="container-lg flex-grow-1">
+        <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
+        <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
+        <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
+            <c:forEach var="order" items="${orders}">
+                <li class="nav-item">
+                    <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
+                    <c:param name = "category" value = "${category}"/>
+                    <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
+                    </c:url>"><spring:message code="${order.interCode}"/></a>
+                </li>
             </c:forEach>
+            <li class="nav-item ml-auto">
+                <a href="./create_article">
+                    <button type="button" class="btn btn-info">
+                        <spring:message code="home.createArticle.button"/>
+                    </button></a>
+            </li>
 
-        </div>
 
+        </ul>
+        <c:if test="${query == ''}">
+            <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
+                <li class="nav-item">
+                    <a class="text-capitalize nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                    <c:param name = "query" value = "${param.query}"/>
+                    </c:url>"><spring:message code="categories.all"/></a>
+                </li>
+                <c:forEach var="cat" items="${categories}">
+                    <li class="nav-item">
+                        <a class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                    <c:param name = "category" value = "${cat}"/>
+
+                    </c:url>"><spring:message code="${cat.interCode}"/></a>
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:if>
+        <c:if test="${query != ''}">
+            <div class="m-4">
+                <a href="<c:url value="/${orderBy}"/>"><spring:message code="search.filter"/> <c:out value=": \"${query}\""/></a>
+            </div>
+        </c:if>
+        <c:if test="${empty news}" >
+            <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1">
+                <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
+                    <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
+                <p class="lead">
+                    <c:if test="${query == '' && category.toString() != 'ALL'}">
+                        <spring:message code="categories.notFound"/> "<spring:message code="${category.interCode}"/>"
+                    </c:if>
+                    <c:if test="${ query != '' && category.toString() == 'ALL'}">
+                        <spring:message code="search.notFound"/> "<c:out value="${query}"/>"
+                    </c:if>
+
+                    <c:if test="${category.toString() == 'ALL' && query == ''}">
+                        <spring:message code="categories.notFound"/> "<spring:message code="categories.all"/>"
+                    </c:if>
+
+
+                </p>
+            </div>
+        </c:if>
+        <c:if test="${!empty news}">
+            <div class="container-fluid">
+                <div class="row row-cols-1 row-cols-md-3">
+                    <c:set var="maxLength" value="${100}"/>
+                    <c:forEach var="article" items="${news}">
+                        <div class="col mb-4">
+                            <div class="card h-100">
+                                <img src="<c:url value="/resources/stock_photo.webp"/>" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <a href="<c:url value="/news/${article.newsId}"/>"><h5 class="card-title"><c:out value="${article.title}"/></h5></a>
+                                    <h6 class="card-subtitle py-1"><c:out value="${article.subtitle}"/></h6>
+                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+
+                </div>
+
+            </div>
+        </c:if>
     </div>
+    <c:if test="${not empty news}">
+        <nav class="d-flex justify-content-center align-items-center">
+            <ul class="pagination">
+
+                <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
+            <c:param name = "page" value = "1"/>
+            <c:param name = "query" value = "${param.query}"/>
+            </c:url>"><spring:message code="home.pagination.first"/></a></li>
+
+
+                <c:forEach var = "i" begin = "${minPage}" end = "${maxPage}">
+                    <li class="page-item"><a class="page-link ${i == page ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
+            <c:param name = "page" value = "${i}"/>
+            <c:param name = "query" value = "${param.query}"/>
+            </c:url>"><c:out value="${i}"/></a></li>
+                </c:forEach>
+
+                <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
+            <c:param name = "page" value = "${totalPages}"/>
+            <c:param name = "query" value = "${param.query}"/>
+            </c:url>"><spring:message code="home.pagination.last"/></a></li>
+
+            </ul>
+        </nav>
+    </c:if>
 </div>
-<h2>Hi <c:out value="${user.email}"/>!</h2>
-<h4>The user's id is <c:out value="${user.id}"/>!</h4>
 </body>
 </html>

@@ -10,4 +10,5 @@ public interface UserDao {
     User create(User.UserBuilder userBuilder);
     User createIfNotExists(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
+    void verifyEmail(long id);
 }

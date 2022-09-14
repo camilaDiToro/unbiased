@@ -26,18 +26,17 @@ public class PawUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 
-        /*final User user = us.findByUsername(username).orElseThrow(()->new UsernameNotFoundException("No user '" + username + "'"));
+        final User user = us.findByEmail(username).orElseThrow(()->new UsernameNotFoundException("No user '" + username + "'"));
 
         if (user == null) {
             throw new UsernameNotFoundException("No user by the name " + username);
         }
         final Collection<? extends GrantedAuthority> authorities = Arrays.asList(
-                new SimpleGrantedAuthority("ROLE_USER"),
-                new SimpleGrantedAuthority("ROLE_ADMIN")
+                //new SimpleGrantedAuthority("ROLE_USER")
+                //new SimpleGrantedAuthority("ROLE_ADMIN")
         );
 
-        return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);*/
-        return null;
+        return new org.springframework.security.core.userdetails.User(username, user.getPass(), authorities);
     }
 
 }

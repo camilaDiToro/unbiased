@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class News {
 
@@ -8,6 +11,7 @@ public class News {
     private final Long imageId;
     private final String body, title, subtitle;
     private final LocalDateTime creationDate;
+//    private final Collection<Category> categories;
 
 
     public News(NewsBuilder builder) {
@@ -18,6 +22,7 @@ public class News {
         this.title = builder.title;
         this.subtitle = builder.subtitle;
         this.creationDate = builder.creationDate;
+//        this.categories = builder.categories;
     }
 
     public long getNewsId() {
@@ -48,6 +53,8 @@ public class News {
         return creationDate;
     }
 
+//    public Collection<Category> getCategories() { return categories; }
+
     public boolean hasImage(){
         return imageId!=null ;
     }
@@ -58,6 +65,7 @@ public class News {
         private Long imageId;
         private final String body, title, subtitle;
         private LocalDateTime creationDate;
+        private final Collection<Category> categories;
 
         public NewsBuilder(long creatorId, String body, String title, String subtitle) {
             this.creatorId = creatorId;
@@ -65,6 +73,7 @@ public class News {
             this.title = title;
             this.subtitle = subtitle;
             this.creationDate = LocalDateTime.now();
+            this.categories = new ArrayList<>();
         }
 
         public NewsBuilder imageId(Long imageId){
@@ -79,6 +88,11 @@ public class News {
 
         public NewsBuilder newsId(long newsId){
             this.newsId = newsId;
+            return this;
+        }
+
+        public NewsBuilder addCategory(Category category){
+            this.categories.add(category);
             return this;
         }
 
@@ -121,6 +135,10 @@ public class News {
 
         public LocalDateTime getCreationDate() {
             return creationDate;
+        }
+
+        public Collection<Category> getCategories() {
+            return categories;
         }
     }
 }
