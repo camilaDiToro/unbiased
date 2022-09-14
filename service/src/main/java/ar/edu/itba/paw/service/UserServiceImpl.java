@@ -74,7 +74,22 @@ public class UserServiceImpl implements UserService {
         }
         userDao.verifyEmail(vt.getUserId());
         login(vt.getUserId());
-        return VerificationToken.Status.SUCCESFULLY_VERIFIED;
+        verificationTokenService.deleteEmailToken(vt.getUserId());
+        return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
+    }
+
+    @Override
+    public VerificationToken.Status resendEmailVerification(String email) {
+        Optional<User> mayBeUser = userDao.findByEmail(email);
+        if(!mayBeUser.isPresent())
+            return VerificationToken.Status.NOT_EXISTS;
+        User user = mayBeUser.get();
+        verificationTokenService.deleteEmailToken(user.getId());
+        final VerificationToken token = verificationTokenService.newToken(user.getId());
+        Locale locale = LocaleContextHolder.getLocale();
+        LocaleContextHolder.setLocale(locale, true);
+        emailService.sendVerificationEmail(user, token, locale);
+        return VerificationToken.Status.SUCCESSFULLY_RESENDED;
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/

@@ -11,5 +11,6 @@ public interface UserService {
     User create(User.UserBuilder userBuilder);
     User createIfNotExists(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
-    public VerificationToken.Status verifyUserEmail(String token);
+    VerificationToken.Status verifyUserEmail(String token);
+    VerificationToken.Status resendEmailVerification(String email);
 }
