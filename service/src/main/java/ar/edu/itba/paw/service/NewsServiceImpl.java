@@ -88,4 +88,5 @@ public class NewsServiceImpl implements NewsService{
         return Positivity.getPositivvity(getPositivityValue(newsId));
     }
 
+
 }

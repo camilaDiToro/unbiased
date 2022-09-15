@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserDao {
@@ -11,4 +12,7 @@ public interface UserDao {
     User createIfNotExists(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
     void verifyEmail(long id);
+
+    List<User> getTopCreators(int qty);
+
 }

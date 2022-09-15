@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -82,5 +83,10 @@ public class UserServiceImpl implements UserService {
         final User user = getUserById(userId).get();
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    @Override
+    public List<User> getTopCreators(int qty) {
+        return userDao.getTopCreators(qty);
     }
 }

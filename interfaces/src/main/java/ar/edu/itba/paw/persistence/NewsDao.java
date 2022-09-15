@@ -25,4 +25,5 @@ public interface NewsDao {
     void setRating(Long newsId, Long userId, Rating rating);
 
     double getPositivityValue(Long newsId);
+
 }

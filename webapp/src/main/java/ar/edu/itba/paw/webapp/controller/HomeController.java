@@ -113,6 +113,7 @@ public class HomeController {
         mav.addObject("positivityMap", positivityMap);
 
 
+
         mav.addObject("news", news);
         mav.addObject("user", user.orElse(null));
 
@@ -121,13 +122,13 @@ public class HomeController {
 
         User userMessi = new User.UserBuilder("messi@messi.com").username("Leo Messi").userId(1).build();
 
-        List<User> topCreators = new ArrayList<>();
+//        List<User> topCreators = new ArrayList<>();
 
-        for (int i=0 ; i<5 ; i++) {
-            topCreators.add(userMessi);
-        }
+//        for (int i=0 ; i<5 ; i++) {
+//            topCreators.add(userMessi);
+//        }
 
-        mav.addObject("topCreators", topCreators);
+        mav.addObject("topCreators", us.getTopCreators(5));
 
 
 

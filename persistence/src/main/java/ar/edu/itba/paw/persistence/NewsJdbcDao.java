@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -20,7 +21,7 @@ public class NewsJdbcDao implements NewsDao{
 
     private final CategoryDao categoryDao;
 
-    private static final double PAGE_SIZE = 9.0;
+    private static final double PAGE_SIZE = 10.0;
 
     private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
             new News.NewsBuilder(   rs.getLong("creator"),
@@ -156,6 +157,8 @@ public class NewsJdbcDao implements NewsDao{
         ratingData.put("news_id",newsId);
         ratingData.put("user_id", userId);
         ratingData.put("upvote",rating.equals(Rating.UPVOTE));
+        ratingData.put("interaction_date", LocalDateTime.now());
+
 
         jdbcUpvoteInsert.execute(ratingData);
 
@@ -170,6 +173,8 @@ public class NewsJdbcDao implements NewsDao{
 
        return interactions == 0 ? 1 : upvotes / interactions;
     }
+
+
 
 
 }

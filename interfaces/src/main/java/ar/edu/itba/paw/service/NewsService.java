@@ -27,4 +27,5 @@ public interface NewsService {
     double getPositivityValue(Long newsId);
 
     Positivity getPositivityBracket(Long newsId);
+
 }

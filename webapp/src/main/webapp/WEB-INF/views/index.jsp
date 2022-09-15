@@ -189,7 +189,7 @@
 
                 </div>
             <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start">
-                <h3 class="card-title">Top creators</h3>
+                <h3 class="card-title">Creators of the day</h3>
 
                 <c:forEach var="creator" items="${topCreators}">
                     <a class="m-1" href="<c:url value="/profile/${creator.id}"/>">
@@ -198,7 +198,7 @@
     <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
 
 </div>
-                                <div class="card-body">${creator.username != null ? creator.username : creator.email}</div>
+                                <div class="mx-2 text-ellipsis-1"><c:out value="${creator.username != null ? creator.username : creator.email}"/></div>
                             </div>
                     </a>
                 </c:forEach>
@@ -206,7 +206,7 @@
             </div>
         </div>
     </div>
-    <c:if test="${not empty newsMap}">
+    <c:if test="${not empty news}">
         <nav class="d-flex justify-content-center align-items-center">
             <ul class="pagination">
 
