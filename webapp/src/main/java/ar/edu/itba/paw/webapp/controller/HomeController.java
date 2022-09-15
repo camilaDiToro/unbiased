@@ -89,7 +89,7 @@ public class HomeController {
         Map<Long, Integer> upvotesMap = new HashMap<>();
         Map<Long, Rating> ratingMap = new HashMap<>();
         Map<Long, String> creatorMap = new HashMap<>();
-        Map<Long, Double> positivityMap = new HashMap<>();
+        Map<Long, Positivity> positivityMap = new HashMap<>();
 
         Optional<User> user = ss.getCurrentUser();
 
@@ -103,7 +103,7 @@ public class HomeController {
             if (name == null)
                 name = u.getEmail();
             creatorMap.put(newsId,name);
-            positivityMap.put(newsId, ns.getPositivityValue(newsId));
+            positivityMap.put(newsId, ns.getPositivityBracket(newsId));
         }
 
         mav.addObject("readTimeMap", readTimeMap);

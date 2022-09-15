@@ -83,4 +83,9 @@ public class NewsServiceImpl implements NewsService{
         return newsDao.getPositivityValue(newsId);
     }
 
+    @Override
+    public Positivity getPositivityBracket(Long newsId) {
+        return Positivity.getPositivvity(getPositivityValue(newsId));
+    }
+
 }

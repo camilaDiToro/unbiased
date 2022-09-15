@@ -86,6 +86,7 @@ public class News {
         private LocalDateTime creationDate;
         private final Collection<Category> categories;
 
+
         public NewsBuilder(long creatorId, String body, String title, String subtitle) {
             this.creatorId = creatorId;
             this.body = body;

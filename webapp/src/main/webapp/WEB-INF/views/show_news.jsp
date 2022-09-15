@@ -34,8 +34,8 @@
         <div class="d-flex align-items-center justify-content-between">
             <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
 
-            <div class="progress w-25" data-toggle="tooltip" data-placement="top" title="Overall positive ratings">
-                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress w-25" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">
+                <div class="progress-bar progress-bar-striped bg-success <c:out value="${positivity}"/>" role="progressbar" style="width: ${positivityBarValue}%"  aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
         <p class="text-sm-left text-secondary"><c:out value="${date}"/>&nbsp · &nbsp<c:out value="${timeToRead}"/> min read</p>

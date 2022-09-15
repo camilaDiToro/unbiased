@@ -148,7 +148,6 @@
 }
 
 .quality-indicator {
-    background-color: #0f7864;
     border-radius: 50%;
     height: 20px;
     width: 20px;
@@ -163,6 +162,18 @@
 
 .w-fit {
     width: fit-content;
+}
+
+.negative {
+    background-color: #d62c1a;
+}
+
+.positive {
+    background-color: #0f7864;
+}
+
+.controversial {
+    background-color: yellow;
 }
 @media(min-width: 1200px) {
     .w-xl-25 {

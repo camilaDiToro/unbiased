@@ -170,4 +170,6 @@ public class NewsJdbcDao implements NewsDao{
 
        return interactions == 0 ? 1 : upvotes / interactions;
     }
+
+
 }

@@ -83,7 +83,7 @@
                         <div class="row row-cols-1 row-cols-md-2">
                             <c:set var="maxLength" value="${100}"/>
                             <c:forEach var="article" items="${news}">
-
+                            <c:set var="newsId" value="${article.newsId}"/>
 
 
                                 <div class="col mb-4">
@@ -94,10 +94,10 @@
                                         <div class="d-flex flex-column justify-content-between w-60">
                                             <div class="d-flex w-100">
                                                 <div class="w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
-                                                    <c:set var="rating" value="${ratingMap.get(article.newsId)}"/>
+                                                    <c:set var="rating" value="${ratingMap.get(newsId)}"/>
 
                                                         <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
-                                                    <div id="rating" class="${rating.toString()}"><c:out value="${upvotesMap.get(article.newsId)}"/></div>
+                                                    <div id="rating" class="${rating.toString()}"><c:out value="${upvotesMap.get(newsId)}"/></div>
                                                     <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
                                                 </div>
@@ -105,7 +105,7 @@
                                                     <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>
                                                     <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis"><c:out value="${article.subtitle}"/></h6>
-                                                    <p class="text-sm-left text-secondary mb-0"><c:out value="${readTimeMap.get(article.newsId)}"/> min read</p>
+                                                    <p class="text-sm-left text-secondary mb-0"><c:out value="${readTimeMap.get(newsId)}"/> min read</p>
                                                         <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
                                                 </div>
@@ -116,7 +116,7 @@
                                                         <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
                                                     </div>
                                                     <a href="<c:url value="/profile/${article.creatorId}"/>">
-                                                        <div class="text-secondary card-name-text text-ellipsis-1">${creatorMap.get(article.newsId)}</div>
+                                                        <div class="text-secondary card-name-text text-ellipsis-1">${creatorMap.get(newsId)}</div>
 
                                                     </a>
                                                 </div>
@@ -165,7 +165,8 @@
                                             </div>
                                         </div>
                                         <div class="bg-secondary position-relative w-40">
-                                            <div class="quality-indicator" data-toggle="tooltip" data-placement="top" title="Overall positive ratings">
+                                            <c:set var="positivity" value="${positivityMap.get(newsId)}"/>
+                                            <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">
                                             </div>
                                             <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
 

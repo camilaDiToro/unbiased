@@ -90,6 +90,9 @@ public class NewsController {
         mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
         mav.addObject("timeToRead", TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(news.getBody())));
+        mav.addObject("positivityBarValue", newsService.getPositivityValue(news.getNewsId())*100);
+        mav.addObject("positivity", newsService.getPositivityBracket(news.getNewsId()));
+
         return mav;
     }
 
