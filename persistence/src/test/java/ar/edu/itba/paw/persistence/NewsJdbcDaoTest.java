@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.News;
+import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.model.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,7 @@ public class NewsJdbcDaoTest {
     private UserJdbcDao userDao;
     @Autowired
     private DataSource ds;
+    private CategoryDao categoryDao;
     protected JdbcTemplate jdbcTemplate;
 
 
@@ -53,15 +55,14 @@ public class NewsJdbcDaoTest {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
         User user = userDao.createIfNotExists(usBuilder);
         return user;
-        //return new User.UserBuilder(EMAIL).build();
     }
-
 
     @Before
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(ds);
-        newsDao = new NewsJdbcDao(ds);
+        newsDao = new NewsJdbcDao(ds, categoryDao);
         userDao = new UserJdbcDao(ds);
+        categoryDao = new CategoryJdbcDao(ds);
         //insertNews(CREATOR_ID, IMAGEN_ID, BODY, TITTLE, SUBTITTLE, CREATE_TIME);
     }
 
@@ -90,11 +91,11 @@ public class NewsJdbcDaoTest {
 
         // 2. ejercitacion
         User user = getMockUser();
-        //Optional<User> mayBeUser = userDao.getUserById(user.getId());
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
 
         Optional<News> optionalNews = newsDao.getById(news.getNewsId());
+        assertNotNull(optionalNews);
         if (optionalNews.isPresent())
             assertEquals(news.getNewsId(), optionalNews.get().getNewsId());
     }
@@ -106,7 +107,7 @@ public class NewsJdbcDaoTest {
     }
 
     @Test
-    public void testGetNewsExists(){
+    public void testGetNewsInCategoryNew(){
         // 1. precondiciones
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
@@ -114,13 +115,17 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
+        assertNotNull(news);
 
-        List<News> newsList = newsDao.getNews(PAGE_SIZE);
+        List<News> newsList = newsDao.getNews(PAGE_SIZE, NewsOrder.NEW);
 
         // 3. validaciones
         assertEquals(PAGE_SIZE, newsList.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+
     }
+
+
 
     @Test
     public void testGetTotalPageNews(){
@@ -139,6 +144,4 @@ public class NewsJdbcDaoTest {
     @Test
     public void testSearchNews(){}
 
-    @Test
-    public void testSearchByCategory(){}
 }

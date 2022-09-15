@@ -14,11 +14,6 @@ CREATE TABLE IF NOT EXISTS users(
     FOREIGN KEY (image_id) REFERENCES image (image_id) ON DELETE SET NULL
     );
 
-CREATE TABLE IF NOT EXISTS category(
-                                       category_id    SERIAL         PRIMARY KEY,
-                                       description    VARCHAR(50)    UNIQUE NOT NULL
-    );
-
 CREATE TABLE IF NOT EXISTS news (
     news_id           SERIAL          PRIMARY KEY,
     body              TEXT            NOT NULL,
@@ -26,6 +21,7 @@ CREATE TABLE IF NOT EXISTS news (
     subtitle          VARCHAR(200)    NOT NULL,
     creator           INTEGER         NOT NULL,
     creation_date     TIMESTAMP       NOT NULL,
+    accesses          INTEGER         NOT NULL DEFAULT 0,
     image_id          INTEGER         ,
 
     FOREIGN KEY (creator) REFERENCES users(user_id) ON DELETE NO ACTION
@@ -36,6 +32,13 @@ CREATE TABLE IF NOT EXISTS news_category(
                                             news_id         INTEGER      NOT NULL,
 
                                             PRIMARY KEY (category_id, news_id),
-    FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE
+    );
+
+CREATE TABLE IF NOT EXISTS email_verification_token (
+                                                        token_id SERIAL PRIMARY KEY,
+                                                        user_id INT NOT NULL,
+                                                        token TEXT NOT NULL,
+                                                        expiration_date TIMESTAMP NOT NULL,
+                                                        FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     );

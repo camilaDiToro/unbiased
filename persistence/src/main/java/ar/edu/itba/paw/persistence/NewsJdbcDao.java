@@ -32,7 +32,7 @@ public class NewsJdbcDao implements NewsDao{
                                     rs.getString("subtitle"))
                                     .newsId(rs.getLong("news_id"))
                                     .imageId(rs.getObject("image_id") == null ? null : rs.getLong("image_id"))
-                                    .creationDate(rs.getObject("creation_date", LocalDateTime.class))
+                                    .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
                                     .build();
 
     private static final RowMapper<Category> CATEGORIES_ROW_MAPPER = (rs, rowNum) ->
