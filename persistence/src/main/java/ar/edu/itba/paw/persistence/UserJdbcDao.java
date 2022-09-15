@@ -74,7 +74,7 @@ public class UserJdbcDao implements UserDao {
     @Override
     public List<User> getTopCreators(int qty) {
         return jdbcTemplate.query("WITH interactions AS (SELECT creator AS user_id, count(*) AS interaction_count FROM upvotes JOIN news ON upvotes.news_id = news.news_id " +
-                "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator ORDER BY count(*) ASC LIMIT ?) SELECT * FROM interactions NATURAL JOIN users", new Object[]{qty},ROW_MAPPER);
+                "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator ORDER BY count(*) DESC LIMIT ?) SELECT * FROM interactions NATURAL JOIN users", new Object[]{qty},ROW_MAPPER);
 
     }
 }

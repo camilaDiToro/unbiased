@@ -145,7 +145,7 @@ public class NewsController {
             newsBuilder.addCategory(Category.getByInterCode(category));
         }
 
-        if(createNewsFrom.getImage()!=null){
+        if(!createNewsFrom.getImage().isEmpty()){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 

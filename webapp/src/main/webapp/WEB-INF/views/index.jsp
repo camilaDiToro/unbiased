@@ -165,14 +165,21 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="bg-secondary position-relative w-40">
-                                            <c:set var="positivity" value="${positivityMap.get(newsId)}"/>
-                                            <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">
+                                            <div class="bg-secondary position-relative w-40">
+                                                <c:set var="positivity" value="${positivityMap.get(newsId)}"/>
+                                                <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">
+                                                </div>
+                                                <c:if test="${article.hasImage()}">
+
+                                                <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
+                                                </c:if>
+
+                                                <c:if test="${!article.hasImage()}">
+
+                                                    <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">
+                                                </c:if>
+
                                             </div>
-                                            <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
-
-
-                                        </div>
 
 
 

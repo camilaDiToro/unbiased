@@ -30,7 +30,10 @@
             <h1 class="text-xl-center mx-auto max-w-75 text-ellipsis-1 m-3"><c:out value="${news.title}"/></h1>
         </div>
         <hr/>
-        <img src="<c:url value="/news/${news.imageId}/image"/>" class="w-50 m-4 rounded mx-auto d-block img-thumbnail"/>
+        <c:if test="${news.hasImage()}">
+            <img src="<c:url value="/news/${news.imageId}/image"/>" class="w-50 m-4 rounded mx-auto d-block img-thumbnail"/>
+
+        </c:if>
         <div class="d-flex align-items-center justify-content-between">
             <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
 

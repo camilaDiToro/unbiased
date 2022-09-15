@@ -59,23 +59,15 @@
             </div>
 
         </div>
-<%--        <div>--%>
-<%--            <form:label path="image">Imagen de la noticia</form:label>--%>
-<%--            <div class="form-group">--%>
-<%--                <form:input type="image" cssClass="form-control-file" id="FormControlFile" path="image"/>--%>
-<%--                <form:errors path="body" element="p" cssClass="invalid-feedback"/>--%>
 
-<%--            </div>--%>
-<%--        </div>--%>
-<%--        <div>--%>
-<%--            <form:label path="image">Imagen de la noticia</form:label>--%>
-<%--            <div class="input-group mb-3">--%>
-<%--                <div class="custom-file">--%>
-<%--                    <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>--%>
-<%--                    <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Choose file</form:label>--%>
-<%--                </div>--%>
-<%--            </div>--%>
-<%--        </div>--%>
+    <form:label path="image">Imagen de la noticia</form:label>
+    <div class="input-group mb-3">
+            <div class="custom-file">
+                <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Choose file</form:label>
+            </div>
+        </div>
+
 
 
 
@@ -88,33 +80,38 @@
             </div>
         </div>
 
-        <form:label path="image">
-            insertar imagen
-        </form:label>
-        <form:input type="file" path="image" accept="image/png, image/jpeg" />
-        <form:errors path="image" element="p" cssStyle="color:red"/>
-
-
-
-        <div class="dropdown" id="categories-dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <spring:message code="createArticle.category.choose"/>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <c:forEach var="category" items="${categories}">
-                    <div class="form-check">
-                        <form:checkbox path="categories" value="${category.interCode}" id="${category.interCode}"/>
-                        <label class="form-check-label" for="${category.interCode}">
-                            <spring:message code="${category.interCode}"/>
-                        </label>
-                    </div>
-                </c:forEach>
-            </div>
+    <div class="dropdown" id="categories-dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <spring:message code="createArticle.category.choose"/>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <c:forEach var="category" items="${categories}">
+                <div class="form-check">
+                    <form:checkbox path="categories" value="${category.interCode}" id="${category.interCode}"/>
+                    <label class="form-check-label" for="${category.interCode}">
+                        <spring:message code="${category.interCode}"/>
+                    </label>
+                </div>
+            </c:forEach>
         </div>
+    </div>
 
-        <div style="width: 100%; display: flex; justify-content: end">
-            <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
-        </div>
+    <div style="width: 100%; display: flex; justify-content: end">
+        <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
+    </div>
+
+</div>
+
+
+<%--        <form:label path="image">--%>
+<%--            insertar imagen--%>
+<%--        </form:label>--%>
+<%--        <form:input type="file" path="image" accept="image/png, image/jpeg" />--%>
+<%--        <form:errors path="image" element="p" cssStyle="color:red"/>--%>
+
+
+
+
     </form:form>
     <script>
         var simplemde = new SimpleMDE({ element: document.getElementById("body-text") });
