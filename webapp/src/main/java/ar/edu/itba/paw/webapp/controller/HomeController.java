@@ -114,6 +114,7 @@ public class HomeController {
 
 
         mav.addObject("news", news);
+        mav.addObject("user", user.orElse(null));
 
         mav.addObject("page", page);
         mav.addObject("totalPages", totalPages);

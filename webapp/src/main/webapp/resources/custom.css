@@ -55,6 +55,10 @@
     width: 50px; /*any size*/
     height: 50px; /*any size*/
 }
+.img-container-navbar {
+    width: 40px; /*any size*/
+    height: 40px; /*any size*/
+}
 .object-fit-cover {
     width: 100%;
     height: 100%;
@@ -63,6 +67,10 @@
 
 .gap-1 {
     gap: 5px;
+}
+
+.gap-2 {
+    gap: 10px;
 }
 
 .article-body img {
@@ -174,6 +182,12 @@
 
 .controversial {
     background-color: yellow;
+}
+
+.logo {
+    font-size: 60px;
+    font-weight: 400;
+    text-align: center;
 }
 @media(min-width: 1200px) {
     .w-xl-25 {

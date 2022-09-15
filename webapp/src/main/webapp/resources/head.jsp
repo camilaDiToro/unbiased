@@ -3,6 +3,10 @@
     <c:out value="unbiased - ${requestScope.pageTitle}"/></title>
   <link rel="icon" type="image/png" href="<c:url value="/resources/unbiased-logo-circle.png"/>">
   <link href="<c:url value="/resources/bootstrap.min.css"/>" rel="stylesheet">
+  <c:if test="${signInOrCreate}">
+    <link href="<c:url value="/resources/signin.css"/>" rel="stylesheet">
+
+  </c:if>
   <link href="<c:url value="/resources/custom.css"/>" rel="stylesheet">
 
   <%--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">--%>
