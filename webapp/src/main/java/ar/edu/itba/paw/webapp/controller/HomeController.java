@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.NewsOrder;
+import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.NewsService;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -42,6 +44,8 @@ public class HomeController {
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
         //Optional<User> mayBeUser = ss.getCurrentUser();
         //es.sendSimpleMessage("cditoro@itba.edu.ar", "First email", "holi");
+        List<String> l = us.getRoles(2);
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + l.get(0));
         return new ModelAndView("redirect:/TOP");
     }
 
