@@ -88,18 +88,30 @@ public class HomeController {
         Map<Long, Integer> readTimeMap = new HashMap<>();
         Map<Long, Integer> upvotesMap = new HashMap<>();
         Map<Long, Rating> ratingMap = new HashMap<>();
+        Map<Long, String> creatorMap = new HashMap<>();
+        Map<Long, Double> positivityMap = new HashMap<>();
 
         Optional<User> user = ss.getCurrentUser();
 
         for (News article : news) {
-            readTimeMap.put(article.getNewsId(), TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(article.getBody())));
-            upvotesMap.put(article.getNewsId(), ns.getUpvotes(article.getNewsId()));
-            ratingMap.put(article.getNewsId(), user.map(u -> ns.upvoteState(article, u)).orElse(Rating.NO_RATING));
+            long newsId = article.getNewsId();
+            readTimeMap.put(newsId, TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(article.getBody())));
+            upvotesMap.put(newsId, ns.getUpvotes(article.getNewsId()));
+            ratingMap.put(newsId, user.map(u -> ns.upvoteState(article, u)).orElse(Rating.NO_RATING));
+            User u = us.getUserById(article.getCreatorId()).get();
+            String name = u.getUsername();
+            if (name == null)
+                name = u.getEmail();
+            creatorMap.put(newsId,name);
+            positivityMap.put(newsId, ns.getPositivityValue(newsId));
         }
 
         mav.addObject("readTimeMap", readTimeMap);
         mav.addObject("upvotesMap", upvotesMap);
         mav.addObject("ratingMap", ratingMap);
+        mav.addObject("creatorMap", creatorMap);
+        mav.addObject("positivityMap", positivityMap);
+
 
         mav.addObject("news", news);
 

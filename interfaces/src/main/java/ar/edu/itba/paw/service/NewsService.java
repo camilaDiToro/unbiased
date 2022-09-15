@@ -23,4 +23,6 @@ public interface NewsService {
     Rating upvoteState(News news, User user);
 
     void setRating(Long newsId, Long userId, Rating rating);
+
+    double getPositivityValue(Long newsId);
 }

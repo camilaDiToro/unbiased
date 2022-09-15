@@ -39,6 +39,9 @@ public class NewsJdbcDao implements NewsDao{
 
     private final static RowMapper<Integer> UPVOTES_MAPPER = (rs, rowNum) -> rs.getInt("upvotes");
     private final static RowMapper<Boolean> RATING_MAPPER = (rs, rowNum) -> rs.getBoolean("upvote");
+    private final static RowMapper<Double> INTERACTIONS_MAPPER = (rs, rowNum) -> rs.getDouble("interactions");
+
+
 
 
     @Autowired
@@ -156,5 +159,15 @@ public class NewsJdbcDao implements NewsDao{
 
         jdbcUpvoteInsert.execute(ratingData);
 
+    }
+
+    @Override
+    public double getPositivityValue(Long newsId) {
+       int upvotes = jdbcTemplate.query("(SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes FROM upvotes WHERE news_id = ?)",
+               new Object[]{newsId}, UPVOTES_MAPPER).stream().findFirst().get();
+       double interactions = jdbcTemplate.query("(SELECT count(*) AS interactions FROM upvotes WHERE news_id = ?)",
+               new Object[]{newsId}, INTERACTIONS_MAPPER).stream().findFirst().get();
+
+       return interactions == 0 ? 1 : upvotes / interactions;
     }
 }

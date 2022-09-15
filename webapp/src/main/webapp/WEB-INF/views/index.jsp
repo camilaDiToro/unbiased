@@ -116,7 +116,7 @@
                                                         <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
                                                     </div>
                                                     <a href="<c:url value="/profile/${article.creatorId}"/>">
-                                                        <div class="text-secondary card-name-text text-ellipsis-1">Nombre Apellido</div>
+                                                        <div class="text-secondary card-name-text text-ellipsis-1">${creatorMap.get(article.newsId)}</div>
 
                                                     </a>
                                                 </div>
@@ -167,7 +167,7 @@
                                         <div class="bg-secondary position-relative w-40">
                                             <div class="quality-indicator" data-toggle="tooltip" data-placement="top" title="Overall positive ratings">
                                             </div>
-                                            <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">
+                                            <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
 
 
                                         </div>

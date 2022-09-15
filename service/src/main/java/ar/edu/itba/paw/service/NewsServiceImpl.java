@@ -78,5 +78,9 @@ public class NewsServiceImpl implements NewsService{
     public void setRating(Long newsId, Long userId, Rating rating) {
         newsDao.setRating(newsId, userId, rating);
     }
+    @Override
+    public double getPositivityValue(Long newsId) {
+        return newsDao.getPositivityValue(newsId);
+    }
 
 }

@@ -1,6 +1,5 @@
 * {
     word-break: break-all;
-white-space: normal;
 }
 
 .card-img-top {
@@ -26,12 +25,13 @@ white-space: normal;
 
 .article-body p {
     word-break: break-all; !important
-    white-space: normal; !important
+    white-space: pre-wrap; !important
     text-align: justify; !important
 }
 
 .article-body {
     width: 65%;
+    white-space: pre-wrap; !important
 }
 
 
