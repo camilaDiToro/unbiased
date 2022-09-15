@@ -3,7 +3,11 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
+<c:set var="pageTitle" scope="request" value="Login"/>
+<c:set var="signInOrCreate" scope="request" value="${false}"/>
+<%@include file="../../resources/head.jsp" %>
 <body>
+<%@include file="../../resources/navbar.jsp" %>
 <h2><spring:message code="views.profile.title" arguments="${user.email}" htmlEscape="true"/></h2>
 <h4><spring:message code="views.profile.desc" arguments="${user.id}" htmlEscape="true"/></h4>
 

@@ -23,9 +23,9 @@
                                                         <div class="img-container-navbar">
                                                             <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
                                                         </div>
-                                                        <a href="<c:url value="/profile/${user.id}"/>">
+
                                                             <b class="text-white"><c:out value="${user.username != null ? user.username : user.email}"/></b>
-                                                        </a>
+
 <%--                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">--%>
 <%--                                                            <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">--%>
 <%--                                                                <a class="dropdown-item" href="<c:url value="/logout"/>">Logout</a>--%>
@@ -35,6 +35,7 @@
                                                     </div>
                     </button>
                     <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="<c:url value="/profile/${user.id}"/>">My Profile</a>
                         <a class="dropdown-item" href="<c:url value="/logout"/>">Logout</a>
                     </div>
                 </div>
