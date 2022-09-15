@@ -2,9 +2,8 @@ package ar.edu.itba.paw.model;
 
 public enum Role {
 
-    REGISTERED("REGISTERED"),
-    UNREGISTERED("UNREGISTERED"),
-    UNABLE("UNABLE");
+    JOURNALIST("JOURNALIST"),
+    MODERATOR("MODERATOR");
 
     private final String role;
 

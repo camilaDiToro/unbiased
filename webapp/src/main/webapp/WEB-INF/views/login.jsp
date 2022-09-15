@@ -22,6 +22,9 @@
     <div>
         <input type="submit" value="Login!"/>
     </div>
+    <c:if test="${param.error}">
+        No se pudo iniciar sesion. El mail ingresado o la contraseña no son correctas, o bien la cuenta no fue verificada
+    </c:if>
 </form>
 </body>
 </html>

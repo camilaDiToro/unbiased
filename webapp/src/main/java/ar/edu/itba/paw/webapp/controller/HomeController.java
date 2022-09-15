@@ -42,10 +42,6 @@ public class HomeController {
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        //Optional<User> mayBeUser = ss.getCurrentUser();
-        //es.sendSimpleMessage("cditoro@itba.edu.ar", "First email", "holi");
-        List<String> l = us.getRoles(2);
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + l.get(0));
         return new ModelAndView("redirect:/TOP");
     }
 
@@ -110,42 +106,6 @@ public class HomeController {
         return mav;
     }
 
-    @RequestMapping("/login")
-    public ModelAndView login() {
-        return new ModelAndView("login");
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public ModelAndView createForm(@ModelAttribute("registerForm") final UserForm userForm){
-        final ModelAndView mav = new ModelAndView("register");
-        return mav;
-    }
-
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ModelAndView create(@Valid @ModelAttribute("registerForm") final UserForm userForm, final BindingResult errors){
-        if(errors.hasErrors()){
-            return createForm(userForm);
-        }
-        User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
-        final User user = us.create(userBuilder);
-        return new ModelAndView("redirect:/profile/"+user.getId());
-    }
-
-    @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView profile(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm){
-        final ModelAndView mav = new ModelAndView("profile");
-        mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
-        return mav;
-    }
-
-    @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
-    public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
-        if(errors.hasErrors()){
-            return profile(userId, userProfileForm);
-        }
-        return new ModelAndView("redirect:/profile/"+userId);
-    }
-
     @RequestMapping("/chau")
     public ModelAndView goodbyeWorld(final long userId){
         final ModelAndView mav = new ModelAndView("byebye");
@@ -153,16 +113,4 @@ public class HomeController {
         return mav;
     }
 
-
-    @RequestMapping("/verify_email")
-    public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
-        us.verifyUserEmail(token);
-        return new ModelAndView("email_verified");
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ModelAndView userNotFound()    {
-        return new ModelAndView("errors/userNotFound");
-    }
 }
