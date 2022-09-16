@@ -106,7 +106,7 @@
                                                     <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>
                                                     <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis"><c:out value="${article.subtitle}"/></h6>
-                                                    <p class="text-sm-left text-secondary mb-0"><c:out value="${readTimeMap.get(newsId)}"/> min read</p>
+                                                    <p class="text-sm-left text-secondary mb-0"><c:out value="${readTimeMap.get(newsId)}"/> <spring:message code="home.read"/></p>
                                                         <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
                                                 </div>
@@ -196,7 +196,7 @@
 
                 </div>
             <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start">
-                <h3 class="card-title">Creators of the day</h3>
+                <h3 class="card-title"><spring:message code="home.topCreators"/></h3>
 
                 <c:forEach var="creator" items="${topCreators}">
                     <a class="m-1" href="<c:url value="/profile/${creator.id}"/>">
