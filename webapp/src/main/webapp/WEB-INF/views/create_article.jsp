@@ -11,7 +11,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
-<c:set var="pageTitle" scope="request" value="Create"/>
+<c:set var="pageTitle" scope="request" value="Create article"/>
 <%@include file="../../resources/head.jsp" %>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
@@ -27,7 +27,6 @@
     <form:form modelAttribute="createNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
 
         <div>
-
             <form:label path="title"><spring:message code="createArticle.title"/></form:label>
             <div class="form-group">
                 <div class="input-group mb-3">
@@ -58,13 +57,19 @@
                 <form:textarea id="body-text" type="text" path="body" cssClass="form-control ${validate && errors != null && errors.getFieldErrorCount('body') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
                 <form:errors path="body" element="p" cssClass="invalid-feedback"/>
             </div>
-<%--            <div class="form-group">--%>
-<%--                <div class="input-group">--%>
-<%--                    --%>
 
-<%--                </div>--%>
-<%--            </div>--%>
         </div>
+
+    <form:label path="image">Imagen de la noticia</form:label>
+    <div class="input-group mb-3">
+            <div class="custom-file">
+                <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Choose file</form:label>
+            </div>
+        </div>
+
+
+
 
         <div>
             <form:label path="creatorEmail"><spring:message code="createArticle.email"/></form:label>
@@ -72,39 +77,44 @@
                 <spring:message code="createArticle.email.placeholder"  var="emailPlaceholder" />
                 <form:input placeholder="${emailPlaceholder}" type="email" cssClass="form-control ${errors != null && errors.getFieldErrorCount('creatorEmail') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}" path="creatorEmail"/>
                 <form:errors path="creatorEmail" element="p" cssClass="invalid-feedback"/>
-
             </div>
         </div>
 
-
-
-        <%--<div class="form-group">
-            <label for="FormControlFile">Imagen de la noticia</label>
-            <input type="file" class="form-control-file" id="FormControlFile">
-        </div>--%>
-
-        <div class="dropdown" id="categories-dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <spring:message code="createArticle.category.choose"/>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <c:forEach var="category" items="${categories}">
-                    <div class="form-check">
-                        <form:checkbox path="categories" value="${category.interCode}" id="${category.interCode}"/>
-                        <label class="form-check-label" for="${category.interCode}">
-                            <spring:message code="${category.interCode}"/>
-                        </label>
-                    </div>
-                </c:forEach>
-            </div>
+    <div class="dropdown" id="categories-dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <spring:message code="createArticle.category.choose"/>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <c:forEach var="category" items="${categories}">
+                <div class="form-check">
+                    <form:checkbox path="categories" value="${category.interCode}" id="${category.interCode}"/>
+                    <label class="form-check-label" for="${category.interCode}">
+                        <spring:message code="${category.interCode}"/>
+                    </label>
+                </div>
+            </c:forEach>
         </div>
+    </div>
 
-        <div style="width: 100%; display: flex; justify-content: end">
-            <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
-        </div>
+    <div style="width: 100%; display: flex; justify-content: end">
+        <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
+    </div>
+
+</div>
+
+
+<%--        <form:label path="image">--%>
+<%--            insertar imagen--%>
+<%--        </form:label>--%>
+<%--        <form:input type="file" path="image" accept="image/png, image/jpeg" />--%>
+<%--        <form:errors path="image" element="p" cssStyle="color:red"/>--%>
+
+
+
+
     </form:form>
     <script>
-        var simplemde = new SimpleMDE({ element: document.getElementById("body-text") });
+        var simplemde = new SimpleMDE({ element: document.getElementById("body-text") , spellChecker: false});
     </script>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

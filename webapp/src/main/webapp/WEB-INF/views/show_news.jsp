@@ -3,10 +3,12 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<c:set var="pageTitle" scope="request" value="${news.title}"/>
-<%@include file="../../resources/head.jsp" %>
+<script src="<c:url value="/resources/upvote-script.js"/>"></script>
+
 <link href="<c:url value="/resources/custom.css"/>" rel="stylesheet">
 <body>
+<c:set var="user" scope="request" value="${loggedUser}"/>
+
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
     <a href="../TOP">
@@ -40,6 +42,13 @@
                     <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
                 </p>
             </c:forEach>
+        </div>
+
+        <div class="w-50 d-flex flex-wrap align-items-center gap-1">
+            <div class="text-sm-left font-weight-bold">
+                Tags:
+            </div>
+            <span class="badge badge-pill badge-primary">Messi</span>
         </div>
 
 <%--        <p class="article-body"><c:out value="${news.body}"/></p>--%>

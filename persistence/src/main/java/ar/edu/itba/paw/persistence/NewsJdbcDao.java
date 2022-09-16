@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.NewsOrder;
+import ar.edu.itba.paw.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,6 +8,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -18,9 +17,11 @@ public class NewsJdbcDao implements NewsDao{
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcUpvoteInsert;
+
     private final CategoryDao categoryDao;
 
-    private static final int PAGE_SIZE = 9;
+    private static final double PAGE_SIZE = 10.0;
 
     private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
             new News.NewsBuilder(   rs.getLong("creator"),
@@ -37,10 +38,19 @@ public class NewsJdbcDao implements NewsDao{
 
     private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("newsCount");
 
+    private final static RowMapper<Integer> UPVOTES_MAPPER = (rs, rowNum) -> rs.getInt("upvotes");
+    private final static RowMapper<Boolean> RATING_MAPPER = (rs, rowNum) -> rs.getBoolean("upvote");
+    private final static RowMapper<Double> INTERACTIONS_MAPPER = (rs, rowNum) -> rs.getDouble("interactions");
+
+
+
+
     @Autowired
     public NewsJdbcDao(final DataSource dataSource, final CategoryDao categoryDao){
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("news").usingGeneratedKeyColumns("news_id");
+        jdbcUpvoteInsert = new SimpleJdbcInsert(dataSource).withTableName("upvotes");
+
         this.categoryDao = categoryDao;
     }
 
@@ -73,7 +83,8 @@ public class NewsJdbcDao implements NewsDao{
     @Override
     public int getTotalPagesAllNews() {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news" , ROW_COUNT_MAPPER).stream().findFirst().get();
-        return rowsCount/PAGE_SIZE + 1;
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
     }
 
     @Override
@@ -89,7 +100,8 @@ public class NewsJdbcDao implements NewsDao{
     public int getTotalPagesAllNews(String query) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?" ,
                 new Object[]{"%" + query.toLowerCase() + "%"},ROW_COUNT_MAPPER).stream().findFirst().get();
-        return rowsCount/PAGE_SIZE + 1;
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
     }
 
 
@@ -118,6 +130,51 @@ public class NewsJdbcDao implements NewsDao{
     public int getTotalPagesCategory(Category category) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?" ,
                 new Object[]{category.getId()},ROW_COUNT_MAPPER).stream().findFirst().get();
-        return rowsCount/PAGE_SIZE + 1;
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
     }
+
+@Override
+    public int getUpvotes(Long newsId) {
+        int upvotes = jdbcTemplate.query("SELECT sum(case when upvote=true then 1 else -1 end) AS upvotes FROM upvotes where news_id = ?",
+                new Object[]{newsId},UPVOTES_MAPPER).stream().findFirst().get();
+        return upvotes;
+    }
+    @Override
+    public Rating upvoteState(News news, User user) {
+        Optional<Boolean> rating = jdbcTemplate.query("SELECT upvote AS upvote FROM upvotes WHERE user_id = ? AND news_id = ?",
+                new Object[]{user.getId(), news.getNewsId()},RATING_MAPPER).stream().findFirst();
+        return rating.map(aBoolean -> aBoolean ? Rating.UPVOTE : Rating.DOWNVOTE).orElse(Rating.NO_RATING);
+    }
+    @Override
+    public void setRating(Long newsId, Long userId, Rating rating) {
+        jdbcTemplate.update("DELETE FROM upvotes WHERE user_id = ? AND news_id = ?",
+                new Object[]{userId, newsId});
+        if (rating.equals(Rating.NO_RATING))
+            return;
+
+        final Map<String,Object> ratingData = new HashMap<>();
+        ratingData.put("news_id",newsId);
+        ratingData.put("user_id", userId);
+        ratingData.put("upvote",rating.equals(Rating.UPVOTE));
+        ratingData.put("interaction_date", LocalDateTime.now());
+
+
+        jdbcUpvoteInsert.execute(ratingData);
+
+    }
+
+    @Override
+    public double getPositivityValue(Long newsId) {
+       int upvotes = jdbcTemplate.query("(SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes FROM upvotes WHERE news_id = ?)",
+               new Object[]{newsId}, UPVOTES_MAPPER).stream().findFirst().get();
+       double interactions = jdbcTemplate.query("(SELECT count(*) AS interactions FROM upvotes WHERE news_id = ?)",
+               new Object[]{newsId}, INTERACTIONS_MAPPER).stream().findFirst().get();
+
+       return interactions == 0 ? 1 : upvotes / interactions;
+    }
+
+
+
+
 }
