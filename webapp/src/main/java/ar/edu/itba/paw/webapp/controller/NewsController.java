@@ -86,6 +86,7 @@ public class NewsController {
         mav.addObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
                 .withLocale( locale)));
         mav.addObject("news", news);
+        mav.addObject("loggedUser", maybeUser.orElseGet(null));
         mav.addObject("upvotes", newsService.getUpvotes(news.getNewsId()));
         mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));

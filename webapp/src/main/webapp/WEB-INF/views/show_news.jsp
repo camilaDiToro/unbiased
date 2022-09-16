@@ -9,6 +9,7 @@
 
 <link href="<c:url value="/resources/custom.css"/>" rel="stylesheet">
 <body>
+<c:set var="user" scope="request" value="${loggedUser}"/>
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
     <a href="../TOP">

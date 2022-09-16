@@ -114,7 +114,7 @@
 
     </form:form>
     <script>
-        var simplemde = new SimpleMDE({ element: document.getElementById("body-text") });
+        var simplemde = new SimpleMDE({ element: document.getElementById("body-text") , spellChecker: false});
     </script>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
