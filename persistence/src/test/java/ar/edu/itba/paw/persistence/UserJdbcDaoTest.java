@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,12 +57,21 @@ public class UserJdbcDaoTest {
         // 3. validaciones
         assertNotNull(user);
         assertEquals(EMAIL, user.getEmail());
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
-    public void testGetUserByIdDoesntExist() {
+    public void testFindById(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
+        User us = userDao.create(usBuilder);
+        Optional<User> mayBeUser = userDao.getUserById(us.getId());
+
+        assertTrue(mayBeUser.isPresent());
+        assertEquals(mayBeUser.get().getId(), us.getId());
+    }
+
+    @Test
+    public void testFailFindByUserId() {
         // 1. clear database
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
@@ -73,13 +83,7 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void testFailFindById() {
-        final Optional<User> usr = userDao.getUserById(80);
-        assertFalse(usr.isPresent());
-    }
-
-    @Test
-    public void testGetUserByIdUserExists() {
+    public void testFindByEmail() {
         //precondicion
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
@@ -97,8 +101,21 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFailFindByEmail() {
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
+
         final Optional<User> usr = userDao.findByEmail(EMAIL);
+
         assertFalse(usr.isPresent());
     }
 
+    @Test
+    public void testTotalUsers(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
+
+        User us = userDao.create(usBuilder);
+        long users = userDao.getAll(1).size();
+
+        assertEquals(1, users);
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+    }
 }
