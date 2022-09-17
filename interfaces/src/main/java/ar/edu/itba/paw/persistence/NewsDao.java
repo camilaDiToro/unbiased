@@ -21,4 +21,5 @@ public interface NewsDao {
 
     List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns);
     int getTotalPagesNewsFromUser(int page, long userId, NewsOrder ns);
+    void deleteNews(long newsId);
 }

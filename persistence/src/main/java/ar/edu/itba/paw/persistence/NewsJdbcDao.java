@@ -131,6 +131,11 @@ public class NewsJdbcDao implements NewsDao{
     }
 
     @Override
+    public void deleteNews(long newsId) {
+        jdbcTemplate.update("DELETE FROM news WHERE news_id = ?",newsId);
+    }
+
+    @Override
     public int getTotalPagesCategory(Category category) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?" ,
                 new Object[]{category.getId()},ROW_COUNT_MAPPER).stream().findFirst().get();

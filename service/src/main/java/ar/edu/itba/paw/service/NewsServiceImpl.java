@@ -4,13 +4,12 @@ import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.xml.ws.http.HTTPException;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,10 +17,12 @@ import java.util.Optional;
 public class NewsServiceImpl implements NewsService{
 
     private final NewsDao newsDao;
+    private final SecurityService securityService;
 
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao) {
+    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService) {
         this.newsDao = newsDao;
+        this.securityService = securityService;
     }
 
     @Override
@@ -68,5 +69,13 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public List<Category> getNewsCategory(News news) {
         return newsDao.getNewsCategory(news);
+    }
+
+    @Override
+    public void deleteNews(long newsId) {
+        News news = newsDao.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(() -> new HTTPException(400)).getId())
+            throw new HTTPException(400);
+        newsDao.deleteNews(newsId);
     }
 }

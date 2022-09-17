@@ -14,4 +14,5 @@ public interface NewsService {
     Page<News> getNews(int page, String category, String newsOrder, String query);
     Page<News> getNewsFromUser(int page, String newsOrder, long userId);
     List<Category> getNewsCategory(News news);
+    void deleteNews(long newsId);
 }
