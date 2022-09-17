@@ -17,6 +17,13 @@ public class ErrorController {
         return mav;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @RequestMapping(value = "/400/invalid_category")
+    public ModelAndView error400InvalidCategory() {
+        ModelAndView mav = new ModelAndView("errors/invalid_category");
+        return mav;
+    }
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @RequestMapping(value = "/401")
     public ModelAndView error401() {

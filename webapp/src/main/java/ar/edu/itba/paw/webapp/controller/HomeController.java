@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.NewsOrder;
 import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
@@ -59,6 +60,7 @@ public class HomeController {
             @RequestParam(name = "query", defaultValue = "") final String query,
             @RequestParam(name = "category", defaultValue = "ALL") final String category){
         final ModelAndView mav = new ModelAndView("index");
+
 
         mav.addObject("orders", NewsOrder.values());
         mav.addObject("orderBy", orderBy);
