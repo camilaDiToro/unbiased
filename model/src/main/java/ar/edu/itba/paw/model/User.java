@@ -2,7 +2,8 @@ package ar.edu.itba.paw.model;
 
 public class User {
 
-    private final long userId, imageId;
+    private final long userId;
+    private final Long imageId;
     private final String email, username, pass;
     private final UserStatus status;
 
@@ -15,11 +16,16 @@ public class User {
         this.status = userBuilder.status;
     }
 
+    @Override
+    public String toString() {
+        return username != null ? username : email;
+    }
+
     public long getId() {
         return userId;
     }
 
-    public long getImageId() {
+    public Long getImageId() {
         return imageId;
     }
 
@@ -40,7 +46,8 @@ public class User {
     }
 
     public static class UserBuilder{
-        private long userId, imageId;
+        private long userId;
+        private Long imageId;
         private final String email;
         private String username, pass;
         private UserStatus status;
@@ -58,7 +65,7 @@ public class User {
             return this;
         }
 
-        public UserBuilder imageId(long imageId){
+        public UserBuilder imageId(Long imageId){
             this.imageId = imageId;
             return this;
         }
@@ -74,6 +81,11 @@ public class User {
             return this;
         }
 
+        public UserBuilder status(String status){
+            this.status = UserStatus.valueOf(status);
+            return this;
+        }
+
         public User build(){
             return new User(this);
         }
@@ -82,7 +94,7 @@ public class User {
             return userId;
         }
 
-        public long getImageId() {
+        public Long getImageId() {
             return imageId;
         }
 

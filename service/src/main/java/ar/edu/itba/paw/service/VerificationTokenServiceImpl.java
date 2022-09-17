@@ -24,10 +24,16 @@ public class VerificationTokenServiceImpl implements VerificationTokenService{
     @Override
     public VerificationToken newToken(long userId) {
         final String token = UUID.randomUUID().toString();
-        return verificationTokenDao.create(userId, token, LocalDateTime.now().plusDays(TOKEN_DURATION));
+        return verificationTokenDao.createEmailToken(userId, token, LocalDateTime.now().plusDays(TOKEN_DURATION));
     }
 
+    @Override
     public Optional<VerificationToken> getToken(String token) {
-        return verificationTokenDao.getToken(token);
+        return verificationTokenDao.getEmailToken(token);
+    }
+
+    @Override
+    public void deleteEmailToken(long userId) {
+        verificationTokenDao.deleteEmailToken(userId);
     }
 }

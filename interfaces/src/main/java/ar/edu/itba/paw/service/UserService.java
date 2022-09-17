@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.VerificationToken;
 
@@ -12,8 +13,11 @@ public interface UserService {
     User create(User.UserBuilder userBuilder);
     User createIfNotExists(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
-    public VerificationToken.Status verifyUserEmail(String token);
 
     List<User> getTopCreators(int qty);
 
+    VerificationToken.Status verifyUserEmail(String token);
+    VerificationToken.Status resendEmailVerification(String email);
+    void addRole(long userId, Role role);
+    List<String> getRoles(long userId);
 }

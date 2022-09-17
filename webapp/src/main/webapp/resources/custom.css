@@ -50,6 +50,7 @@
 .img-container {
     width: 50px; /*any size*/
     height: 50px; /*any size*/
+    min-width: 50px;
 }
 .img-container-article {
     width: 50px; /*any size*/

@@ -26,4 +26,12 @@ public interface NewsDao {
 
     double getPositivityValue(Long newsId);
 
+    List<News> getSavedNews(int page, User user, NewsOrder ns);
+
+    void saveNews(News news, User user);
+
+    boolean isSaved(News news, User user);
+
+    void removeSaved(News news, User user);
+
 }

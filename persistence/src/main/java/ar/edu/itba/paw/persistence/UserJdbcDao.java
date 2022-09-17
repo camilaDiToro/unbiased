@@ -20,7 +20,7 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id")).build();
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id")).status(rs.getString("status")).build();
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {
@@ -42,6 +42,8 @@ public class UserJdbcDao implements UserDao {
         userData.put("email", userBuilder.getEmail());
         userData.put("status", userBuilder.getStatus().getStatus());
         userData.put("pass", userBuilder.getPass());
+        userData.put("image_id",userBuilder.getImageId());
+        userData.put("username",userBuilder.getUsername());
 
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
         return userBuilder.userId(userId).build();
