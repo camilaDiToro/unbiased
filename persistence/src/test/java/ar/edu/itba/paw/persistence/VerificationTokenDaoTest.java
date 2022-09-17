@@ -60,7 +60,7 @@ public class VerificationTokenDaoTest {
         if (optionalUser.isPresent()) {
             VerificationToken token = verificationTokenDao.create(optionalUser.get().getId(), "token", date);
 
-            Assert.assertEquals(optionalUser.get(), token.getUserId());
+            Assert.assertEquals(optionalUser.get().getId(), token.getUserId());
             Assert.assertEquals("token", token.getToken());
             Assert.assertEquals(LocalDateTime.now().plusDays(TOKEN_DURATION), token.getExpiryDate());
         }
