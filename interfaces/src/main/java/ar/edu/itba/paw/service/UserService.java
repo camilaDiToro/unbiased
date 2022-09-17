@@ -17,4 +17,5 @@ public interface UserService {
     VerificationToken.Status resendEmailVerification(String email);
     void addRole(long userId, Role role);
     List<String> getRoles(long userId);
+    void updateProfile(long userId, String username, Long imageId);
 }

@@ -11,4 +11,6 @@ public interface UserDao {
     User createIfNotExists(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
     void verifyEmail(long id);
+    void updateUsername(long userId, String username);
+    void updateImage(long userId, Long imageId);
 }

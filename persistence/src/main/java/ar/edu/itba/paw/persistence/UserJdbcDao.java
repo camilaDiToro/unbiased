@@ -69,7 +69,19 @@ public class UserJdbcDao implements UserDao {
         jdbcTemplate.update("UPDATE users SET status = 'REGISTERED' WHERE user_id = ?", id);
     }
 
+    @Override
+    public void updateUsername(long userId, String username) {
+        jdbcTemplate.update("UPDATE users SET username = ? WHERE user_id = ?", username, userId);
+    }
+
+    @Override
+    public void updateImage(long userId, Long imageId) {
+        jdbcTemplate.update("UPDATE users SET image_id = ? WHERE user_id = ?", imageId, userId);
+    }
+
     public List<User> getAll(int page){
         return jdbcTemplate.query("SELECT * FROM Users LIMIT 10 OFFSET ?", new Object[]{(page-1)*10},ROW_MAPPER);
     }
+
+
 }

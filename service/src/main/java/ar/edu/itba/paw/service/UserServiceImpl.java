@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.VerificationToken;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +104,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<String> getRoles(long userId) {
         return roleDao.getRoles(userId);
+    }
+
+    @Override
+    public void updateProfile(long userId, String username, Long imageId) {
+
+        userDao.updateImage(userId,imageId);
+        userDao.updateUsername(userId,username);
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/

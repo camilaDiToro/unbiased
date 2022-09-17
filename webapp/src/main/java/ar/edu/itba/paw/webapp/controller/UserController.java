@@ -1,12 +1,15 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
+import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +22,12 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
+    private final ImageService imageService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ImageService imageService) {
         this.userService = userService;
+        this.imageService = imageService;
     }
 
 
@@ -59,6 +64,11 @@ public class UserController {
         if (errors.hasErrors()) {
             return profile(userId, userProfileForm);
         }
+        Long imageId = null;
+        if(userProfileForm.getImage()!=null){
+            imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
+        }
+        userService.updateProfile(userId, userProfileForm.getUsername(), imageId);
         return new ModelAndView("redirect:/profile/" + userId);
     }
 
@@ -66,6 +76,13 @@ public class UserController {
     public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
         userService.verifyUserEmail(token);
         return new ModelAndView("email_verified");
+    }
+
+    @RequestMapping( value = "/profile/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
+            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    @ResponseBody
+    public byte[] profileImage(@PathVariable(value = "imageId") long imageId) {
+        return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
     }
 
     @ExceptionHandler(UserNotFoundException.class)
