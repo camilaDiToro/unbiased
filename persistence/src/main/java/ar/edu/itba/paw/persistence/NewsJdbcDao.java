@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.Category;
+import ar.edu.itba.paw.model.News;
+import ar.edu.itba.paw.model.NewsOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -8,8 +10,10 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 
 @Repository
@@ -17,13 +21,9 @@ public class NewsJdbcDao implements NewsDao{
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
-    private final SimpleJdbcInsert jdbcUpvoteInsert;
-
-    private final SimpleJdbcInsert jdbcSavedNewsInsert;
-
     private final CategoryDao categoryDao;
 
-    private static final double PAGE_SIZE = 10.0;
+    private static final double PAGE_SIZE = 9.0;
 
     private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
             new News.NewsBuilder(   rs.getLong("creator"),
@@ -40,20 +40,10 @@ public class NewsJdbcDao implements NewsDao{
 
     private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("newsCount");
 
-    private final static RowMapper<Integer> UPVOTES_MAPPER = (rs, rowNum) -> rs.getInt("upvotes");
-    private final static RowMapper<Boolean> RATING_MAPPER = (rs, rowNum) -> rs.getBoolean("upvote");
-    private final static RowMapper<Double> INTERACTIONS_MAPPER = (rs, rowNum) -> rs.getDouble("interactions");
-
-
-
-
     @Autowired
     public NewsJdbcDao(final DataSource dataSource, final CategoryDao categoryDao){
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("news").usingGeneratedKeyColumns("news_id");
-        jdbcUpvoteInsert = new SimpleJdbcInsert(dataSource).withTableName("upvotes");
-        jdbcSavedNewsInsert = new SimpleJdbcInsert(dataSource).withTableName("saved_news");
-
         this.categoryDao = categoryDao;
     }
 
@@ -65,7 +55,7 @@ public class NewsJdbcDao implements NewsDao{
         newsData.put("title", newsBuilder.getTitle());
         newsData.put("subtitle",newsBuilder.getSubtitle());
         newsData.put("creator", newsBuilder.getCreatorId());
-        newsData.put("creation_date",newsBuilder.getCreationDate());
+        newsData.put("creation_date", Timestamp.valueOf(newsBuilder.getCreationDate()));
         newsData.put("image_id", newsBuilder.getImageId());
         newsData.put("accesses", 0);
 
@@ -117,12 +107,6 @@ public class NewsJdbcDao implements NewsDao{
     }
 
     @Override
-    public List<News> getSavedNews(int page, User user, NewsOrder ns) {
-        return jdbcTemplate.query("SELECT * FROM saved_news NATURAL JOIN news ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
-                new Object[]{PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
-    }
-
-    @Override
     public List<News> getNewsByCategory(int page, Category category, NewsOrder ns) {
         return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN news_category WHERE category_id = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
                 new Object[]{category.getId(), PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
@@ -142,80 +126,4 @@ public class NewsJdbcDao implements NewsDao{
         int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
         return total==0?1:total;
     }
-
-@Override
-    public int getUpvotes(Long newsId) {
-        int upvotes = jdbcTemplate.query("SELECT sum(case when upvote=true then 1 else -1 end) AS upvotes FROM upvotes where news_id = ?",
-                new Object[]{newsId},UPVOTES_MAPPER).stream().findFirst().get();
-        return upvotes;
-    }
-    @Override
-    public Rating upvoteState(News news, User user) {
-        Optional<Boolean> rating = jdbcTemplate.query("SELECT upvote AS upvote FROM upvotes WHERE user_id = ? AND news_id = ?",
-                new Object[]{user.getId(), news.getNewsId()},RATING_MAPPER).stream().findFirst();
-        return rating.map(aBoolean -> aBoolean ? Rating.UPVOTE : Rating.DOWNVOTE).orElse(Rating.NO_RATING);
-    }
-    @Override
-    public void setRating(Long newsId, Long userId, Rating rating) {
-        jdbcTemplate.update("DELETE FROM upvotes WHERE user_id = ? AND news_id = ?",
-                new Object[]{userId, newsId});
-        if (rating.equals(Rating.NO_RATING))
-            return;
-
-        final Map<String,Object> ratingData = new HashMap<>();
-        ratingData.put("news_id",newsId);
-        ratingData.put("user_id", userId);
-        ratingData.put("upvote",rating.equals(Rating.UPVOTE));
-        ratingData.put("interaction_date", LocalDateTime.now());
-
-
-        jdbcUpvoteInsert.execute(ratingData);
-
-    }
-
-    @Override
-    public double getPositivityValue(Long newsId) {
-       int upvotes = jdbcTemplate.query("(SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes FROM upvotes WHERE news_id = ?)",
-               new Object[]{newsId}, UPVOTES_MAPPER).stream().findFirst().get();
-       double interactions = jdbcTemplate.query("(SELECT count(*) AS interactions FROM upvotes WHERE news_id = ?)",
-               new Object[]{newsId}, INTERACTIONS_MAPPER).stream().findFirst().get();
-
-       return interactions == 0 ? 1 : upvotes / interactions;
-    }
-
-    @Override
-    public void saveNews(News news, User user) {
-//        jdbcTemplate.update("DELETE FROM upvotes WHERE user_id = ? AND news_id = ?",
-//                new Object[]{userId, newsId});
-//        if (rating.equals(Rating.NO_RATING))
-//            return;
-
-
-
-        final Map<String,Object> savedNewsData = new HashMap<>();
-        savedNewsData.put("news_id",news.getNewsId());
-        savedNewsData.put("user_id", user.getId());
-        savedNewsData.put("saved_date", LocalDateTime.now());
-
-
-        jdbcSavedNewsInsert.execute(savedNewsData);
-
-    }
-
-    @Override
-    public boolean isSaved(News news, User user) {
-        return jdbcTemplate.query("SELECT count(*) AS is_saved FROM saved_news WHERE news_id = ? AND user_id = ?",
-                new Object[]{news.getNewsId(), user.getId()}, (rs, rowNum) -> rs.getInt("is_saved") > 0).stream().findFirst().get();
-    }
-
-    @Override
-    public void removeSaved(News news, User user) {
-        jdbcTemplate.update("DELETE FROM saved_news WHERE news_id = ? AND user_id = ?",new Object[]{news.getNewsId(), user.getId()});
-    }
-
-
-
-
-
-
 }
