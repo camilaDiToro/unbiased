@@ -3,8 +3,11 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.NewsOrder;
+import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -59,6 +62,27 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public int getTotalPagesCategory(Category category) {
         return newsDao.getTotalPagesCategory(category);
+    }
+
+    @Override
+    public Page<News> getNews(int page, String category, String newsOrder, String query) {
+        int totalPages;
+        page = page <= 0 ? 1 : page;
+
+        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
+        List<News> ln;
+        if (category.equals("ALL")) {
+            totalPages = newsDao.getTotalPagesAllNews(query);
+            page = Math.min(page, totalPages);
+            ln = newsDao.getNews(page, query, newsOrderObject);
+        }
+        else {
+            Category catObject = Category.getByValue(category);
+            totalPages = newsDao.getTotalPagesCategory(catObject);
+            page = Math.min(page, totalPages);
+            ln = newsDao.getNewsByCategory(page, catObject, newsOrderObject);
+        }
+        return new Page<>(ln,page,totalPages);
     }
 
     @Override

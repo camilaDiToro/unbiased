@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.NewsOrder;
-import ar.edu.itba.paw.model.Role;
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.NewsService;
@@ -67,44 +64,14 @@ public class HomeController {
         mav.addObject("query", query);
         mav.addObject("categories", Category.values());
         mav.addObject("pageTitle", query.equals("") ? "Home" : "Search");
-        int totalPages;
-        page = page <= 0 ? 1 : page;
+        mav.addObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
-        if (category.equals("ALL")) {
-            mav.addObject("category", category);
-            totalPages = ns.getTotalPagesAllNews(query);
-            page = page > totalPages ? totalPages : page;
-            mav.addObject("news", ns.getNews(page, query, NewsOrder.valueOf(orderBy)));
-        }
-        else {
-            Category catObject = Category.valueOf(category);
-            mav.addObject("category", catObject);
-            totalPages = ns.getTotalPagesCategory(catObject);
-            page = page > totalPages ? totalPages : page;
-            mav.addObject("news", ns.getNewsByCategory(page, catObject, NewsOrder.valueOf(orderBy)));
-        }
-
-        mav.addObject("page", page);
-        mav.addObject("totalPages", totalPages);
-
-
-
-        int minPage = 1;
-        if (page - 2 >= 1)
-            minPage = page - 2;
-        else if (page - 1 >= 1)
-            minPage = page - 1;
-        mav.addObject("minPage",minPage);
-
-
-        int maxPage = page;
-        if (page + 2 <= totalPages) {
-            maxPage = page + 2;
-        }
-        else if (page + 1 <= totalPages)
-            maxPage = page + 1;
-
-        mav.addObject("maxPage",maxPage);
+        Page<News> newsPage = ns.getNews(page,category,orderBy,query);
+        mav.addObject("news", newsPage.getContent());
+        mav.addObject("page", newsPage.getCurrentPage());
+        mav.addObject("totalPages", newsPage.getTotalPages());
+        mav.addObject("minPage",newsPage.getMinPage());
+        mav.addObject("maxPage",newsPage.getMaxPage());
         return mav;
     }
 
