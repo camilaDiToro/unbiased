@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
@@ -126,7 +127,10 @@ public class NewsController {
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
         for(String category : createNewsFrom.getCategories()){
-            newsBuilder.addCategory(Category.getByInterCode(category));
+            Category c = Category.getByInterCode(category);
+            if(c==null)
+                throw new InvalidCategoryException();
+            newsBuilder.addCategory(c);
         }
 
         if(createNewsFrom.getImage()!=null){
