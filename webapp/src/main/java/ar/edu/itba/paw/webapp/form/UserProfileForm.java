@@ -1,10 +1,13 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.constraints.NotExistingUsername;
 import org.springframework.web.multipart.MultipartFile;
 
 public class UserProfileForm {
 
     private MultipartFile image;
+
+    @NotExistingUsername
     private String username;
 
 

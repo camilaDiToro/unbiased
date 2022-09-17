@@ -18,4 +18,5 @@ public interface UserService {
     void addRole(long userId, Role role);
     List<String> getRoles(long userId);
     void updateProfile(long userId, String username, Long imageId);
+    Optional<User> findByUsername(String username);
 }

@@ -65,6 +65,12 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
+    public Optional<User> findByUsername(String username) {
+        return jdbcTemplate.query("SELECT * FROM Users WHERE username = ?",
+                new Object[] { username }, ROW_MAPPER).stream().findFirst();
+    }
+
+    @Override
     public void verifyEmail(long id) {
         jdbcTemplate.update("UPDATE users SET status = 'REGISTERED' WHERE user_id = ?", id);
     }

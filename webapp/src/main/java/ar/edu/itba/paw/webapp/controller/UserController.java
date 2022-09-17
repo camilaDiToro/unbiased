@@ -65,7 +65,7 @@ public class UserController {
             return profile(userId, userProfileForm);
         }
         Long imageId = null;
-        if(userProfileForm.getImage()!=null){
+        if(userProfileForm.getImage()!=null && userProfileForm.getImage().getBytes().length != 0){
             imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
         }
         userService.updateProfile(userId, userProfileForm.getUsername(), imageId);

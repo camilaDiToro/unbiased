@@ -111,10 +111,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateProfile(long userId, String username, Long imageId) {
         User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        if(user.getImageId()!=null)
-            imageService.deleteImage(user.getImageId());
-        userDao.updateImage(userId,imageId);
-        userDao.updateUsername(userId,username);
+
+        if(imageId!=null){
+            if(user.getImageId()!=null)
+                imageService.deleteImage(user.getImageId());
+            userDao.updateImage(userId,imageId);
+        }
+
+        if(username!= null && !username.isEmpty())
+            userDao.updateUsername(userId,username);
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return userDao.findByUsername(username);
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
