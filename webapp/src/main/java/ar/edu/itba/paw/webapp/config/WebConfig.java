@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -25,6 +26,10 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
@@ -117,6 +122,24 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         props.put("mail.debug", "true");
 
         return mailSender;
+    }
+
+    @Bean
+    public ITemplateResolver thymeleafTemplateResolver() {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("mail-templates/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode("HTML");
+        templateResolver.setCharacterEncoding("UTF-8");
+        return templateResolver;
+    }
+
+    @Bean
+    public SpringTemplateEngine thymeleafTemplateEngine(ITemplateResolver templateResolver) {
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+        templateEngine.setTemplateEngineMessageSource(messageSource());
+        return templateEngine;
     }
 
 }
