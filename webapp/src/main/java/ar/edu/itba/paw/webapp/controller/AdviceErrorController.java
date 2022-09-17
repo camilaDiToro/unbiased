@@ -9,7 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /*https://www.baeldung.com/exception-handling-for-rest-with-spring*/
 @ControllerAdvice
-public class AdviceErrorControler {
+public class AdviceErrorController {
 
     @ExceptionHandler(InvalidCategoryException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
