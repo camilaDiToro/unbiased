@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
 import ar.edu.itba.paw.webapp.exceptions.NewsNotFoundException;
@@ -31,12 +32,14 @@ public class NewsController {
     private final NewsService newsService;
     private final UserService userService;
     private final ImageService imageService;
+    private final SecurityService securityService;
 
     @Autowired
-    public NewsController(final NewsService newsService, final UserService userService, ImageService imageService){
+    public NewsController(final NewsService newsService, final UserService userService, ImageService imageService, SecurityService securityService){
         this.newsService = newsService;
         this.userService = userService;
         this.imageService = imageService;
+        this.securityService = securityService;
     }
 
 
@@ -119,10 +122,8 @@ public class NewsController {
             return createArticleAndValidate(createNewsFrom, errors);
         }
 
-        final User user = userService.createIfNotExists(new User.UserBuilder(createNewsFrom.getCreatorEmail()));
+        final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
-
-        //newsBuilder.addCategory(Category.POLITICS);
 
         for(String category : createNewsFrom.getCategories()){
             newsBuilder.addCategory(Category.getByInterCode(category));
