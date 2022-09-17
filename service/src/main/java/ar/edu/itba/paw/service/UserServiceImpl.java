@@ -27,14 +27,16 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final VerificationTokenService verificationTokenService;
     private final RoleDao roleDao;
+    private final ImageService imageService;
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
         this.roleDao = roleDao;
+        this.imageService = imageService;
     }
 
 
@@ -108,7 +110,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateProfile(long userId, String username, Long imageId) {
-
+        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        if(user.getImageId()!=null)
+            imageService.deleteImage(user.getImageId());
         userDao.updateImage(userId,imageId);
         userDao.updateUsername(userId,username);
     }
