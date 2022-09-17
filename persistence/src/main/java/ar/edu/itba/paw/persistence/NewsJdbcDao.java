@@ -117,6 +117,20 @@ public class NewsJdbcDao implements NewsDao{
     }
 
     @Override
+    public List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns) {
+        return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN news_category WHERE creator = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
+                new Object[]{userId, PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
+    }
+
+    @Override
+    public int getTotalPagesNewsFromUser(int page, long userId, NewsOrder ns) {
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE creator = ?" ,
+                new Object[]{userId},ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        return total==0?1:total;
+    }
+
+    @Override
     public int getTotalPagesCategory(Category category) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?" ,
                 new Object[]{category.getId()},ROW_COUNT_MAPPER).stream().findFirst().get();

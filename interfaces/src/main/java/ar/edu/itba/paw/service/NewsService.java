@@ -12,5 +12,6 @@ public interface NewsService {
     News create(News.NewsBuilder newsBuilder);
     Optional<News> getById(long id);
     Page<News> getNews(int page, String category, String newsOrder, String query);
+    Page<News> getNewsFromUser(int page, String newsOrder, long userId);
     List<Category> getNewsCategory(News news);
 }
