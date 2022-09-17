@@ -61,6 +61,7 @@ public class HomeController {
         final ModelAndView mav = new ModelAndView("index");
 
 //        ns.setRating((long)1, (long)1, Rating.UPVOTE);
+//        es.sendSimpleMessage("kcatino@itba.edu.ar", "Prueba", "Esto es una prueba");
         mav.addObject("orders", NewsOrder.values());
         mav.addObject("orderBy", orderBy);
         mav.addObject("query", query);

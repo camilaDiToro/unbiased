@@ -154,4 +154,7 @@ public class NewsController {
         return new ModelAndView("redirect:/news/" + news.getNewsId());
     }
 
+
+
+
 }
