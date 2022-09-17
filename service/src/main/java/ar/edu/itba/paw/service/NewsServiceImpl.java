@@ -122,6 +122,16 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
+    public Page<News> getNewsFromUser(int page, String newsOrder, long userId) {
+        page = page <= 0 ? 1 : page;
+        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
+        int totalPages = newsDao.getTotalPagesNewsFromUser(page, userId, newsOrderObject);
+        page = Math.min(page, totalPages);
+        List<News> ln = newsDao.getAllNewsFromUser(page,userId,newsOrderObject);
+        return new Page<>(ln, page, totalPages);
+    }
+
+    @Override
     public List<Category> getNewsCategory(News news) {
         return newsDao.getNewsCategory(news);
     }
