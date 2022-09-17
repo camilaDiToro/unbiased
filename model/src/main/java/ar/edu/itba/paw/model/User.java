@@ -77,7 +77,6 @@ public class User {
         }
 
         public UserBuilder status(String status){
-            System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^" + status);
             this.status = UserStatus.valueOf(status);
             return this;
         }
