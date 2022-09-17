@@ -25,11 +25,6 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public List<News> getNews(int page, NewsOrder newsOrder) {
-        return newsDao.getNews(page, newsOrder);
-    }
-
-    @Override
     public News create(News.NewsBuilder newsBuilder) {
         return this.newsDao.create(newsBuilder);
     }
@@ -37,31 +32,6 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public Optional<News> getById(long id) {
         return newsDao.getById(id);
-    }
-
-    @Override
-    public int getTotalPagesAllNews() {
-        return newsDao.getTotalPagesAllNews();
-    }
-
-    @Override
-    public List<News> getNews(int page, String query, NewsOrder newsOrder) {
-        return newsDao.getNews(page, query, newsOrder);
-    }
-
-    @Override
-    public int getTotalPagesAllNews(String query) {
-        return newsDao.getTotalPagesAllNews(query);
-    }
-
-    @Override
-    public List<News> getNewsByCategory(int page, Category category, NewsOrder newsOrder) {
-        return newsDao.getNewsByCategory(page,category,newsOrder);
-    }
-
-    @Override
-    public int getTotalPagesCategory(Category category) {
-        return newsDao.getTotalPagesCategory(category);
     }
 
     @Override

@@ -43,6 +43,8 @@ public class PawUserDetailsService implements UserDetailsService {
 
         //us.getRoles(user.getId()).stream().forEach((t)->authorities.add(new SimpleGrantedAuthority(t)));
 
-        return new org.springframework.security.core.userdetails.User(username, user.getPass(), user.getStatus() == UserStatus.REGISTERED, true, true, true, authorities);
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" + user.getStatus().getStatus() + UserStatus.REGISTERED.getStatus());
+
+        return new org.springframework.security.core.userdetails.User(username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities);
     }
 }

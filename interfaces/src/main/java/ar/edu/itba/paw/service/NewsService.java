@@ -9,15 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NewsService {
-
-    List<News> getNews(int page, NewsOrder ns);
     News create(News.NewsBuilder newsBuilder);
     Optional<News> getById(long id);
-    int getTotalPagesAllNews();
-   List<News> getNews(int page, String query, NewsOrder ns);
-    int getTotalPagesAllNews(String query);
-    List<News> getNewsByCategory(int page, Category category, NewsOrder ns);
-    int getTotalPagesCategory(Category category);
     Page<News> getNews(int page, String category, String newsOrder, String query);
     List<Category> getNewsCategory(News news);
 }

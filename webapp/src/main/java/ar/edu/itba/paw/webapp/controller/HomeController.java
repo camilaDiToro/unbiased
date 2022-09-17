@@ -43,13 +43,6 @@ public class HomeController {
         return new ModelAndView("redirect:/TOP");
     }
 
-//    @RequestMapping("/{orderBy}")
-//    public ModelAndView helloWorld( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-//        final ModelAndView mav = new ModelAndView("index");
-//        mav.addObject("user",us.getUserById(userId).orElseThrow(UserNotFoundException::new));
-//        return mav;
-//    }
-
     @RequestMapping("/{orderBy:TOP|NEW}")
     public ModelAndView helloWorld(
             @PathVariable("orderBy") final String orderBy,
