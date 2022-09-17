@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,4 +27,15 @@ public class AdviceErrorController {
         return new ModelAndView("forward:/" + exception.getStatusCode());
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public ModelAndView userNotFound(UserNotFoundException ex) {
+        return new ModelAndView("errors/userNotFound");
+    }
+
+    @ExceptionHandler(NewsNotFoundException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public ModelAndView newsNotFound()    {
+        return new ModelAndView("errors/newsNotFound");
+    }
 }

@@ -85,9 +85,4 @@ public class UserController {
         return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ModelAndView userNotFound(UserNotFoundException ex) {
-        return new ModelAndView("errors/userNotFound");
-    }
 }

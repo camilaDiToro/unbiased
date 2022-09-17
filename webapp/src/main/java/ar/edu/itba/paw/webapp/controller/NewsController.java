@@ -92,12 +92,6 @@ public class NewsController {
          return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
     }
 
-    @ExceptionHandler(NewsNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ModelAndView newsNotFound()    {
-        return new ModelAndView("errors/newsNotFound");
-    }
-
 
     @RequestMapping(value = "/create_article", method = RequestMethod.GET)
     public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
