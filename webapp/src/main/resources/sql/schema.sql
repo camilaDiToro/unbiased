@@ -43,6 +43,12 @@ CREATE TABLE IF NOT EXISTS email_verification_token (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS user_role (
+    user_id INT NOT NULL,
+    user_role VARCHAR(30) NOT NULL,
+    PRIMARY KEY (user_id, user_role),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
 CREATE TABLE IF NOT EXISTS upvotes (
     news_id           INTEGER         NOT NULL,
     user_id           INTEGER         NOT NULL,

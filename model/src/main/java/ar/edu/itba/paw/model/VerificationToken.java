@@ -37,9 +37,11 @@ public class VerificationToken {
     }
 
     public enum Status{
-        SUCCESFULLY_VERIFIED("SUCCESFULLY_VERIFIED"),
+        SUCCESFFULLY_VERIFIED("SUCCESFULLY_VERIFIED"),
+        SUCCESSFULLY_RESENDED("SUCCESSFULLY_RESENDED"),
         EXPIRED("EXPIRED"),
-        NOT_EXISTS("NOT_EXISTS");
+        NOT_EXISTS("NOT_EXISTS"),
+        ALREADY_VERIFIED("ALREADY_VERIFIED");
 
         private final String status;
 

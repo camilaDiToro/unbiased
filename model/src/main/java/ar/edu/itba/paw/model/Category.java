@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.model;
 
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+
 public enum Category {
 
     TOURISM("categories.tourism"),
@@ -40,6 +42,14 @@ public enum Category {
             }
         }
         return null;
+    }
+
+    public static Category getByValue(String value){
+        try{
+            return Category.valueOf(value);
+        }catch (IllegalArgumentException e){
+            throw new InvalidCategoryException();
+        }
     }
 
 }

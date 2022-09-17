@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,11 +21,6 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public List<News> getNews(int page, NewsOrder newsOrder) {
-        return newsDao.getNews(page, newsOrder);
-    }
-
-    @Override
     public News create(News.NewsBuilder newsBuilder) {
         return this.newsDao.create(newsBuilder);
     }
@@ -35,28 +31,24 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public int getTotalPagesAllNews() {
-        return newsDao.getTotalPagesAllNews();
-    }
+    public Page<News> getNews(int page, String category, String newsOrder, String query) {
+        int totalPages;
+        page = page <= 0 ? 1 : page;
 
-    @Override
-    public List<News> getNews(int page, String query, NewsOrder newsOrder) {
-        return newsDao.getNews(page, query, newsOrder);
-    }
-
-    @Override
-    public int getTotalPagesAllNews(String query) {
-        return newsDao.getTotalPagesAllNews(query);
-    }
-
-    @Override
-    public List<News> getNewsByCategory(int page, Category category, NewsOrder newsOrder) {
-        return newsDao.getNewsByCategory(page,category,newsOrder);
-    }
-
-    @Override
-    public int getTotalPagesCategory(Category category) {
-        return newsDao.getTotalPagesCategory(category);
+        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
+        List<News> ln;
+        if (category.equals("ALL")) {
+            totalPages = newsDao.getTotalPagesAllNews(query);
+            page = Math.min(page, totalPages);
+            ln = newsDao.getNews(page, query, newsOrderObject);
+        }
+        else {
+            Category catObject = Category.getByValue(category);
+            totalPages = newsDao.getTotalPagesCategory(catObject);
+            page = Math.min(page, totalPages);
+            ln = newsDao.getNewsByCategory(page, catObject, newsOrderObject);
+        }
+        return new Page<>(ln,page,totalPages);
     }
 
     @Override
