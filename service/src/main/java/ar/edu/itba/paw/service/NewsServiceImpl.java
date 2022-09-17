@@ -2,22 +2,24 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.persistence.NewsDao;
+import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class NewsServiceImpl implements NewsService{
 
     private final NewsDao newsDao;
+    private final UserDao userDao;
 
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao) {
+    public NewsServiceImpl(NewsDao newsDao, UserDao userDao) {
         this.newsDao = newsDao;
+        this.userDao=userDao;
     }
 
     @Override
@@ -31,7 +33,25 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public Page<News> getNews(int page, String category, String newsOrder, String query) {
+    public Optional<FullNews> getFullNewsById(long id) {
+        Optional<News> maybeNews = newsDao.getById(id);
+        if (maybeNews.isPresent()) {
+            return Optional.of(getFullNews(maybeNews.get()));
+        }
+
+        return Optional.empty();
+
+    }
+
+    private FullNews getFullNews(News news) {
+        long newsId = news.getNewsId();
+        double positiveValue = newsDao.getPositivityValue(newsId);
+        Positivity positivity = Positivity.getPositivvity(positiveValue);
+        return new FullNews(news, userDao.getUserById(news.getCreatorId()).get(), newsDao.getUpvotes(newsId), positivity, positiveValue);
+    }
+
+    @Override
+    public Page<FullNews> getNews(int page, String category, String newsOrder, String query) {
         int totalPages;
         page = page <= 0 ? 1 : page;
 
@@ -48,7 +68,7 @@ public class NewsServiceImpl implements NewsService{
             page = Math.min(page, totalPages);
             ln = newsDao.getNewsByCategory(page, catObject, newsOrderObject);
         }
-        return new Page<>(ln,page,totalPages);
+        return new Page<>(ln.stream().map(this::getFullNews).collect(Collectors.toList()),page,totalPages);
     }
 
     @Override
@@ -80,5 +100,25 @@ public class NewsServiceImpl implements NewsService{
         return Positivity.getPositivvity(getPositivityValue(newsId));
     }
 
+    @Override
+    public List<FullNews> getSavedNews(int page, User user, NewsOrder ns) {
+        List<News> news = newsDao.getSavedNews(page, user, ns);
+        return news.stream().map(this::getFullNews).collect(Collectors.toList());
+    }
 
+    @Override
+    public boolean toggleSaveNews(News news, User user) {
+        if (newsDao.isSaved(news, user)) {
+            newsDao.removeSaved(news, user);
+            return false;
+        }
+
+        else
+            newsDao.saveNews(news, user);
+        return true;
+    }
+    @Override
+    public boolean isSaved(News news, User user) {
+        return newsDao.isSaved(news, user);
+    }
 }

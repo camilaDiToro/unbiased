@@ -25,7 +25,7 @@ public class Page<T>{
         return totalPages;
     }
 
-    public int getMinPage(){
+    public int getMinPage() {
         int minPage = 1;
         if (currentPage - 2 >= 1)
             minPage = currentPage - 2;

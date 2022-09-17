@@ -17,14 +17,16 @@
     </a>
 </div>
 
+<c:set var="news" value="${fullNews.news}"/>
+
+
 <div class="d-flex align-items-center justify-content-center w-100 py-4">
     <div class="h-auto w-75">
         <div class="d-flex align-items-center  ">
             <div class="position-absolute w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${news.newsId}"/>">
-
                 <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
 
-                <div id="rating" class="${rating.toString()}"><c:out value="${upvotes}"/></div>
+                <div id="rating" class="${rating.toString()}"><c:out value="${fullNews.upvotes}"/></div>
                 <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
             </div>
@@ -38,11 +40,11 @@
         <div class="d-flex align-items-center justify-content-between">
             <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
 
-            <div class="progress w-25" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">
-                <div class="progress-bar progress-bar-striped <c:out value="${positivity}"/>" role="progressbar" style="width: ${positivityBarValue}%"  aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress w-25" data-toggle="tooltip" data-placement="top" title="<spring:message code="${fullNews.positivity.getInterCode()}"/>">
+                <div class="progress-bar progress-bar-striped <c:out value="${fullNews.positivity}"/>" role="progressbar" style="width: ${fullNews.positiveValue*100}%"  aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
-        <p class="text-sm-left text-secondary"><c:out value="${date}"/>&nbsp · &nbsp<c:out value="${timeToRead}"/> min read</p>
+        <p class="text-sm-left text-secondary"><c:out value="${date}"/>&nbsp · &nbsp<c:out value="${fullNews.readTime}"/> min read</p>
 
             <div class="w-fit">
                 <a href="<c:url value="/profile/${user.id}"/>" class="w-fit">

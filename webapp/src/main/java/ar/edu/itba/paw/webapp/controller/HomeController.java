@@ -57,11 +57,13 @@ public class HomeController {
             @RequestParam(name = "category", defaultValue = "ALL") final String category){
         final ModelAndView mav = new ModelAndView("index");
 
-        Map<Long, Integer> readTimeMap = new HashMap<>();
-        Map<Long, Integer> upvotesMap = new HashMap<>();
+
         Map<Long, Rating> ratingMap = new HashMap<>();
-        Map<Long, String> creatorMap = new HashMap<>();
-        Map<Long, Positivity> positivityMap = new HashMap<>();
+        Map<Long, Boolean> savedMap = new HashMap<>();
+        Map<Long, User> creatorMap = new HashMap<>();
+
+
+
 
         Optional<User> user = ss.getCurrentUser();
 
@@ -77,29 +79,25 @@ public class HomeController {
         mav.addObject("pageTitle", query.equals("") ? "Home" : "Search");
         mav.addObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
-        Page<News> newsPage = ns.getNews(page,category,orderBy,query);
+        Page<FullNews> newsPage = ns.getNews(page,category,orderBy,query);
 
-        List<News> newsContent = newsPage.getContent();
+        List<FullNews> newsContent = newsPage.getContent();
 
-        for (News article : newsContent) {
+        for (FullNews news : newsContent) {
+            News article = news.getNews();
             long newsId = article.getNewsId();
-            readTimeMap.put(newsId, TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(article.getBody())));
-            upvotesMap.put(newsId, ns.getUpvotes(article.getNewsId()));
             ratingMap.put(newsId, user.map(u -> ns.upvoteState(article, u)).orElse(Rating.NO_RATING));
-            User u = us.getUserById(article.getCreatorId()).get();
-            String name = u.getUsername();
-            if (name == null)
-                name = u.getEmail();
-            creatorMap.put(newsId,name);
-            positivityMap.put(newsId, ns.getPositivityBracket(newsId));
+            savedMap.put(newsId, user.map(u -> ns.isSaved(article, u)).orElse(false));
+            creatorMap.put(newsId, us.getUserById(article.getCreatorId()).get());
         }
 
-        mav.addObject("readTimeMap", readTimeMap);
-        mav.addObject("upvotesMap", upvotesMap);
-        mav.addObject("ratingMap", ratingMap);
-        mav.addObject("creatorMap", creatorMap);
-        mav.addObject("positivityMap", positivityMap);
+
         mav.addObject("topCreators", us.getTopCreators(5));
+
+        mav.addObject("ratingMap", ratingMap);
+        mav.addObject("savedMap", savedMap);
+        mav.addObject("creatorMap", creatorMap);
+
 
 
 
@@ -150,7 +148,6 @@ public class HomeController {
     @ResponseBody
     public ResponseEntity<UpvoteActionResponse>  toggleDownvote(@RequestBody UpvoteAction payload) throws JsonProcessingException {
         return toggleHandler(payload, Rating.DOWNVOTE);
-
     }
 
 
