@@ -37,15 +37,12 @@ public class NewsJdbcDaoTest {
     private CategoryDao categoryDao;
     protected JdbcTemplate jdbcTemplate;
 
-
     protected static final String NEWS_TABLE = "news";
-
+    protected static final String CATEGORY_TABLE = "news_category";
     //USERS DATA
     protected static final String EMAIL = "juan@gmail.com";
 
     //NEWS DATA
-    protected static final long CREATOR_ID = 1;
-    protected static final long IMAGEN_ID = 1;
     protected static final String TITTLE = "titulo";
     protected static final String SUBTITTLE = "subtitulo";
     protected static final String BODY = "cuerpo";
@@ -136,11 +133,7 @@ public class NewsJdbcDaoTest {
         assertEquals(PAGE_SIZE, newsList.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
-    /*
-    getTotalPagesAllNews(String query)
-    getNewsCategory
-    getTotalPagesCategory
-   */
+
     @Test
     public void testGetNewsByCategory(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
@@ -148,23 +141,41 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        Category cat = Category.valueOf("ALL");
-        List<News> newsList = newsDao.getNewsByCategory(PAGE_SIZE, cat, NewsOrder.NEW);
+        boolean addCategory = categoryDao.addCategoryToNews(news.getNewsId(), Category.SPORTS);
+        List<News> newsList = newsDao.getNewsByCategory(PAGE_SIZE, Category.SPORTS, NewsOrder.NEW);
 
         assertEquals(1, newsList.size());
     }
 
     @Test
-    public void testgetNewsCategory(){
+    public void testGetNewsCategory(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
+        boolean addCategory = categoryDao.addCategoryToNews(news.getNewsId(), Category.SPORTS);
 
-        List<Category> catList = newsDao.getNewsCategory(news);
+        if(addCategory) {
+            List<Category> catList = newsDao.getNewsCategory(news);
+            assertEquals(1, catList.size());
+        }
+    }
 
-        assertEquals(0, catList.size());
+    @Test
+    public void testGetTotalPagesCategory(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, CATEGORY_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+        boolean addCategory = categoryDao.addCategoryToNews(news.getNewsId(), Category.SPORTS);
+
+        if(addCategory) {
+            int pagesCategory = newsDao.getTotalPagesCategory(Category.SPORTS);
+            assertEquals(PAGE_SIZE, pagesCategory);
+        }
     }
 
     @Test
@@ -181,4 +192,7 @@ public class NewsJdbcDaoTest {
         assertEquals(PAGE_SIZE, newsDao.getTotalPagesAllNews());
     }
 
+        /*
+    getTotalPagesCategory
+   */
 }
