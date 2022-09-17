@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserProfileForm {
 
     private MultipartFile image;
+    private String username;
+
 
     @NotExistingUsername
     private String username;
