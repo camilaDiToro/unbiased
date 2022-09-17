@@ -63,7 +63,6 @@ public class NewsJdbcDaoTest {
         newsDao = new NewsJdbcDao(ds, categoryDao);
         userDao = new UserJdbcDao(ds);
         categoryDao = new CategoryJdbcDao(ds);
-        //insertNews(CREATOR_ID, IMAGEN_ID, BODY, TITTLE, SUBTITTLE, CREATE_TIME);
     }
 
     @Test
@@ -85,7 +84,7 @@ public class NewsJdbcDaoTest {
     }
 
     @Test
-    public void testFindById() {
+    public void testFindByNewsId() {
         // 1. precondiciones
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
@@ -101,7 +100,7 @@ public class NewsJdbcDaoTest {
     }
 
     @Test
-    public void testFindByIdFailure() {
+    public void testFindByNewsIdFailure() {
         Optional<News> news = newsDao.getById(80);
         assertFalse(news.isPresent());
     }
@@ -125,7 +124,18 @@ public class NewsJdbcDaoTest {
 
     }
 
+    @Test
+    public void testFindByAuthorId() {
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+        Optional<News> maybeNews = newsDao.getById(news.getNewsId());
+
+        assertNotNull(news);
+        assertEquals(maybeNews.get().getNewsId(), news.getNewsId());
+    }
 
     @Test
     public void testGetTotalPageNews(){
@@ -141,7 +151,13 @@ public class NewsJdbcDaoTest {
         assertEquals(PAGE_SIZE, newsDao.getTotalPagesAllNews());
     }
 
-    @Test
-    public void testSearchNews(){}
+
+
+    /*
+    getTotalPagesAllNews
+    getNewsCategory
+    getNewsBYCategory
+    getTotalPagesCategory
+   */
 
 }
