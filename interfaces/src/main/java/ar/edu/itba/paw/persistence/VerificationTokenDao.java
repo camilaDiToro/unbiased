@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface VerificationTokenDao {
-    VerificationToken create(long userId, String token, LocalDateTime expiryDate);
-    Optional<VerificationToken> getToken(String token);
+    VerificationToken createEmailToken(long userId, String token, LocalDateTime expiryDate);
+    Optional<VerificationToken> getEmailToken(String token);
+    void deleteEmailToken(long userId);
 }

@@ -20,7 +20,7 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id")).build();
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id")).status(rs.getString("status")).build();
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {
@@ -42,6 +42,8 @@ public class UserJdbcDao implements UserDao {
         userData.put("email", userBuilder.getEmail());
         userData.put("status", userBuilder.getStatus().getStatus());
         userData.put("pass", userBuilder.getPass());
+        userData.put("image_id",userBuilder.getImageId());
+        userData.put("username",userBuilder.getUsername());
 
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
         return userBuilder.userId(userId).build();
@@ -63,11 +65,34 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
+    public Optional<User> findByUsername(String username) {
+        return jdbcTemplate.query("SELECT * FROM Users WHERE username = ?",
+                new Object[] { username }, ROW_MAPPER).stream().findFirst();
+    }
+
+    @Override
     public void verifyEmail(long id) {
         jdbcTemplate.update("UPDATE users SET status = 'REGISTERED' WHERE user_id = ?", id);
     }
 
+    @Override
+    public void updateUsername(long userId, String username) {
+        jdbcTemplate.update("UPDATE users SET username = ? WHERE user_id = ?", username, userId);
+    }
+
+    @Override
+    public void updateImage(long userId, Long imageId) {
+        jdbcTemplate.update("UPDATE users SET image_id = ? WHERE user_id = ?", imageId, userId);
+    }
+
     public List<User> getAll(int page){
         return jdbcTemplate.query("SELECT * FROM Users LIMIT 10 OFFSET ?", new Object[]{(page-1)*10},ROW_MAPPER);
+    }
+
+    @Override
+    public List<User> getTopCreators(int qty) {
+        return jdbcTemplate.query("WITH interactions AS (SELECT creator AS user_id, count(*) AS interaction_count FROM upvotes JOIN news ON upvotes.news_id = news.news_id " +
+                "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator ORDER BY count(*) DESC LIMIT ?) SELECT * FROM interactions NATURAL JOIN users", new Object[]{qty},ROW_MAPPER);
+
     }
 }

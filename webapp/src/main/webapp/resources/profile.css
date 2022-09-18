@@ -1,0 +1,30 @@
+#right-card .card-title{
+    margin-top: 20px;
+}
+
+#right-card.card{
+    border-radius: 15px;
+}
+
+#right-card .card-img-top{
+    height: 80px;
+    border-radius: 15px 15px 0 0;
+}
+
+
+.profile{
+
+    position: absolute;
+    height: 90px;
+    width: 90px;
+
+    border-radius: 50%;
+
+}
+
+.profile img{
+    height: 80px;
+    width: 80px;
+    margin-top:65px;
+
+}
