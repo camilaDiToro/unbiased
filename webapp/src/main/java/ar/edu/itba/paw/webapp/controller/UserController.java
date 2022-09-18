@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
@@ -94,9 +95,17 @@ public class UserController {
 
         mav.addObject("newsPage", fullNews);
 
-        mav.addObject("newsOrder", newsOrder);
+        mav.addObject("orderBy", newsOrder);
 
-        mav.addObject("category", category);
+        try {
+            mav.addObject("category", ProfileCategory.valueOf(category));
+        } catch(IllegalArgumentException e) {
+            throw new InvalidCategoryException();
+        }
+
+        mav.addObject("orders", NewsOrder.values());
+
+        mav.addObject("categories", ProfileCategory.values());
 
 
         Map<Long, Rating> ratingMap = new HashMap<>();

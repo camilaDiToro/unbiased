@@ -34,7 +34,15 @@ public interface NewsDao {
     void removeSaved(News news, User user);
 
     List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns);
-    int getTotalPagesNewsFromUser(int page, long userId, NewsOrder ns);
+    int getTotalPagesNewsFromUser(int page, long userId);
+
+    int getTotalPagesNewsFromUserSaved(int page, long userId);
+
+    int getTotalPagesNewsFromUserUpvoted(int page, long userId);
+
+    int getTotalPagesNewsFromUserDownvoted(int page, long userId);
+
+
     void deleteNews(long newsId);
 
     List<News> getNewsUpvotedByUser(int page, long userId, NewsOrder ns);
@@ -42,5 +50,6 @@ public interface NewsDao {
     List<News> getNewsDownvotedByUser(int page, long userId, NewsOrder ns);
 
     List<News> getSavedNewsFromUser(int page, long userId, NewsOrder ns);
+
 
 }

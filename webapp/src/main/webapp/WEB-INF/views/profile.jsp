@@ -6,6 +6,7 @@
 <c:set var="pageTitle" scope="request" value="Login"/>
 <c:set var="signInOrCreate" scope="request" value="${false}"/>
 <%@include file="../../resources/head.jsp" %>
+<script src="<c:url value="/resources/upvote-script.js"/>"></script>
 <%--<body>
 <%@include file="../../resources/navbar.jsp" %>
 <h2><spring:message code="views.profile.title" arguments="${user.email}" htmlEscape="true"/></h2>
@@ -40,66 +41,68 @@
 <%--<%@include file="../../resources/navbar.jsp" %>--%>
 <div class="d-flex h-100 flex-column">
     <c:set var="loggedUser" scope="request" value="${user}"/>
-    <%@ include file="../../resources/navbar.jsp" %>
-    <div class="container-xxl container-fluid flex-grow-1">
+<%@include file="../../resources/navbar.jsp" %>
 
-
-            <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
-                <li class="nav-item">
-                    <a class="text-capitalize nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
-                    <c:param name = "query" value = "${param.query}"/>
-                    </c:url>"><spring:message code="categories.all"/></a>
-                </li>
-                <c:forEach var="cat" items="${categories}">
-                    <li class="nav-item">
-                        <a class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+<%--TAB (publicaciones, guardado, upvoteado, downvoteado)--%>
+<div>
+    <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
+        <c:forEach var="cat" items="${categories}">
+            <li class="nav-item">
+                <a class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
-
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
-                    </li>
-                </c:forEach>
-            </ul>
+            </li>
+        </c:forEach>
+    </ul>
+</div>
 
-        <div class="w-75 d-flex flex-col">
-<%--            <div>--%>
-<%--                <div>--%>
-<%--                    <div style="margin-left: 5%; margin-top: 2%; font-family: 'Helvetica Neue', sans-serif; font-weight: 700; font-size: 42px">--%>
-<%--                        Alejo Caeiro--%>
-<%--                    </div>--%>
-<%--                </div>--%>
+<div class="d-flex flex-column h-100">
+    <div class="flex-grow-1 d-flex flex-row">
+        <%--LEFT SIDE--%>
+        <div style="display: flex; width: 70%; flex-direction: column">
 
-<%--                &lt;%&ndash;    <div style="border-left:1px grey; border-right:1px solid grey; height:100%; opacity: 50%"></div>&ndash;%&gt;--%>
-<%--            </div>--%>
-
-        <div class="d-flex flex-row">
-            <%--LEFT SIDE--%>
-
+            <%--TAB (top, new)--%>
+            <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
                 <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
                 <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
                 <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
                     <c:forEach var="order" items="${orders}">
                         <li class="nav-item">
-                            <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
+                            <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${order}">
                     <c:param name = "category" value = "${category}"/>
-                    <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
                     </c:url>"><spring:message code="${order.interCode}"/></a>
                         </li>
                     </c:forEach>
-                    <li class="nav-item ml-auto">
-                        <c:if test="${user != null}">
-                            <a href="./create_article">
-                                <button type="button" class="btn btn-info">
-                                    <spring:message code="home.createArticle.button"/>
-                                </button></a>
-                        </c:if>
-                    </li>
-
-
+<%--                    <li class="nav-item ml-auto">--%>
+<%--                        <c:if test="${user != null}">--%>
+<%--                            <a href="./create_article">--%>
+<%--                                <button type="button" class="btn btn-info">--%>
+<%--                                    <spring:message code="home.createArticle.button"/>--%>
+<%--                                </button></a>--%>
+<%--                        </c:if>--%>
+<%--                    </li>--%>
                 </ul>
+            </div>
+
+            <%--CARDS--%>
+            <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
+                <c:if test="${empty news}" >
+                    <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
+                        <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
+                            <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
+                        <p class="lead">
+                            <spring:message code="categories.notFound"/> "<spring:message code="${category.interCode}"/>"
+
+
+
+
+                        </p>
+                    </div>
+                </c:if>
                 <c:if test="${!empty news}">
 
                     <div class="container-fluid">
-                        <div class="row row-cols-1 row-cols-md-2">
+                        <div class="row row-cols-1">
                             <c:set var="maxLength" value="${100}"/>
                             <c:forEach var="fullNews" items="${news}">
                                 <c:set var="article" value="${fullNews.news}"/>
@@ -108,7 +111,7 @@
 
 
                                 <div class="col mb-4">
-                                    <div class="card h-100 d-flex flex-row" >
+                                    <div class="card h-100 d-flex flex-row" id="left-card">
 
                                         <div class="d-flex flex-column justify-content-between w-60">
                                             <div class="d-flex w-100">
@@ -150,7 +153,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="bg-secondary position-relative w-40">
+                                        <div class="bg-secondary position-relative w-40" style="border-radius: 15px">
                                             <c:set var="positivity" value="${fullNews.positivity}"/>
                                             <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">
                                             </div>
@@ -160,7 +163,7 @@
                                             </c:if>
 
                                             <c:if test="${!article.hasImage()}">
-                                                <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">
+                                                <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="..." >
                                             </c:if>
                                         </div>
                                     </div>
@@ -172,51 +175,57 @@
                 </c:if>
             </div>
 
-            <%--RIGHT SIDE--%>
-            <div style="display: flex; width: 30%; height: 100%;justify-content: center; margin-top: 5%">
-                <div class="card" style="width: 18rem; height: 12rem">
-                    <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <%--<h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>--%>
-                        <h4 class="mb-0 card-title text-center">Alejo Caeiro</h4>
-                        <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${user.email}"/> </span>
-                    </div>
-                </div>
-
-                <div class="profile">
-                    <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
-                </div>
+        </div>
+        <%--RIGHT SIDE--%>
+        <div style="display: flex; width: 30%; justify-content: center;">
+        <div class="card" style="width: 18rem; height: 12rem; margin-top: 4%" id="right-card">
+            <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h4 class="mb-0 card-title text-center">Alejo Caeiro</h4>
+                <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${user.email}"/> </span>
             </div>
         </div>
+
+        <div class="profile">
+            <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
+        </div>
     </div>
+    </div>
+
     <c:if test="${not empty news}">
         <nav class="d-flex justify-content-center align-items-center">
             <ul class="pagination">
 
                 <li class="page-item"><a class="page-link" href="<c:url value = "/profile/${profileUser.id}/${newsOrder}">
-            <c:param name = "page" value = "1"/>
-            <c:param name = "category" value = "${param.category}"/>
-            </c:url>"><spring:message code="home.pagination.first"/></a></li>
+                        <c:param name = "page" value = "1"/>
+                        <c:param name = "category" value = "${param.category}"/>
+                        </c:url>"><spring:message code="home.pagination.first"/></a></li>
 
 
                 <c:forEach var = "i" begin = "${newsPage.minPage}" end = "${newsPage.maxPage}">
                     <li class="page-item"><a class="page-link ${i == newsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/profile/${profileUser.id}/${newsOrder}">
-            <c:param name = "page" value = "${i}"/>
-            <c:param name = "category" value = "${param.category}"/>
-            </c:url>"><c:out value="${i}"/></a></li>
+                        <c:param name = "page" value = "${i}"/>
+                        <c:param name = "category" value = "${param.category}"/>
+                        </c:url>"><c:out value="${i}"/></a></li>
                 </c:forEach>
 
                 <li class="page-item"><a class="page-link" href="<c:url value = "/profile/${profileUser.id}/${newsOrder}">
-            <c:param name = "page" value = "${newsPage.totalPages}"/>
-            <c:param name = "category" value = "${param.category}"/>
-            </c:url>"><spring:message code="home.pagination.last"/></a></li>
+                        <c:param name = "page" value = "${newsPage.totalPages}"/>
+                        <c:param name = "category" value = "${param.category}"/>
+                        </c:url>"><spring:message code="home.pagination.last"/></a></li>
 
             </ul>
         </nav>
     </c:if>
+
+
+
 </div>
+
+
+
+
+
 
 
 </body>

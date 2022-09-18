@@ -3,11 +3,11 @@ package ar.edu.itba.paw.model;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 
 public enum ProfileCategory {
+    MY_POSTS("profileCategories.myPosts"),
 
     SAVED("profileCategories.saved"),
-    UPVOTED("categories.upvoted"),
-    DOWNVOTED("categories.downvoted"),
-    MY_POSTS("categories.myPosts");
+    UPVOTED("profileCategories.upvoted"),
+    DOWNVOTED("profileCategories.downvoted");
 
     private final String interCode;
 

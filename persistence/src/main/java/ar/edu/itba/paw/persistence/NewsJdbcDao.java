@@ -24,6 +24,7 @@ public class NewsJdbcDao implements NewsDao{
     private final CategoryDao categoryDao;
 
     private static final double PAGE_SIZE = 10.0;
+    private static final double PROFILE_PAGE_SIZE = 5.0;
 
     private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
             new News.NewsBuilder(   rs.getLong("creator"),
@@ -138,18 +139,18 @@ public class NewsJdbcDao implements NewsDao{
     @Override
     public List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns) {
         return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN news_category WHERE creator = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
-                new Object[]{userId, PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
+                new Object[]{userId, PROFILE_PAGE_SIZE, (page-1)*PROFILE_PAGE_SIZE},NEWS_ROW_MAPPER);
     }
 
     @Override
     public List<News> getSavedNewsFromUser(int page, long userId, NewsOrder ns) {
         return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN saved_news WHERE user_id = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
-                new Object[]{userId, PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
+                new Object[]{userId, PROFILE_PAGE_SIZE, (page-1)*PROFILE_PAGE_SIZE},NEWS_ROW_MAPPER);
     }
 
     private List<News> getNewsWithRatingFromUser(int page, long userId, NewsOrder ns, boolean upvote) {
-        return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN upvoted_news WHERE user_id = ? AND upvote = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
-                new Object[]{userId, PAGE_SIZE, (page-1)*PAGE_SIZE, upvote},NEWS_ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN upvotes WHERE user_id = ? AND upvote = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
+                new Object[]{userId, upvote, PROFILE_PAGE_SIZE, (page-1)*PROFILE_PAGE_SIZE},NEWS_ROW_MAPPER);
     }
 
     @Override
@@ -163,10 +164,35 @@ public class NewsJdbcDao implements NewsDao{
     }
 
     @Override
-    public int getTotalPagesNewsFromUser(int page, long userId, NewsOrder ns) {
+    public int getTotalPagesNewsFromUser(int page, long userId) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE creator = ?" ,
                 new Object[]{userId},ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
+        int total = (int) Math.ceil(rowsCount/PROFILE_PAGE_SIZE);
+        return total==0?1:total;
+    }
+
+    private int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN upvotes WHERE user_id = ? AND upvote = ?" ,
+                new Object[]{userId, upvoted},ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount/PROFILE_PAGE_SIZE);
+        return total==0?1:total;
+    }
+
+    @Override
+    public int getTotalPagesNewsFromUserUpvoted(int page, long userId) {
+        return getTotalPagesNewsFromUserRating(page, userId, true);
+    }
+
+    @Override
+    public int getTotalPagesNewsFromUserDownvoted(int page, long userId) {
+        return getTotalPagesNewsFromUserRating(page, userId, false);
+    }
+
+    @Override
+    public int getTotalPagesNewsFromUserSaved(int page, long userId) {
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN saved_news WHERE user_id = ?" ,
+                new Object[]{userId},ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount/PROFILE_PAGE_SIZE);
         return total==0?1:total;
     }
 

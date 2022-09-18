@@ -84,22 +84,33 @@ public class NewsServiceImpl implements NewsService{
     public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String profileCategory) {
         page = page <= 0 ? 1 : page;
         NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
-        int totalPages = newsDao.getTotalPagesNewsFromUser(page, userId, newsOrderObject);
-        page = Math.min(page, totalPages);
+        int totalPages = 0;
+
         List<News> ln = null;
         ProfileCategory pc = ProfileCategory.valueOf(profileCategory);
         switch (pc) {
             case SAVED: ln = newsDao.getSavedNewsFromUser(page,userId,newsOrderObject);
-            break;
+                totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, userId);
+
+                break;
 
             case UPVOTED: ln = newsDao.getNewsUpvotedByUser(page,userId,newsOrderObject);
-            break;
+                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
+
+                break;
 
             case DOWNVOTED: ln = newsDao.getNewsDownvotedByUser(page,userId,newsOrderObject);
-            break;
+                totalPages = newsDao.getTotalPagesNewsFromUserDownvoted(page, userId);
+
+                break;
 
             case MY_POSTS: ln  = newsDao.getAllNewsFromUser(page,userId,newsOrderObject);
+                totalPages = newsDao.getTotalPagesNewsFromUser(page, userId);
+
         };
+
+        page = Math.min(page, totalPages);
+
         return new Page<>(ln.stream().map(this::getFullNews).collect(Collectors.toList()), page, totalPages);
     }
 
