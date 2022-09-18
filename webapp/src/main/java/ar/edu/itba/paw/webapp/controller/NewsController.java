@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 public class NewsController {
@@ -79,20 +81,21 @@ public class NewsController {
 
 
         //TODO: check if there is a better way of doing this.
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        mav.addObject("rating",maybeUser.map(u -> newsService.upvoteState(news, u)).orElse(Rating.NO_RATING));
+        FullNews fullNews = newsService.getFullNewsById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = fullNews.getNews();
+        mav.addObject("rating",maybeUser.map(u -> newsService.upvoteState(fullNews.getNews(), u)).orElse(Rating.NO_RATING));
 
         Locale locale = LocaleContextHolder.getLocale();
         mav.addObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
                 .withLocale( locale)));
-        mav.addObject("news", news);
+        mav.addObject("fullNews", fullNews);
         mav.addObject("loggedUser", maybeUser.orElseGet(null));
-        mav.addObject("upvotes", newsService.getUpvotes(news.getNewsId()));
+//        mav.addObject("upvotes", fullNews.getUpvotes());
         mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
-        mav.addObject("timeToRead", TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(news.getBody())));
-        mav.addObject("positivityBarValue", newsService.getPositivityValue(news.getNewsId())*100);
-        mav.addObject("positivity", newsService.getPositivityBracket(news.getNewsId()));
+//        mav.addObject("timeToRead", TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(news.getBody())));
+//        mav.addObject("positivityBarValue", newsService.getPositivityValue(news.getNewsId())*100);
+//        mav.addObject("positivity", newsService.getPositivityBracket(news.getNewsId()));
 
         return mav;
     }
@@ -118,6 +121,20 @@ public class NewsController {
         mav.addObject("validate", false);
 
         return mav;
+    }
+
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<SavedResult> saveNews(@PathVariable(value = "newsId") long newsId){
+        Optional<User> maybeUser = securityService.getCurrentUser();
+        Optional<News> maybeNews = newsService.getById(newsId);
+
+        if (!maybeUser.isPresent() || !maybeNews.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(maybeNews.get(), maybeUser.get()));
+        return new ResponseEntity<>(savedResult, HttpStatus.OK);
     }
 
     private ModelAndView createArticleAndValidate(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm, final BindingResult errors){

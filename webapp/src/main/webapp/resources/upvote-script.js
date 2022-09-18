@@ -13,7 +13,9 @@ async function postData(url = '', data = {}) {
     });
     let text = await response.text()
     console.log(text)
-    return JSON.parse(text); // parses JSON response into native JavaScript objects
+    let json = JSON.parse(text);
+    json.ok = response.ok;
+    return json; // parses JSON response into native JavaScript objects
 }
 
 
@@ -69,5 +71,33 @@ async function handleClick(img) {
             postData(URL, {active: true, newsId: newsId}).then(r => addActionAndRemoveOpposite(r, 'upvote', 'downvoted'))
         }
     }
+
+}
+
+async function handleBookmarkClick(bImg) {
+    const src = bImg.src
+    const URL = bImg.getAttribute('url')
+    // const newsId = bImg.parentElement.getAttribute('url')
+
+    console.log(URL)
+
+    const setBookmarkColor = (response) => {
+        if (response.ok) {
+            if (response.active) {
+                if (!src.includes('-clicked')) {
+                    const aux = src.split('.')
+                    bImg.src = aux[0] + '-clicked' + '.' + aux[1]
+                }
+            }
+
+            else {
+                if (src.includes('-clicked')) {
+                    bImg.setAttribute('src', src.replace(/-clicked/g, ""));
+                }
+            }
+        }
+    }
+
+    await postData(URL, {}).then(r => setBookmarkColor(r))
 
 }

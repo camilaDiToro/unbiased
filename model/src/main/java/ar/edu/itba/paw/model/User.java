@@ -16,6 +16,11 @@ public class User {
         this.status = userBuilder.status;
     }
 
+    @Override
+    public String toString() {
+        return username != null ? username : email;
+    }
+
     public long getId() {
         return userId;
     }

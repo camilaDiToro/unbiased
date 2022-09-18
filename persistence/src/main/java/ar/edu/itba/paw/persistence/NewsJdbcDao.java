@@ -19,6 +19,8 @@ public class NewsJdbcDao implements NewsDao{
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert jdbcUpvoteInsert;
 
+    private final SimpleJdbcInsert jdbcSavedNewsInsert;
+
     private final CategoryDao categoryDao;
 
     private static final double PAGE_SIZE = 10.0;
@@ -50,6 +52,7 @@ public class NewsJdbcDao implements NewsDao{
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("news").usingGeneratedKeyColumns("news_id");
         jdbcUpvoteInsert = new SimpleJdbcInsert(dataSource).withTableName("upvotes");
+        jdbcSavedNewsInsert = new SimpleJdbcInsert(dataSource).withTableName("saved_news");
 
         this.categoryDao = categoryDao;
     }
@@ -114,6 +117,12 @@ public class NewsJdbcDao implements NewsDao{
     }
 
     @Override
+    public List<News> getSavedNews(int page, User user, NewsOrder ns) {
+        return jdbcTemplate.query("SELECT * FROM saved_news NATURAL JOIN news ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
+                new Object[]{PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
+    }
+
+    @Override
     public List<News> getNewsByCategory(int page, Category category, NewsOrder ns) {
         return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN news_category WHERE category_id = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
                 new Object[]{category.getId(), PAGE_SIZE, (page-1)*PAGE_SIZE},NEWS_ROW_MAPPER);
@@ -173,6 +182,38 @@ public class NewsJdbcDao implements NewsDao{
 
        return interactions == 0 ? 1 : upvotes / interactions;
     }
+
+    @Override
+    public void saveNews(News news, User user) {
+//        jdbcTemplate.update("DELETE FROM upvotes WHERE user_id = ? AND news_id = ?",
+//                new Object[]{userId, newsId});
+//        if (rating.equals(Rating.NO_RATING))
+//            return;
+
+
+
+        final Map<String,Object> savedNewsData = new HashMap<>();
+        savedNewsData.put("news_id",news.getNewsId());
+        savedNewsData.put("user_id", user.getId());
+        savedNewsData.put("saved_date", LocalDateTime.now());
+
+
+        jdbcSavedNewsInsert.execute(savedNewsData);
+
+    }
+
+    @Override
+    public boolean isSaved(News news, User user) {
+        return jdbcTemplate.query("SELECT count(*) AS is_saved FROM saved_news WHERE news_id = ? AND user_id = ?",
+                new Object[]{news.getNewsId(), user.getId()}, (rs, rowNum) -> rs.getInt("is_saved") > 0).stream().findFirst().get();
+    }
+
+    @Override
+    public void removeSaved(News news, User user) {
+        jdbcTemplate.update("DELETE FROM saved_news WHERE news_id = ? AND user_id = ?",new Object[]{news.getNewsId(), user.getId()});
+    }
+
+
 
 
 

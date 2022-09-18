@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface NewsService {
     News create(News.NewsBuilder newsBuilder);
     Optional<News> getById(long id);
-    Page<News> getNews(int page, String category, String newsOrder, String query);
+    Page<FullNews> getNews(int page, String category, String newsOrder, String query);
     List<Category> getNewsCategory(News news);
 
     int getUpvotes(Long newsId);
@@ -24,5 +24,13 @@ public interface NewsService {
     double getPositivityValue(Long newsId);
 
     Positivity getPositivityBracket(Long newsId);
+
+    List<FullNews> getSavedNews(int page, User user, NewsOrder ns);
+
+    boolean toggleSaveNews(News news, User user);
+
+    Optional<FullNews> getFullNewsById(long id);
+
+    boolean isSaved(News news, User user);
 
 }
