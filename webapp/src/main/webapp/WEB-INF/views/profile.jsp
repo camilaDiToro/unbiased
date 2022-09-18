@@ -141,6 +141,15 @@
                                                 </div>
                                                 <div class="d-flex align-items-center" role="group">
 
+                                                    <c:if test="${isMyProfile}">
+                                                        <%--<input type="image" alt="..." src="<c:url value="/resources/bin.png"/>" style="max-width: 20px; max-height: 20px">--%>
+                                                        <form method="post" >
+                                                            <button type="submit" class="btn" style="background: none; outline: none; margin-top: 10px">
+                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
+                                                            </button>
+                                                        </form>
+                                                    </c:if>
+
                                                     <c:if test="${user != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
                                                             <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${savedMap.get(newsId) ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
@@ -184,7 +193,7 @@
         </div>
 
         <div class="profile">
-            <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
+            <img src="<c:url value="/profile/${userProfile.imageId}/image"/>" class="rounded-circle" width="80">
         </div>
 
 
