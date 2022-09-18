@@ -113,6 +113,7 @@ public class NewsController {
                 .withLocale( locale)));
         mav.addObject("fullNews", fullNews);
         mav.addObject("loggedUser", maybeUser.orElse(null));
+        mav.addObject("saved", maybeUser.map(u -> newsService.isSaved(news, u)).orElse(false));
 
         mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
