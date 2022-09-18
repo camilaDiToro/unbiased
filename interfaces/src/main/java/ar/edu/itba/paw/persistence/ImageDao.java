@@ -9,4 +9,5 @@ public interface ImageDao {
 
     Optional<Image> getImageById(long id);
     long uploadImage(byte[] bytes, String dataType);
+    void deleteImage(long id);
 }

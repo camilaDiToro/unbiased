@@ -1,28 +1,19 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.exceptions.UserNotFoundException;
-import ar.edu.itba.paw.webapp.form.UserForm;
-import ar.edu.itba.paw.webapp.form.UserProfileForm;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +51,7 @@ public class HomeController {
 
         Map<Long, Rating> ratingMap = new HashMap<>();
         Map<Long, Boolean> savedMap = new HashMap<>();
-        Map<Long, User> creatorMap = new HashMap<>();
+
 
 
 
@@ -88,7 +79,6 @@ public class HomeController {
             long newsId = article.getNewsId();
             ratingMap.put(newsId, user.map(u -> ns.upvoteState(article, u)).orElse(Rating.NO_RATING));
             savedMap.put(newsId, user.map(u -> ns.isSaved(article, u)).orElse(false));
-            creatorMap.put(newsId, us.getUserById(article.getCreatorId()).get());
         }
 
 
@@ -96,21 +86,20 @@ public class HomeController {
 
         mav.addObject("ratingMap", ratingMap);
         mav.addObject("savedMap", savedMap);
-        mav.addObject("creatorMap", creatorMap);
 
 
 
 
-        mav.addObject("news", newsContent);
-        mav.addObject("page", newsPage.getCurrentPage());
-        mav.addObject("totalPages", newsPage.getTotalPages());
-        mav.addObject("minPage",newsPage.getMinPage());
-        mav.addObject("maxPage",newsPage.getMaxPage());
+        mav.addObject("newsPage", newsPage);
+//        mav.addObject("page", newsPage.getCurrentPage());
+//        mav.addObject("totalPages", newsPage.getTotalPages());
+//        mav.addObject("minPage",newsPage.getMinPage());
+//        mav.addObject("maxPage",newsPage.getMaxPage());
 
         return mav;
     }
 
-    private ResponseEntity<UpvoteActionResponse> toggleHandler(UpvoteAction payload, Rating action) throws JsonProcessingException {
+    private ResponseEntity<UpvoteActionResponse> toggleHandler(UpvoteAction payload, Rating action) {
 //        ObjectMapper mapper = new ObjectMapper();
 //        Map<String, Object> map = mapper.readValue(payload, Map.class);
 //        final String fmt = "{ \"upvotes\": %d, \"active\": %b }";
@@ -140,13 +129,13 @@ public class HomeController {
 
     @RequestMapping(value = "/change-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<UpvoteActionResponse>  toggleUpvote(@RequestBody UpvoteAction payload) throws JsonProcessingException {
+    public ResponseEntity<UpvoteActionResponse>  toggleUpvote(@RequestBody UpvoteAction payload){
         return toggleHandler(payload, Rating.UPVOTE);
     }
 
     @RequestMapping(value = "/change-downvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
     @ResponseBody
-    public ResponseEntity<UpvoteActionResponse>  toggleDownvote(@RequestBody UpvoteAction payload) throws JsonProcessingException {
+    public ResponseEntity<UpvoteActionResponse>  toggleDownvote(@RequestBody UpvoteAction payload){
         return toggleHandler(payload, Rating.DOWNVOTE);
     }
 

@@ -65,8 +65,24 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
+    public Optional<User> findByUsername(String username) {
+        return jdbcTemplate.query("SELECT * FROM Users WHERE username = ?",
+                new Object[] { username }, ROW_MAPPER).stream().findFirst();
+    }
+
+    @Override
     public void verifyEmail(long id) {
         jdbcTemplate.update("UPDATE users SET status = 'REGISTERED' WHERE user_id = ?", id);
+    }
+
+    @Override
+    public void updateUsername(long userId, String username) {
+        jdbcTemplate.update("UPDATE users SET username = ? WHERE user_id = ?", username, userId);
+    }
+
+    @Override
+    public void updateImage(long userId, Long imageId) {
+        jdbcTemplate.update("UPDATE users SET image_id = ? WHERE user_id = ?", imageId, userId);
     }
 
     public List<User> getAll(int page){
@@ -80,7 +96,3 @@ public class UserJdbcDao implements UserDao {
 
     }
 }
-
-/*
-WITH interactions AS (SELECT creator AS user_id, count(*) AS interaction_count FROM upvotes JOIN news ON upvotes.news_id = news.news_id WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator ORDER BY count(*) ASC LIMIT ?) SELECT * FROM interactions NATURAL JOIN users
- */

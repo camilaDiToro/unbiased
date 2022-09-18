@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Component
 public class PawUserDetailsService implements UserDetailsService {
@@ -33,15 +34,11 @@ public class PawUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("No user by the name " + username);
         }
-        final Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+        final Collection<? extends GrantedAuthority> authorities = us.getRoles(user.getId()).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
                 //Arrays.asList(
                 //new SimpleGrantedAuthority("ROLE_USER")
                 //new SimpleGrantedAuthority("ROLE_ADMIN")
         //);
-
-        //authorities.add(new SimpleGrantedAuthority("la"))
-
-        //us.getRoles(user.getId()).stream().forEach((t)->authorities.add(new SimpleGrantedAuthority(t)));
 
         return new org.springframework.security.core.userdetails.User(username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities);
     }

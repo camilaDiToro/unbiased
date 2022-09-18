@@ -27,4 +27,9 @@ public class ImageServiceImpl implements ImageService{
     public long uploadImage(byte[] bytes, String dataType) {
         return imageDao.uploadImage(bytes, dataType);
     }
+
+    @Override
+    public void deleteImage(long id) {
+        imageDao.deleteImage(id);
+    }
 }
