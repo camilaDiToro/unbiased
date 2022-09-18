@@ -32,7 +32,7 @@ public class VerificationTokenJdbcDao implements VerificationTokenDao{
 
 
     @Override
-    public VerificationToken create(long userId, String token, LocalDateTime expiryDate) {
+    public VerificationToken createEmailToken(long userId, String token, LocalDateTime expiryDate) {
         final Map<String, Object> tokenData = new HashMap<>();
         tokenData.put("user_id", userId);
         tokenData.put("token", token);
@@ -43,10 +43,14 @@ public class VerificationTokenJdbcDao implements VerificationTokenDao{
     }
 
     @Override
-    public Optional<VerificationToken> getToken(String token) {
+    public Optional<VerificationToken> getEmailToken(String token) {
         return jdbcTemplate.query("SELECT * FROM email_verification_token WHERE token = ?", new Object[]{token},
                 TOKEN_ROW_MAPPER).stream().findFirst();
     }
 
+    @Override
+    public void deleteEmailToken(long userId) {
+        jdbcTemplate.update("DELETE FROM email_verification_token WHERE user_id = ? ", userId);
+    }
 
 }

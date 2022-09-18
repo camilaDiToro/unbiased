@@ -15,4 +15,13 @@ public enum UserStatus {
     public String getStatus() {
         return status;
     }
+
+    public static UserStatus getByDesc(String description){
+        for (UserStatus c : UserStatus.values()) {
+            if (c.getStatus().equals(description) ) {
+                return c;
+            }
+        }
+        return null;
+    }
 }

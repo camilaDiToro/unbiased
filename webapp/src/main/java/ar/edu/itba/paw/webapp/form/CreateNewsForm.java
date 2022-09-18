@@ -22,6 +22,7 @@ public class CreateNewsForm {
     private String subtitle;
     @NotNull
     @NotBlank
+    @Length(max=10000000)
     private String body;
 
     @Email(regexp = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$")
