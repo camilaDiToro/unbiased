@@ -30,7 +30,10 @@
                 <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
             </div>
-            <h1 class="text-xl-center mx-auto max-w-75 text-ellipsis-1 m-3"><c:out value="${news.title}"/></h1>
+
+                <h1 class="text-xl-center mx-auto max-w-75 text-ellipsis-1 m-3"><c:out value="${news.title}"/></h1>
+
+
         </div>
         <hr/>
         <c:if test="${news.hasImage()}">
@@ -38,7 +41,17 @@
 
         </c:if>
         <div class="d-flex align-items-center justify-content-between">
-            <h4 class="text-lg-left"><c:out value="${news.subtitle}"/></h4>
+            <div class="d-flex gap-1 align-items-center justify-content-center">
+                <div class="d-flex align-items-center justify-content-center">
+                    <h4 class="text-lg-left mb-0"><c:out value="${news.subtitle}"/></h4>
+
+                </div>
+                <c:if test="${user != null}">
+                    <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center" >
+                        <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
+                    </div>
+                </c:if>
+            </div>
 
             <div class="progress w-25" data-toggle="tooltip" data-placement="top" title="<spring:message code="${fullNews.positivity.getInterCode()}"/>">
                 <div class="progress-bar progress-bar-striped <c:out value="${fullNews.positivity}"/>" role="progressbar" style="width: ${fullNews.positiveValue*100}%"  aria-valuemin="0" aria-valuemax="100"></div>
