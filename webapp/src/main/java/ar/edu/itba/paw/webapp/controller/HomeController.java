@@ -38,6 +38,8 @@ public class HomeController {
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
         return new ModelAndView("redirect:/TOP");
+//        return new ModelAndView("email_verification");
+
     }
 
     @RequestMapping("/{orderBy:TOP|NEW}")
