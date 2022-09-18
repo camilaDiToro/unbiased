@@ -19,7 +19,7 @@ public class CategoryJdbcDao implements CategoryDao{
 
     @Override
     public boolean addCategoryToNews(long newsId, Category category) {
-        String sql = "INSERT INTO news_category VALUES (?, ?) ON CONFLICT DO NOTHING";
+        String sql = "INSERT INTO news_category VALUES (?, ?)";
         return jdbcTemplate.update(sql, category.ordinal(), newsId) == 1;
     }
 }
