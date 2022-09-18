@@ -15,7 +15,6 @@ public interface NewsDao {
     Optional<News> getById(long id);
     List<News> getNewsByCategory(int page, Category category, NewsOrder ns);
     int getTotalPagesCategory(Category category);
-
     List<Category> getNewsCategory(News news);
 
     int getUpvotes(Long newsId);
@@ -33,5 +32,9 @@ public interface NewsDao {
     boolean isSaved(News news, User user);
 
     void removeSaved(News news, User user);
+
+    List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns);
+    int getTotalPagesNewsFromUser(int page, long userId, NewsOrder ns);
+    void deleteNews(long newsId);
 
 }

@@ -7,7 +7,7 @@
 <%@ include file="../../../resources/head.jsp" %>
 <div class="d-flex align-items-center justify-content-center h-75">
     <div class="text-center">
-        <h1 class="display-1 fw-bold">404</h1>
+        <h1 class="display-1 fw-bold">400</h1>
         <p class="fs-1"> <span class="text-info font-weight-bold"><spring:message code="genericError.ops"/></span> <spring:message code="genericError.message.400"/></p>
         <p class="lead">
             <spring:message code="error.invalidCategory"/>

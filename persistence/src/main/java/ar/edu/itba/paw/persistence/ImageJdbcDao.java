@@ -42,4 +42,9 @@ public class ImageJdbcDao implements ImageDao {
 
         return jdbcInsert.executeAndReturnKey(imageData).longValue();
     }
+
+    @Override
+    public void deleteImage(long id) {
+        jdbcTemplate.update("DELETE FROM image WHERE image_id = ?",id);
+    }
 }

@@ -44,6 +44,18 @@ public class User {
     public UserStatus getStatus() {
         return status;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (!(o instanceof User))
+            return false;
+
+        User aux = (User) o;
+
+        return aux.userId == userId;
+    }
 
     public static class UserBuilder{
         private long userId;
