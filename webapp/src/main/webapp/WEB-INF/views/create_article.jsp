@@ -73,14 +73,14 @@
 
 
 
-        <div>
-            <form:label path="creatorEmail"><spring:message code="createArticle.email"/></form:label>
-            <div class="form-group">
-                <spring:message code="createArticle.email.placeholder"  var="emailPlaceholder" />
-                <form:input placeholder="${emailPlaceholder}" type="email" cssClass="form-control ${errors != null && errors.getFieldErrorCount('creatorEmail') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}" path="creatorEmail"/>
-                <form:errors path="creatorEmail" element="p" cssClass="invalid-feedback"/>
-            </div>
-        </div>
+<%--        <div>--%>
+<%--            <form:label path="creatorEmail"><spring:message code="createArticle.email"/></form:label>--%>
+<%--            <div class="form-group">--%>
+<%--                <spring:message code="createArticle.email.placeholder"  var="emailPlaceholder" />--%>
+<%--                <form:input placeholder="${emailPlaceholder}" type="email" cssClass="form-control ${errors != null && errors.getFieldErrorCount('creatorEmail') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}" path="creatorEmail"/>--%>
+<%--                <form:errors path="creatorEmail" element="p" cssClass="invalid-feedback"/>--%>
+<%--            </div>--%>
+<%--        </div>--%>
 
     <div class="dropdown" id="categories-dropdown">
         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
