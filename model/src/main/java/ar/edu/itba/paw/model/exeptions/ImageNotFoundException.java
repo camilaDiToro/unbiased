@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.exceptions;
+package ar.edu.itba.paw.model.exeptions;
 
 public class ImageNotFoundException extends RuntimeException  {
 }

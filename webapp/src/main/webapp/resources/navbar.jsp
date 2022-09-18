@@ -15,7 +15,7 @@
 
 
         <div class="d-flex h-75 gap-2">
-            <c:if test="${user != null}">
+            <c:if test="${loggedUser != null}">
                 <div class="dropdown dropdown-p">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <div class="w-fit d-flex flex-row align-items-center gap-1 border-info">
@@ -42,7 +42,7 @@
 
             </c:if>
 
-            <c:if test="${user == null}">
+            <c:if test="${loggedUser == null}">
                 <a role="button" class="btn btn-primary" href="<c:url value="/login"/>">Login</a>
                 <a role="button" class="btn btn-primary" href="<c:url value="/create"/>">Register</a>
             </c:if>

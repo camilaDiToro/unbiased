@@ -193,6 +193,10 @@
     font-weight: 400;
     text-align: center;
 }
+
+.news-bookmark {
+    height: 30px;
+}
 @media(min-width: 1200px) {
     .w-xl-25 {
         width: 25% !important;

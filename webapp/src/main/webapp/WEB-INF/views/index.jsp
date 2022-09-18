@@ -8,9 +8,9 @@
 <%@ include file="../../resources/head.jsp" %>
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
 <body>
-
+<c:set var="news" value="${newsPage.content}"/>
 <div class="d-flex h-100 flex-column">
-    <c:set var="user" scope="request" value="${user}"/>
+    <c:set var="loggedUser" scope="request" value="${user}"/>
     <%@ include file="../../resources/navbar.jsp" %>
     <div class="container-xxl container-fluid flex-grow-1">
         <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
@@ -119,15 +119,17 @@
                                                         <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
                                                     </div>
                                                     <a href="<c:url value="/profile/${article.creatorId}"/>">
-                                                        <div class="text-secondary card-name-text text-ellipsis-1">${creatorMap.get(newsId)}</div>
+                                                        <div class="text-secondary card-name-text text-ellipsis-1">${fullNews.user}</div>
 
                                                     </a>
                                                 </div>
                                                 <div class="d-flex align-items-center" role="group">
 
-                                                    <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                        <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${savedMap.get(newsId) ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
-                                                    </div>
+                                                    <c:if test="${user != null}">
+                                                        <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
+                                                            <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${savedMap.get(newsId) ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                        </div>
+                                                    </c:if>
 <%--                                                    <button type="button" class="btn btn-sm btn-outline-primary m-1 h-75 max-h-40px"><svg class="h-75" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 4H5a2 2 0 0 0-2 2v15l3.467-2.6a2 2 0 0 1 1.2-.4H19a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg></button>--%>
                                                 </div>
                                             </div>
@@ -190,15 +192,15 @@
             </c:url>"><spring:message code="home.pagination.first"/></a></li>
 
 
-                <c:forEach var = "i" begin = "${minPage}" end = "${maxPage}">
-                    <li class="page-item"><a class="page-link ${i == page ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
+                <c:forEach var = "i" begin = "${newsPage.minPage}" end = "${newsPage.maxPage}">
+                    <li class="page-item"><a class="page-link ${i == newsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "${i}"/>
             <c:param name = "query" value = "${param.query}"/>
             </c:url>"><c:out value="${i}"/></a></li>
                 </c:forEach>
 
                 <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
-            <c:param name = "page" value = "${totalPages}"/>
+            <c:param name = "page" value = "${newsPage.totalPages}"/>
             <c:param name = "query" value = "${param.query}"/>
             </c:url>"><spring:message code="home.pagination.last"/></a></li>
 

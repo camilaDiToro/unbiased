@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.VerificationToken;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,16 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final VerificationTokenService verificationTokenService;
     private final RoleDao roleDao;
+    private final ImageService imageService;
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
         this.roleDao = roleDao;
+        this.imageService = imageService;
     }
 
 
@@ -103,6 +106,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<String> getRoles(long userId) {
         return roleDao.getRoles(userId);
+    }
+
+    @Override
+    public void updateProfile(long userId, String username, Long imageId) {
+        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+
+        if(imageId!=null){
+            if(user.getImageId()!=null)
+                imageService.deleteImage(user.getImageId());
+            userDao.updateImage(userId,imageId);
+        }
+
+        if(username!= null && !username.isEmpty())
+            userDao.updateUsername(userId,username);
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return userDao.findByUsername(username);
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/

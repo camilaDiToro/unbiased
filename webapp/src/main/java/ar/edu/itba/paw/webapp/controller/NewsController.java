@@ -1,12 +1,16 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.Category;
+import ar.edu.itba.paw.model.News;
+import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.exceptions.ImageNotFoundException;
-import ar.edu.itba.paw.webapp.exceptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -25,7 +29,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 public class NewsController {
@@ -73,6 +76,26 @@ public class NewsController {
 //        return mav;
 //    }
 
+    @RequestMapping(value = "/news/create", method = RequestMethod.POST)
+    public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
+                                     final BindingResult errors) throws IOException {
+        if(errors.hasErrors()){
+            return createArticle(createNewsFrom);
+        }
+
+        final User.UserBuilder userBuilder = new User.UserBuilder(createNewsFrom.getCreatorEmail());
+        final User user = userService.createIfNotExists(userBuilder);
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+
+        if(createNewsFrom.getImage()!=null && createNewsFrom.getImage().getBytes().length!=0){
+            newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
+        }
+
+
+        final News news = newsService.create(newsBuilder);
+        return new ModelAndView("redirect:/news/" + news.getNewsId());
+    }
+
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("newsId") long newsId){
         final ModelAndView mav = new ModelAndView("show_news");
@@ -89,14 +112,11 @@ public class NewsController {
         mav.addObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
                 .withLocale( locale)));
         mav.addObject("fullNews", fullNews);
-        mav.addObject("loggedUser", maybeUser.orElseGet(null));
-//        mav.addObject("upvotes", fullNews.getUpvotes());
+        mav.addObject("loggedUser", maybeUser.orElse(null));
+        mav.addObject("saved", maybeUser.map(u -> newsService.isSaved(news, u)).orElse(false));
+
         mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
-//        mav.addObject("timeToRead", TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(news.getBody())));
-//        mav.addObject("positivityBarValue", newsService.getPositivityValue(news.getNewsId())*100);
-//        mav.addObject("positivity", newsService.getPositivityBracket(news.getNewsId()));
-
         return mav;
     }
 
@@ -107,18 +127,13 @@ public class NewsController {
          return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
     }
 
-    @ExceptionHandler(NewsNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ModelAndView newsNotFound()    {
-        return new ModelAndView("errors/newsNotFound");
-    }
-
 
     @RequestMapping(value = "/create_article", method = RequestMethod.GET)
     public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
         final ModelAndView mav = new ModelAndView("create_article");
         mav.addObject("categories", Category.values());
         mav.addObject("validate", false);
+        mav.addObject("loggedUser", securityService.getCurrentUser().orElse(null));
 
         return mav;
     }
@@ -153,14 +168,16 @@ public class NewsController {
         }
 
         String htmlBody = TextUtils.convertMarkdownToHTML(createNewsFrom.getBody());
-        // TODO: hacer un validador para que rechaze cualquier texto de tipo html en el body.
 
-        final User user = userService.createIfNotExists(new User.UserBuilder(createNewsFrom.getCreatorEmail()));
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), htmlBody, createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        final User user = securityService.getCurrentUser().get();
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
 
         for(String category : createNewsFrom.getCategories()){
-            newsBuilder.addCategory(Category.getByInterCode(category));
+            Category c = Category.getByInterCode(category);
+            if(c==null)
+                throw new InvalidCategoryException();
+            newsBuilder.addCategory(c);
         }
 
         if(!createNewsFrom.getImage().isEmpty()){
