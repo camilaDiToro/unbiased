@@ -21,6 +21,7 @@
 </form:form>
 </body>--%>
 
+<link href="<c:url value="/resources/profile.css"/>" rel="stylesheet">
 <body>
 <%@include file="../../resources/navbar.jsp" %>
 
@@ -35,8 +36,21 @@
     <div style="border-left:1px grey; border-right:1px solid grey; height:100%; opacity: 50%"></div>
 
     <%--RIGHT SIDE--%>
-    <div style=" width: 30%; height: 100%">
+    <div style="display: flex; width: 30%; height: 100%;justify-content: center; margin-top: 5%">
+        <div class="card" style="width: 18rem; height: 12rem">
+            <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">
+            <div class="card-body">
+                <%--<h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>--%>
+                <h4 class="mb-0 card-title text-center">Alejo Caeiro</h4>
+                <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${user.email}"/> </span>
+            </div>
+        </div>
 
+        <div class="profile">
+            <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
+        </div>
     </div>
 </div>
 
