@@ -13,6 +13,9 @@ public interface UserService {
     User create(User.UserBuilder userBuilder);
     User createIfNotExists(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
+
+    List<User> getTopCreators(int qty);
+
     VerificationToken.Status verifyUserEmail(String token);
     VerificationToken.Status resendEmailVerification(String email);
     void addRole(long userId, Role role);

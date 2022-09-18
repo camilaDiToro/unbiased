@@ -133,4 +133,9 @@ public class UserServiceImpl implements UserService {
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
+
+    @Override
+    public List<User> getTopCreators(int qty) {
+        return userDao.getTopCreators(qty);
+    }
 }

@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserDao {
@@ -12,6 +13,9 @@ public interface UserDao {
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
     void verifyEmail(long id);
+
+    List<User> getTopCreators(int qty);
+
     void updateUsername(long userId, String username);
     void updateImage(long userId, Long imageId);
 }
