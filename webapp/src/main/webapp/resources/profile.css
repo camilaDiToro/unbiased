@@ -1,0 +1,29 @@
+.card{
+    border-radius: 15px;
+}
+
+.card-img-top{
+    height: 80px;
+    border-radius: 15px 15px 0 0;
+}
+
+.card-title{
+    margin-top: 20px;
+}
+
+.profile{
+
+    position: absolute;
+    height: 90px;
+    width: 90px;
+
+    border-radius: 50%;
+
+}
+
+.profile img{
+    height: 80px;
+    width: 80px;
+    margin-top:50px;
+
+}
