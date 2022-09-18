@@ -20,7 +20,7 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id")).status(rs.getString("status")).build();
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id") == 0 ? null : rs.getLong("image_id")).status(rs.getString("status")).build();
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {

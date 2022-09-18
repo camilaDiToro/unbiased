@@ -21,10 +21,18 @@
                                                     <div class="w-fit d-flex flex-row align-items-center gap-1 border-info">
 
                                                         <div class="img-container-navbar">
-                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+                                                            <c:if test="${loggedUser.hasImage()}">
+                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${loggedUser.imageId}/image"/>" alt="">
+
+                                                            </c:if>
+
+                                                            <c:if test="${!loggedUser.hasImage()}">
+                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+
+                                                            </c:if>
                                                         </div>
 
-                                                            <b class="text-white"><c:out value="${user.username != null ? user.username : user.email}"/></b>
+                                                            <b class="text-white"><c:out value="${loggedUser}"/></b>
 
 <%--                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">--%>
 <%--                                                            <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">--%>

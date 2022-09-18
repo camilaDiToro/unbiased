@@ -10,7 +10,7 @@
 <body>
 <c:set var="news" value="${newsPage.content}"/>
 <div class="d-flex h-100 flex-column">
-    <c:set var="loggedUser" scope="request" value="${user}"/>
+<%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
     <%@ include file="../../resources/navbar.jsp" %>
     <div class="container-xxl container-fluid flex-grow-1">
         <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
@@ -116,7 +116,12 @@
                                             <div class="d-flex justify-content-between p-2 w-100">
                                                 <div class="d-flex align-items-center w-auto gap-1">
                                                     <div class="img-container-article">
-                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+                                                        <c:if test="${fullNews.user.hasImage()}">
+                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${fullNews.user.imageId}/image"/>" alt="">
+                                                        </c:if>
+                                                        <c:if test="${!fullNews.user.hasImage()}">
+                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+                                                        </c:if>
                                                     </div>
                                                     <a href="<c:url value="/profile/${article.creatorId}"/>">
                                                         <div class="text-secondary card-name-text text-ellipsis-1">${fullNews.user}</div>
@@ -171,8 +176,14 @@
                     <a class="m-1" href="<c:url value="/profile/${creator.id}"/>">
                             <div class="card bg-primary text-white d-flex flex-row p-2 creator-card align-items-center">
 <div class="img-container">
-    <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+<c:if test="${creator.hasImage()}">
+    <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.imageId}/image"/>" alt="">
 
+</c:if>
+    <c:if test="${!creator.hasImage()}">
+        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+
+    </c:if>
 </div>
                                 <div class="mx-2 text-ellipsis-1"><c:out value="${creator.username != null ? creator.username : creator.email}"/></div>
                             </div>

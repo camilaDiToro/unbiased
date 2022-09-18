@@ -11,13 +11,17 @@
     border-radius: 15px 15px 0 0;
 }
 
+#right-card .card-body{
+    margin-top: 10px;
+}
+
 
 .profile{
 
     position: absolute;
     height: 90px;
     width: 90px;
-
+    margin-right: 150px;
     border-radius: 50%;
 
 }
@@ -26,5 +30,16 @@
     height: 80px;
     width: 80px;
     margin-top:65px;
+    border:3px solid #8ea7e8;
+}
 
+.pencil-edit{
+    position: absolute;
+    margin-top:100px;
+    margin-left: 200px;
+}
+
+.pencil-edit img{
+    height: 10px;
+    width: 10px
 }

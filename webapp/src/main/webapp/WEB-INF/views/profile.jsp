@@ -3,36 +3,11 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<c:set var="pageTitle" scope="request" value="Login"/>
+
 <c:set var="signInOrCreate" scope="request" value="${false}"/>
 <%@include file="../../resources/head.jsp" %>
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
-<%--<body>
-<%@include file="../../resources/navbar.jsp" %>
-<h2><spring:message code="views.profile.title" arguments="${user.email}" htmlEscape="true"/></h2>
-<h4><spring:message code="views.profile.desc" arguments="${user.id}" htmlEscape="true"/></h4>
-<h4>${user.username}</h4>
 
-<c:if test="${user.imageId!=null}">
-    <img src="<c:url value="/profile/${user.imageId}/image"/>" class="user-section-img"/>
-</c:if>
-
-<form:form modelAttribute="userProfileForm" method="post" enctype="multipart/form-data" acceptCharset="utf-8">
-    <div>
-        <form:label path="image">
-            insertar imagen
-        </form:label>
-        <form:input type="file" path="image" accept="image/png, image/jpeg" />
-        <form:errors path="image" element="p" cssStyle="color:red"/>
-    </div>
-    <div>
-        <form:errors path="username" element="p" cssStyle="color: red"/>
-        <form:label path="username">Username:</form:label>
-        <form:input type="text" path="username"/>
-    </div>
-    <button style="border-radius:4px; padding:4px; font-size: 18px; margin-top: 5px">guardar</button>
-</form:form>
-</body>--%>
 
 <link href="<c:url value="/resources/profile.css"/>" rel="stylesheet">
 <body>
@@ -41,6 +16,7 @@
 <%--<%@include file="../../resources/navbar.jsp" %>--%>
 <div class="d-flex h-100 flex-column">
     <c:set var="loggedUser" scope="request" value="${user}"/>
+    <c:set var="userProfile" scope="request" value="${profileUser}"/>
 <%@include file="../../resources/navbar.jsp" %>
 
 <%--TAB (publicaciones, guardado, upvoteado, downvoteado)--%>
@@ -92,10 +68,6 @@
                             <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
                         <p class="lead">
                             <spring:message code="categories.notFound"/> "<spring:message code="${category.interCode}"/>"
-
-
-
-
                         </p>
                     </div>
                 </c:if>
@@ -135,7 +107,12 @@
                                             <div class="d-flex justify-content-between p-2 w-100">
                                                 <div class="d-flex align-items-center w-auto gap-1">
                                                     <div class="img-container-article">
-                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+                                                        <c:if test="${fullNews.user.hasImage()}">
+                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${fullNews.user.imageId}/image"/>" alt="">
+                                                        </c:if>
+                                                        <c:if test="${!fullNews.user.hasImage()}">
+                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+                                                        </c:if>
                                                     </div>
                                                     <a href="<c:url value="/profile/${article.creatorId}"/>">
                                                         <div class="text-secondary card-name-text text-ellipsis-1">${fullNews.user}</div>
@@ -143,6 +120,15 @@
                                                     </a>
                                                 </div>
                                                 <div class="d-flex align-items-center" role="group">
+
+                                                    <c:if test="${isMyProfile}">
+                                                        <%--<input type="image" alt="..." src="<c:url value="/resources/bin.png"/>" style="max-width: 20px; max-height: 20px">--%>
+                                                        <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
+                                                            <button type="submit" class="btn" style="background: none; outline: none; margin-top: 10px">
+                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
+                                                            </button>
+                                                        </form>
+                                                    </c:if>
 
                                                     <c:if test="${user != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
@@ -181,14 +167,73 @@
         <div class="card" style="width: 18rem; height: 12rem; margin-top: 4%" id="right-card">
             <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">
             <div class="card-body">
-                <h4 class="mb-0 card-title text-center">Alejo Caeiro</h4>
-                <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${user.email}"/> </span>
+                <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
+                <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${profileUser.email}"/> </span>
             </div>
         </div>
 
         <div class="profile">
-            <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
+            <c:if test="${userProfile.hasImage()}">
+                <img src="<c:url value="/profile/${userProfile.imageId}/image"/>" class="rounded-circle" width="80">
+
+            </c:if>
+            <c:if test="${!userProfile.hasImage()}">
+                <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
+
+            </c:if>
         </div>
+
+
+        <c:if test="${isMyProfile}">
+            <div class="pencil-edit">
+                <button style="border: none; background-color: white; outline: none" data-toggle="modal" data-target="#exampleModal">
+                <span class="badge badge-pill badge-info">
+                   <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
+                    Editar
+                </span>
+                </button>
+            </div>
+        </c:if>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><spring:message code="createArticle.modal.question"/></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <c:url value="/profile/${profileUser.id}" var="postUrl"/>
+                        <form:form modelAttribute="userProfileForm" enctype="multipart/form-data" action="${postUrl}" method="post">
+                            <div class="modal-body">
+
+                                    <form:label path="image">Cambiar nombre de usuario</form:label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1">@</span>
+                                        </div>
+                                        <form:input type="text" path="username" cssClass="form-control" placeholder="username"/>
+                                    </div>
+
+                                    <form:label path="image">Cambiar imagen de perfil</form:label>
+                                    <div class="input-group mb-3">
+                                        <div class="custom-file">
+                                            <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Elegir imagen</form:label>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="createArticle.modal.cancel"/></button>
+                                <button type="submit" class="btn btn-primary"><spring:message code="createArticle.modal.accept"/></button>
+                            </div>
+                        </form:form>
+                    </div>
+                </div>
+            </div>
     </div>
     </div>
 
