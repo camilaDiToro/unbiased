@@ -1,6 +1,13 @@
 <head>
   <title>
-    <c:out value="unbiased - ${requestScope.pageTitle}"/></title>
+    unbiased&nbsp;-&nbsp;
+    <c:if test="${textType == 'LITERAL'}">
+      <c:out value="${pageTitle}"/>
+    </c:if>
+    <c:if test="${textType == 'INTERCODE'}">
+      <spring:message code="${pageTitle}"/>
+    </c:if>
+  </title>
   <link rel="icon" type="image/png" href="<c:url value="/resources/unbiased-logo-circle.png"/>">
   <link href="<c:url value="/resources/bootstrap.min.css"/>" rel="stylesheet">
   <c:if test="${signInOrCreate}">

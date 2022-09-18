@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Controller
 public class UserController {
@@ -35,12 +37,19 @@ public class UserController {
 
     private final SecurityService securityService;
 
+    private final MAVSupplier mavSupplier;
+
+
     @Autowired
     public UserController(UserService userService, ImageService imageService, SecurityService securityService, NewsService newsService) {
         this.userService = userService;
         this.imageService = imageService;
         this.securityService = securityService;
         this.newsService = newsService;
+
+         mavSupplier = (view, title, textType) -> new MyModelAndView(view, title, textType, securityService.getCurrentUser());
+
+//        this.
     }
 
 
@@ -51,7 +60,7 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createForm(@ModelAttribute("registerForm") final UserForm userForm) {
-        final ModelAndView mav = new ModelAndView("register");
+        final ModelAndView mav = mavSupplier.supply("registerForm", "pageTitle.create", TextType.INTERCODE);
         return mav;
     }
 
@@ -82,7 +91,7 @@ public class UserController {
                                 @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
                                 @RequestParam(name = "page", defaultValue = "1") int page,
                                 @RequestParam(name = "category", defaultValue = "MY_POSTS") String category) {
-        final ModelAndView mav = new ModelAndView("profile");
+        final ModelAndView mav = mavSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE);
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, "TOP", profileUser.getId(), category);
@@ -140,7 +149,7 @@ public class UserController {
     @RequestMapping("/verify_email")
     public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
         userService.verifyUserEmail(token);
-        return new ModelAndView("email_verified");
+        return mavSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.LITERAL);
     }
 
     @RequestMapping( value = "/profile/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
