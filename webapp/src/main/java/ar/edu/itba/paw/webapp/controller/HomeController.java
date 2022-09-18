@@ -27,12 +27,17 @@ public class HomeController {
     private final SecurityService ss;
     private final EmailService es;
 
+    private final MAVSupplier mavSupplier;
+;
+
     @Autowired
     public HomeController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns, SecurityService ss, EmailService es){
         this.us = us;
         this.ns = ns;
         this.ss = ss;
         this.es = es;
+        mavSupplier = (view, title, textType) -> new MyModelAndView(view, title, textType, ss.getCurrentUser());
+
     }
 
     @RequestMapping("/")
@@ -48,7 +53,7 @@ public class HomeController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "query", defaultValue = "") final String query,
             @RequestParam(name = "category", defaultValue = "ALL") final String category){
-        final ModelAndView mav = new ModelAndView("index");
+        final ModelAndView mav = mavSupplier.supply("index", "pageTitle.home", TextType.INTERCODE);
 
 
         Map<Long, Rating> ratingMap = new HashMap<>();
@@ -69,7 +74,6 @@ public class HomeController {
         mav.addObject("orderBy", orderBy);
         mav.addObject("query", query);
         mav.addObject("categories", Category.values());
-        mav.addObject("pageTitle", query.equals("") ? "Home" : "Search");
         mav.addObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
         Page<FullNews> newsPage = ns.getNews(page,category,orderBy,query);
@@ -145,6 +149,6 @@ public class HomeController {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView userNotFound()    {
-        return new ModelAndView("errors/userNotFound");
+        return mavSupplier.supply("errors/userNotFound", "pageTitle.userNotFound", TextType.INTERCODE);
     }
 }
