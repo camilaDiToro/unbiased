@@ -58,11 +58,11 @@ public class VerificationTokenDaoTest {
         LocalDateTime date = LocalDateTime.now().plusDays(TOKEN_DURATION);
 
         if (optionalUser.isPresent()) {
-            VerificationToken token = verificationTokenDao.create(optionalUser.get().getId(), "token", date);
+            VerificationToken token = verificationTokenDao.createEmailToken(optionalUser.get().getId(), "token", date);
 
             Assert.assertEquals(optionalUser.get().getId(), token.getUserId());
             Assert.assertEquals("token", token.getToken());
-            Assert.assertEquals(LocalDateTime.now().plusDays(TOKEN_DURATION), token.getExpiryDate());
+            Assert.assertEquals(date, token.getExpiryDate());
         }
     }
     @Test
@@ -73,14 +73,14 @@ public class VerificationTokenDaoTest {
         Optional<User> optionalUser = userDao.getUserById(user.getId());
 
         if(optionalUser.isPresent()){
-            Optional<VerificationToken> token= verificationTokenDao.getToken("token");
+            Optional<VerificationToken> token= verificationTokenDao.getEmailToken("token");
             Assert.assertEquals(token.get().getUserId(), optionalUser.get().getId());
         }
     }
 
     @Test
     public void testFindByTokenFailed() {
-        Optional<VerificationToken> token= verificationTokenDao.getToken("token");
+        Optional<VerificationToken> token= verificationTokenDao.getEmailToken("token");
         assertFalse(token.isPresent());
     }
 
