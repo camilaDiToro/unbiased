@@ -72,6 +72,7 @@ public class UserController {
         }
 
         User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
+
         final User user = userService.create(userBuilder);
         return new ModelAndView("redirect:/profile/" + user.getId());
     }

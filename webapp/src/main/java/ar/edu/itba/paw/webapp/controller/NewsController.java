@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.Category;
 import ar.edu.itba.paw.model.News;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.exeptions.InvalidUserException;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
@@ -100,6 +101,28 @@ public class NewsController {
 
         final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/" + news.getNewsId());
+    }
+
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
+    public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
+
+        Optional<News> maybeNews = newsService.getById(newsId);
+
+        if (!maybeNews.isPresent()) {
+            throw new NewsNotFoundException();
+        }
+
+        News news = maybeNews.get();
+
+        User loggedUser = securityService.getCurrentUser().get();
+
+        if (loggedUser.getId() != news.getCreatorId()) {
+            throw new InvalidUserException();
+        }
+
+        newsService.deleteNews(news.getNewsId());
+
+        return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)

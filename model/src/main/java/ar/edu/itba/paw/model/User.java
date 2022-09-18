@@ -29,6 +29,10 @@ public class User {
         return imageId;
     }
 
+    public boolean hasImage() {
+        return imageId != null;
+    }
+
     public String getEmail() {
         return email;
     }

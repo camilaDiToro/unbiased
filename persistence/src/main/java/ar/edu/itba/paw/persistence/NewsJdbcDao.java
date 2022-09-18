@@ -138,7 +138,7 @@ public class NewsJdbcDao implements NewsDao{
 
     @Override
     public List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns) {
-        return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN news_category WHERE creator = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
+        return jdbcTemplate.query("SELECT * FROM news WHERE creator = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
                 new Object[]{userId, PROFILE_PAGE_SIZE, (page-1)*PROFILE_PAGE_SIZE},NEWS_ROW_MAPPER);
     }
 

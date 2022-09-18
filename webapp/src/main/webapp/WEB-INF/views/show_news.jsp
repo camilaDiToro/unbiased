@@ -3,13 +3,12 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<c:set var="pageTitle" scope="request" value="${news.title}"/>
 <%@include file="../../resources/head.jsp" %>
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
 
 <link href="<c:url value="/resources/custom.css"/>" rel="stylesheet">
 <body>
-<c:set var="loggedUser" scope="request" value="${loggedUser}"/>
+
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
     <a href="../TOP">
@@ -64,7 +63,14 @@
                     <div class="card w-fit d-flex flex-row align-items-center p-2 gap-1">
 
                 <div class="img-container-article">
-                    <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+                    <c:if test="${user.hasImage()}">
+                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
+
+                    </c:if>
+                    <c:if test="${!user.hasImage()}">
+                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+
+                    </c:if>
                 </div>
                 <b><c:out value="${user.username != null ? user.username : user.email}"/></b>
                     </div>

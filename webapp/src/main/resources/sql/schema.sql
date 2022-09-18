@@ -55,8 +55,8 @@ CREATE TABLE IF NOT EXISTS upvotes (
     upvote            BOOLEAN         NOT NULL,
     interaction_date  TIMESTAMP       NOT NULL,
 
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
-    FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE SET NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
     PRIMARY KEY (news_id, user_id)
 
 );

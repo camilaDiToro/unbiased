@@ -107,7 +107,12 @@
                                             <div class="d-flex justify-content-between p-2 w-100">
                                                 <div class="d-flex align-items-center w-auto gap-1">
                                                     <div class="img-container-article">
-                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/stock_photo.webp"/>" alt="">
+                                                        <c:if test="${fullNews.user.hasImage()}">
+                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${fullNews.user.imageId}/image"/>" alt="">
+                                                        </c:if>
+                                                        <c:if test="${!fullNews.user.hasImage()}">
+                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+                                                        </c:if>
                                                     </div>
                                                     <a href="<c:url value="/profile/${article.creatorId}"/>">
                                                         <div class="text-secondary card-name-text text-ellipsis-1">${fullNews.user}</div>
@@ -118,7 +123,7 @@
 
                                                     <c:if test="${isMyProfile}">
                                                         <%--<input type="image" alt="..." src="<c:url value="/resources/bin.png"/>" style="max-width: 20px; max-height: 20px">--%>
-                                                        <form method="post" >
+                                                        <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
                                                             <button type="submit" class="btn" style="background: none; outline: none; margin-top: 10px">
                                                                 <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
                                                             </button>
@@ -168,7 +173,14 @@
         </div>
 
         <div class="profile">
-            <img src="<c:url value="/profile/${userProfile.imageId}/image"/>" class="rounded-circle" width="80">
+            <c:if test="${userProfile.hasImage()}">
+                <img src="<c:url value="/profile/${userProfile.imageId}/image"/>" class="rounded-circle" width="80">
+
+            </c:if>
+            <c:if test="${!userProfile.hasImage()}">
+                <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
+
+            </c:if>
         </div>
 
 

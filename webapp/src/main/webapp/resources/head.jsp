@@ -1,10 +1,10 @@
 <head>
   <title>
     unbiased&nbsp;-&nbsp;
-    <c:if test="${textType == 'LITERAL'}">
+    <c:if test="${textType.toString() == 'LITERAL'}">
       <c:out value="${pageTitle}"/>
     </c:if>
-    <c:if test="${textType == 'INTERCODE'}">
+    <c:if test="${textType.toString() == 'INTERCODE'}">
       <spring:message code="${pageTitle}"/>
     </c:if>
   </title>
