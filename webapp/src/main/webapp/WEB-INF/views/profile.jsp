@@ -41,6 +41,7 @@
 <%--<%@include file="../../resources/navbar.jsp" %>--%>
 <div class="d-flex h-100 flex-column">
     <c:set var="loggedUser" scope="request" value="${user}"/>
+    <c:set var="userProfile" scope="request" value="${profileUser}"/>
 <%@include file="../../resources/navbar.jsp" %>
 
 <%--TAB (publicaciones, guardado, upvoteado, downvoteado)--%>
@@ -92,10 +93,6 @@
                             <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
                         <p class="lead">
                             <spring:message code="categories.notFound"/> "<spring:message code="${category.interCode}"/>"
-
-
-
-
                         </p>
                     </div>
                 </c:if>
@@ -181,14 +178,66 @@
         <div class="card" style="width: 18rem; height: 12rem; margin-top: 4%" id="right-card">
             <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">
             <div class="card-body">
-                <h4 class="mb-0 card-title text-center">Alejo Caeiro</h4>
-                <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${user.email}"/> </span>
+                <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
+                <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${profileUser.email}"/> </span>
             </div>
         </div>
 
         <div class="profile">
             <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
         </div>
+
+
+        <c:if test="${isMyProfile}">
+            <div class="pencil-edit">
+                <button style="border: none; background-color: white; outline: none" data-toggle="modal" data-target="#exampleModal">
+                <span class="badge badge-pill badge-info">
+                   <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
+                    Editar
+                </span>
+                </button>
+            </div>
+        </c:if>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><spring:message code="createArticle.modal.question"/></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <c:url value="/profile/${profileUser.id}" var="postUrl"/>
+                        <form:form modelAttribute="userProfileForm" enctype="multipart/form-data" action="${postUrl}" method="post">
+                            <div class="modal-body">
+
+                                    <form:label path="image">Cambiar nombre de usuario</form:label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1">@</span>
+                                        </div>
+                                        <form:input type="text" path="username" cssClass="form-control" placeholder="username"/>
+                                    </div>
+
+                                    <form:label path="image">Cambiar imagen de perfil</form:label>
+                                    <div class="input-group mb-3">
+                                        <div class="custom-file">
+                                            <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Elegir imagen</form:label>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="createArticle.modal.cancel"/></button>
+                                <button type="submit" class="btn btn-primary"><spring:message code="createArticle.modal.accept"/></button>
+                            </div>
+                        </form:form>
+                    </div>
+                </div>
+            </div>
     </div>
     </div>
 
