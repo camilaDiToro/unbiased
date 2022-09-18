@@ -1,14 +1,7 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.Rating;
-import ar.edu.itba.paw.model.FullNews;
-import ar.edu.itba.paw.model.NewsOrder;
-import ar.edu.itba.paw.model.Positivity;
+import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.persistence.NewsDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,11 +77,29 @@ public class NewsServiceImpl implements NewsService{
 
     @Override
     public Page<FullNews> getNewsFromUser(int page, String newsOrder, long userId) {
+        return getNewsForUserProfile(page, newsOrder, userId, ProfileCategory.MY_POSTS.toString());
+    }
+
+    @Override
+    public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String profileCategory) {
         page = page <= 0 ? 1 : page;
         NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
         int totalPages = newsDao.getTotalPagesNewsFromUser(page, userId, newsOrderObject);
         page = Math.min(page, totalPages);
-        List<News> ln = newsDao.getAllNewsFromUser(page,userId,newsOrderObject);
+        List<News> ln = null;
+        ProfileCategory pc = ProfileCategory.valueOf(profileCategory);
+        switch (pc) {
+            case SAVED: ln = newsDao.getSavedNewsFromUser(page,userId,newsOrderObject);
+            break;
+
+            case UPVOTED: ln = newsDao.getNewsUpvotedByUser(page,userId,newsOrderObject);
+            break;
+
+            case DOWNVOTED: ln = newsDao.getNewsDownvotedByUser(page,userId,newsOrderObject);
+            break;
+
+            case MY_POSTS: ln  = newsDao.getAllNewsFromUser(page,userId,newsOrderObject);
+        };
         return new Page<>(ln.stream().map(this::getFullNews).collect(Collectors.toList()), page, totalPages);
     }
 

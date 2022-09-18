@@ -43,9 +43,9 @@ async function handleClick(img) {
 
     const addActionAndRemoveOpposite = (r, oppositeId, numberClassname) => {
         if (r.active) {
-            const aux = src.split('.')
-            newSrc = aux[0] + '-clicked' + '.' + aux[1]
-            img.src = newSrc
+            const aux = src.split('.');
+            const last = aux.pop()
+            img.src = aux.join('.') + '-clicked' + '.' + last
             var arrow;
             img.parentElement.childNodes.forEach(e => {
                 if (e.id === oppositeId)
@@ -85,8 +85,9 @@ async function handleBookmarkClick(bImg) {
         if (response.ok) {
             if (response.active) {
                 if (!src.includes('-clicked')) {
-                    const aux = src.split('.')
-                    bImg.src = aux[0] + '-clicked' + '.' + aux[1]
+                    const aux = src.split('.');
+                    const last = aux.pop()
+                    bImg.src = aux.join('.') + '-clicked' + '.' + last
                 }
             }
 

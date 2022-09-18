@@ -39,7 +39,7 @@
 
 <%--<%@include file="../../resources/navbar.jsp" %>--%>
 <div class="d-flex h-100 flex-column">
-    <c:set var="user" scope="request" value="${user}"/>
+    <c:set var="loggedUser" scope="request" value="${user}"/>
     <%@ include file="../../resources/navbar.jsp" %>
     <div class="container-xxl container-fluid flex-grow-1">
 
@@ -195,22 +195,22 @@
         <nav class="d-flex justify-content-center align-items-center">
             <ul class="pagination">
 
-                <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
+                <li class="page-item"><a class="page-link" href="<c:url value = "/profile/${profileUser.id}/${newsOrder}">
             <c:param name = "page" value = "1"/>
-            <c:param name = "query" value = "${param.query}"/>
+            <c:param name = "category" value = "${param.category}"/>
             </c:url>"><spring:message code="home.pagination.first"/></a></li>
 
 
                 <c:forEach var = "i" begin = "${newsPage.minPage}" end = "${newsPage.maxPage}">
-                    <li class="page-item"><a class="page-link ${i == newsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/${orderBy}">
+                    <li class="page-item"><a class="page-link ${i == newsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/profile/${profileUser.id}/${newsOrder}">
             <c:param name = "page" value = "${i}"/>
-            <c:param name = "query" value = "${param.query}"/>
+            <c:param name = "category" value = "${param.category}"/>
             </c:url>"><c:out value="${i}"/></a></li>
                 </c:forEach>
 
-                <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
+                <li class="page-item"><a class="page-link" href="<c:url value = "/profile/${profileUser.id}/${newsOrder}">
             <c:param name = "page" value = "${newsPage.totalPages}"/>
-            <c:param name = "query" value = "${param.query}"/>
+            <c:param name = "category" value = "${param.category}"/>
             </c:url>"><spring:message code="home.pagination.last"/></a></li>
 
             </ul>

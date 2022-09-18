@@ -9,7 +9,7 @@
 
 <link href="<c:url value="/resources/custom.css"/>" rel="stylesheet">
 <body>
-<c:set var="user" scope="request" value="${loggedUser}"/>
+<c:set var="loggedUser" scope="request" value="${loggedUser}"/>
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
     <a href="../TOP">
@@ -75,17 +75,13 @@
             <span class="badge badge-pill badge-primary">Messi</span>
         </div>
 
-<%--        <p class="article-body"><c:out value="${news.body}"/></p>--%>
-
         <div class="d-flex w-100 justify-content-center align-items-center">
             <div class="article-body">
                 <c:out value="${news.body}" escapeXml="false"/>
             </div>
         </div>
 
-<%--        <c:if test="${news.hasImage()}">--%>
-<%--        <img src="<c:url value="/news/${newsId}/image"/>" class="user-section-img"/>--%>
-<%--        </c:if>--%>
+
 
     </div>
 </div>

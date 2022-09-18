@@ -66,13 +66,25 @@ public class UserController {
         return new ModelAndView("redirect:/profile/" + user.getId());
     }
 
-
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView profile(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm) {
+    public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
+        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
+
+
+        return mav;
+    }
+
+
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
+    public ModelAndView profile(@PathVariable("userId") long userId,
+                                @PathVariable("newsOrder") String newsOrder,
+                                @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
+                                @RequestParam(name = "page", defaultValue = "1") int page,
+                                @RequestParam(name = "category", defaultValue = "MY_POSTS") String category) {
         final ModelAndView mav = new ModelAndView("profile");
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Page<FullNews> fullNews = newsService.getNewsFromUser(0, "TOP", profileUser.getId());
+        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, "TOP", profileUser.getId(), category);
         List<FullNews> newsContent = fullNews.getContent();
         mav.addObject("user",user.orElse(null));
 
@@ -81,6 +93,11 @@ public class UserController {
         mav.addObject("isMyProfile", profileUser.equals(user.orElse(null)));
 
         mav.addObject("newsPage", fullNews);
+
+        mav.addObject("newsOrder", newsOrder);
+
+        mav.addObject("category", category);
+
 
         Map<Long, Rating> ratingMap = new HashMap<>();
         Map<Long, Boolean> savedMap = new HashMap<>();
@@ -101,10 +118,10 @@ public class UserController {
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
     public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
         if (errors.hasErrors()) {
-            return profile(userId, userProfileForm);
+            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS");
         }
         Long imageId = null;
-        if(userProfileForm.getImage()!=null && userProfileForm.getImage().getBytes().length != 0){
+        if(!userProfileForm.getImage().isEmpty() && userProfileForm.getImage().getBytes().length != 0){
             imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
         }
         userService.updateProfile(userId, userProfileForm.getUsername(), imageId);

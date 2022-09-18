@@ -112,7 +112,7 @@ public class NewsController {
         mav.addObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
                 .withLocale( locale)));
         mav.addObject("fullNews", fullNews);
-        mav.addObject("loggedUser", maybeUser.orElseGet(null));
+        mav.addObject("loggedUser", maybeUser.orElse(null));
 
         mav.addObject("categories", newsService.getNewsCategory(news));
         mav.addObject("user", userService.getUserById(news.getCreatorId()).orElseThrow(NewsNotFoundException::new));
@@ -132,6 +132,7 @@ public class NewsController {
         final ModelAndView mav = new ModelAndView("create_article");
         mav.addObject("categories", Category.values());
         mav.addObject("validate", false);
+        mav.addObject("loggedUser", securityService.getCurrentUser().orElse(null));
 
         return mav;
     }

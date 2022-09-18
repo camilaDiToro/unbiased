@@ -10,7 +10,7 @@
 <body>
 <c:set var="news" value="${newsPage.content}"/>
 <div class="d-flex h-100 flex-column">
-    <c:set var="user" scope="request" value="${user}"/>
+    <c:set var="loggedUser" scope="request" value="${user}"/>
     <%@ include file="../../resources/navbar.jsp" %>
     <div class="container-xxl container-fluid flex-grow-1">
         <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>

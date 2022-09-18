@@ -37,4 +37,6 @@ public interface NewsService {
     boolean isSaved(News news, User user);
 
     void deleteNews(long newsId);
+
+    Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String pc);
 }
