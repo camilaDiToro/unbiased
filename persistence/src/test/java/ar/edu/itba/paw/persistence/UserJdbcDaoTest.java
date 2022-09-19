@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserStatus;
 import org.hsqldb.jdbc.JDBCDriver;
 import org.junit.After;
 import org.junit.Before;
@@ -72,19 +73,15 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFailFindByUserId() {
-        // 1. clear database
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        //2.
         Optional<User> mayBeUser = userDao.getUserById(1);
 
-        //3.
         assertFalse(mayBeUser.isPresent());
     }
 
     @Test
     public void testFindByEmail() {
-        //precondicion
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         //ejercitacion
@@ -109,6 +106,38 @@ public class UserJdbcDaoTest {
     }
 
     @Test
+    public void testVerifyEmail(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
+
+        User us = userDao.create(usBuilder);
+        Optional<User> mayBeUser = userDao.getUserById(us.getId());
+
+        assertTrue(mayBeUser.isPresent());
+        //userDao.verifyEmail(mayBeUser.get().getId());
+        assertEquals(UserStatus.UNREGISTERED, mayBeUser.get().getStatus());
+    }
+
+    @Test
+    public void testFindByUsername() {
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
+
+        User us = userDao.create(usBuilder);
+        Optional<User> mayBeUser = userDao.getUserById(us.getId());
+
+        assertTrue(mayBeUser.isPresent());
+        //assertEquals("username", mayBeUser.get().getUsername());
+    }
+
+    @Test
+    public void testFailFindByUsername() {
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
+
+        final Optional<User> user = userDao.findByUsername("username");
+
+        assertFalse(user.isPresent());
+    }
+
+    @Test
     public void testTotalUsers(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
@@ -118,4 +147,6 @@ public class UserJdbcDaoTest {
         assertEquals(1, users);
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
+
+
 }
