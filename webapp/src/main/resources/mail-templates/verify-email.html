@@ -2,11 +2,45 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <style type="text/css">
+        .bg {
+            background-color: #1e1e2d;
+        }
+        .btn-share{
+            background-color: #8ea7e8;
+            border-color: #8ea7e8;
+            color:white;
+            margin-left: 50%;
+        }
+        .btn-share:hover{
+            color: #8ea7e8;
+            background-color: transparent;
+            border-color: #8ea7e8;
+            box-shadow: 0 0 2px #888;
+
+        }
+        .h-color{
+            color: #8ea7e8;
+        }
+
+    </style>
 </head>
 <body>
-<p th:text="#{email.verification.text}"></p>
-<p>
-    <em th:text="${verificationUrl}"></em> <br />
-</p>
+<div class="bg">
+    <div style="text-align: center">
+        <h1 class="h-color">Unbiased</h1>
+        <br/>
+    </div>
+    <div style="text-align: center">
+        <h3 class="h-color" th:text="#{email.verification.text}"></h3>
+    </div>
+    <div class="col-12 d-flex justify-content-center align-items-center">
+        <a th:href="${verificationUrl}" class="takeme">
+            <button th:text="#{email.verification.click}" class="btn btn-lg btn-info btn-block btn-share">
+            </button>
+        </a>
+    </div>
+</div>
 </body>
 </html>
