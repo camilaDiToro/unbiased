@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
+    <meta name="x-apple-disable-message-reformatting">
     <style type="text/css">
         .bg {
             background-color: #1e1e2d;
@@ -23,14 +22,19 @@
         .h-color{
             color: #8ea7e8;
         }
+        .title {
+            font-size: 60px;
+            font-weight: 400;
+            text-align: center;
+            color: #8ea7e8;
+        }
 
     </style>
 </head>
 <body>
 <div class="bg">
     <div style="text-align: center">
-        <h1 class="h-color">Unbiased</h1>
-        <br/>
+        <h1 class="title">unbiased</h1>
     </div>
     <div style="text-align: center">
         <h3 class="h-color" th:text="#{email.verification.text}"></h3>
