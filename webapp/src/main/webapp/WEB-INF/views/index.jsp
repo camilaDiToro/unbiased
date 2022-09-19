@@ -155,15 +155,9 @@
                                                 </c:if>
 
                                                 <c:if test="${!article.hasImage()}">
-
                                                     <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">
                                                 </c:if>
-
                                             </div>
-
-
-
-
                                     </div>
                                 </div>
                             </c:forEach>

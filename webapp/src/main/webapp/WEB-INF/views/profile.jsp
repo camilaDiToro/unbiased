@@ -235,9 +235,7 @@
                                     <form:label path="image">Cambiar imagen de perfil</form:label>
                                     <div class="input-group mb-3">
                                         <div class="custom-file">
-                                            <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
-                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Elegir imagen</form:label>
-                                        </div>
+                                            <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/></div>
                                     </div>
                             </div>
                             <div class="modal-footer">
