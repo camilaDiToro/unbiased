@@ -64,7 +64,7 @@
 
         </div>
 
-    <form:label path="image">Imagen de la noticia</form:label>
+    <form:label path="image"><spring:message code="createArticle.imageMsg"/> </form:label>
     <div class="input-group mb-3">
             <div class="custom-file">
                 <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
@@ -78,7 +78,7 @@
                 $(this).next('.custom-file-label').html(fileName);
             })
         </script>
-        </div>
+    </div>
 
 
 

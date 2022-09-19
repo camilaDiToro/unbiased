@@ -237,9 +237,18 @@
                                     <form:label path="image"><spring:message code="profile.modal.changeProfilePicture"/> </form:label>
                                     <div class="input-group mb-3">
                                         <div class="custom-file">
-                                            <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                                            <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
                                             <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
                                         </div>
+
+                                        <script>
+                                            $('#fileInput').on('change',function(){
+                                                //get the file name
+                                                var fileName = $(this).val();
+                                                //replace the "Choose a file" label
+                                                $(this).next('.custom-file-label').html(fileName);
+                                            })
+                                        </script>
                                     </div>
                             </div>
                             <div class="modal-footer">
