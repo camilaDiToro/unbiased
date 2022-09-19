@@ -193,6 +193,26 @@ public class NewsJdbcDaoTest {
     }
 
         /*
-    getTotalPagesCategory
-   */
+    public List<News> getSavedNews(int page, User user, NewsOrder ns)
+    public List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns) {
+    public List<News> getSavedNewsFromUser(int page, long userId, NewsOrder ns) {
+    private List<News> getNewsWithRatingFromUser(int page, long userId, NewsOrder ns, boolean upvote) {
+    public List<News> getNewsUpvotedByUser(int page, long userId, NewsOrder ns) {
+    public List<News> getNewsDownvotedByUser(int page, long userId, NewsOrder ns) {
+    public int getTotalPagesNewsFromUser(int page, long userId) {
+    private int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
+     public int getTotalPagesNewsFromUserUpvoted(int page, long userId) {
+     public int getTotalPagesNewsFromUserDownvoted(int page, long userId) {
+     public int getTotalPagesNewsFromUserSaved(int page, long userId) {
+    public void deleteNews(long newsId) {
+    public int getTotalPagesCategory(Category category) {
+    public int getUpvotes(Long newsId) {
+    public Rating upvoteState(News news, User user) {
+    public void setRating(Long newsId, Long userId, Rating rating) {
+    public double getPositivityValue(Long newsId) {
+    public void saveNews(News news, User user) {
+    public boolean isSaved(News news, User user) {
+    public void removeSaved(News news, User user) {
+
+*/
 }
