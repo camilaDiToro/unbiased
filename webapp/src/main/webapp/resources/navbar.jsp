@@ -16,7 +16,7 @@
 
         <div class="d-flex h-75 gap-2 align-items-center">
 <c:if test="${loggedUser != null}">
-    <a href="./create_article">
+    <a href="<c:url value="/create_article"/>">
         <button type="button" class="btn btn-info">
             <spring:message code="home.createArticle.button"/>
         </button></a>
@@ -48,7 +48,7 @@
 
                                                     </div>
                     </button>
-                    <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
+                    <div id="navbar-dropdown" class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>"><spring:message code="navbar.myProfile"/></a>
                         <a class="dropdown-item" href="<c:url value="/logout"/>"><spring:message code="navbar.logOut"/> </a>
                     </div>

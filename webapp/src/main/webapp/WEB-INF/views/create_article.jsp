@@ -88,7 +88,7 @@
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <c:forEach var="category" items="${categories}">
-                <div class="form-check">
+                <div class="form-check  w-100">
                     <form:checkbox path="categories" value="${category.interCode}" id="${category.interCode}"/>
                     <label class="form-check-label" for="${category.interCode}">
                         <spring:message code="${category.interCode}"/>
