@@ -67,7 +67,6 @@ public class HomeController {
                 .withObject("categories", Category.values())
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category))
                 .withObject("newsPage", newsPage).build();
-
     }
 
     private ResponseEntity<UpvoteActionResponse> toggleHandler(UpvoteAction payload, Rating action) {

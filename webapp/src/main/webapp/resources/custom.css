@@ -197,6 +197,9 @@
 .news-bookmark {
     height: 30px;
 }
+.dropdown-menu {
+    min-width:inherit;
+}
 @media(min-width: 1200px) {
     .w-xl-25 {
         width: 25% !important;

@@ -14,10 +14,22 @@
 
 
 
-        <div class="d-flex h-75 gap-2">
+        <div class="d-flex h-75 gap-2 align-items-center">
+<c:if test="${loggedUser != null}">
+    <a href="./create_article">
+        <button type="button" class="btn btn-info">
+            <spring:message code="home.createArticle.button"/>
+        </button></a>
+</c:if>
+
+            <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP"/>">
+                <spring:message code="navbar.search"  var="searchPlaceholder" />
+                <input style="height: 30px; padding-left: 35px; background-image: url('<c:url value="/resources/images/lupa.png"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="form-control ml-2 btn-outline-info text-white bg-primary"
+                       type="search" placeholder="${searchPlaceholder}" id="query" name="query"/>
+            </form>
             <c:if test="${loggedUser != null}">
                 <div class="dropdown dropdown-p">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-primary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <div class="w-fit d-flex flex-row align-items-center gap-1 border-info">
 
                                                         <div class="img-container-navbar">
@@ -34,19 +46,19 @@
 
                                                             <b class="text-white"><c:out value="${loggedUser}"/></b>
 
-<%--                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">--%>
-<%--                                                            <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">--%>
-<%--                                                                <a class="dropdown-item" href="<c:url value="/logout"/>">Logout</a>--%>
-<%--                                                            </div>--%>
-<%--                                                        </div>--%>
+
 
                                                     </div>
                     </button>
-                    <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>">My Profile</a>
                         <a class="dropdown-item" href="<c:url value="/logout"/>">Logout</a>
                     </div>
+
                 </div>
+
+
+
 
             </c:if>
 
@@ -54,10 +66,7 @@
                 <a role="button" class="btn btn-primary" href="<c:url value="/login"/>">Login</a>
                 <a role="button" class="btn btn-primary" href="<c:url value="/create"/>">Register</a>
             </c:if>
-            <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP"/>">
-                <spring:message code="navbar.search"  var="searchPlaceholder" />
-                <input style="height: 30px; padding-left: 35px; background-image: url('<c:url value="/resources/images/lupa.png"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="form-control mr-sm-2 btn-outline-info text-white bg-primary" type="search" placeholder="${searchPlaceholder}" id="query" name="query"/>
-            </form>
+
         </div>
     </div>
 </nav>

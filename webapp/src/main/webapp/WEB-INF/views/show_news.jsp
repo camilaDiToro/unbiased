@@ -18,8 +18,8 @@
 
 <c:set var="news" value="${fullNews.news}"/>
 <c:set var="user" value="${fullNews.user}"/>
-<c:set var="loggedParams" value="${fullNews.loggedUserParamateres}"/>
-<c:set var="rating" value="${loggedParams != null : loggedParams.rating : ''}"/>
+<c:set var="loggedParameters" value="${fullNews.loggedUserParameters}"/>
+<c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
 
 
 
@@ -50,9 +50,10 @@
                     <h4 class="text-lg-left mb-0"><c:out value="${news.subtitle}"/></h4>
 
                 </div>
+                <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
                 <c:if test="${user != null}">
                     <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center" >
-                        <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${loggedParams != null && loggedParams.saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
+                        <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
                     </div>
                 </c:if>
             </div>
@@ -92,12 +93,12 @@
             </c:forEach>
         </div>
 
-        <div class="w-50 d-flex flex-wrap align-items-center gap-1">
-            <div class="text-sm-left font-weight-bold">
-                Tags:
-            </div>
-            <span class="badge badge-pill badge-primary">Messi</span>
-        </div>
+<%--        <div class="w-50 d-flex flex-wrap align-items-center gap-1">--%>
+<%--            <div class="text-sm-left font-weight-bold">--%>
+<%--                Tags:--%>
+<%--            </div>--%>
+<%--            <span class="badge badge-pill badge-primary">Messi</span>--%>
+<%--        </div>--%>
 
         <div class="d-flex w-100 justify-content-center align-items-center">
             <div class="article-body">

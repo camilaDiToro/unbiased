@@ -46,7 +46,6 @@ public class UserController {
 
          mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
 
-//        this.
     }
 
 
@@ -57,7 +56,7 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createForm(@ModelAttribute("registerForm") final UserForm userForm) {
-        return mavBuilderSupplier.supply("registerForm", "pageTitle.create", TextType.INTERCODE)
+        return mavBuilderSupplier.supply("register", "pageTitle.register", TextType.INTERCODE)
                 .build();
     }
 
@@ -77,8 +76,6 @@ public class UserController {
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
         final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
-
-
         return mav;
     }
 

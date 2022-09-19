@@ -48,14 +48,7 @@
                     </c:url>"><spring:message code="${order.interCode}"/></a>
                         </li>
                     </c:forEach>
-<%--                    <li class="nav-item ml-auto">--%>
-<%--                        <c:if test="${user != null}">--%>
-<%--                            <a href="./create_article">--%>
-<%--                                <button type="button" class="btn btn-info">--%>
-<%--                                    <spring:message code="home.createArticle.button"/>--%>
-<%--                                </button></a>--%>
-<%--                        </c:if>--%>
-<%--                    </li>--%>
+
                 </ul>
             </div>
 
@@ -97,7 +90,7 @@
 
                                                 </div>
                                                 <div class="card-body-home">
-                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>
+<%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                     <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis"><c:out value="${article.subtitle}"/></h6>
                                                     <p class="text-sm-left text-secondary mb-0"><c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/></p>
