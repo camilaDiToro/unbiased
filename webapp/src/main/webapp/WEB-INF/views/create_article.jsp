@@ -65,9 +65,22 @@
     <form:label path="image">Imagen de la noticia</form:label>
     <div class="input-group mb-3">
             <div class="custom-file">
-                <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
-                <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Choose file</form:label>
+                <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01"><spring:message code="createArticle.selectFile"/></form:label>
             </div>
+        <script>
+            <c:set var="labelText"><spring:message code="createArticle.label"/></c:set>
+            let slidingTagLiAfterStyle = document.createElement("style");
+            slidingTagLiAfterStyle.innerHTML =
+                ".custom-file-label::after{content:'${labelText}'}";
+            document.head.appendChild(slidingTagLiAfterStyle);
+            $('#fileInput').on('change',function(){
+                //get the file name
+                var fileName = $(this).val();
+                //replace the "Choose a file" label
+                $(this).next('.custom-file-label').html(fileName);
+            })
+        </script>
         </div>
 
 
