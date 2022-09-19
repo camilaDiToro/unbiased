@@ -70,7 +70,7 @@ public class UserController {
         User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
 
         final User user = userService.create(userBuilder);
-        return new ModelAndView("redirect:/profile/" + user.getId());
+        return new ModelAndView("email_verification_pending");
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
