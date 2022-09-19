@@ -28,6 +28,14 @@
             <spring:message code="login.error"/>
         </div>
     </c:if>
+    <c:if test="${param.unable}">
+        <div class="text-danger text-nowrap form-text d-inline-block">
+            <spring:message code="login.emailNotVerified"/>
+        </div>
+        <div class="text-danger text-nowrap form-text d-inline-block">
+            <spring:message code="login.emailResended"/>
+        </div>
+    </c:if>
    <div class="checkbox mb-3">
         <label class="text-light">
             <input type="checkbox" name="rememberme"> <spring:message code="login.rememberMe"/>
@@ -35,6 +43,15 @@
 
     </div>
     <button class="btn btn-lg btn-info btn-block" type="submit"><spring:message code="login.signIn"/></button>
+
+    <%--<c:if test="${param.unable}">
+        <a href="<c:url value = "/resend_verification_email">
+                    <c:param name = "email" value = "${param.email}"/>
+                    </c:url>">
+            <button type="button" class="btn btn-lg btn-info btn-block">
+                <spring:message code="login.resendVerificationEmail.button"/>
+            </button></a>
+    </c:if> --%>
     <p class="mt-5 mb-3 text-muted">© 2022-2022</p>
     </form>
 

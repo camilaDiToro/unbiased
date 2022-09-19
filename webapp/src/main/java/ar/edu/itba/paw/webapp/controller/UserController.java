@@ -87,7 +87,7 @@ public class UserController {
                                 @RequestParam(name = "page", defaultValue = "1") int page,
                                 @RequestParam(name = "category", defaultValue = "MY_POSTS") String category) {
         Optional<User> user =  securityService.getCurrentUser();
-        User profileUser = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
         Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser.getId(), category);
 
 
