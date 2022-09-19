@@ -224,19 +224,21 @@
                         <form:form modelAttribute="userProfileForm" enctype="multipart/form-data" action="${postUrl}" method="post">
                             <div class="modal-body">
 
-                                    <form:label path="image">Cambiar nombre de usuario</form:label>
+                                    <spring:message code="profile.modal.changeUsername" var="changeUsername"/>
+                                    <form:label path="image"><spring:message code="profile.modal.changeUsername"/></form:label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">@</span>
                                         </div>
-                                        <form:input type="text" path="username" cssClass="form-control" placeholder="username"/>
+                                        <form:input type="text" path="username" cssClass="form-control" placeholder="${changeUsername}"/>
                                     </div>
 
-                                    <form:label path="image">Cambiar imagen de perfil</form:label>
+                                    <spring:message code="profile.modal.changeProfilePicture" var="changeUserPicture"/>
+                                    <form:label path="image"><spring:message code="profile.modal.changeProfilePicture"/> </form:label>
                                     <div class="input-group mb-3">
                                         <div class="custom-file">
                                             <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
-                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Elegir imagen</form:label>
+                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
                                         </div>
                                     </div>
                             </div>
