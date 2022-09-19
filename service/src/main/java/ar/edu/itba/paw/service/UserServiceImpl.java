@@ -2,6 +2,7 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.UserStatus;
 import ar.edu.itba.paw.model.VerificationToken;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.RoleDao;
@@ -45,6 +46,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUserById(long id) {
         return userDao.getUserById(id);
+    }
+
+    @Override
+    public Optional<User> getRegisteredUserById(long id) {
+        Optional<User> mayBeUser = userDao.getUserById(id);
+        if(!mayBeUser.isPresent())
+            return Optional.empty();
+        if(!mayBeUser.get().getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()))
+            return Optional.empty();
+        return mayBeUser;
     }
 
     @Override

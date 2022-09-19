@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
+import ar.edu.itba.paw.webapp.auth.LoginFailureHandler;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private PawUserDetailsService userDetailsService;
+    @Autowired
+    private LoginFailureHandler loginFailureHandler;
 
     @Value("${security.key.remeberme}")
     private String rememberMeKey;
@@ -55,7 +58,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .passwordParameter("password")
                     .defaultSuccessUrl("/", false)
                     .loginPage("/login")
-                    .failureUrl("/login?error=true")
+                    .failureHandler(loginFailureHandler)
                 .and().rememberMe()
                     .rememberMeParameter("rememberme")
                     .userDetailsService(userDetailsService)
