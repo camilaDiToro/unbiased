@@ -11,13 +11,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
-
+<style>
+    <c:set var="labelText"><spring:message code="createArticle.label"/></c:set>
+    .custom-file-input:lang(en)~.custom-file-label::after{content:'${labelText}'!important}
+</style>
 <%@include file="../../resources/head.jsp" %>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
 <body>
-<c:set var="loggedUser" scope="request" value="${loggedUser}"/>
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
     <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%" data-toggle="modal" data-target="#exampleModal">
@@ -65,9 +67,17 @@
     <form:label path="image">Imagen de la noticia</form:label>
     <div class="input-group mb-3">
             <div class="custom-file">
-                <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
-                <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Choose file</form:label>
+                <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01"><spring:message code="createArticle.selectFile"/></form:label>
             </div>
+        <script>
+            $('#fileInput').on('change',function(){
+                //get the file name
+                var fileName = $(this).val();
+                //replace the "Choose a file" label
+                $(this).next('.custom-file-label').html(fileName);
+            })
+        </script>
         </div>
 
 

@@ -5,6 +5,7 @@
 <html>
 <c:set var="signInOrCreate" scope="request" value="${true}"/>
 <%@include file="../../resources/head.jsp" %>
+<link href="<c:url value="/resources/login.css"/>" rel="stylesheet">
 <body class="text-center">
 <%--<h2><spring:message code="views.register.title"/></h2>--%>
 <c:url value="/create" var="postUrl"/>
