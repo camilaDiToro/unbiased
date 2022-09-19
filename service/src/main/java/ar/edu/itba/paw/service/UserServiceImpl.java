@@ -29,6 +29,8 @@ public class UserServiceImpl implements UserService {
     private final RoleDao roleDao;
     private final ImageService imageService;
 
+
+
     @Autowired
     public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService) {
         this.userDao = userDao;

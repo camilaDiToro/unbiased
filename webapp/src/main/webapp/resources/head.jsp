@@ -5,7 +5,7 @@
       <c:out value="${pageTitle}"/>
     </c:if>
     <c:if test="${textType.toString() == 'INTERCODE'}">
-      <spring:message code="${pageTitle}"/>
+      <spring:message code="${pageTitle}" arguments="${stringParams}"/>
     </c:if>
   </title>
   <link rel="icon" type="image/png" href="<c:url value="/resources/unbiased-logo-circle.png"/>">

@@ -4,6 +4,6 @@ import ar.edu.itba.paw.model.TextType;
 import org.springframework.web.servlet.ModelAndView;
 @FunctionalInterface
 
-public interface MAVSupplier {
-    ModelAndView supply(String view, String titleCode, TextType textType);
+public interface MAVBuilderSupplier {
+    MyModelAndView.Builder supply(String view, String titleCode, TextType textType);
 }

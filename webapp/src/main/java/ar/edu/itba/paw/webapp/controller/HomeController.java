@@ -27,7 +27,7 @@ public class HomeController {
     private final SecurityService ss;
     private final EmailService es;
 
-    private final MAVSupplier mavSupplier;
+    private final MAVBuilderSupplier mavBuilderSupplier;
 ;
 
     @Autowired
@@ -36,7 +36,7 @@ public class HomeController {
         this.ns = ns;
         this.ss = ss;
         this.es = es;
-        mavSupplier = (view, title, textType) -> new MyModelAndView(view, title, textType, ss.getCurrentUser());
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, ss.getCurrentUser());
 
     }
 
@@ -53,56 +53,20 @@ public class HomeController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "query", defaultValue = "") final String query,
             @RequestParam(name = "category", defaultValue = "ALL") final String category){
-        final ModelAndView mav = mavSupplier.supply("index", "pageTitle.home", TextType.INTERCODE);
 
 
-        Map<Long, Rating> ratingMap = new HashMap<>();
-        Map<Long, Boolean> savedMap = new HashMap<>();
-
-
-
-
-
-        Optional<User> user = ss.getCurrentUser();
-
-
-
-        mav.addObject("user", user.orElse(null));
-
-
-        mav.addObject("orders", NewsOrder.values());
-        mav.addObject("orderBy", orderBy);
-        mav.addObject("query", query);
-        mav.addObject("categories", Category.values());
-        mav.addObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
         Page<FullNews> newsPage = ns.getNews(page,category,orderBy,query);
 
-        List<FullNews> newsContent = newsPage.getContent();
 
-        for (FullNews news : newsContent) {
-            News article = news.getNews();
-            long newsId = article.getNewsId();
-            ratingMap.put(newsId, user.map(u -> ns.upvoteState(article, u)).orElse(Rating.NO_RATING));
-            savedMap.put(newsId, user.map(u -> ns.isSaved(article, u)).orElse(false));
-        }
-
-
-        mav.addObject("topCreators", us.getTopCreators(5));
-
-        mav.addObject("ratingMap", ratingMap);
-        mav.addObject("savedMap", savedMap);
-
-
-
-
-        mav.addObject("newsPage", newsPage);
-//        mav.addObject("page", newsPage.getCurrentPage());
-//        mav.addObject("totalPages", newsPage.getTotalPages());
-//        mav.addObject("minPage",newsPage.getMinPage());
-//        mav.addObject("maxPage",newsPage.getMaxPage());
-
-        return mav;
+        return mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
+                .withObject("topCreators", us.getTopCreators(5))
+                .withObject("orders", NewsOrder.values())
+                .withObject("orderBy", orderBy)
+                .withObject("query", query)
+                .withObject("categories", Category.values())
+                .withObject("category", category.equals("ALL")? category:Category.getByValue(category))
+                .withObject("newsPage", newsPage).build();
     }
 
     private ResponseEntity<UpvoteActionResponse> toggleHandler(UpvoteAction payload, Rating action) {
@@ -149,6 +113,6 @@ public class HomeController {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView userNotFound()    {
-        return mavSupplier.supply("errors/userNotFound", "pageTitle.userNotFound", TextType.INTERCODE);
+        return mavBuilderSupplier.supply("errors/userNotFound", "pageTitle.userNotFound", TextType.INTERCODE).build();
     }
 }

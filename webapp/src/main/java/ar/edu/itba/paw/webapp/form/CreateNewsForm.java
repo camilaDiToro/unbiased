@@ -25,9 +25,6 @@ public class CreateNewsForm {
     @Length(max=10000000)
     private String body;
 
-    @Email(regexp = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$")
-    // source: https://www.w3resource.com/javascript/form/email-validation.php
-    private String creatorEmail;
     private CommonsMultipartFile image;
 
     private String[] categories;
@@ -53,9 +50,6 @@ public class CreateNewsForm {
         return body;
     }
 
-    public String getCreatorEmail() {
-        return creatorEmail;
-    }
 
     public void setTitle(String title) {
         this.title = title;
@@ -69,9 +63,6 @@ public class CreateNewsForm {
         this.body = body;
     }
 
-    public void setCreatorEmail(String creatorEmail) {
-        this.creatorEmail = creatorEmail;
-    }
 
     public MultipartFile getImage() {
         return image;
