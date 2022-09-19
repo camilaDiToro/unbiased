@@ -16,3 +16,8 @@
     border-bottom: 1px solid #F2F2F2;
     color: #C2C2CC;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
