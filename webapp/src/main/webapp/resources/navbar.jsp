@@ -45,7 +45,6 @@
                                                         </div>
 
                                                             <b class="text-white"><c:out value="${loggedUser}"/></b>
-                                                        c
 
                                                     </div>
                     </button>
