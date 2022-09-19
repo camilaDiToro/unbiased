@@ -124,12 +124,32 @@
 
                                                     <c:if test="${isMyProfile}">
                                                         <%--<input type="image" alt="..." src="<c:url value="/resources/bin.png"/>" style="max-width: 20px; max-height: 20px">--%>
-                                                        <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
-                                                            <button type="submit" class="btn" style="background: none; outline: none; margin-top: 10px">
+                                                            <button data-toggle="modal" data-target="#binModal" class="btn" style="background: none; outline: none; margin-top: 10px">
                                                                 <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
                                                             </button>
-                                                        </form>
                                                     </c:if>
+                                                            <!-- Modal -->
+                                                            <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                            <div class="modal-body">
+                                                                                <spring:message code="profile.modal.msg"/>
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                                                                <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
+                                                                                    <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                                                </form>
+                                                                            </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
@@ -190,7 +210,7 @@
                 <button style="border: none; background-color: white; outline: none" data-toggle="modal" data-target="#exampleModal">
                 <span class="badge badge-pill badge-info">
                    <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
-                    Editar
+                    <spring:message code="profile.edit"/>
                 </span>
                 </button>
             </div>
@@ -202,7 +222,7 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel"><spring:message code="createArticle.modal.question"/></h5>
+                            <h5 class="modal-title" id="exampleModalLabel"><spring:message code="profile.user.settings"/></h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -228,8 +248,8 @@
                                     </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="createArticle.modal.cancel"/></button>
-                                <button type="submit" class="btn btn-primary"><spring:message code="createArticle.modal.accept"/></button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.save"/></button>
                             </div>
                         </form:form>
                     </div>
