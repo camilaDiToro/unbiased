@@ -5,6 +5,7 @@
 <c:set var="pageTitle" scope="request" value="Login"/>
 <c:set var="signInOrCreate" scope="request" value="${true}"/>
 <%@include file="../../resources/head.jsp" %>
+<link href="<c:url value="/resources/login.css"/>" rel="stylesheet">
 <body class="text-center">
 <c:url value="/login" var="loginUrl" />
 
