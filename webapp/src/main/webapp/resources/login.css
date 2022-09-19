@@ -1,0 +1,23 @@
+.form-control{
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid #F2F2F2;
+    background: none;
+    color: #C2C2CC;
+}
+
+.form-control::placeholder{
+    color: #C2C2CC;
+}
+
+.form-control:focus{
+    background: none;
+    box-shadow: none;
+    border-bottom: 1px solid #F2F2F2;
+    color: #C2C2CC;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
+}

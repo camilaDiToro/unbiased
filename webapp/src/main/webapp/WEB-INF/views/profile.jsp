@@ -117,7 +117,7 @@
 
                                                     <c:if test="${isMyProfile}">
                                                         <%--<input type="image" alt="..." src="<c:url value="/resources/bin.png"/>" style="max-width: 20px; max-height: 20px">--%>
-                                                            <button data-toggle="modal" data-target="#binModal" class="btn" style="background: none; outline: none; margin-top: 10px">
+                                                            <button data-toggle="modal" data-target="#binModal" class="btn" style="background: none; outline: none; margin-bottom: 4px">
                                                                 <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
                                                             </button>
                                                     </c:if>
