@@ -32,6 +32,9 @@
         <div class="text-danger text-nowrap form-text d-inline-block">
             <spring:message code="login.emailNotVerified"/>
         </div>
+        <div class="text-danger text-nowrap form-text d-inline-block">
+            <spring:message code="login.emailResended"/>
+        </div>
     </c:if>
    <div class="checkbox mb-3">
         <label class="text-light">
