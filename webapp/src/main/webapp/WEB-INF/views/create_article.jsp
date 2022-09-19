@@ -11,7 +11,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
-
+<style>
+    <c:set var="labelText"><spring:message code="createArticle.label"/></c:set>
+    .custom-file-input:lang(en)~.custom-file-label::after{content:'${labelText}'!important}
+</style>
 <%@include file="../../resources/head.jsp" %>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
@@ -69,11 +72,6 @@
                 <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01"><spring:message code="createArticle.selectFile"/></form:label>
             </div>
         <script>
-            <c:set var="labelText"><spring:message code="createArticle.label"/></c:set>
-            let slidingTagLiAfterStyle = document.createElement("style");
-            slidingTagLiAfterStyle.innerHTML =
-                ".custom-file-label::after{content:'${labelText}'}";
-            document.head.appendChild(slidingTagLiAfterStyle);
             $('#fileInput').on('change',function(){
                 //get the file name
                 var fileName = $(this).val();
