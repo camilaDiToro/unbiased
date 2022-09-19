@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -66,7 +67,7 @@ public class NewsJdbcDao implements NewsDao{
         newsData.put("title", newsBuilder.getTitle());
         newsData.put("subtitle",newsBuilder.getSubtitle());
         newsData.put("creator", newsBuilder.getCreatorId());
-        newsData.put("creation_date",newsBuilder.getCreationDate());
+        newsData.put("creation_date", Timestamp.valueOf(newsBuilder.getCreationDate()));
         newsData.put("image_id", newsBuilder.getImageId());
         newsData.put("accesses", 0);
 
@@ -232,7 +233,7 @@ public class NewsJdbcDao implements NewsDao{
         ratingData.put("news_id",newsId);
         ratingData.put("user_id", userId);
         ratingData.put("upvote",rating.equals(Rating.UPVOTE));
-        ratingData.put("interaction_date", LocalDateTime.now());
+        ratingData.put("interaction_date", Timestamp.valueOf(LocalDateTime.now()));
 
 
         jdbcUpvoteInsert.execute(ratingData);
@@ -261,7 +262,7 @@ public class NewsJdbcDao implements NewsDao{
         final Map<String,Object> savedNewsData = new HashMap<>();
         savedNewsData.put("news_id",news.getNewsId());
         savedNewsData.put("user_id", user.getId());
-        savedNewsData.put("saved_date", LocalDateTime.now());
+        savedNewsData.put("saved_date", Timestamp.valueOf(LocalDateTime.now()));
 
 
         jdbcSavedNewsInsert.execute(savedNewsData);

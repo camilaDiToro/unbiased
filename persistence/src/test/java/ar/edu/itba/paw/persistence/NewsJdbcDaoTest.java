@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.NewsOrder;
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,8 +34,10 @@ public class NewsJdbcDaoTest {
     private CategoryDao categoryDao;
     protected JdbcTemplate jdbcTemplate;
 
+    //TABLES
     protected static final String NEWS_TABLE = "news";
     protected static final String CATEGORY_TABLE = "news_category";
+    protected static final String SAVED_TABLE = "saved_news";
     //USERS DATA
     protected static final String EMAIL = "juan@gmail.com";
 
@@ -114,6 +113,19 @@ public class NewsJdbcDaoTest {
 
         assertNotNull(news);
         assertEquals(maybeNews.get().getNewsId(), news.getNewsId());
+    }
+
+    @Test
+    public void testDeleteNews() {
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+        newsDao.deleteNews(news.getCreatorId());
+
+        List<News> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, news.getCreatorId(), NewsOrder.NEW);
+        assertEquals(0, newsList.size());
     }
 
     @Test
@@ -204,27 +216,97 @@ public class NewsJdbcDaoTest {
         assertEquals(1, newsList.size());
     }
 
+    @Test
+    public void testGetTotalPagesNewsFromUser(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+
+        int newsList = newsDao.getTotalPagesNewsFromUser(PAGE_SIZE, news.getCreatorId());
+        assertEquals(PAGE_SIZE, newsList);
+    }
+
+    @Test
+    public void testUpvoteState(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+
+        newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.UPVOTE);
+        assertEquals(Rating.UPVOTE, newsDao.upvoteState(news, user));
+        //int rating = newsDao.getUpvotes(news.getNewsId());
+        //assertEquals(0, rating);
+    }
+
+    @Test
+    public void testSaveNews(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, SAVED_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+
+        newsDao.saveNews(news, user);
+        assertTrue(newsDao.isSaved(news, user));
+    }
+
+    @Test
+    public void testRemoveSavedNews(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, SAVED_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+
+        newsDao.saveNews(news, user);
+        newsDao.removeSaved(news, user);
+        assertTrue(newsDao.getSavedNews(PAGE_SIZE, user, NewsOrder.NEW).isEmpty());
+    }
+
+    @Test
+    public void testGetSavedNews(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, SAVED_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+        newsDao.saveNews(news, user);
+
+        List<News> savedList = newsDao.getSavedNews(PAGE_SIZE, user, NewsOrder.NEW);
+        assertEquals(1, savedList.size());
+    }
+
+    @Test
+    public void testGetSavedNewsFromUser(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, SAVED_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+        newsDao.saveNews(news, user);
+
+        List<News> savedList = newsDao.getSavedNewsFromUser(PAGE_SIZE, news.getCreatorId(), NewsOrder.NEW);
+        assertEquals(1, savedList.size());
+    }
+
         /*
-    public List<News> getSavedNews(int page, User user, NewsOrder ns)
-    public List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns) {
-    public List<News> getSavedNewsFromUser(int page, long userId, NewsOrder ns) {
     private List<News> getNewsWithRatingFromUser(int page, long userId, NewsOrder ns, boolean upvote) {
     public List<News> getNewsUpvotedByUser(int page, long userId, NewsOrder ns) {
     public List<News> getNewsDownvotedByUser(int page, long userId, NewsOrder ns) {
-    public int getTotalPagesNewsFromUser(int page, long userId) {
     private int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
      public int getTotalPagesNewsFromUserUpvoted(int page, long userId) {
      public int getTotalPagesNewsFromUserDownvoted(int page, long userId) {
      public int getTotalPagesNewsFromUserSaved(int page, long userId) {
-    public void deleteNews(long newsId) {
-    public int getTotalPagesCategory(Category category) {
     public int getUpvotes(Long newsId) {
-    public Rating upvoteState(News news, User user) {
-    public void setRating(Long newsId, Long userId, Rating rating) {
     public double getPositivityValue(Long newsId) {
-    public void saveNews(News news, User user) {
-    public boolean isSaved(News news, User user) {
-    public void removeSaved(News news, User user) {
 
 */
 }
