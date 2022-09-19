@@ -16,12 +16,21 @@ public class User {
         this.status = userBuilder.status;
     }
 
+    @Override
+    public String toString() {
+        return username != null ? username : email;
+    }
+
     public long getId() {
         return userId;
     }
 
     public Long getImageId() {
         return imageId;
+    }
+
+    public boolean hasImage() {
+        return imageId != null;
     }
 
     public String getEmail() {
@@ -38,6 +47,18 @@ public class User {
 
     public UserStatus getStatus() {
         return status;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (!(o instanceof User))
+            return false;
+
+        User aux = (User) o;
+
+        return aux.userId == userId;
     }
 
     public static class UserBuilder{
