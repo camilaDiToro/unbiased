@@ -64,7 +64,7 @@
 
         </div>
 
-    <form:label path="image">Imagen de la noticia</form:label>
+    <form:label path="image"><spring:message code="createArticle.imageMsg"/> </form:label>
     <div class="input-group mb-3">
             <div class="custom-file">
                 <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input ${validate && errors != null && errors.getFieldErrorCount('image') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
@@ -83,6 +83,10 @@
         </script>
         </div>
     <form:errors path="image" element="div" cssClass="text-danger mb-3"  />
+    </div>
+
+
+
 
 <%--        <div>--%>
 <%--            <form:label path="creatorEmail"><spring:message code="createArticle.email"/></form:label>--%>
@@ -128,8 +132,6 @@
     </form:form>
     <script>
         var simplemde = new SimpleMDE({ element: document.getElementById("body-text") , spellChecker: false});
-        // var simplemde = new SimpleMDE({ element: document.getElementById("body-text")});
-
     </script>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

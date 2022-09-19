@@ -12,7 +12,7 @@
     <div>
         <h1 class="logo mb-4 text-info">unbiased</h1>
         <h1 class="h3 mb-3 font-weight-normal text-light"><spring:message code="email.verification.confirmed"/></h1>
-        <a class="btn btn-lg btn-info btn-block" type="submit" href="<c:url value="/"/>">Go Home</a>
+        <a class="btn btn-lg btn-info btn-block" type="submit" href="<c:url value="/"/>"><spring:message code="verifyEmail.goHome"/> </a>
     </div>
 </div>
 

@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface UserService {
 
     Optional<User> getUserById(long id);
+    Optional<User> getRegisteredUserById(long id);
     User create(User.UserBuilder userBuilder);
     User createIfNotExists(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);

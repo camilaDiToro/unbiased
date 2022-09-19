@@ -93,7 +93,10 @@
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                     <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis"><c:out value="${article.subtitle}"/></h6>
-                                                    <p class="text-sm-left text-secondary mb-0"><c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/></p>
+                                                    <p class="text-sm-left text-secondary mb-0">
+                                                        <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px"/>
+                                                        <c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/>
+                                                    </p>
                                                         <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
                                                 </div>
@@ -224,18 +227,31 @@
                         <form:form modelAttribute="userProfileForm" enctype="multipart/form-data" action="${postUrl}" method="post">
                             <div class="modal-body">
 
-                                    <form:label path="image">Cambiar nombre de usuario</form:label>
+                                    <spring:message code="profile.modal.changeUsername" var="changeUsername"/>
+                                    <form:label path="image"><spring:message code="profile.modal.changeUsername"/></form:label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">@</span>
                                         </div>
-                                        <form:input type="text" path="username" cssClass="form-control" placeholder="username"/>
+                                        <form:input type="text" path="username" cssClass="form-control" placeholder="${changeUsername}"/>
                                     </div>
 
-                                    <form:label path="image">Cambiar imagen de perfil</form:label>
+                                    <spring:message code="profile.modal.changeProfilePicture" var="changeUserPicture"/>
+                                    <form:label path="image"><spring:message code="profile.modal.changeProfilePicture"/> </form:label>
                                     <div class="input-group mb-3">
                                         <div class="custom-file">
-                                            <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/></div>
+                                            <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
+                                        </div>
+
+                                        <script>
+                                            $('#fileInput').on('change',function(){
+                                                //get the file name
+                                                var fileName = $(this).val();
+                                                //replace the "Choose a file" label
+                                                $(this).next('.custom-file-label').html(fileName);
+                                            })
+                                        </script>
                                     </div>
                             </div>
                             <div class="modal-footer">
