@@ -90,6 +90,12 @@
 
                                 <c:set var="newsId" value="${article.newsId}"/>
 
+                                <c:set var="loggedParameters" value="${fullNews.loggedUserParameters}"/>
+                                <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
+                                <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
+
+
+
 
                                 <div class="col mb-4">
                                     <div class="card h-100 d-flex flex-row" >
@@ -97,7 +103,7 @@
                                         <div class="d-flex flex-column justify-content-between w-60">
                                             <div class="d-flex w-100">
                                                 <div class="w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
-                                                    <c:set var="rating" value="${ratingMap.get(newsId)}"/>
+                                                    <c:set var="rating" value="${rating}"/>
 
                                                         <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                     <div id="rating" class="${rating.toString()}"><c:out value="${fullNews.upvotes}"/></div>

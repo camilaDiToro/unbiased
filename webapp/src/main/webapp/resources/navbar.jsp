@@ -43,7 +43,7 @@
                                                     </div>
                     </button>
                     <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="<c:url value="/profile/${user.id}"/>">My Profile</a>
+                        <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>">My Profile</a>
                         <a class="dropdown-item" href="<c:url value="/logout"/>">Logout</a>
                     </div>
                 </div>

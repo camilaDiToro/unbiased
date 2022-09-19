@@ -15,8 +15,7 @@
 
 <%--<%@include file="../../resources/navbar.jsp" %>--%>
 <div class="d-flex h-100 flex-column">
-    <c:set var="loggedUser" scope="request" value="${user}"/>
-    <c:set var="userProfile" scope="request" value="${profileUser}"/>
+
 <%@include file="../../resources/navbar.jsp" %>
 
 <%--TAB (publicaciones, guardado, upvoteado, downvoteado)--%>
@@ -80,6 +79,8 @@
                                 <c:set var="article" value="${fullNews.news}"/>
 
                                 <c:set var="newsId" value="${article.newsId}"/>
+                                <c:set var="loggedParams" value="${fullNews.loggedUserParameters}"/>
+
 
 
                                 <div class="col mb-4">
@@ -88,7 +89,7 @@
                                         <div class="d-flex flex-column justify-content-between w-60">
                                             <div class="d-flex w-100">
                                                 <div class="w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
-                                                    <c:set var="rating" value="${ratingMap.get(newsId)}"/>
+                                                    <c:set var="rating" value="${loggedParams != null ? loggedParams.personalRating : ''}"/>
 
                                                     <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                     <div id="rating" class="${rating.toString()}"><c:out value="${fullNews.upvotes}"/></div>
@@ -130,9 +131,9 @@
                                                         </form>
                                                     </c:if>
 
-                                                    <c:if test="${user != null}">
+                                                    <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                            <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${savedMap.get(newsId) ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                            <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
                                                         </div>
                                                     </c:if>
                                                         <%--                                                    <button type="button" class="btn btn-sm btn-outline-primary m-1 h-75 max-h-40px"><svg class="h-75" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 4H5a2 2 0 0 0-2 2v15l3.467-2.6a2 2 0 0 1 1.2-.4H19a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg></button>--%>
@@ -173,11 +174,11 @@
         </div>
 
         <div class="profile">
-            <c:if test="${userProfile.hasImage()}">
-                <img src="<c:url value="/profile/${userProfile.imageId}/image"/>" class="rounded-circle" width="80">
+            <c:if test="${profileUser.hasImage()}">
+                <img src="<c:url value="/profile/${profileUser.imageId}/image"/>" class="rounded-circle" width="80">
 
             </c:if>
-            <c:if test="${!userProfile.hasImage()}">
+            <c:if test="${!profileUser.hasImage()}">
                 <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
 
             </c:if>

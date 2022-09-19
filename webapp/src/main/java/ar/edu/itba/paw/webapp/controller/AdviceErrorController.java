@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,12 @@ public class AdviceErrorController {
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ModelAndView userNotFound(UserNotFoundException ex) {
         return new ModelAndView("errors/userNotFound");
+    }
+
+    @ExceptionHandler(UserNotAuthorized.class)
+    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+    public ModelAndView invalidUser(UserNotFoundException ex) {
+        return new ModelAndView("errors/invalid_user");
     }
 
     @ExceptionHandler(NewsNotFoundException.class)

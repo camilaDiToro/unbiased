@@ -17,6 +17,11 @@
 </div>
 
 <c:set var="news" value="${fullNews.news}"/>
+<c:set var="user" value="${fullNews.user}"/>
+<c:set var="loggedParams" value="${fullNews.loggedUserParamateres}"/>
+<c:set var="rating" value="${loggedParams != null : loggedParams.rating : ''}"/>
+
+
 
 
 <div class="d-flex align-items-center justify-content-center w-100 py-4">
@@ -47,7 +52,7 @@
                 </div>
                 <c:if test="${user != null}">
                     <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center" >
-                        <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
+                        <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${loggedParams != null && loggedParams.saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
                     </div>
                 </c:if>
             </div>

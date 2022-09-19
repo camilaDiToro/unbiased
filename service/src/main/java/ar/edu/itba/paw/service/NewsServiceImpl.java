@@ -51,7 +51,14 @@ public class NewsServiceImpl implements NewsService{
         long newsId = news.getNewsId();
         double positiveValue = newsDao.getPositivityValue(newsId);
         Positivity positivity = Positivity.getPositivvity(positiveValue);
-        return new FullNews(news, userDao.getUserById(news.getCreatorId()).get(), newsDao.getUpvotes(newsId), positivity, positiveValue);
+        Optional<User> maybeUser = securityService.getCurrentUser();
+        LoggedUserParameters loggedUserParameters = null;
+        if (maybeUser.isPresent()) {
+            User user = maybeUser.get();
+            loggedUserParameters = new LoggedUserParameters(upvoteState(news, user), isSaved(news, user));
+
+        }
+        return new FullNews(news, userDao.getUserById(news.getCreatorId()).get(), newsDao.getUpvotes(newsId), positivity, positiveValue, loggedUserParameters);
     }
 
     @Override

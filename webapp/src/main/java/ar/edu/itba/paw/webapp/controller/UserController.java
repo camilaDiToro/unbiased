@@ -11,7 +11,6 @@ import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -24,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @Controller
 public class UserController {
@@ -37,7 +34,7 @@ public class UserController {
 
     private final SecurityService securityService;
 
-    private final MAVSupplier mavSupplier;
+    private final MAVBuilderSupplier mavBuilderSupplier;
 
 
     @Autowired
@@ -47,7 +44,7 @@ public class UserController {
         this.securityService = securityService;
         this.newsService = newsService;
 
-         mavSupplier = (view, title, textType) -> new MyModelAndView(view, title, textType, securityService.getCurrentUser());
+         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
 
 //        this.
     }
@@ -60,8 +57,8 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createForm(@ModelAttribute("registerForm") final UserForm userForm) {
-        final ModelAndView mav = mavSupplier.supply("registerForm", "pageTitle.create", TextType.INTERCODE);
-        return mav;
+        return mavBuilderSupplier.supply("registerForm", "pageTitle.create", TextType.INTERCODE)
+                .build();
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -92,46 +89,29 @@ public class UserController {
                                 @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
                                 @RequestParam(name = "page", defaultValue = "1") int page,
                                 @RequestParam(name = "category", defaultValue = "MY_POSTS") String category) {
-        final ModelAndView mav = mavSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE);
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, "TOP", profileUser.getId(), category);
-        List<FullNews> newsContent = fullNews.getContent();
-        mav.addObject("user",user.orElse(null));
+        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser.getId(), category);
 
-        mav.addObject("profileUser", profileUser);
 
-        mav.addObject("isMyProfile", profileUser.equals(user.orElse(null)));
-
-        mav.addObject("newsPage", fullNews);
-
-        mav.addObject("orderBy", newsOrder);
+        MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)
+                .withObject("orders", NewsOrder.values())
+                .withObject("orderBy", newsOrder)
+                .withObject("categories", ProfileCategory.values())
+                .withObject("newsPage", fullNews)
+                .withObject("isMyProfile", profileUser.equals(user.orElse(null)))
+                .withObject("profileUser", profileUser)
+                .withStringParam(profileUser.toString());
 
         try {
-            mav.addObject("category", ProfileCategory.valueOf(category));
+            mavBuilder.withObject("category", ProfileCategory.valueOf(category));
         } catch(IllegalArgumentException e) {
             throw new InvalidCategoryException();
         }
 
-        mav.addObject("orders", NewsOrder.values());
-
-        mav.addObject("categories", ProfileCategory.values());
 
 
-        Map<Long, Rating> ratingMap = new HashMap<>();
-        Map<Long, Boolean> savedMap = new HashMap<>();
-
-        for (FullNews news : newsContent) {
-            News article = news.getNews();
-            long newsId = article.getNewsId();
-            ratingMap.put(newsId, user.map(u -> newsService.upvoteState(article, u)).orElse(Rating.NO_RATING));
-            savedMap.put(newsId, user.map(u -> newsService.isSaved(article, u)).orElse(false));
-        }
-
-        mav.addObject("ratingMap", ratingMap);
-        mav.addObject("savedMap", savedMap);
-
-        return mav;
+        return mavBuilder.build();
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
@@ -150,7 +130,8 @@ public class UserController {
     @RequestMapping("/verify_email")
     public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
         userService.verifyUserEmail(token);
-        return mavSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.LITERAL);
+        return mavBuilderSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.LITERAL)
+                .build();
     }
 
     @RequestMapping( value = "/profile/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
