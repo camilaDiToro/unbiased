@@ -63,6 +63,7 @@
                         </p>
                     </div>
                 </c:if>
+
                 <c:if test="${!empty news}">
 
                     <div class="container-fluid">
