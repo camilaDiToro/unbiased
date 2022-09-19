@@ -43,16 +43,16 @@
                                                     </div>
                     </button>
                     <div class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>">My Profile</a>
-                        <a class="dropdown-item" href="<c:url value="/logout"/>">Logout</a>
+                        <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>"><spring:message code="navbar.myProfile"/></a>
+                        <a class="dropdown-item" href="<c:url value="/logout"/>"><spring:message code="navbar.logOut"/> </a>
                     </div>
                 </div>
 
             </c:if>
 
             <c:if test="${loggedUser == null}">
-                <a role="button" class="btn btn-primary" href="<c:url value="/login"/>">Login</a>
-                <a role="button" class="btn btn-primary" href="<c:url value="/create"/>">Register</a>
+                <a role="button" class="btn btn-primary" href="<c:url value="/login"/>"><spring:message code="navbar.logIn"/></a>
+                <a role="button" class="btn btn-primary" href="<c:url value="/create"/>"><spring:message code="navbar.register"/></a>
             </c:if>
             <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP"/>">
                 <spring:message code="navbar.search"  var="searchPlaceholder" />

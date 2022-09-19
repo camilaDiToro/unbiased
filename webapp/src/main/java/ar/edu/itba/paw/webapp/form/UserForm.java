@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 public class UserForm {
 
     @NotExistingEmail
-    @Email(regexp = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$")
+    @Email(regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$")
     // source: https://www.w3resource.com/javascript/form/email-validation.php
     private String email;
 

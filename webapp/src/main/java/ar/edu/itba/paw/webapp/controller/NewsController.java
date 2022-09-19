@@ -90,8 +90,7 @@ public class NewsController {
             return createArticle(createNewsFrom);
         }
 
-        final User.UserBuilder userBuilder = new User.UserBuilder(createNewsFrom.getCreatorEmail());
-        final User user = userService.createIfNotExists(userBuilder);
+        final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
         if(createNewsFrom.getImage()!=null && createNewsFrom.getImage().getBytes().length!=0){
