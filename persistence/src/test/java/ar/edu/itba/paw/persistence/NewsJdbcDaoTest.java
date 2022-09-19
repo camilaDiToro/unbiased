@@ -192,6 +192,18 @@ public class NewsJdbcDaoTest {
         assertEquals(PAGE_SIZE, newsDao.getTotalPagesAllNews());
     }
 
+    @Test
+    public void testGetAllNewsFromUser(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+
+        List<News> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, news.getCreatorId(), NewsOrder.NEW);
+        assertEquals(1, newsList.size());
+    }
+
         /*
     public List<News> getSavedNews(int page, User user, NewsOrder ns)
     public List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns) {

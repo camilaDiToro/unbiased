@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS news (
     news_id           SERIAL          PRIMARY KEY,
     body              TEXT            NOT NULL,
     title             VARCHAR(200)    NOT NULL,
-    subtitle          VARCHAR(200)    NOT NULL,
+    subtitle          VARCHAR(400)    NOT NULL,
     creator           INTEGER         NOT NULL,
     creation_date     TIMESTAMP       NOT NULL,
     accesses          INTEGER         NOT NULL DEFAULT 0,
@@ -41,4 +41,33 @@ CREATE TABLE IF NOT EXISTS email_verification_token (
                                                         token TEXT NOT NULL,
                                                         expiration_date TIMESTAMP NOT NULL,
                                                         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+    );
+
+CREATE TABLE IF NOT EXISTS user_role (
+                                         user_id INT NOT NULL,
+                                         user_role VARCHAR(30) NOT NULL,
+    PRIMARY KEY (user_id, user_role),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+    );
+CREATE TABLE IF NOT EXISTS upvotes (
+                                       news_id           INTEGER         NOT NULL,
+                                       user_id           INTEGER         NOT NULL,
+                                       upvote            BOOLEAN         NOT NULL,
+                                       interaction_date  TIMESTAMP       NOT NULL,
+
+                                       FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
+    PRIMARY KEY (news_id, user_id)
+
+    );
+
+CREATE TABLE IF NOT EXISTS saved_news (
+                                          news_id           INTEGER         NOT NULL,
+                                          user_id           INTEGER         NOT NULL,
+                                          saved_date        TIMESTAMP       NOT NULL,
+
+                                          FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
+    PRIMARY KEY (news_id, user_id)
+
     );
