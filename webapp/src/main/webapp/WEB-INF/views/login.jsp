@@ -28,6 +28,11 @@
             <spring:message code="login.error"/>
         </div>
     </c:if>
+    <c:if test="${param.unable}">
+        <div class="text-danger text-nowrap form-text d-inline-block">
+            <spring:message code="login.emailNotVerified"/>
+        </div>
+    </c:if>
    <div class="checkbox mb-3">
         <label class="text-light">
             <input type="checkbox" name="rememberme"> <spring:message code="login.rememberMe"/>
