@@ -27,9 +27,9 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
         Optional<User> mayBeUser = userService.findByEmail(request.getParameter("username"));
         if(mayBeUser.isPresent() && !mayBeUser.get().getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus())) {
             redirectURL = "/login?unable=true";
+            userService.resendEmailVerification(request.getParameter("username"));
         }
         super.setDefaultFailureUrl(redirectURL);
         super.onAuthenticationFailure(request, response, exception);
     }
-
 }
