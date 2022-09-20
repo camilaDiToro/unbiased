@@ -121,7 +121,7 @@ public class NewsServiceImpl implements NewsService{
         return new Page<>(ln.stream().map(this::getFullNews).collect(Collectors.toList()), page, totalPages);
     }
 
-    @Override
+    /*@Override
     public Page<News> getNewsFromUser(int page, String newsOrder, long userId) {
         page = page <= 0 ? 1 : page;
         NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
@@ -129,7 +129,7 @@ public class NewsServiceImpl implements NewsService{
         page = Math.min(page, totalPages);
         List<News> ln = newsDao.getAllNewsFromUser(page,userId,newsOrderObject);
         return new Page<>(ln, page, totalPages);
-    }
+    }*/
 
     @Override
     public List<Category> getNewsCategory(News news) {
