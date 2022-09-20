@@ -200,6 +200,10 @@
 #navbar-dropdown.dropdown-menu {
     min-width:inherit;
 }
+
+#bookmark,#upvote,#downvote {
+    cursor: pointer;
+}
 @media(min-width: 1200px) {
     .w-xl-25 {
         width: 25% !important;

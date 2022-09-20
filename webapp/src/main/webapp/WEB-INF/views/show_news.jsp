@@ -28,11 +28,21 @@
     <div class="h-auto w-75">
         <div class="d-flex align-items-center  ">
             <div class="position-absolute w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${news.newsId}"/>">
-                <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                <c:if test="${loggedUser != null}">
+                    <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
 
-                <div id="rating" class="${rating.toString()}"><c:out value="${fullNews.upvotes}"/></div>
-                <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
-
+                    <div id="rating" class="${rating.toString()}"><c:out value="${fullNews.upvotes}"/></div>
+                    <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                </c:if>
+                <c:if test="${loggedUser == null}">
+                    <a href="<c:url value = "/create"/>">
+                        <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
+                    </a>
+                    <div  ><c:out value="${fullNews.upvotes}"/></div>
+                    <a href="<c:url value = "/create"/>">
+                        <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
+                    </a>
+                </c:if>
             </div>
 
                 <h1 class="text-xl-center mx-auto max-w-75 text-ellipsis-1 m-3"><c:out value="${news.title}"/></h1>
@@ -53,7 +63,7 @@
                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
                 <c:if test="${user != null}">
                     <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center" >
-                        <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
+                        <img id="bookmark" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
                     </div>
                 </c:if>
             </div>

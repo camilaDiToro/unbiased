@@ -43,7 +43,10 @@
 
     </div>
 
+
     <button class="btn btn-lg btn-info btn-block" type="submit"><spring:message code="register.signUp"/></button>
+    <p class="m-2 text-light"><spring:message code="register.alreadyMemberQuestion"/> <a class="text-info" href="<c:url value="/login"/>"><spring:message code="navbar.logIn"/></a></p>
+
     <p class="mt-5 mb-3 text-muted">© 2022-2022</p>
 </form:form>
 </body>
