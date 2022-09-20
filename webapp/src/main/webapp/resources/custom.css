@@ -173,6 +173,7 @@
     position: absolute;
     top: 10px;
     right: 10px;
+    z-index: 2;
 }
 
 .max-w-75 {
@@ -210,6 +211,12 @@
 
 #bookmark,#upvote,#downvote {
     cursor: pointer;
+}
+.upvote-div-profile {
+    width: 50px;
+}
+.upvote-div-home {
+    width: 30px;
 }
 @media(min-width: 1200px) {
     .w-xl-25 {

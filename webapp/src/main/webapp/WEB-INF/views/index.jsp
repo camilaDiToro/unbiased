@@ -99,10 +99,12 @@
 
                                 <div class="col mb-4">
                                     <div class="card h-100 d-flex flex-row" >
-
-                                        <div class="d-flex flex-column justify-content-between w-60">
+                                        <c:set var="positivity" value="${fullNews.positivity}"/>
+                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-between ${article.hasImage() ? 'w-60' : 'w-100'}">
                                             <div class="d-flex w-100">
-                                                <div class="w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
+                                                <div class="upvote-div-home d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
                                                     <c:set var="rating" value="${rating}"/>
 
                                                      <c:if test="${loggedUser != null}">
@@ -163,19 +165,20 @@
                                                 </div>
                                             </div>
                                         </div>
-                                            <div class="bg-secondary position-relative w-40">
-                                                <c:set var="positivity" value="${fullNews.positivity}"/>
-                                                <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">
-                                                </div>
-                                                <c:if test="${article.hasImage()}">
+
+                                        <c:if test="${article.hasImage()}">
+
+                                        <div class="bg-secondary position-relative w-40">
+
 
                                                 <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
-                                                </c:if>
 
-                                                <c:if test="${!article.hasImage()}">
-                                                    <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">
-                                                </c:if>
+<%--                                                <c:if test="${!article.hasImage()}">--%>
+<%--                                                    <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">--%>
+<%--                                                </c:if>--%>
                                             </div>
+                                        </c:if>
+
                                     </div>
                                 </div>
                             </c:forEach>
