@@ -93,9 +93,11 @@
                 </a>
             </div>
         <div class="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
-            <div class="text-sm-left font-weight-bold">
-                Categories:
-            </div>
+            <c:if test="${not empty categories}">
+                <div class="text-sm-left font-weight-bold">
+                    <spring:message code="showNews.categories"/>
+                </div>
+            </c:if>
             <c:forEach var="category" items="${categories}">
 
                 <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
