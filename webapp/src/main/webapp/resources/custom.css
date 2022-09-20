@@ -1,6 +1,6 @@
-* {
-    word-break: break-all;
-}
+/** {*/
+/*    word-break: break-all;*/
+/*}*/
 
 .card-img-top {
     width: 100%;
@@ -111,9 +111,16 @@
     font-weight: bold;
 }
 
-.text-ellipsis {
+.text-ellipsis-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.text-ellipsis-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;

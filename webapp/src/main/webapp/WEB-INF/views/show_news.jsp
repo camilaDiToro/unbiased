@@ -45,7 +45,7 @@
                 </c:if>
             </div>
 
-                <h1 class="text-xl-center mx-auto max-w-75 text-ellipsis-1 m-3"><c:out value="${news.title}"/></h1>
+                <h1 class="text-xl-center mx-auto max-w-75 m-3"><c:out value="${news.title}"/></h1>
 
 
         </div>
