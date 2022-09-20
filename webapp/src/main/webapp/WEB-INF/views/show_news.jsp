@@ -100,8 +100,10 @@
             </c:if>
             <c:forEach var="category" items="${categories}">
 
-                <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
-
+            <a href="<c:url value = "/TOP">
+            <c:param name = "category" value = "${category}"/>
+            </c:url>">                <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
+            </a>
             </c:forEach>
         </div>
 
