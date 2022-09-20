@@ -214,3 +214,21 @@
     }
 }
 
+.article-subtitle {
+    width: 95%;
+    color: #68717A;
+}
+
+.hr-style{
+    border: 2px solid black;
+    border-radius: 2px;
+    width: 45%;
+    margin-right:55% !important;
+}
+
+.comment{
+    height: 100px;
+    width: 500px;
+}
+
+

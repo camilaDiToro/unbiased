@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -28,13 +29,13 @@ public class NewsJdbcDao implements NewsDao{
 
     private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
             new News.NewsBuilder(   rs.getLong("creator"),
-                                    rs.getString("body"),
-                                    rs.getString("title"),
-                                    rs.getString("subtitle"))
-                                    .newsId(rs.getLong("news_id"))
-                                    .imageId(rs.getObject("image_id") == null ? null : rs.getLong("image_id"))
-                                    .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
-                                    .build();
+                    rs.getString("body"),
+                    rs.getString("title"),
+                    rs.getString("subtitle"))
+                    .newsId(rs.getLong("news_id"))
+                    .imageId(rs.getObject("image_id") == null ? null : rs.getLong("image_id"))
+                    .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
+                    .build();
 
     private static final RowMapper<Category> CATEGORIES_ROW_MAPPER = (rs, rowNum) ->
             Category.getById(rs.getLong("category_id"));
@@ -66,7 +67,7 @@ public class NewsJdbcDao implements NewsDao{
         newsData.put("title", newsBuilder.getTitle());
         newsData.put("subtitle",newsBuilder.getSubtitle());
         newsData.put("creator", newsBuilder.getCreatorId());
-        newsData.put("creation_date",newsBuilder.getCreationDate());
+        newsData.put("creation_date", Timestamp.valueOf(newsBuilder.getCreationDate()));
         newsData.put("image_id", newsBuilder.getImageId());
         newsData.put("accesses", 0);
 
@@ -209,7 +210,7 @@ public class NewsJdbcDao implements NewsDao{
         return total==0?1:total;
     }
 
-@Override
+    @Override
     public int getUpvotes(Long newsId) {
         int upvotes = jdbcTemplate.query("SELECT sum(case when upvote=true then 1 else -1 end) AS upvotes FROM upvotes where news_id = ?",
                 new Object[]{newsId},UPVOTES_MAPPER).stream().findFirst().get();
@@ -232,7 +233,7 @@ public class NewsJdbcDao implements NewsDao{
         ratingData.put("news_id",newsId);
         ratingData.put("user_id", userId);
         ratingData.put("upvote",rating.equals(Rating.UPVOTE));
-        ratingData.put("interaction_date", LocalDateTime.now());
+        ratingData.put("interaction_date", Timestamp.valueOf(LocalDateTime.now()));
 
 
         jdbcUpvoteInsert.execute(ratingData);
@@ -241,12 +242,12 @@ public class NewsJdbcDao implements NewsDao{
 
     @Override
     public double getPositivityValue(Long newsId) {
-       int upvotes = jdbcTemplate.query("(SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes FROM upvotes WHERE news_id = ?)",
-               new Object[]{newsId}, UPVOTES_MAPPER).stream().findFirst().get();
-       double interactions = jdbcTemplate.query("(SELECT count(*) AS interactions FROM upvotes WHERE news_id = ?)",
-               new Object[]{newsId}, INTERACTIONS_MAPPER).stream().findFirst().get();
+        int upvotes = jdbcTemplate.query("(SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes FROM upvotes WHERE news_id = ?)",
+                new Object[]{newsId}, UPVOTES_MAPPER).stream().findFirst().get();
+        double interactions = jdbcTemplate.query("(SELECT count(*) AS interactions FROM upvotes WHERE news_id = ?)",
+                new Object[]{newsId}, INTERACTIONS_MAPPER).stream().findFirst().get();
 
-       return interactions == 0 ? 1 : upvotes / interactions;
+        return interactions == 0 ? 1 : upvotes / interactions;
     }
 
     @Override
@@ -261,7 +262,7 @@ public class NewsJdbcDao implements NewsDao{
         final Map<String,Object> savedNewsData = new HashMap<>();
         savedNewsData.put("news_id",news.getNewsId());
         savedNewsData.put("user_id", user.getId());
-        savedNewsData.put("saved_date", LocalDateTime.now());
+        savedNewsData.put("saved_date", Timestamp.valueOf(LocalDateTime.now()));
 
 
         jdbcSavedNewsInsert.execute(savedNewsData);
