@@ -48,7 +48,7 @@
 
                                                     </div>
                     </button>
-                    <div id="navbar-dropdown" class="dropdown-menu w-100" aria-labelledby="dropdownMenuLink">
+                    <div id="navbar-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>"><spring:message code="navbar.myProfile"/></a>
                         <a class="dropdown-item" href="<c:url value="/logout"/>"><spring:message code="navbar.logOut"/> </a>
                     </div>

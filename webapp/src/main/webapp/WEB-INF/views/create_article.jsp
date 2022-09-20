@@ -13,14 +13,13 @@
 <html>
 <style>
     <c:set var="labelText"><spring:message code="createArticle.label"/></c:set>
-    .custom-file-input:lang(en)~.custom-file-label::after{content:'${labelText}'!important}
+    .custom-file-input~.custom-file-label::after{content:'${labelText}'!important}
 </style>
 <%@include file="../../resources/head.jsp" %>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
 <body>
-<c:set var="loggedUser" scope="request" value="${loggedUser}"/>
 <%@include file="../../resources/navbar.jsp" %>
 <div style="position: absolute ; margin-left: 4%; margin-top: 2%">
     <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%" data-toggle="modal" data-target="#exampleModal">
@@ -65,12 +64,15 @@
 
         </div>
 
-    <form:label path="image">Imagen de la noticia</form:label>
+    <form:label path="image"><spring:message code="createArticle.imageMsg"/> </form:label>
     <div class="input-group mb-3">
             <div class="custom-file">
-                <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input ${validate && errors != null && errors.getFieldErrorCount('image') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
                 <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01"><spring:message code="createArticle.selectFile"/></form:label>
+
             </div>
+
+
         <script>
             $('#fileInput').on('change',function(){
                 //get the file name
@@ -80,19 +82,7 @@
             })
         </script>
         </div>
-
-
-
-
-<%--        <div>--%>
-<%--            <form:label path="creatorEmail"><spring:message code="createArticle.email"/></form:label>--%>
-<%--            <div class="form-group">--%>
-<%--                <spring:message code="createArticle.email.placeholder"  var="emailPlaceholder" />--%>
-<%--                <form:input placeholder="${emailPlaceholder}" type="email" cssClass="form-control ${errors != null && errors.getFieldErrorCount('creatorEmail') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}" path="creatorEmail"/>--%>
-<%--                <form:errors path="creatorEmail" element="p" cssClass="invalid-feedback"/>--%>
-<%--            </div>--%>
-<%--        </div>--%>
-
+    <form:errors path="image" element="div" cssClass="text-danger mb-3"  />
     <div class="dropdown" id="categories-dropdown">
         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <spring:message code="createArticle.category.choose"/>
@@ -112,6 +102,21 @@
     <div style="width: 100%; display: flex; justify-content: end">
         <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
     </div>
+    </div>
+
+
+
+
+<%--        <div>--%>
+<%--            <form:label path="creatorEmail"><spring:message code="createArticle.email"/></form:label>--%>
+<%--            <div class="form-group">--%>
+<%--                <spring:message code="createArticle.email.placeholder"  var="emailPlaceholder" />--%>
+<%--                <form:input placeholder="${emailPlaceholder}" type="email" cssClass="form-control ${errors != null && errors.getFieldErrorCount('creatorEmail') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}" path="creatorEmail"/>--%>
+<%--                <form:errors path="creatorEmail" element="p" cssClass="invalid-feedback"/>--%>
+<%--            </div>--%>
+<%--        </div>--%>
+
+
 
 </div>
 

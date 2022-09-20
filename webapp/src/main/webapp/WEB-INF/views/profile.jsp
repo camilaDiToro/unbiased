@@ -63,6 +63,7 @@
                         </p>
                     </div>
                 </c:if>
+
                 <c:if test="${!empty news}">
 
                     <div class="container-fluid">
@@ -93,7 +94,10 @@
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                     <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis"><c:out value="${article.subtitle}"/></h6>
-                                                    <p class="text-sm-left text-secondary mb-0"><c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/></p>
+                                                    <p class="text-sm-left text-secondary mb-0">
+                                                        <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px"/>
+                                                        <c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/>
+                                                    </p>
                                                         <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
                                                 </div>
@@ -117,32 +121,33 @@
 
                                                     <c:if test="${isMyProfile}">
                                                         <%--<input type="image" alt="..." src="<c:url value="/resources/bin.png"/>" style="max-width: 20px; max-height: 20px">--%>
-                                                            <button data-toggle="modal" data-target="#binModal" class="btn" style="background: none; outline: none; margin-bottom: 4px">
+                                                            <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px">
                                                                 <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
                                                             </button>
-                                                    </c:if>
-                                                            <!-- Modal -->
-                                                            <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog modal-dialog-centered">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
-                                                                        </div>
-                                                                            <div class="modal-body">
-                                                                                <spring:message code="profile.modal.msg"/>
-                                                                            </div>
-                                                                            <div class="modal-footer">
-                                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                                                                <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
-                                                                                    <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
-                                                                                </form>
-                                                                            </div>
+                                                        <!-- Modal -->
+                                                        <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <spring:message code="profile.modal.msg"/>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                                                        <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
+                                                                            <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                                        </form>
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+
+                                                    </c:if>
 
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
@@ -224,20 +229,31 @@
                         <form:form modelAttribute="userProfileForm" enctype="multipart/form-data" action="${postUrl}" method="post">
                             <div class="modal-body">
 
-                                    <form:label path="image">Cambiar nombre de usuario</form:label>
+                                    <spring:message code="profile.modal.changeUsername" var="changeUsername"/>
+                                    <form:label path="image"><spring:message code="profile.modal.changeUsername"/></form:label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">@</span>
                                         </div>
-                                        <form:input type="text" path="username" cssClass="form-control" placeholder="username"/>
+                                        <form:input type="text" path="username" cssClass="form-control" placeholder="${changeUsername}"/>
                                     </div>
 
-                                    <form:label path="image">Cambiar imagen de perfil</form:label>
+                                    <spring:message code="profile.modal.changeProfilePicture" var="changeUserPicture"/>
+                                    <form:label path="image"><spring:message code="profile.modal.changeProfilePicture"/> </form:label>
                                     <div class="input-group mb-3">
                                         <div class="custom-file">
-                                            <form:input type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
-                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">Elegir imagen</form:label>
+                                            <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
                                         </div>
+
+                                        <script>
+                                            $('#fileInput').on('change',function(){
+                                                //get the file name
+                                                var fileName = $(this).val();
+                                                //replace the "Choose a file" label
+                                                $(this).next('.custom-file-label').html(fileName);
+                                            })
+                                        </script>
                                     </div>
                             </div>
                             <div class="modal-footer">

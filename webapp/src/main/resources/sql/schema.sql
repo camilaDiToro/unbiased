@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS user_role (
     PRIMARY KEY (user_id, user_role),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
 CREATE TABLE IF NOT EXISTS upvotes (
     news_id           INTEGER         NOT NULL,
     user_id           INTEGER         NOT NULL,

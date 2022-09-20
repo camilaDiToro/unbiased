@@ -114,7 +114,14 @@
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                     <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis"><c:out value="${article.subtitle}"/></h6>
-                                                    <p class="text-sm-left text-secondary mb-0"><c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/></p>
+
+                                                    <div>
+                                                        <p class="text-sm-left text-secondary mb-0">
+                                                            <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px"/>
+                                                            <c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/>
+                                                        </p>
+                                                    </div>
+
                                                         <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
                                                 </div>
@@ -155,15 +162,9 @@
                                                 </c:if>
 
                                                 <c:if test="${!article.hasImage()}">
-
                                                     <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">
                                                 </c:if>
-
                                             </div>
-
-
-
-
                                     </div>
                                 </div>
                             </c:forEach>

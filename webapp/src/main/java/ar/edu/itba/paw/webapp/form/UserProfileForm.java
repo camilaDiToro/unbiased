@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
+import ar.edu.itba.paw.webapp.constraints.FileSize;
 import ar.edu.itba.paw.webapp.constraints.NotExistingUsername;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,11 +11,7 @@ public class UserProfileForm {
     @NotExistingUsername
     private String username;
 
-
-    @NotExistingUsername
-    private String username;
-
-
+    @FileSize
     public MultipartFile getImage() {
         return image;
     }
