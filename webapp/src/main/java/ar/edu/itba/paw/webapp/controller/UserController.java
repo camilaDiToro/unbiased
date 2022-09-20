@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Controller
@@ -88,14 +89,15 @@ public class UserController {
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
         Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser.getId(), category);
+        boolean isMyProfile = profileUser.equals(user.orElse(null));
 
 
         MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", newsOrder)
-                .withObject("categories", ProfileCategory.values())
+                .withObject("categories", Arrays.stream(ProfileCategory.values()).filter(c -> isMyProfile || !c.equals(ProfileCategory.SAVED)).toArray())
                 .withObject("newsPage", fullNews)
-                .withObject("isMyProfile", profileUser.equals(user.orElse(null)))
+                .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
                 .withStringParam(profileUser.toString());
 
