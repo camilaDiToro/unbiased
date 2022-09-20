@@ -49,8 +49,8 @@ public class NewsServiceImpl implements NewsService{
 
     private FullNews getFullNews(News news) {
         long newsId = news.getNewsId();
-        double positiveValue = newsDao.getPositivityValue(newsId);
-        Positivity positivity = Positivity.getPositivvity(positiveValue);
+        NewsStats newsStats = newsDao.getNewsStats(newsId);
+        NewsStats.Positivity positivity = newsStats.getPositivity();
         Optional<User> maybeUser = securityService.getCurrentUser();
         LoggedUserParameters loggedUserParameters = null;
         if (maybeUser.isPresent()) {
@@ -58,7 +58,7 @@ public class NewsServiceImpl implements NewsService{
             loggedUserParameters = new LoggedUserParameters(upvoteState(news, user), isSaved(news, user));
 
         }
-        return new FullNews(news, userDao.getUserById(news.getCreatorId()).get(), newsDao.getUpvotes(newsId), positivity, positiveValue, loggedUserParameters);
+        return new FullNews(news, userDao.getUserById(news.getCreatorId()).get(), newsDao.getNewsStats(newsId), loggedUserParameters);
     }
 
     @Override
@@ -151,14 +151,14 @@ public class NewsServiceImpl implements NewsService{
         newsDao.setRating(newsId, userId, rating);
     }
     @Override
-    public double getPositivityValue(Long newsId) {
-        return newsDao.getPositivityValue(newsId);
+    public NewsStats getNewsStats(Long newsId) {
+        return newsDao.getNewsStats(newsId);
     }
 
-    @Override
-    public Positivity getPositivityBracket(Long newsId) {
-        return Positivity.getPositivvity(getPositivityValue(newsId));
-    }
+//    @Override
+//    public Positivity getPositivityBracket(Long newsId) {
+//        return Positivity.getPositivvity(getPositivityValue(newsId));
+//    }
 
     @Override
     public List<FullNews> getSavedNews(int page, User user, NewsOrder ns) {

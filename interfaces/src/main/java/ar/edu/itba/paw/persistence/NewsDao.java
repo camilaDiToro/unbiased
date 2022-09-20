@@ -23,7 +23,7 @@ public interface NewsDao {
 
     void setRating(Long newsId, Long userId, Rating rating);
 
-    double getPositivityValue(Long newsId);
+    NewsStats getNewsStats(Long newsId);
 
     List<News> getSavedNews(int page, User user, NewsOrder ns);
 

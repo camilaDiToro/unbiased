@@ -24,9 +24,9 @@ public interface NewsService {
 
     void setRating(Long newsId, Long userId, Rating rating);
 
-    double getPositivityValue(Long newsId);
+    NewsStats getNewsStats(Long newsId);
 
-    Positivity getPositivityBracket(Long newsId);
+//    Positivity getPositivityBracket(Long newsId);
 
     List<FullNews> getSavedNews(int page, User user, NewsOrder ns);
 

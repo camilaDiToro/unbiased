@@ -175,6 +175,11 @@
     right: 10px;
     z-index: 2;
 }
+.quality-indicator-news-view {
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+}
 
 .max-w-75 {
     max-width: 75%;

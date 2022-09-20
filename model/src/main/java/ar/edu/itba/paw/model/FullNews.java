@@ -1,37 +1,28 @@
 package ar.edu.itba.paw.model;
 
-import java.util.NoSuchElementException;
-
 public class FullNews {
     private News news;
     private int readTime;
-    private int upvotes;
     private User creator;
-    private Positivity positivity;
+    private NewsStats newsStats;
 
     private LoggedUserParameters loggedUserParameters;
 
-    public double getPositiveValue() {
-        return positiveValue;
-    }
-
-    private final double positiveValue;
 
 
 
-    public FullNews(News news, User creator, int upvotes,Positivity positivity, double positiveValue, LoggedUserParameters loggedUserParameters) {
+    public FullNews(News news, User creator,  NewsStats newsStats, LoggedUserParameters loggedUserParameters) {
         this.news = news;
-        this.upvotes = upvotes;
+
         this.creator = creator;
-        this.positivity = positivity;
-        this.positiveValue = positiveValue;
+        this.newsStats = newsStats;
         this.loggedUserParameters = loggedUserParameters;
 
         readTime = TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(news.getBody()));
     }
 
-    public FullNews(News news, User creator, int upvotes,Positivity positivity, double positiveValue) {
-        this(news, creator, upvotes, positivity, positiveValue, null);
+    public FullNews(News news, User creator,  NewsStats newsStats ) {
+        this(news, creator, newsStats, null);
     }
 
     public boolean hasLoggedUserParameters() {
@@ -53,16 +44,16 @@ public class FullNews {
         return readTime;
     }
 
-    public int getUpvotes() {
-        return upvotes;
-    }
+
 
     public User getUser() {
         return creator;
     }
 
 
-    public Positivity getPositivity() {
-        return positivity;
+
+
+    public NewsStats getNewsStats() {
+        return newsStats;
     }
 }
