@@ -49,8 +49,7 @@ public class NewsServiceImpl implements NewsService{
 
     private FullNews getFullNews(News news) {
         long newsId = news.getNewsId();
-        NewsStats newsStats = newsDao.getNewsStats(newsId);
-        NewsStats.Positivity positivity = newsStats.getPositivity();
+//        NewsStats newsStats = newsDao.getNewsStats(newsId);
         Optional<User> maybeUser = securityService.getCurrentUser();
         LoggedUserParameters loggedUserParameters = null;
         if (maybeUser.isPresent()) {
@@ -93,13 +92,19 @@ public class NewsServiceImpl implements NewsService{
         NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
         int totalPages = 0;
 
+        Optional<User> maybeUser = securityService.getCurrentUser();
+
+        Long loggedUserId = maybeUser.map(u -> u.getId()).orElse(null);
+
         List<News> ln = null;
         ProfileCategory pc = ProfileCategory.valueOf(profileCategory);
         switch (pc) {
-            case SAVED: ln = newsDao.getSavedNewsFromUser(page,userId,newsOrderObject);
+            case SAVED:
                 totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, userId);
 
-                break;
+                return new Page<>(newsDao.getSavedNews(page,userId,newsOrderObject, loggedUserId), page, totalPages);
+
+//                break;
 
             case UPVOTED: ln = newsDao.getNewsUpvotedByUser(page,userId,newsOrderObject);
                 totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
@@ -162,8 +167,9 @@ public class NewsServiceImpl implements NewsService{
 
     @Override
     public List<FullNews> getSavedNews(int page, User user, NewsOrder ns) {
-        List<News> news = newsDao.getSavedNews(page, user, ns);
-        return news.stream().map(this::getFullNews).collect(Collectors.toList());
+//        List<FullNews> news = newsDao.getSavedNews(page, user.getId(), ns);
+        return null;
+//        return news.stream().map(this::getFullNews).collect(Collectors.toList());
     }
 
     @Override

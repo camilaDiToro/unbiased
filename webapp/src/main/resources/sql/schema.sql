@@ -74,3 +74,23 @@ CREATE TABLE IF NOT EXISTS saved_news (
 
     );
 
+DROP VIEW IF EXISTS full_news;
+
+
+DROP VIEW IF EXISTS news_stats;
+
+
+CREATE OR REPLACE VIEW news_stats AS
+            SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, news_id FROM upvotes GROUP BY news_id;
+
+CREATE OR REPLACE VIEW logged_news_parameters AS
+SELECT users.user_id AS logged_user, news.news_id, upvote, saved_date
+FROM news LEFT JOIN upvotes ON news.news_id = upvotes.news_id
+    LEFT JOIN saved_news ON saved_news.news_id = news.news_id
+RIGHT JOIN users ON (users.user_id = saved_news.user_id OR users.user_id = upvotes.user_id);
+
+CREATE OR REPLACE VIEW full_news AS
+SELECT news.*, upvotes, downvotes, email, username, pass, status, users.image_id as user_image_id FROM news NATURAL JOIN news_stats JOIN users ON creator = user_id;
+
+CREATE OR REPLACE VIEW full_news_with_logged_params AS
+    SELECT saved_date, upvote, full_news.news_id FROM logged_news_parameters RIGHT JOIN full_news ON full_news.news_id = logged_news_parameters.news_id

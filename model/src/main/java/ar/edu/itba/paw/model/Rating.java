@@ -23,4 +23,15 @@ public enum Rating {
     @Override
     public abstract String toString();
 
+
+    public static Rating getRating(Boolean value) {
+        if (value == null)
+            return NO_RATING;
+        if (value) {
+            return Rating.UPVOTE;
+        } else {
+            return Rating.DOWNVOTE;
+        }
+
+    }
 }

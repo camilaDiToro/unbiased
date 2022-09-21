@@ -25,7 +25,7 @@ public interface NewsDao {
 
     NewsStats getNewsStats(Long newsId);
 
-    List<News> getSavedNews(int page, User user, NewsOrder ns);
+    List<FullNews> getSavedNews(int page, long userId, NewsOrder ns, Long loggedUser);
 
     void saveNews(News news, User user);
 
