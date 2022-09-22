@@ -44,7 +44,7 @@ public class AdminController {
 
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        newsService.deleteNews(newsId);
+        adminService.deleteNews(newsId);
         return new ModelAndView("redirect:/admin/reported_news");
     }
 }

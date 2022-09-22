@@ -2,6 +2,7 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.User;
@@ -179,8 +180,8 @@ public class NewsServiceImpl implements NewsService{
     public void deleteNews(long newsId) {
         News news = newsDao.getById(newsId).orElseThrow(NewsNotFoundException::new);
 
-        if(!securityService.isCurrentUserAdmin() || news.getCreatorId() != securityService.getCurrentUser().orElseThrow(() -> new HTTPException(403)).getId())
-            throw new HTTPException(403);
+        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
+            throw new UserNotAuthorized();
         newsDao.deleteNews(newsId);
     }
 }
