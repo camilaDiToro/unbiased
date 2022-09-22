@@ -6,5 +6,5 @@ import ar.edu.itba.paw.model.admin.ReportedNews;
 
 public interface AdminService {
     void reportNews(long newsId, long userId, ReportReason reportReason);
-    Page<ReportedNews> getReportedNews();
+    Page<ReportedNews> getReportedNews(int page);
 }

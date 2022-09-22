@@ -23,7 +23,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<ReportedNews> getReportedNews() {
-        return null;
+    public Page<ReportedNews> getReportedNews(int page) {
+        return adminDao.getReportedNews(page);
     }
 }

@@ -8,24 +8,24 @@ import java.util.List;
 public class ReportedNews {
 
     private final News news;
-    private final User news_owner;
-    private final List<ReportDetail> reports;
+    private final User newsOwner;
+    private final int reportCount;
 
-    public ReportedNews(News news, User news_owner, List<ReportDetail> reports) {
+    public ReportedNews(News news, User newsOwner, int reportCount) {
         this.news = news;
-        this.news_owner = news_owner;
-        this.reports = reports;
+        this.newsOwner = newsOwner;
+        this.reportCount = reportCount;
     }
 
     public News getNews() {
         return news;
     }
 
-    public User getNews_owner() {
-        return news_owner;
+    public User getNewsOwner() {
+        return newsOwner;
     }
 
-    public List<ReportDetail> getReports() {
-        return reports;
+    public int getReportCount() {
+        return reportCount;
     }
 }

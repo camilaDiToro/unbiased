@@ -1,18 +1,15 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.service.EmailService;
-import ar.edu.itba.paw.service.NewsService;
-import ar.edu.itba.paw.service.SecurityService;
-import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,18 +25,18 @@ public class HomeController {
     private final NewsService ns;
     private final SecurityService ss;
     private final EmailService es;
-
+    private final AdminService as;
     private final MAVBuilderSupplier mavBuilderSupplier;
 ;
 
     @Autowired
-    public HomeController(@Qualifier("userServiceImpl") final UserService us, final NewsService ns, SecurityService ss, EmailService es){
+    public HomeController(final UserService us, final NewsService ns, SecurityService ss, EmailService es, AdminService as){
         this.us = us;
         this.ns = ns;
         this.ss = ss;
         this.es = es;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, ss.getCurrentUser());
-
+        this.as = as;
     }
 
     @RequestMapping("/")
@@ -59,7 +56,6 @@ public class HomeController {
 
 
         Page<FullNews> newsPage = ns.getNews(page,category,orderBy,query);
-
 
         return mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
                 .withObject("topCreators", us.getTopCreators(5))
