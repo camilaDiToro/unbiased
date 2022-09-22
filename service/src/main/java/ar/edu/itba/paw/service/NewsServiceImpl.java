@@ -178,8 +178,9 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public void deleteNews(long newsId) {
         News news = newsDao.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(() -> new HTTPException(400)).getId())
-            throw new HTTPException(400);
+
+        if(!securityService.isCurrentUserAdmin() || news.getCreatorId() != securityService.getCurrentUser().orElseThrow(() -> new HTTPException(403)).getId())
+            throw new HTTPException(403);
         newsDao.deleteNews(newsId);
     }
 }
