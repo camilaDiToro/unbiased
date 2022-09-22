@@ -87,7 +87,7 @@ public class AdminJdbcDao implements AdminDao{
         List<ReportDetail> rd = jdbcTemplate.query("SELECT * FROM report NATURAL JOIN users WHERE news_id = ? ORDER BY report_date DESC LIMIT ? OFFSET ?",
                                                     new Object[]{newsId, PAGE_SIZE, (page-1)*PAGE_SIZE}, REPORT_DETAIL_ROW_MAPPER);
 
-        return null;
+        return new Page<>(rd, page, getTotalReportsOfANews(newsId));
     }
 
     private int getTotalReportsOfANews(long newsId){
