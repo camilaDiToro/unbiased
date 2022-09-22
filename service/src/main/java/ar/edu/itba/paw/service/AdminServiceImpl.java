@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.persistence.AdminDao;
@@ -25,5 +26,10 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public Page<ReportedNews> getReportedNews(int page) {
         return adminDao.getReportedNews(page);
+    }
+
+    @Override
+    public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
+        return adminDao.getReportedNewsDetail(page, newsId);
     }
 }
