@@ -73,10 +73,13 @@ public class AdminJdbcDao implements AdminDao{
 
     @Override
     public void makeUserAdmin(long userId) {
+        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as report_count FROM user_role WHERE user_id = ? AND user_role = ? ", new Object[]{userId, Role.ADMIN.getRole()}, ROW_COUNT_MAPPER).stream().findFirst().get();
+        if(rowsCount!=0)
+            return;
         final Map<String, Object> adminData = new HashMap<>();
         adminData.put("user_role", Role.ADMIN.getRole());
         adminData.put("user_id", userId);
-        jdbcReportInsert.execute(adminData);
+        jdbcAdminInsert.execute(adminData);
     }
 
     @Override

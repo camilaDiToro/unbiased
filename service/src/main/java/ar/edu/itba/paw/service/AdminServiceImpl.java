@@ -9,8 +9,6 @@ import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.AdminDao;
-import ar.edu.itba.paw.persistence.NewsDao;
-import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +16,14 @@ import org.springframework.stereotype.Service;
 public class AdminServiceImpl implements AdminService{
 
     private final AdminDao adminDao;
-    private final NewsDao newsDao;
-    private final UserDao userDao;
+    private final NewsService newsService;
+    private final UserService userService;
 
     @Autowired
-    public AdminServiceImpl(AdminDao adminDao, NewsDao newsDao, UserDao userDao) {
+    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, UserService userService) {
         this.adminDao = adminDao;
-        this.newsDao = newsDao;
-        this.userDao = userDao;
+        this.newsService = newsService;
+        this.userService = userService;
     }
 
     @Override
@@ -40,19 +38,19 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
-        News n = newsDao.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News n = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         return adminDao.getReportedNewsDetail(page, newsId);
     }
 
     @Override
     public void deleteNews(long newsId) {
-        News news = newsDao.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        newsDao.deleteNews(newsId);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.deleteNews(newsId);
     }
 
     @Override
     public void makeUserAdmin(long userId) {
-        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
         adminDao.makeUserAdmin(userId);
     }
 }
