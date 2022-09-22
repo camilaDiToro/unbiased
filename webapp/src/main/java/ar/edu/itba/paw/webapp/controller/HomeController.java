@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.service.EmailService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
@@ -91,8 +92,10 @@ public class HomeController {
 //            active = !(boolean)map.get("active");
             active = !isActive;
         }
+        final FullNews news = ns.getById(newsId).orElseThrow(NewsNotFoundException::new);
 
-        return new ResponseEntity<>(new UpvoteActionResponse(ns.getUpvotes(newsId), active), HttpStatus.OK);
+
+        return new ResponseEntity<>(new UpvoteActionResponse(news.getNewsStats().getNetUpvotes(), active), HttpStatus.OK);
 //        return String.format(fmt, ns.getUpvotes(newsId), active);
     }
 

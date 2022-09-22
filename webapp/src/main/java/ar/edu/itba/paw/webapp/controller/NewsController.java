@@ -62,13 +62,13 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
 
-        Optional<News> maybeNews = newsService.getById(newsId);
+        Optional<FullNews> maybeNews = newsService.getById(newsId);
 
         if (!maybeNews.isPresent()) {
             throw new NewsNotFoundException();
         }
 
-        News news = maybeNews.get();
+        News news = maybeNews.get().getNews();
 
         User loggedUser = securityService.getCurrentUser().get();
 
@@ -88,7 +88,7 @@ public class NewsController {
 
 
         //TODO: check if there is a better way of doing this.
-        FullNews fullNews = newsService.getFullNewsById(newsId).orElseThrow(NewsNotFoundException::new);
+        FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         News news = fullNews.getNews();
 
 
@@ -97,7 +97,7 @@ public class NewsController {
         return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
                 .withObject("fullNews", fullNews)
-                .withObject("categories", newsService.getNewsCategory(news)).build();
+                .withObject("categories", newsService.getNewsCategory(fullNews)).build();
 
     }
 
@@ -120,7 +120,7 @@ public class NewsController {
     @ResponseBody
     public ResponseEntity<SavedResult> saveNews(@PathVariable(value = "newsId") long newsId){
         Optional<User> maybeUser = securityService.getCurrentUser();
-        Optional<News> maybeNews = newsService.getById(newsId);
+        Optional<FullNews> maybeNews = newsService.getById(newsId);
 
         if (!maybeUser.isPresent() || !maybeNews.isPresent()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
