@@ -28,7 +28,7 @@ public class AdminJdbcDao implements AdminDao{
 
     private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("report_count");
     private static final RowMapper<ReportedNews> REPORT_ROW_MAPPER = (rs, rowNum) ->
-            new ReportedNews(   new News.NewsBuilder(rs.getLong("creator"),rs.getString("body"),rs.getString("title"),rs.getString("subtitile"))
+            new ReportedNews(   new News.NewsBuilder(rs.getLong("creator"),rs.getString("body"),rs.getString("title"),rs.getString("subtitle"))
                                                 .newsId(rs.getLong("news_id"))
                                                 .imageId(rs.getObject("image_id") == null ? null : rs.getLong("image_id"))
                                                 .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
@@ -37,7 +37,7 @@ public class AdminJdbcDao implements AdminDao{
                                         .username(rs.getString("username"))
                                         .userId(rs.getLong("creator"))
                                         .pass(rs.getString("pass"))
-                                        .imageId(rs.getLong("users.image_id") == 0 ? null : rs.getLong("image_id"))
+                                        .imageId(rs.getLong("user_image_id") == 0 ? null : rs.getLong("user_image_id"))
                                         .status(rs.getString("status")).build(),
                                 rs.getInt("report_count") );
 
@@ -62,9 +62,9 @@ public class AdminJdbcDao implements AdminDao{
     public Page<ReportedNews> getReportedNews(int page) {
 
         List<ReportedNews> rn = jdbcTemplate.query(
-                "SELECT news_id, body, title, subtitle, creator, creation_date, accesses, news.image_id, email, username, pass,status, users.image_id, COUNT(report.user_id) AS report_count" +
-                "FROM (report NATURAL JOIN news) JOIN users ON users.user_id=news.creator" +
-                "GROUP BY news_id, body, title, subtitle, creator, creation_date, accesses, news.image_id, email, username, pass, status, users.image_id" +
+                "SELECT news_id, body, title, subtitle, creator, creation_date, accesses, news.image_id, email, username, pass,status, users.image_id as user_image_id, COUNT(report.user_id) AS report_count " +
+                "FROM (report NATURAL JOIN news) JOIN users ON users.user_id=news.creator " +
+                "GROUP BY news_id, body, title, subtitle, creator, creation_date, accesses, news.image_id, email, username, pass, status, users.image_id " +
                 "ORDER BY report_count DESC LIMIT ? OFFSET ?", new Object[]{PAGE_SIZE, (page-1)*PAGE_SIZE}, REPORT_ROW_MAPPER);
 
         return new Page<>(rn,page,getTotalReportedNews());

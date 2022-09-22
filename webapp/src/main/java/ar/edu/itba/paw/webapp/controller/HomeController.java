@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.NewsOrder;
@@ -52,8 +53,6 @@ public class HomeController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "query", defaultValue = "") final String query,
             @RequestParam(name = "category", defaultValue = "ALL") final String category){
-
-
 
         Page<FullNews> newsPage = ns.getNews(page,category,orderBy,query);
 
