@@ -62,7 +62,7 @@ public class NewsJdbcDao implements NewsDao{
 
 
 
-        NewsStats stats = new NewsStats(rs.getInt("upvotes"), rs.getInt("downvotes"));
+        PositivityStats stats = new PositivityStats(rs.getInt("upvotes"), rs.getInt("downvotes"));
         LoggedUserParameters loggedParams = null;
         if (rs.getObject("logged_user") != null) {
             Rating rating = Rating.getRating((Boolean) rs.getObject("upvote"));
@@ -80,7 +80,7 @@ public class NewsJdbcDao implements NewsDao{
 
     private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("newsCount");
 
-    private final static RowMapper<NewsStats> NEWS_STATS_ROW_MAPPER = (rs, rowNum) -> new NewsStats(rs.getInt("upvotes"), rs.getInt("downvotes"));
+    private final static RowMapper<PositivityStats> NEWS_STATS_ROW_MAPPER = (rs, rowNum) -> new PositivityStats(rs.getInt("upvotes"), rs.getInt("downvotes"));
     private final static RowMapper<Boolean> RATING_MAPPER = (rs, rowNum) -> rs.getBoolean("upvote");
     private final static RowMapper<Integer> UPVOTES_MAPPER = (rs, rowNum) -> rs.getInt("upvotes");
 

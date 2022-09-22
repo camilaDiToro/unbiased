@@ -3,21 +3,21 @@ package ar.edu.itba.paw.model;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class NewsStats {
+public class PositivityStats {
     private final Positivity positivity;
     private final int upvotes;
     private final int downvotes;
-    public NewsStats(int upvotes, int downvotes) {
+    public PositivityStats(int upvotes, int downvotes) {
         this.upvotes = upvotes;
         this.downvotes = downvotes;
-        this.positivity = Positivity.getPositivvity(upvotes/(double)(upvotes + downvotes));
+        this.positivity = Positivity.getPositivity(upvotes/(double)(upvotes + downvotes));
     }
     public int getInteractions() {
         return upvotes + downvotes;
     }
 
     public int getPercentageUpvoted() {
-        return (int)(upvotes/(double)(upvotes + downvotes))*100;
+        return (int)(((double)upvotes/(double)(upvotes + downvotes))*100);
     }
 
     public int getNetUpvotes() {
@@ -49,7 +49,7 @@ public class NewsStats {
         public String getInterCode() {
             return interCode;
         }
-        public static Positivity getPositivvity(double positivity) {
+        public static Positivity getPositivity(double positivity) {
             Iterator<Positivity> it = Arrays.stream(Positivity.values()).iterator();
             while (it.hasNext()) {
                 Positivity pos = it.next();

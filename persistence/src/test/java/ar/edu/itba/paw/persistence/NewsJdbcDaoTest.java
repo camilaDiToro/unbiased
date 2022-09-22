@@ -8,14 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -340,7 +338,7 @@ public class NewsJdbcDaoTest {
         FullNews fullNews = newsDao.getById(news.getNewsId(), user.getId()).get();
 
         newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.UPVOTE);
-        int rating = fullNews.getNewsStats().getNetUpvotes();
+        int rating = fullNews.getPositivityStats().getNetUpvotes();
         assertEquals(1, rating);
     }
 

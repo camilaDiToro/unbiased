@@ -20,8 +20,8 @@
 <c:set var="user" value="${fullNews.user}"/>
 <c:set var="loggedParameters" value="${fullNews.loggedUserParameters}"/>
 <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
-<c:set var="newsStats" value="${fullNews.newsStats}"/>
-<c:set var="positivity" value="${newsStats.positivity}"/>
+<c:set var="positivityStats" value="${fullNews.positivityStats}"/>
+<c:set var="positivity" value="${positivityStats.positivity}"/>
 
 
 
@@ -35,14 +35,14 @@
                 <c:if test="${loggedUser != null}">
                     <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
 
-                    <div id="rating" class="${rating.toString()}"><c:out value="${newsStats.getNetUpvotes()}"/></div>
+                    <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
                     <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                 </c:if>
                 <c:if test="${loggedUser == null}">
                     <a href="<c:url value = "/create"/>">
                         <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
                     </a>
-                    <div  ><c:out value="${newsStats.getNetUpvotes()}"/></div>
+                    <div  ><c:out value="${positivityStats.getNetUpvotes()}"/></div>
                     <a href="<c:url value = "/create"/>">
                         <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
                     </a>
@@ -51,7 +51,7 @@
 
                 <h1 class="text-xl-center mx-auto max-w-75 m-3"><c:out value="${news.title}"/></h1>
 <div>
-    <div class="d-inline-block quality-indicator-news-view <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${newsStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${newsStats.getInteractions()} <spring:message code="home.interactions"/>" >
+    <div class="d-inline-block quality-indicator-news-view <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
     </div>
 
     </div>
@@ -79,7 +79,7 @@
 
 <%--            <div class="progress w-25" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">--%>
 <%--&lt;%&ndash;                <div class="progress-bar progress-bar-striped <c:out value="${fullNews.positivity}"/>" role="progressbar" style="width: ${fullNews.positiveValue*100}%"  aria-valuemin="0" aria-valuemax="100"></div>&ndash;%&gt;--%>
-<%--    <div class="quality-indicator-news-view <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${newsStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${newsStats.getInteractions()} <spring:message code="home.interactions"/>" >--%>
+<%--    <div class="quality-indicator-news-view <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >--%>
 <%--    </div>--%>
 
             </div>

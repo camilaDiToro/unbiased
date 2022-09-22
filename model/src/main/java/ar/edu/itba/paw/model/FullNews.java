@@ -4,25 +4,25 @@ public class FullNews {
     private News news;
     private int readTime;
     private User creator;
-    private NewsStats newsStats;
+    private PositivityStats positivityStats;
 
     private LoggedUserParameters loggedUserParameters;
 
 
 
 
-    public FullNews(News news, User creator,  NewsStats newsStats, LoggedUserParameters loggedUserParameters) {
+    public FullNews(News news, User creator, PositivityStats positivityStats, LoggedUserParameters loggedUserParameters) {
         this.news = news;
 
         this.creator = creator;
-        this.newsStats = newsStats;
+        this.positivityStats = positivityStats;
         this.loggedUserParameters = loggedUserParameters;
 
         readTime = TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(news.getBody()));
     }
 
-    public FullNews(News news, User creator,  NewsStats newsStats ) {
-        this(news, creator, newsStats, null);
+    public FullNews(News news, User creator,  PositivityStats positivityStats) {
+        this(news, creator, positivityStats, null);
     }
 
     public boolean hasLoggedUserParameters() {
@@ -53,7 +53,7 @@ public class FullNews {
 
 
 
-    public NewsStats getNewsStats() {
-        return newsStats;
+    public PositivityStats getPositivityStats() {
+        return positivityStats;
     }
 }

@@ -74,14 +74,14 @@
 
                                 <c:set var="newsId" value="${article.newsId}"/>
                                 <c:set var="loggedParams" value="${fullNews.loggedUserParameters}"/>
-                                <c:set var="newsStats" value="${fullNews.newsStats}"/>
+                                <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
 
 
 
                                 <div class="col mb-4">
                                     <div class="card h-100 d-flex flex-row" id="left-card">
-                                        <c:set var="positivity" value="${newsStats.positivity}"/>
-                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${newsStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${newsStats.getInteractions()} <spring:message code="home.interactions"/>" >
+                                        <c:set var="positivity" value="${positivityStats.positivity}"/>
+                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
 
                                         </div>
                                         <div class="d-flex flex-column justify-content-between ${article.hasImage() ? 'w-60' : 'w-100'}">
@@ -91,7 +91,7 @@
 
                                                    <c:if test="${loggedUser != null}">
                                                        <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
-                                                       <div id="rating" class="${rating.toString()}"><c:out value="${newsStats.getNetUpvotes()}"/></div>
+                                                       <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
                                                        <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
                                                    </c:if>
@@ -99,7 +99,7 @@
                                                         <a href="<c:url value = "/create"/>">
                                                             <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
                                                         </a>
-                                                        <div  ><c:out value="${newsStats.getNetUpvotes()}"/></div>
+                                                        <div  ><c:out value="${positivityStats.getNetUpvotes()}"/></div>
                                                         <a href="<c:url value = "/create"/>">
                                                             <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
                                                         </a>
@@ -197,8 +197,12 @@
 
         </div>
         <%--RIGHT SIDE--%>
+            <c:set var="profilePositivityStats" value="${profileUser.getPositivityStats()}"/>
         <div style="display: flex; width: 30%; justify-content: center;">
         <div class="card" style="width: 18rem; height: 12rem; margin-top: 4%" id="right-card">
+            <c:set var="profilePositivity" value="${profilePositivityStats.getPositivity()}"/>
+            <div class="quality-indicator <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="${profilePositivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${profilePositivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
+            </div>
             <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">
             <div class="card-body">
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
@@ -209,11 +213,9 @@
         <div class="profile">
             <c:if test="${profileUser.hasImage()}">
                 <img src="<c:url value="/profile/${profileUser.imageId}/image"/>" class="rounded-circle" width="80">
-
             </c:if>
             <c:if test="${!profileUser.hasImage()}">
                 <img src="<c:url value="/resources/profile-image.png"/>" class="rounded-circle" width="80">
-
             </c:if>
         </div>
 

@@ -95,7 +95,7 @@ public class HomeController {
         final FullNews news = ns.getById(newsId).orElseThrow(NewsNotFoundException::new);
 
 
-        return new ResponseEntity<>(new UpvoteActionResponse(news.getNewsStats().getNetUpvotes(), active), HttpStatus.OK);
+        return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), active), HttpStatus.OK);
 //        return String.format(fmt, ns.getUpvotes(newsId), active);
     }
 

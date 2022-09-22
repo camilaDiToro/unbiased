@@ -93,7 +93,6 @@
                                 <c:set var="loggedParameters" value="${fullNews.loggedUserParameters}"/>
                                 <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
                                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
-                                <c:set var="newsStats" value="${fullNews.newsStats}"/>
 
 
 
@@ -101,8 +100,10 @@
 
                                 <div class="col mb-4">
                                     <div class="card h-100 d-flex flex-row" >
-                                        <c:set var="positivity" value="${newsStats.positivity}"/>
-                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${newsStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${newsStats.getInteractions()} <spring:message code="home.interactions"/>" >
+                                        <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
+
+                                        <c:set var="positivity" value="${positivityStats.positivity}"/>
+                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
                                         </div>
                                         <div class="d-flex flex-column justify-content-between ${article.hasImage() ? 'w-60' : 'w-100'}">
                                             <div class="d-flex w-100">
@@ -111,14 +112,14 @@
 
                                                      <c:if test="${loggedUser != null}">
                                                          <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
-                                                         <div id="rating" class="${rating.toString()}"><c:out value="${newsStats.getNetUpvotes()}"/></div>
+                                                         <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
                                                          <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                      </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <a href="<c:url value = "/create"/>">
                                                             <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
                                                         </a>
-                                                        <div  ><c:out value="${newsStats.netUpvotes}"/></div>
+                                                        <div  ><c:out value="${positivityStats.netUpvotes}"/></div>
                                                         <a href="<c:url value = "/create"/>">
                                                             <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
                                                         </a>

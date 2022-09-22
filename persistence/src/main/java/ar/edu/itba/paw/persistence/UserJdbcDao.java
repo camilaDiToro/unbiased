@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.model.PositivityStats;
 import ar.edu.itba.paw.model.User;
 import ar.edu.itba.paw.model.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,14 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id") == 0 ? null : rs.getLong("image_id")).status(rs.getString("status")).build();
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User
+            .UserBuilder(rs.getString("email"))
+            .username(rs.getString("username"))
+            .userId(rs.getLong("user_id"))
+            .pass(rs.getString("pass"))
+            .imageId(rs.getLong("image_id") == 0 ? null : rs.getLong("image_id"))
+            .status(rs.getString("status"))
+            .positivity(new PositivityStats(rs.getInt("upvotes"),rs.getInt("downvotes"))).build();
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {
@@ -30,7 +38,7 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Optional<User> getUserById(long id) {
-        List<User> query= jdbcTemplate.query("SELECT * FROM Users WHERE user_id = ?",
+        List<User> query= jdbcTemplate.query("SELECT * FROM Users NATURAL JOIN user_positivity WHERE user_id = ?",
                 new Object[] { id }, ROW_MAPPER);
         return query.stream().findFirst();
     }
@@ -60,13 +68,13 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return jdbcTemplate.query("SELECT * FROM Users WHERE email = ?",
+        return jdbcTemplate.query("SELECT * FROM Users NATURAL JOIN user_positivity WHERE email = ?",
                 new Object[] { email }, ROW_MAPPER).stream().findFirst();
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return jdbcTemplate.query("SELECT * FROM Users WHERE username = ?",
+        return jdbcTemplate.query("SELECT * FROM Users NATURAL JOIN user_positivity WHERE username = ?",
                 new Object[] { username }, ROW_MAPPER).stream().findFirst();
     }
 
@@ -86,13 +94,13 @@ public class UserJdbcDao implements UserDao {
     }
 
     public List<User> getAll(int page){
-        return jdbcTemplate.query("SELECT * FROM Users LIMIT 10 OFFSET ?", new Object[]{(page-1)*10},ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM Users NATURAL JOIN user_positivity LIMIT 10 OFFSET ?", new Object[]{(page-1)*10},ROW_MAPPER);
     }
 
     @Override
     public List<User> getTopCreators(int qty) {
         return jdbcTemplate.query("WITH interactions AS (SELECT creator AS user_id, count(*) AS interaction_count FROM upvotes JOIN news ON upvotes.news_id = news.news_id " +
-                "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator LIMIT ?) SELECT * FROM interactions NATURAL JOIN users ORDER BY interaction_count DESC", new Object[]{qty},ROW_MAPPER);
+                "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator LIMIT ?) SELECT * FROM interactions NATURAL JOIN users NATURAL JOIN user_positivity ORDER BY interaction_count DESC", new Object[]{qty},ROW_MAPPER);
 
     }
 }

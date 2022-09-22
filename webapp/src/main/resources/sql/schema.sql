@@ -81,6 +81,8 @@ DROP VIEW IF EXISTS full_news;
 
 DROP VIEW IF EXISTS news_stats;
 
+DROP VIEW IF EXISTS user_positivity;
+
 
 CREATE OR REPLACE VIEW news_stats AS
             SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, news_id FROM upvotes GROUP BY news_id;
@@ -95,3 +97,6 @@ SELECT  news.*, upvotes, downvotes, email, username, pass, status, users.image_i
 
 CREATE OR REPLACE VIEW full_news_with_logged_params AS
 SELECT upvote, saved_date, logged_news_parameters.logged_user, full_news.news_id, body, title, subtitle, creator, creation_date, accesses, image_id, upvotes, downvotes, email, username, pass, status, user_image_id  FROM logged_news_parameters RIGHT JOIN full_news ON full_news.news_id = logged_news_parameters.news_id;
+
+CREATE OR REPLACE VIEW user_positivity AS
+SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, creator AS user_id FROM upvotes NATURAL JOIN news GROUP BY creator;
