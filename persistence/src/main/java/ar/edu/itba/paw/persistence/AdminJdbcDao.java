@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
@@ -23,7 +23,8 @@ import java.util.Map;
 public class AdminJdbcDao implements AdminDao{
 
     private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcReportInsert;
+    private final SimpleJdbcInsert jdbcAdminInsert;
 
     private static final double PAGE_SIZE = 10.0;
 
@@ -56,7 +57,8 @@ public class AdminJdbcDao implements AdminDao{
     @Autowired
     public AdminJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(ds).withTableName("report");
+        jdbcReportInsert = new SimpleJdbcInsert(ds).withTableName("report");
+        jdbcAdminInsert = new SimpleJdbcInsert(ds).withTableName("user_role");
     }
 
     @Override
@@ -66,7 +68,15 @@ public class AdminJdbcDao implements AdminDao{
         reportData.put("user_id", userId);
         reportData.put("report_date", LocalDateTime.now());
         reportData.put("reason", reportReason.getDescription());
-        jdbcInsert.execute(reportData);
+        jdbcReportInsert.execute(reportData);
+    }
+
+    @Override
+    public void makeUserAdmin(long userId) {
+        final Map<String, Object> adminData = new HashMap<>();
+        adminData.put("user_role", Role.ADMIN.getRole());
+        adminData.put("user_id", userId);
+        jdbcReportInsert.execute(adminData);
     }
 
     @Override
@@ -89,6 +99,7 @@ public class AdminJdbcDao implements AdminDao{
 
         return new Page<>(rd, page, getTotalReportsOfANews(newsId));
     }
+
 
     private int getTotalReportsOfANews(long newsId){
         int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as report_count FROM report WHERE news_id = ?" ,new Object[]{newsId}, ROW_COUNT_MAPPER).stream().findFirst().get();

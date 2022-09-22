@@ -9,4 +9,5 @@ public interface AdminDao {
     void reportNews(long newsId, long userId, ReportReason reportReason);
     Page<ReportedNews> getReportedNews(int page);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsId);
+    void makeUserAdmin(long userId);
 }

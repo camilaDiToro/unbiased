@@ -10,4 +10,5 @@ public interface AdminService {
     Page<ReportedNews> getReportedNews(int page);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsId);
     void deleteNews(long newsId);
+    void makeUserAdmin(long userId);
 }
