@@ -107,21 +107,12 @@ public class NewsController {
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
 
         Optional<News> maybeNews = newsService.getById(newsId);
-
         if (!maybeNews.isPresent()) {
             throw new NewsNotFoundException();
         }
 
         News news = maybeNews.get();
-
-        User loggedUser = securityService.getCurrentUser().get();
-
-        if (loggedUser.getId() != news.getCreatorId()) {
-            throw new UserNotAuthorized();
-        }
-
         newsService.deleteNews(news.getNewsId());
-
         return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
 

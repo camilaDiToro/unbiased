@@ -56,8 +56,6 @@ public class HomeController {
 
         Page<FullNews> newsPage = ns.getNews(page,category,orderBy,query);
 
-        as.
-
         return mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
                 .withObject("topCreators", us.getTopCreators(5))
                 .withObject("orders", NewsOrder.values())

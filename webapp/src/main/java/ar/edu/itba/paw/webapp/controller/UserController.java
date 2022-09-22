@@ -29,12 +29,9 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-
     private final NewsService newsService;
     private final ImageService imageService;
-
     private final SecurityService securityService;
-
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
@@ -44,11 +41,8 @@ public class UserController {
         this.imageService = imageService;
         this.securityService = securityService;
         this.newsService = newsService;
-
-         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
-
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
     }
-
 
     @RequestMapping("/login")
     public ModelAndView login() {
@@ -106,9 +100,6 @@ public class UserController {
         } catch(IllegalArgumentException e) {
             throw new InvalidCategoryException();
         }
-
-
-
         return mavBuilder.build();
     }
 
