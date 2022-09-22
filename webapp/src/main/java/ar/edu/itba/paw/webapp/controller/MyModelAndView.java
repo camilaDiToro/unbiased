@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.TextType;
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.user.User;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;

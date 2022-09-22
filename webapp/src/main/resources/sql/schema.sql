@@ -69,6 +69,15 @@ CREATE TABLE IF NOT EXISTS saved_news (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
     PRIMARY KEY (news_id, user_id)
+);
 
-    );
+CREATE TABLE IF NOT EXISTS report (
+    news_id           INTEGER         NOT NULL,
+    user_id           INTEGER         NOT NULL,
+    report_date       TIMESTAMP       NOT NULL,
+    reason            TEXT            NOT NULL,
 
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
+    PRIMARY KEY (news_id, user_id)
+);

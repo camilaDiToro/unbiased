@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.TextType;
-import org.springframework.web.servlet.ModelAndView;
+import ar.edu.itba.paw.model.news.TextType;
+
 @FunctionalInterface
 
 public interface MAVBuilderSupplier {

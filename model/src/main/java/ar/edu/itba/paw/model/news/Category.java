@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.model;
+package ar.edu.itba.paw.model.news;
 
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 
