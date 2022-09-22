@@ -4,18 +4,25 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.persistence.AdminDao;
+import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AdminServiceImpl implements AdminService{
 
     private final AdminDao adminDao;
+    private final NewsDao newsDao;
 
     @Autowired
-    public AdminServiceImpl(AdminDao adminDao) {
+    public AdminServiceImpl(AdminDao adminDao, NewsDao newsDao) {
         this.adminDao = adminDao;
+        this.newsDao = newsDao;
     }
 
     @Override
@@ -30,6 +37,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
+        News n = newsDao.getById(newsId).orElseThrow(NewsNotFoundException::new);
         return adminDao.getReportedNewsDetail(page, newsId);
     }
 }
