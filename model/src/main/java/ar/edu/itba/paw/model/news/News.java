@@ -1,9 +1,8 @@
-package ar.edu.itba.paw.model;
+package ar.edu.itba.paw.model.news;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 public class News {

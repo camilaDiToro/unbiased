@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserStatus;
+import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;

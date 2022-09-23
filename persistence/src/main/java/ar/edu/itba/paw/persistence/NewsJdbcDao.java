@@ -1,6 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.FullNews;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
