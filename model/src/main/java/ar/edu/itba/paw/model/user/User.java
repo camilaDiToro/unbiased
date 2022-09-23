@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.model.user;
 
+import ar.edu.itba.paw.model.PositivityStats;
+
 public class User {
 
     private final long userId;

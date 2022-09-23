@@ -6,6 +6,7 @@ import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.AdminDao;
@@ -38,13 +39,13 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
-        News n = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        FullNews n = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         return adminDao.getReportedNewsDetail(page, newsId);
     }
 
     @Override
     public void deleteNews(long newsId) {
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        FullNews news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         newsService.deleteNews(newsId);
     }
 

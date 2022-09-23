@@ -1,8 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.PositivityStats;
-import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserStatus;
+import ar.edu.itba.paw.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -104,7 +103,3 @@ public class UserJdbcDao implements UserDao {
 
     }
 }
-
-/*
-SELECT creator AS user_id, count(*) AS interaction_count FROM upvotes JOIN news ON upvotes.news_id = news.news_id WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator ORDER BY count(*) DESC LIMIT 5;
- */

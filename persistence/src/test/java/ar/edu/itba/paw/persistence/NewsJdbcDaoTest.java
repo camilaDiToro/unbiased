@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +53,7 @@ public class NewsJdbcDaoTest {
 
     private User getMockUser() {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        User user = userDao.create(usBuilder);
+        User user = userDao.createIfNotExists(usBuilder);
         return user;
     }
 
@@ -83,13 +85,15 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testFindByNewsId() {
+        // 1. precondiciones
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
+        // 2. ejercitacion
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
 
-        Optional<FullNews> optionalNews = newsDao.getById(news.getNewsId(), 0L);
+        Optional<FullNews> optionalNews = newsDao.getById(news.getNewsId(), null);
         assertNotNull(optionalNews);
         if (optionalNews.isPresent())
             assertEquals(news.getNewsId(), optionalNews.get().getNews().getNewsId());

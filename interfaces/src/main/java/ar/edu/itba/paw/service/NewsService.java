@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.News;
+import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.user.User;
 
 import java.util.List;
 import java.util.Optional;
