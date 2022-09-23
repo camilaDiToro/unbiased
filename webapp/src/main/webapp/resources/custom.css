@@ -178,6 +178,13 @@
     right: 10px;
     z-index: 2;
 }
+.reports-indicator {
+    position: absolute;
+    top: 10px;
+    width: 80px;
+    right: 50px;
+    z-index: 2;
+}
 .quality-indicator-news-view {
     border-radius: 50%;
     height: 30px;
@@ -226,6 +233,17 @@
 .upvote-div-home {
     width: 30px;
 }
+
+.vertical-menu li + li {
+    border-top: solid #dee2e6 1px;
+}
+
+.selected {
+    font-weight: bold;
+    color: #4e76db;
+}
+
+
 @media(min-width: 1200px) {
     .w-xl-25 {
         width: 25% !important;

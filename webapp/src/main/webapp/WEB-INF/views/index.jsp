@@ -175,7 +175,6 @@
 
 
                                                 <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
-
 <%--                                                <c:if test="${!article.hasImage()}">--%>
 <%--                                                    <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">--%>
 <%--                                                </c:if>--%>
