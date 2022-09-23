@@ -18,6 +18,7 @@ public class UserJdbcDao implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert followJdbcInsert;
 
     private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User.UserBuilder(rs.getString("email")).username(rs.getString("username")).userId(rs.getLong("user_id")).pass(rs.getString("pass")).imageId(rs.getLong("image_id") == 0 ? null : rs.getLong("image_id")).status(rs.getString("status")).build();
 
@@ -25,6 +26,7 @@ public class UserJdbcDao implements UserDao {
     public UserJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("user_id");
+        followJdbcInsert = new SimpleJdbcInsert(ds).withTableName("follows");
     }
 
     @Override
@@ -82,6 +84,15 @@ public class UserJdbcDao implements UserDao {
     @Override
     public void updateImage(long userId, Long imageId) {
         jdbcTemplate.update("UPDATE users SET image_id = ? WHERE user_id = ?", imageId, userId);
+    }
+
+    @Override
+    public void addFollow(long userId, long follows) {
+        final Map<String, Object> followData = new HashMap<>();
+        followData.put("user_id", userId);
+        followData.put("follows", follows);
+
+        followJdbcInsert.execute(followData);
     }
 
     public List<User> getAll(int page){

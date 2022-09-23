@@ -81,3 +81,11 @@ CREATE TABLE IF NOT EXISTS report (
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
     PRIMARY KEY (news_id, user_id)
 );
+
+CREATE TABLE IF NOT EXISTS follows(
+  user_id           INTEGER     NOT NULL,
+  follows            INTEGER     NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (follows) REFERENCES users(user_id) ON DELETE CASCADE,
+  PRIMARY KEY (follows, user_id)
+);
