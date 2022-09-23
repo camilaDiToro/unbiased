@@ -1,6 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.FullNews;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.user.User;
 
 import java.util.List;
 import java.util.Optional;

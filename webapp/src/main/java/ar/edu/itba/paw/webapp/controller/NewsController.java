@@ -1,9 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.Category;
-import ar.edu.itba.paw.model.News;
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.service.ImageService;
@@ -62,6 +61,7 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
 
+//        Optional<News> maybeNews = newsService.getById(newsId);
         Optional<FullNews> maybeNews = newsService.getById(newsId);
 
         if (!maybeNews.isPresent()) {
@@ -69,15 +69,7 @@ public class NewsController {
         }
 
         News news = maybeNews.get().getNews();
-
-        User loggedUser = securityService.getCurrentUser().get();
-
-        if (loggedUser.getId() != news.getCreatorId()) {
-            throw new UserNotAuthorized();
-        }
-
         newsService.deleteNews(news.getNewsId());
-
         return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
 

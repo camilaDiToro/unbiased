@@ -1,4 +1,8 @@
-package ar.edu.itba.paw.model;
+package ar.edu.itba.paw.model.news;
+
+import ar.edu.itba.paw.model.PositivityStats;
+import ar.edu.itba.paw.model.user.LoggedUserParameters;
+import ar.edu.itba.paw.model.user.User;
 
 public class FullNews {
     private News news;

@@ -1,9 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.UserStatus;
-import org.hsqldb.jdbc.JDBCDriver;
-import org.junit.After;
+
+import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.UserStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

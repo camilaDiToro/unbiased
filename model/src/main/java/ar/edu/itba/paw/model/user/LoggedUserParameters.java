@@ -1,4 +1,6 @@
-package ar.edu.itba.paw.model;
+package ar.edu.itba.paw.model.user;
+
+import ar.edu.itba.paw.model.Rating;
 
 public class LoggedUserParameters {
     private final Rating personalRating;

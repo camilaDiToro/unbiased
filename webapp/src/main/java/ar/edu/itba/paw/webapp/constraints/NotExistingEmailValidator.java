@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.webapp.constraints;
 
-import ar.edu.itba.paw.model.User;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
-import ar.edu.itba.paw.service.SecurityService;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintValidator;

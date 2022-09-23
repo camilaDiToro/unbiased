@@ -3,6 +3,10 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.news.FullNews;
+import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
@@ -28,12 +32,9 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-
     private final NewsService newsService;
     private final ImageService imageService;
-
     private final SecurityService securityService;
-
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
@@ -43,11 +44,8 @@ public class UserController {
         this.imageService = imageService;
         this.securityService = securityService;
         this.newsService = newsService;
-
-         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
-
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
     }
-
 
     @RequestMapping("/login")
     public ModelAndView login() {
@@ -95,7 +93,7 @@ public class UserController {
         MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", newsOrder)
-                .withObject("categories", Arrays.stream(ProfileCategory.values()).filter(c -> true || isMyProfile || !c.equals(ProfileCategory.SAVED)).toArray())
+                .withObject("categories", Arrays.stream(ProfileCategory.values()).filter(c -> isMyProfile || !c.equals(ProfileCategory.SAVED)).toArray())
                 .withObject("newsPage", fullNews)
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
@@ -106,9 +104,6 @@ public class UserController {
         } catch(IllegalArgumentException e) {
             throw new InvalidCategoryException();
         }
-
-
-
         return mavBuilder.build();
     }
 

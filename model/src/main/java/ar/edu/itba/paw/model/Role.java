@@ -2,8 +2,9 @@ package ar.edu.itba.paw.model;
 
 public enum Role {
 
-    JOURNALIST("JOURNALIST"),
-    MODERATOR("MODERATOR");
+    JOURNALIST("ROLE_JOURNALIST"),
+    MODERATOR("ROLE_MODERATOR"),
+    ADMIN("ROLE_ADMIN");
 
     private final String role;
 

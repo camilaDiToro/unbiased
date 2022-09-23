@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.VerificationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
