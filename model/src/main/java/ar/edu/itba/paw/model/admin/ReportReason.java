@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.model.admin;
 
 public enum ReportReason {
-    INAPP("INAP", "report.inappropiate"),
+    INAP("INAP", "report.inappropiate"),
     NOT_SERIOUS("NOT_SERIOUS", "report.notSerious"),
     VIOLENT("VIOLENT", "report.violent"),
     LIE("LIE", "report.lie");
@@ -9,7 +9,7 @@ public enum ReportReason {
     private final String description;
     private final String interCode;
 
-    ReportReason(String description, String interCode){
+    ReportReason(String description, String interCode) {
         this.description = description;
         this.interCode = interCode;
     }

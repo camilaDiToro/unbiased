@@ -8,6 +8,7 @@ import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.AdminDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<ReportedNews> getReportedNews(int page) {
-        return adminDao.getReportedNews(page);
+    public Page<ReportedNews> getReportedNews(int page, NewsOrder ns) {
+        return adminDao.getReportedNews(page, ns);
     }
 
     @Override

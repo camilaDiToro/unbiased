@@ -2,9 +2,15 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
+import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.service.*;
+import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
+import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,22 +18,48 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+
 @Controller
 public class AdminController {
 
     private final AdminService adminService;
     private final NewsService newsService;
 
+    private final MAVBuilderSupplier mavBuilderSupplier;
+
+    private final SecurityService securityService;
+
+
+
     @Autowired
-    public AdminController(AdminService adminService, NewsService newsService) {
+    public AdminController(AdminService adminService, NewsService newsService, SecurityService ss) {
         this.adminService = adminService;
         this.newsService = newsService;
+        this.securityService = ss;
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
+
+    }
+
+    @RequestMapping(value = "/admin/reported_news/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
+    public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
+                                     @PathVariable("newsOrder") String newsOrder) {
+//        adminService.reportNews(24,1, ReportReason.INAPP);
+
+        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, NewsOrder.NEW);
+        return mavBuilderSupplier.supply("moderation-panel", "Moderation Panel", TextType.LITERAL)
+                .withObject("newsPage", reportedNewsPage)
+                .withObject("orders", NewsOrder.values())
+                .withObject("orderBy", NewsOrder.valueOf(newsOrder)).build();
     }
 
     @RequestMapping("/admin/reported_news")
-    public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page) {
-        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page);
-        return new ModelAndView("admin_panel");
+    public ModelAndView reportedNewsRedirect() {
+
+        return new ModelAndView("redirect:/admin/reported_news/TOP");
     }
 
 
@@ -35,7 +67,12 @@ public class AdminController {
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
         Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsId);
-        return new ModelAndView("admin_panel");
+        return mavBuilderSupplier.supply("moderation-panel-detail", "Moderation View", TextType.LITERAL)
+                .withObject("reportedNewsPage", reportedNewsPage)
+                .withObject("locale", LocaleContextHolder.getLocale())
+                .withObject("newsId", newsId)
+                .build();
+
     }
 
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)

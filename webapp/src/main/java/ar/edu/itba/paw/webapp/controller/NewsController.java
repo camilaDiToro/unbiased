@@ -87,7 +87,7 @@ public class NewsController {
         Locale locale = LocaleContextHolder.getLocale();
 
         return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
-                .withObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
+                .withObject("date", news.getCreationDate().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
                 .withObject("fullNews", fullNews)
                 .withObject("categories", newsService.getNewsCategory(fullNews)).build();
 
