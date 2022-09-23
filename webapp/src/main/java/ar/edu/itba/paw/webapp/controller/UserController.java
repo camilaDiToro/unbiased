@@ -34,7 +34,6 @@ public class UserController {
     private final SecurityService securityService;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
-
     @Autowired
     public UserController(UserService userService, ImageService imageService, SecurityService securityService, NewsService newsService) {
         this.userService = userService;

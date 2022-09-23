@@ -43,8 +43,6 @@ public class HomeController {
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
         return new ModelAndView("redirect:/TOP");
-//        return new ModelAndView("verify_email");
-
     }
 
     @RequestMapping("/{orderBy:TOP|NEW}")
@@ -67,11 +65,6 @@ public class HomeController {
     }
 
     private ResponseEntity<UpvoteActionResponse> toggleHandler(UpvoteAction payload, Rating action) {
-//        ObjectMapper mapper = new ObjectMapper();
-//        Map<String, Object> map = mapper.readValue(payload, Map.class);
-//        final String fmt = "{ \"upvotes\": %d, \"active\": %b }";
-
-//        final Long newsId = (Long.valueOf((String)map.get("newsId")));
         final Long newsId = payload.getNewsId();
         final boolean isActive = payload.isActive();
 
@@ -79,19 +72,15 @@ public class HomeController {
         boolean active;
 
         if (maybeUser.isPresent()) {
-//            active = (boolean)map.get("active");
             active = isActive;
-
             User user = maybeUser.get();
             ns.setRating(newsId,  user.getId(), active ? action : Rating.NO_RATING);
         }
         else {
-//            active = !(boolean)map.get("active");
             active = !isActive;
         }
 
         return new ResponseEntity<>(new UpvoteActionResponse(ns.getUpvotes(newsId), active), HttpStatus.OK);
-//        return String.format(fmt, ns.getUpvotes(newsId), active);
     }
 
     @RequestMapping(value = "/change-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
@@ -104,12 +93,5 @@ public class HomeController {
     @ResponseBody
     public ResponseEntity<UpvoteActionResponse>  toggleDownvote(@RequestBody UpvoteAction payload){
         return toggleHandler(payload, Rating.DOWNVOTE);
-    }
-
-
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ModelAndView userNotFound()    {
-        return mavBuilderSupplier.supply("errors/userNotFound", "pageTitle.userNotFound", TextType.INTERCODE).build();
     }
 }
