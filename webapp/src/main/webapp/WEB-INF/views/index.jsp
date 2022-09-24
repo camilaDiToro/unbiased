@@ -9,6 +9,7 @@
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
 <body>
 <c:set var="news" value="${newsPage.content}"/>
+
 <div class="d-flex h-100 flex-column">
 <%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
     <%@ include file="../../resources/navbar.jsp" %>
@@ -94,10 +95,6 @@
                                 <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
                                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
 
-
-
-
-
                                 <div class="col mb-4">
                                     <div class="card h-100 d-flex flex-row" >
                                         <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
@@ -123,6 +120,7 @@
                                                         <a href="<c:url value = "/create"/>">
                                                             <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
                                                         </a>
+
                                                     </c:if>
 
                                                 </div>
@@ -199,7 +197,7 @@
 
                 <c:forEach var="creator" items="${topCreators}">
                     <a class="m-1" href="<c:url value="/profile/${creator.id}"/>">
-                            <div class="card bg-primary text-white d-flex flex-row p-2 creator-card align-items-center">
+                            <div class="card bg-primary text-white d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">
 <div class="img-container">
 <c:if test="${creator.hasImage()}">
     <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.imageId}/image"/>" alt="">
@@ -210,7 +208,7 @@
 
     </c:if>
 </div>
-                                <div class="mx-2 text-ellipsis-1"><c:out value="${creator.username != null ? creator.username : creator.email}"/></div>
+                                <div id="name_card" class="mx-2 text-ellipsis-1"><c:out value="${creator.username != null ? creator.username : creator.email}"/></div>
                             </div>
                     </a>
                 </c:forEach>
