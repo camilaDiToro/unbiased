@@ -17,7 +17,7 @@
         <div class="d-flex h-75 gap-2 align-items-center">
 <c:if test="${loggedUser != null}">
     <a href="<c:url value="/create_article"/>">
-        <button type="button" class="btn btn-info">
+        <button type="button" class="btn btn-info" style="border-radius: 999px">
             <spring:message code="home.createArticle.button"/>
         </button></a>
 </c:if>

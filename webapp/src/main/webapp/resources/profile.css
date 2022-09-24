@@ -15,6 +15,16 @@
     margin-top: 10px;
 }
 
+#right-card.card:hover{
+    transform: none;
+    transition: none;
+    box-shadow: none;
+}
+
+#right-card.card{
+    box-shadow: none;
+}
+
 
 .profile{
 

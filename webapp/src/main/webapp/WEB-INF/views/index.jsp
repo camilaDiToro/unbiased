@@ -192,8 +192,10 @@
 
 
                 </div>
-            <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start">
-                <h4 class="card-title"><spring:message code="home.topCreators"/></h4>
+            <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start" id="none_shadow">
+
+                <h4 style="padding-left: 35px; background-image: url('<c:url value="/resources/crown-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="card-title"><spring:message code="home.topCreators"/></h4>
+
 
                 <c:forEach var="creator" items="${topCreators}">
                     <a class="m-1" href="<c:url value="/profile/${creator.id}"/>">
