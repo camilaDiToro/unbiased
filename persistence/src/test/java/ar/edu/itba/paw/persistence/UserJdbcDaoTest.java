@@ -74,7 +74,7 @@ public class UserJdbcDaoTest {
     public void testFailFindByUserId() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        Optional<User> mayBeUser = userDao.getUserById(1);
+        Optional<User> mayBeUser = userDao.getUserById(1L);
 
         assertFalse(mayBeUser.isPresent());
     }
