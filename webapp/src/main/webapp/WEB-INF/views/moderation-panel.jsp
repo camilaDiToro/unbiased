@@ -63,6 +63,28 @@
 
                                     <c:set var="newsId" value="${article.newsId}"/>
                                 <c:set var="creator" value="${reportedNews.newsOwner}"/>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <spring:message code="profile.modal.msg"/>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                                    <form method="post" action="<c:url value="/admin/reported_news/${newsId}/delete"/>">
+                                                        <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="col mb-4">
                                         <div class="card h-100 d-flex flex-row p-3" id="left-card">
@@ -102,28 +124,7 @@
                                                             <a  class="text-info font-weight-bold hover-hand" href="<c:url value="/admin/reported_news_detail/${newsId}"/>">
                                                                 View details
                                                             </a>
-                                                            <!-- Modal -->
-                                                            <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog modal-dialog-centered">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <spring:message code="profile.modal.msg"/>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                                                            <form method="post" action="<c:url value="/admin/reported_news/${newsId}/delete"/>">
-                                                                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+
                                                     </div>
                                                 </div>
                                             </div>

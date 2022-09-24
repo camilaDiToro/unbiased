@@ -1,6 +1,6 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <%@include file="../../resources/head.jsp" %>
@@ -74,14 +74,11 @@
                     <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center" >
                         <img id="bookmark" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
                     </div>
-                    <c:if test="${isAdmin}">
+
                         <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
                             <img ${hasReported ? '' : 'data-toggle="modal" data-target="#binModal"'} class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
                         </div>
-                    </c:if>
-<%--                    <button data-toggle="modal" data-target="#binModal"  style="background: none; outline: none; margin-bottom: 4px">--%>
-<%--                        <img src="<c:url value="/resources/flag.svg"/>" />--%>
-<%--                    </button>--%>
+
                     <!-- Modal -->
                     <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -109,9 +106,9 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-<%--                                    <form method="post" action="">--%>
-                                        <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
-<%--                                    </form>--%>
+                                        <%--                                    <form method="post" action="">--%>
+                                    <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                        <%--                                    </form>--%>
                                 </div>
                                 </form:form>
 
@@ -157,8 +154,8 @@
 
             <a href="<c:url value = "/TOP">
             <c:param name = "category" value = "${category}"/>
-            </c:url>">                <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
-            </a>
+            </c:url>"> <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
+                </a>
             </c:forEach>
         </div>
 
