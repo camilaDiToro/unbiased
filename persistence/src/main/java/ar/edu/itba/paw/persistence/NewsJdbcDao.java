@@ -152,7 +152,7 @@ public class NewsJdbcDao implements NewsDao{
                     params,FULLNEWS_ROW_MAPPER);
 
         }
-        return namedJdbcTemplate.query("SELECT *,null as logged_user FROM full_news WHERE LOWER(title) LIKE :query ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+        return namedJdbcTemplate.query("SELECT full_news.*,null as logged_user FROM full_news WHERE LOWER(title) LIKE :query ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                 params,FULLNEWS_ROW_MAPPER);
     }
 
@@ -178,7 +178,7 @@ public class NewsJdbcDao implements NewsDao{
        }
        else {
            news =  jdbcTemplate.query(
-                           "SELECT *, null as logged_user FROM full_news  WHERE news_id = ?",
+                           "SELECT full_news.*, null as logged_user FROM full_news  WHERE news_id = ?",
                    new Object[] { id }, FULLNEWS_ROW_MAPPER).stream().findFirst();
        }
 
@@ -187,11 +187,6 @@ public class NewsJdbcDao implements NewsDao{
 
     }
 
-//    @Override
-//    public NewsStats getNewsStats(Long newsId) {
-//        return jdbcTemplate.query("(SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes FROM upvotes WHERE news_id = ?)",
-//                new Object[]{newsId}, NEWS_STATS_ROW_MAPPER).stream().findFirst().get();
-//    }
 
 
 
@@ -208,7 +203,7 @@ public class NewsJdbcDao implements NewsDao{
                             " ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                     params,FULLNEWS_ROW_MAPPER);
         }
-        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM full_news NATURAL JOIN news_category WHERE category_id = :category ORDER BY " +  ns.getQuery() +
+        return namedJdbcTemplate.query("SELECT full_news.*, null as logged_user FROM full_news NATURAL JOIN news_category WHERE category_id = :category ORDER BY " +  ns.getQuery() +
                         " LIMIT :pageSize OFFSET :offset ",
                 params,FULLNEWS_ROW_MAPPER);
     }
@@ -233,7 +228,7 @@ public class NewsJdbcDao implements NewsDao{
                             " WHERE creator = :creatorId ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                     params,FULLNEWS_ROW_MAPPER);
         }
-        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM full_news WHERE creator = :creatorId ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+        return namedJdbcTemplate.query("SELECT full_news.*, null as logged_user FROM full_news WHERE creator = :creatorId ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                 params,FULLNEWS_ROW_MAPPER);
 
     }
@@ -257,7 +252,7 @@ public class NewsJdbcDao implements NewsDao{
                     params,FULLNEWS_ROW_MAPPER);
         }
 
-        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM saved_news NATURAL JOIN full_news " +
+        return namedJdbcTemplate.query("SELECT full_news.*, null as logged_user FROM saved_news NATURAL JOIN full_news " +
                         "    WHERE user_id = :userId " +
                         "ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                 params,FULLNEWS_ROW_MAPPER);
@@ -300,7 +295,7 @@ SELECT * FROM saved_news JOIN (logged_news_parameters RIGHT JOIN full_news ON fu
                            WHERE user_id = 1 AND logged_user = 1 AND upvote = 1
          */
 
-        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM upvotes NATURAL RIGHT JOIN full_news " +
+        return namedJdbcTemplate.query("SELECT upvotes.*, null as logged_user FROM upvotes NATURAL RIGHT JOIN full_news " +
                         "    WHERE user_id = :userId AND upvote = :upvote " +
                         "ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                 params,FULLNEWS_ROW_MAPPER);

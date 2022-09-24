@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS news (
     accesses          INTEGER         NOT NULL DEFAULT 0,
     image_id          INTEGER         ,
 
-    FOREIGN KEY (creator) REFERENCES users(user_id) ON DELETE SET NULL
+    FOREIGN KEY (creator) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS news_category(

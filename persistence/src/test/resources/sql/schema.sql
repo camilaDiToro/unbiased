@@ -1,12 +1,13 @@
+
 CREATE TABLE IF NOT EXISTS image(
                                     image_id        SERIAL          PRIMARY KEY,
-                                    bytes           VARBINARY(100)         NOT NULL,
+                                    bytes           VARBINARY(100)  NOT NULL,
                                     data_type       VARCHAR(50)     NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS users(
-    user_id        SERIAL         PRIMARY KEY,
-    email          VARCHAR(100)   UNIQUE NOT NULL,
+                                    user_id        SERIAL         PRIMARY KEY,
+                                    email          VARCHAR(100)   UNIQUE NOT NULL,
     username       VARCHAR(50)    UNIQUE ,
     pass           VARCHAR(200)   ,
     status         TEXT           NOT NULL,
@@ -15,16 +16,16 @@ CREATE TABLE IF NOT EXISTS users(
     );
 
 CREATE TABLE IF NOT EXISTS news (
-    news_id           SERIAL          PRIMARY KEY,
-    body              TEXT            NOT NULL,
-    title             VARCHAR(200)    NOT NULL,
+                                    news_id           SERIAL          PRIMARY KEY,
+                                    body              TEXT            NOT NULL,
+                                    title             VARCHAR(200)    NOT NULL,
     subtitle          VARCHAR(400)    NOT NULL,
     creator           INTEGER         NOT NULL,
     creation_date     TIMESTAMP       NOT NULL,
     accesses          INTEGER         NOT NULL DEFAULT 0,
     image_id          INTEGER         ,
 
-    FOREIGN KEY (creator) REFERENCES users(user_id) ON DELETE NO ACTION
+    FOREIGN KEY (creator) REFERENCES users(user_id) ON DELETE CASCADE
     );
 
 CREATE TABLE IF NOT EXISTS news_category(
@@ -49,6 +50,7 @@ CREATE TABLE IF NOT EXISTS user_role (
     PRIMARY KEY (user_id, user_role),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     );
+
 CREATE TABLE IF NOT EXISTS upvotes (
                                        news_id           INTEGER         NOT NULL,
                                        user_id           INTEGER         NOT NULL,
@@ -83,3 +85,30 @@ CREATE TABLE IF NOT EXISTS report (
     PRIMARY KEY (news_id, user_id)
     );
 
+DROP VIEW IF EXISTS full_news_with_logged_params;
+
+
+DROP VIEW IF EXISTS full_news;
+
+
+DROP VIEW IF EXISTS news_stats;
+
+DROP VIEW IF EXISTS user_positivity;
+
+
+CREATE VIEW news_stats AS
+SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, news_id FROM upvotes GROUP BY news_id;
+
+CREATE VIEW logged_news_parameters AS
+SELECT user_id AS logged_user, news_id, upvote, saved_date
+FROM upvotes NATURAL FULL JOIN
+     saved_news;
+
+CREATE VIEW full_news AS
+SELECT  news.*, upvotes, downvotes, email, username, pass, status, users.image_id as user_image_id FROM news LEFT JOIN news_stats ON news_stats.news_id = news.news_id JOIN users ON creator = user_id;
+
+CREATE VIEW full_news_with_logged_params AS
+SELECT upvote, saved_date, logged_news_parameters.logged_user, full_news.news_id, body, title, subtitle, creator, creation_date, accesses, image_id, upvotes, downvotes, email, username, pass, status, user_image_id  FROM logged_news_parameters RIGHT JOIN full_news ON full_news.news_id = logged_news_parameters.news_id;
+
+CREATE VIEW user_positivity AS
+SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, creator AS user_id FROM upvotes NATURAL JOIN news GROUP BY creator;
