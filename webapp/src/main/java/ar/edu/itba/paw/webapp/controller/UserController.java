@@ -44,7 +44,7 @@ public class UserController {
         this.imageService = imageService;
         this.securityService = securityService;
         this.newsService = newsService;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
     @RequestMapping("/login")

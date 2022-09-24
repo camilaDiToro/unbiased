@@ -20,17 +20,24 @@ public class AdminServiceImpl implements AdminService{
     private final AdminDao adminDao;
     private final NewsService newsService;
     private final UserService userService;
+    private final SecurityService securityService;
+
 
     @Autowired
-    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, UserService userService) {
+    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, UserService userService, SecurityService securityService) {
         this.adminDao = adminDao;
         this.newsService = newsService;
         this.userService = userService;
+        this.securityService = securityService;
+    }
+    private Long getLoggedUserId() {
+        return securityService.getCurrentUser().map(User::getId).orElse(null);
     }
 
+
     @Override
-    public void reportNews(long newsId, long userId, ReportReason reportReason) {
-        adminDao.reportNews(newsId,userId,reportReason);
+    public void reportNews(long newsId, ReportReason reportReason) {
+        adminDao.reportNews(newsId,getLoggedUserId(),reportReason);
     }
 
     @Override
@@ -42,6 +49,11 @@ public class AdminServiceImpl implements AdminService{
     public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
         FullNews n = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         return adminDao.getReportedNewsDetail(page, newsId);
+    }
+
+    @Override
+    public boolean hasReported(long newsId) {
+        return adminDao.hasReported(newsId, getLoggedUserId());
     }
 
     @Override

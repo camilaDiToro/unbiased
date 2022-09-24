@@ -22,6 +22,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -107,18 +109,27 @@ public class AdminJdbcDao implements AdminDao{
     }
 
     @Override
-    public void reportNews(long newsId, long userId, ReportReason reportReason) {
+    public void reportNews(long newsId, Long loggedUser, ReportReason reportReason) {
+//        if (loggedUser == null)
+//            throw new ;
         final Map<String, Object> reportData = new HashMap<>();
         reportData.put("news_id", newsId);
-        reportData.put("user_id", userId);
+        reportData.put("user_id", loggedUser);
         reportData.put("report_date", LocalDateTime.now());
         reportData.put("reason", reportReason.getDescription());
         jdbcReportInsert.execute(reportData);
     }
+    @Override
+    public boolean hasReported(long newsId, Long loggedUser) {
+        if (loggedUser == null)
+            return false;
+        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) AS report_count FROM report WHERE user_id = ? AND news_id = ?", new Object[]{loggedUser, newsId}, ROW_COUNT_MAPPER).stream().findFirst().orElse(0);
+        return rowsCount > 0;
+    }
 
     @Override
     public void makeUserAdmin(long userId) {
-        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as report_count FROM user_role WHERE user_id = ? AND user_role = ? ", new Object[]{userId, Role.ADMIN.getRole()}, ROW_COUNT_MAPPER).stream().findFirst().get();
+        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as report_count FROM user_role WHERE user_id = ? AND user_role = ?", new Object[]{userId, Role.ADMIN.getRole()}, ROW_COUNT_MAPPER).stream().findFirst().orElse(0);
         if(rowsCount!=0)
             return;
         final Map<String, Object> adminData = new HashMap<>();
@@ -159,7 +170,6 @@ public class AdminJdbcDao implements AdminDao{
 //        }
 //
 //        return new Page<>(rn,page,getTotalReportedNews());
-
     }
 
     @Override

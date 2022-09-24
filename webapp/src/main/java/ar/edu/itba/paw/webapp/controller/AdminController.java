@@ -7,17 +7,18 @@ import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.service.*;
+import ar.edu.itba.paw.webapp.form.CreateNewsForm;
+import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -40,7 +41,7 @@ public class AdminController {
         this.adminService = adminService;
         this.newsService = newsService;
         this.securityService = ss;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
 
     }
 
@@ -75,11 +76,23 @@ public class AdminController {
 
     }
 
+    @RequestMapping(value = "/admin/report_news/{newsId:[0-9]+}", method = RequestMethod.POST)
+    public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                   final BindingResult errors) {
+//        if (errors.hasErrors()) {
+//            return
+//        }
+        adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        return new ModelAndView("redirect:/admin/reported_news");
+    }
+
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
         adminService.deleteNews(newsId);
         return new ModelAndView("redirect:/admin/reported_news");
     }
+
+
 
     @RequestMapping(value = "/admin/add_admin/{userId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView addAdmin(@PathVariable("userId") long userId) {

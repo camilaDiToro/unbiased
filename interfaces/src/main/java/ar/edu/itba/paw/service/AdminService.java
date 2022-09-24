@@ -7,9 +7,11 @@ import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.news.NewsOrder;
 
 public interface AdminService {
-    void reportNews(long newsId, long userId, ReportReason reportReason);
+    void reportNews(long newsId, ReportReason reportReason);
     Page<ReportedNews> getReportedNews(int page, NewsOrder ns);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsId);
     void deleteNews(long newsId);
     void makeUserAdmin(long userId);
+
+    boolean hasReported(long newsId);
 }

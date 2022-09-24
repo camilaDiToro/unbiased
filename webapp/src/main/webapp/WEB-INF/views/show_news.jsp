@@ -74,6 +74,48 @@
                     <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center" >
                         <img id="bookmark" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
                     </div>
+                    <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
+                        <img ${hasReported ? '' : 'data-toggle="modal" data-target="#binModal"'} class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
+                    </div>
+<%--                    <button data-toggle="modal" data-target="#binModal"  style="background: none; outline: none; margin-bottom: 4px">--%>
+<%--                        <img src="<c:url value="/resources/flag.svg"/>" />--%>
+<%--                    </button>--%>
+                    <!-- Modal -->
+                    <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <c:url value="/admin/report_news/${newsId}" var="postUrl"/>
+                                    <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
+
+                                    <div class="input-group">
+
+                                        <c:forEach var="item" items="${reportReasons}">
+                                            <div class="form-check w-100">
+                                                <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}"/>
+                                                <form:label path="reason" cssClass="form-check-label" for="flexRadioDefault1"> <spring:message code="${item.interCode}"/> </form:label>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+<%--                                    <form method="post" action="">--%>
+                                        <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+<%--                                    </form>--%>
+                                </div>
+                                </form:form>
+
+                            </div>
+                        </div>
+                    </div>
                 </c:if>
             </div>
 
