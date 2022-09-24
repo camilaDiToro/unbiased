@@ -8,7 +8,7 @@
 <%@ include file="../../resources/head.jsp" %>
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
 <body>
-<c:set var="news" value="${newsPage.content}"/>
+<c:set var="reports" value="${reportedNewsPage.content}"/>
 <div class="d-flex h-100 flex-column">
 <%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
     <%@ include file="../../resources/navbar.jsp" %>
@@ -38,20 +38,20 @@
     </div>
             <%--RIGHT SIDE--%>
             <div class="d-flex w-75 flex-column">
-                <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
-                    <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
-                    <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
-                    <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
-                        <c:forEach var="order" items="${orders}">
-                            <li class="nav-item">
-                                <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_news_detail/${newsId}/${order}">
+<%--                <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">--%>
+<%--                    <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>--%>
+<%--                    <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>--%>
+<%--                    <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">--%>
+<%--                        <c:forEach var="order" items="${orders}">--%>
+<%--                            <li class="nav-item">--%>
+<%--                                <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_news_detail/${newsId}/${order}">--%>
 
-                    </c:url>"><spring:message code="${order.interCode}"/></a>
-                            </li>
-                        </c:forEach>
+<%--                    </c:url>"><spring:message code="${order.interCode}"/></a>--%>
+<%--                            </li>--%>
+<%--                        </c:forEach>--%>
 
-                    </ul>
-                </div>
+<%--                    </ul>--%>
+<%--                </div>--%>
                 <div class="w-100 my-2">
                     <a  href="<c:url value="/admin/reported_news"/>">
                         <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="width: 50px;">
@@ -107,28 +107,28 @@
 
         </div>
 
-<%--        <c:if test="${not empty news}">--%>
-<%--            <nav class="d-flex justify-content-center align-items-center">--%>
-<%--                <ul class="pagination">--%>
+        <c:if test="${not empty reports}">
+            <nav class="d-flex justify-content-center align-items-center">
+                <ul class="pagination">
 
-<%--                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news/${newsOrder}">--%>
-<%--                        <c:param name = "page" value = "1"/>--%>
-<%--                        </c:url>"><spring:message code="home.pagination.first"/></a></li>--%>
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news_detail/${newsId}">
+                        <c:param name = "page" value = "1"/>
+                        </c:url>"><spring:message code="home.pagination.first"/></a></li>
 
 
-<%--                    <c:forEach var = "i" begin = "${newsPage.minPage}" end = "${newsPage.maxPage}">--%>
-<%--                        <li class="page-item"><a class="page-link ${i == newsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/admin/reported_news/${newsOrder}">--%>
-<%--                        <c:param name = "page" value = "${i}"/>--%>
-<%--                        </c:url>"><c:out value="${i}"/></a></li>--%>
-<%--                    </c:forEach>--%>
+                    <c:forEach var = "i" begin = "${reportedNewsPage.minPage}" end = "${reportedNewsPage.maxPage}">
+                        <li class="page-item"><a class="page-link ${i == reportedNewsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/admin/reported_news_detail/${newsId}">
+                        <c:param name = "page" value = "${i}"/>
+                        </c:url>"><c:out value="${i}"/></a></li>
+                    </c:forEach>
 
-<%--                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news/${newsOrder}">--%>
-<%--                        <c:param name = "page" value = "${newsPage.totalPages}"/>--%>
-<%--                        </c:url>"><spring:message code="home.pagination.last"/></a></li>--%>
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news_detail/${newsId}">
+                        <c:param name = "page" value = "${reportedNewsPage.totalPages}"/>
+                        </c:url>"><spring:message code="home.pagination.last"/></a></li>
 
-<%--                </ul>--%>
-<%--            </nav>--%>
-<%--        </c:if>--%>
+                </ul>
+            </nav>
+        </c:if>
 
 
     </div>
