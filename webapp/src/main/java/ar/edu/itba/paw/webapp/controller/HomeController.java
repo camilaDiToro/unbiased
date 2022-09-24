@@ -43,7 +43,7 @@ public class HomeController {
         this.ns = ns;
         this.ss = ss;
         this.es = es;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, ss.getCurrentUser());
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, ss);
         this.as = as;
     }
 

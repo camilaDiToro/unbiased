@@ -1,17 +1,16 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.service.ImageService;
-import ar.edu.itba.paw.service.NewsService;
-import ar.edu.itba.paw.service.SecurityService;
-import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
+import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +40,20 @@ public class NewsController {
 
     private final SecurityService securityService;
 
+    private final AdminService adminService;
+
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
     @Autowired
-    public NewsController(final NewsService newsService, final UserService userService, ImageService imageService, SecurityService ss){
+    public NewsController(final AdminService adminService, final NewsService newsService, final UserService userService, ImageService imageService, SecurityService ss){
         this.newsService = newsService;
         this.userService = userService;
         this.imageService = imageService;
         this.securityService = ss;
+        this.adminService = adminService;
 
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
 
     }
 
@@ -74,7 +76,7 @@ public class NewsController {
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView profile(@PathVariable("newsId") long newsId){
+    public ModelAndView profile(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom){
 
         Optional<User> maybeUser = securityService.getCurrentUser();
 
@@ -87,8 +89,10 @@ public class NewsController {
         Locale locale = LocaleContextHolder.getLocale();
 
         return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
-                .withObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
+                .withObject("date", news.getCreationDate().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
                 .withObject("fullNews", fullNews)
+                .withObject("hasReported", adminService.hasReported(newsId ))
+                .withObject("reportReasons", ReportReason.values())
                 .withObject("categories", newsService.getNewsCategory(fullNews)).build();
 
     }
