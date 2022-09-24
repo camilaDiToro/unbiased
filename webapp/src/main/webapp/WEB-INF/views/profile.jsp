@@ -79,7 +79,7 @@
 
 
                                 <div class="col mb-4">
-                                    <div class="card h-100 d-flex flex-row" id="left-card">
+                                    <div class="card h-100 d-flex flex-row" id="none_shadow">
                                         <c:set var="positivity" value="${positivityStats.positivity}"/>
                                         <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
 
@@ -136,7 +136,7 @@
 
                                                     <c:if test="${isMyProfile}">
                                                         <%--<input type="image" alt="..." src="<c:url value="/resources/bin.png"/>" style="max-width: 20px; max-height: 20px">--%>
-                                                            <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px">
+                                                            <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px" id="bin_button">
                                                                 <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
                                                             </button>
                                                         <!-- Modal -->

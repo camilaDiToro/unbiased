@@ -317,3 +317,7 @@ body{
     background: #fff6f6;
 }
 
+#bin_button:focus{
+    box-shadow: none;
+}
+
