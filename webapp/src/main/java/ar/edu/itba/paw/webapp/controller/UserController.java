@@ -37,7 +37,6 @@ public class UserController {
     private final SecurityService securityService;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
-
     @Autowired
     public UserController(UserService userService, ImageService imageService, SecurityService securityService, NewsService newsService) {
         this.userService = userService;
@@ -77,6 +76,20 @@ public class UserController {
         return mav;
     }
 
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
+    public ModelAndView profileFollow(@PathVariable("userId") long userId) {
+        userService.followUser(userId);
+        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
+        return mav;
+    }
+
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
+    public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
+        userService.unfollowUser(userId);
+        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
+        return mav;
+    }
+
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("userId") long userId,
@@ -97,7 +110,11 @@ public class UserController {
                 .withObject("newsPage", fullNews)
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
+                .withObject("userId", userId)
                 .withStringParam(profileUser.toString());
+        if(securityService.getCurrentUser().isPresent()) {
+                   mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
+        }
 
         try {
             mavBuilder.withObject("category", ProfileCategory.valueOf(category));

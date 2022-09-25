@@ -59,6 +59,25 @@ public class NewsController {
 
 
 
+    @RequestMapping(value = "/news/create", method = RequestMethod.POST)
+    public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
+                                     final BindingResult errors) throws IOException {
+        if(errors.hasErrors()){
+            return createArticle(createNewsFrom);
+        }
+
+        String htmlText = TextUtils.convertMarkdownToHTML(TextUtils.extractTextFromHTML(createNewsFrom.getBody()));
+
+        final User user = securityService.getCurrentUser().get();
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(),htmlText , createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+
+        if(createNewsFrom.getImage()!=null && createNewsFrom.getImage().getBytes().length!=0){
+            newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
+        }
+
+        final News news = newsService.create(newsBuilder);
+        return new ModelAndView("redirect:/news/" + news.getNewsId());
+    }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
@@ -78,14 +97,8 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom){
 
-        Optional<User> maybeUser = securityService.getCurrentUser();
-
-
-        //TODO: check if there is a better way of doing this.
         FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         News news = fullNews.getNews();
-
-
         Locale locale = LocaleContextHolder.getLocale();
 
         return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
@@ -109,7 +122,6 @@ public class NewsController {
         return mavBuilderSupplier.supply("create_article", "pageTitle.createArticle", TextType.INTERCODE)
                 .withObject("categories", Category.values())
                 .withObject("validate", false).build();
-
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
@@ -146,7 +158,6 @@ public class NewsController {
         final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), htmlText, createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-
         for(String category : createNewsFrom.getCategories()){
             Category c = Category.getByInterCode(category);
             if(c==null)
@@ -161,8 +172,4 @@ public class NewsController {
         final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/" + news.getNewsId());
     }
-
-
-
-
 }

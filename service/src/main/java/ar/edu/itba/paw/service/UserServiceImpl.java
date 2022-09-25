@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Role;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.VerificationToken;
@@ -29,17 +30,18 @@ public class UserServiceImpl implements UserService {
     private final VerificationTokenService verificationTokenService;
     private final RoleDao roleDao;
     private final ImageService imageService;
-
+    private final SecurityService securityService;
 
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
         this.roleDao = roleDao;
         this.imageService = imageService;
+        this.securityService = securityService;
     }
 
 
@@ -138,6 +140,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByUsername(String username) {
         return userDao.findByUsername(username);
+    }
+
+    @Override
+    public void followUser(long followId) {
+        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        User follow = getRegisteredUserById(followId).orElseThrow(UserNotFoundException::new);
+        userDao.addFollow(user.getId(), followId);
+    }
+
+    @Override
+    public void unfollowUser(long followId) {
+        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        User unfollow = getRegisteredUserById(followId).orElseThrow(UserNotFoundException::new);
+        userDao.unfollow(user.getId(), followId);
+    }
+
+    @Override
+    public boolean isFollowing(long followId) {
+        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        User follow = getRegisteredUserById(followId).orElseThrow(UserNotFoundException::new);
+        return userDao.isFollowing(user.getId(), followId);
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
