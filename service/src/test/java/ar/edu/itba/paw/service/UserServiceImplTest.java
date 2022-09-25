@@ -1,10 +1,8 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.VerificationToken;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
-import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.VerificationTokenDao;
 import org.junit.Assert;
@@ -15,10 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
-import java.util.Locale;
 import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +25,7 @@ public class UserServiceImplTest {
     private static final String USERNAME = "username";
     private static final String EMAIL = "user@mail.com";
     private static final String PASS = "userpass";
-    private static LocalDateTime DATE = LocalDateTime.now().plusDays(1);
+    private static final LocalDateTime DATE = LocalDateTime.now().plusDays(1);
     //static User.UserBuilder usBuilderTest = new User.UserBuilder(EMAIL);
     //private static final User testUser = new User(usBuilderTest);
     @Mock
@@ -40,8 +36,6 @@ public class UserServiceImplTest {
     private VerificationTokenDao mockVerifDao;
     @Mock
     private PasswordEncoder mockPasswordEncoder;
-    @Mock
-    private VerificationTokenService mockVerificationTokenService;
     @InjectMocks
     private UserServiceImpl userService;
 

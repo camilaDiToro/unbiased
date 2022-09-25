@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.VerificationToken;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
-import ar.edu.itba.paw.persistence.UserDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,10 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewsServiceImplTest {
@@ -46,7 +41,7 @@ public class NewsServiceImplTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreate(){
         News.NewsBuilder newsBuilder = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
         Mockito.when(mockNewsDao.create(Mockito.eq(newsBuilder))).thenReturn(mockNews);
 

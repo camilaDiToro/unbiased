@@ -16,7 +16,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -45,8 +44,7 @@ public class VerificationTokenDaoTest {
     private User getMockUser() {
         String EMAIL = "juan@gmail.com";
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        User user = userDao.createIfNotExists(usBuilder);
-        return user;
+        return userDao.createIfNotExists(usBuilder);
     }
 
     @Test

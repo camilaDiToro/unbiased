@@ -50,8 +50,7 @@ public class NewsJdbcDaoTest {
 
     private User getMockUser() {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        User user = userDao.create(usBuilder);
-        return user;
+        return userDao.create(usBuilder);
     }
 
     @Before
@@ -342,7 +341,7 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        FullNews fullNews = newsDao.getById(news.getNewsId(), user.getId()).get();
+        //FullNews fullNews = newsDao.getById(news.getNewsId(), user.getId()).get();
 
         newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.DOWNVOTE);
         List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, news.getCreatorId(), NewsOrder.NEW, null);

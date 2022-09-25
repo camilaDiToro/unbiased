@@ -24,7 +24,7 @@ public class VerificationTokenServiceImplTest {
     private static final String EMAIL = "user@email.com";
 
     private static final String TOKEN = "token";
-    private static LocalDateTime DATE = LocalDateTime.now().plusDays(1);
+    private static final LocalDateTime DATE = LocalDateTime.now().plusDays(1);
 
     @InjectMocks
     private VerificationTokenServiceImpl tokenService;

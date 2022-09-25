@@ -20,7 +20,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -50,15 +49,13 @@ public class AdminJdbcDaoTest {
 
     private User getMockUser() {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        User user = userDao.create(usBuilder);
-        return user;
+        return userDao.create(usBuilder);
     }
 
     private News getMockNews() {
         User user = getMockUser();
         News.NewsBuilder nsBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
-        News news = newsDao.create(nsBuilder);
-        return news;
+        return newsDao.create(nsBuilder);
     }
 
     @Before
