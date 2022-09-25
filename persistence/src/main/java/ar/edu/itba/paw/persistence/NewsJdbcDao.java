@@ -424,7 +424,9 @@ public class NewsJdbcDao implements NewsDao {
         jdbcCommentsInsert.execute(commentData);
 
     }
-
+/*
+SELECT * FROM comments NATURAL JOIN users WHERE news_id = :newsId LIMIT :pageSize OFFSET :offset
+ */
     @Override
     public Page<Comment> getComments(long newsId, int page) {
         SqlParameterSource params = new MapSqlParameterSource()
@@ -439,6 +441,11 @@ public class NewsJdbcDao implements NewsDao {
                 params, COMMENTS_ROW_MAPPER).stream().collect(Collectors.toList());
 
         return new Page<>(comments, page, getTotalPagesComments(newsId));
+    }
+
+    @Override
+    public void removeSaved(News news, User user) {
+        jdbcTemplate.update("DELETE FROM saved_news WHERE news_id = ? AND user_id = ?",new Object[]{news.getNewsId(), user.getId()});
     }
 }
 

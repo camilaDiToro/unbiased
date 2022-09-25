@@ -15,6 +15,7 @@ import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -99,7 +100,7 @@ public class NewsController {
     public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                    final BindingResult errors) {
         if (errors.hasErrors()) {
-            return showNews(newsId, reportNewsFrom, null,true);
+            return showNews(newsId, reportNewsFrom, null,true, 1);
         }
         adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
@@ -109,7 +110,7 @@ public class NewsController {
     public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsForm,
                                     final BindingResult errors) {
         if (errors.hasErrors()) {
-            return showNews(newsId, null,commentNewsForm, false);
+            return showNews(newsId, null,commentNewsForm, false, 1);
         }
         newsService.addComment(newsService.getOrThrowException(newsId).getNews(), commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId);
@@ -118,7 +119,8 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                  @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsFrom,
-                                 @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors){
+                                 @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors,
+                                 @RequestParam(name="page", defaultValue="1") int page){
 
         FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         News news = fullNews.getNews();
@@ -130,6 +132,8 @@ public class NewsController {
                 .withObject("hasReported", adminService.hasReported(newsId ))
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("hasErrors", hasErrors)
+                .withObject("locale", LocaleContextHolder.getLocale())
+                .withObject("commentsPage", newsService.getComments(newsId,page))
                 .withObject("categories", newsService.getNewsCategory(fullNews)).build();
 
     }

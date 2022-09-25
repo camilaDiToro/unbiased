@@ -35,7 +35,7 @@ public interface NewsDao {
 
 //    boolean isSaved(News news, User user);
 
-//    void removeSaved(News news, User user);
+    void removeSaved(News news, User user);
 
     List<FullNews> getAllNewsFromUser(int page, long userId, NewsOrder ns, Long loggedUser);
     int getTotalPagesNewsFromUser(int page, long userId);

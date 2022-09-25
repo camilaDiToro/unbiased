@@ -230,4 +230,11 @@ public class NewsServiceImpl implements NewsService{
     public Page<Comment> getComments(long newsId, int page) {
         return newsDao.getComments(newsId, page);
     }
+
+
+
+
+
 }
+
+

@@ -79,7 +79,7 @@
                 <c:if test="${loggedUser != null}">
                     <div class="d-flex flex-row">
                         <div class="ml-2 news-bookmark d-flex justify-content-center align-items-center" >
-                            <img id="bookmark" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
+                            <img id="bookmark-news" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
                         </div>
 
                         <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
@@ -239,44 +239,55 @@
             </div>
             </c:if>
 
-            <div class="d-flex flex-row w-100">
-                <div class="p-4 bg-white">
+            <div class="d-flex flex-column w-100 ">
+                <c:forEach var="comment" items="${commentsPage.content}">
 
-                    <div >
-                       <div class="d-flex flex-row gap-1 align-items-center">
-                           <div class="img-container-navbar">
-                               <img class="object-fit-cover rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Image Description">
-                           </div>
-                           <h5 class="mb-0">John Doe</h5>
-                       </div>
-                        <span >5 days ago</span>
+                <c:set var="user" value="${comment.user}"/>
+                    <div class="mb-4 w-100 p-4 bg-white">
+
+                        <div >
+                            <div class="d-flex flex-row gap-1 align-items-center">
+                                <div class="img-container-navbar">
+                                    <c:if test="${user.hasImage()}">
+                                        <img class="object-fit-cover rounded-circle" src="<c:url value="/profile/${user.getImageId()}/image"/>" alt="Image Description">
+
+                                    </c:if>
+                                        <c:if test="${!user.hasImage()}">
+                                            <img class="object-fit-cover rounded-circle" src="<c:url value="/resources/profile-image.png"/>" alt="Image Description">
+                                        </c:if>
+                                </div>
+                                <a href="<c:url value="/profile/${user.id}"/>"><h5 class="mb-0"><c:out value="${user}"/></h5></a>
+                            </div>
+                            <span class="font-weight-light">${comment.getFormattedDate(locale)}</span>
+                        </div>
+
+                        <p id="comment"><c:out value="${comment.comment}"/></p>
+
+                            <%--                    <ul class="list-inline d-sm-flex my-0">--%>
+                            <%--                        <li class="list-inline-item ">--%>
+                            <%--                            <a class="" href="#!">--%>
+                            <%--                                <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>--%>
+                            <%--                                178--%>
+                            <%--                            </a>--%>
+                            <%--                        </li>--%>
+                            <%--                        <li class="list-inline-item ">--%>
+                            <%--                            <a href="#!">--%>
+                            <%--                                <i ></i>--%>
+                            <%--                                34--%>
+                            <%--                            </a>--%>
+                            <%--                        </li>--%>
+                            <%--                        <li class="list-inline-item ml-auto">--%>
+                            <%--                            <a  href="#!">--%>
+                            <%--                                <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>--%>
+                            <%--                                Reply--%>
+                            <%--                            </a>--%>
+                            <%--                        </li>--%>
+                            <%--                    </ul>--%>
                     </div>
+                </c:forEach>
 
-                    <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue
-                        felis in faucibus ras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p>
-
-<%--                    <ul class="list-inline d-sm-flex my-0">--%>
-<%--                        <li class="list-inline-item ">--%>
-<%--                            <a class="" href="#!">--%>
-<%--                                <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>--%>
-<%--                                178--%>
-<%--                            </a>--%>
-<%--                        </li>--%>
-<%--                        <li class="list-inline-item ">--%>
-<%--                            <a href="#!">--%>
-<%--                                <i ></i>--%>
-<%--                                34--%>
-<%--                            </a>--%>
-<%--                        </li>--%>
-<%--                        <li class="list-inline-item ml-auto">--%>
-<%--                            <a  href="#!">--%>
-<%--                                <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>--%>
-<%--                                Reply--%>
-<%--                            </a>--%>
-<%--                        </li>--%>
-<%--                    </ul>--%>
-                </div>
             </div>
+
 
         </div>
 

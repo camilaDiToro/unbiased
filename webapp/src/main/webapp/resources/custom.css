@@ -229,6 +229,11 @@
     width: 25px !important;
 }
 
+#bookmark-news{
+    cursor: pointer;
+    width: 35px !important;
+}
+
 #upvote,#downvote {
     cursor: pointer;
 }
@@ -256,6 +261,10 @@
     position: fixed;
     bottom: 50px;
     right: 50px;
+}
+
+#comment {
+    white-space: pre;
 }
 
 

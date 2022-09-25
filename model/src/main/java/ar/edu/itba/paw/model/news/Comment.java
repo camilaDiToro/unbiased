@@ -3,6 +3,9 @@ package ar.edu.itba.paw.model.news;
 import ar.edu.itba.paw.model.user.User;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 
 public class Comment {
     User user;
@@ -38,5 +41,11 @@ public class Comment {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    public String getFormattedDate(Locale locale) {
+        return date
+                .format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
+                        .withLocale( locale));
     }
 }
