@@ -7,7 +7,13 @@
 <c:set var="signInOrCreate" scope="request" value="${false}"/>
 <%@include file="../../resources/head.jsp" %>
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
-
+<c:if test="${hasErrors}">
+    <script>
+        $(document).ready(function(){
+            $("#profileModal").modal('show');
+        });
+    </script>
+</c:if>
 
 <link href="<c:url value="/resources/profile.css"/>" rel="stylesheet">
 <body>
@@ -233,7 +239,7 @@
 
         <c:if test="${isMyProfile}">
             <div class="pencil-edit">
-                <button style="border: none; background-color: white; outline: none" data-toggle="modal" data-target="#exampleModal">
+                <button style="border: none; background-color: white; outline: none" data-toggle="modal" data-target="#profileModal">
                 <span class="badge badge-pill badge-info">
                    <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
                     <spring:message code="profile.edit"/>
@@ -244,7 +250,7 @@
 
 
             <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -264,6 +270,10 @@
                                             <span class="input-group-text" id="basic-addon1">@</span>
                                         </div>
                                         <form:input type="text" path="username" cssClass="form-control" placeholder="${changeUsername}"/>
+                                        <div class="w-100">
+                                            <form:errors cssClass="text-danger" path="username" element="p"/>
+
+                                        </div>
                                     </div>
 
                                     <spring:message code="profile.modal.changeProfilePicture" var="changeUserPicture"/>
@@ -272,6 +282,10 @@
                                         <div class="custom-file">
                                             <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
                                             <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
+                                            <div class="w-100">
+                                                <form:errors cssClass="text-danger" path="image" element="p"/>
+
+                                            </div>
                                         </div>
 
                                         <script>

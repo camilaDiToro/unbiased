@@ -5,7 +5,13 @@
 <html>
 <%@include file="../../resources/head.jsp" %>
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
-
+<c:if test="${hasErrors}">
+    <script>
+        $(document).ready(function(){
+            $("#reportModal").modal('show');
+        });
+    </script>
+</c:if>
 <link href="<c:url value="/resources/custom.css"/>" rel="stylesheet">
 <body>
 
@@ -77,12 +83,12 @@
                         </div>
 
                         <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
-                            <img ${hasReported ? '' : 'data-toggle="modal" data-target="#binModal"'} class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
+                            <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportModal"'} class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
                         </div>
                     </div>
 
                     <!-- Modal -->
-                    <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -92,7 +98,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <c:url value="/admin/report_news/${newsId}" var="postUrl"/>
+                                    <c:url value="/news/${newsId}/report" var="postUrl"/>
                                     <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
 
                                     <div class="input-group">
@@ -101,8 +107,13 @@
                                             <div class="form-check w-100">
                                                 <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}"/>
                                                 <form:label path="reason" cssClass="form-check-label" for="flexRadioDefault1"> <spring:message code="${item.interCode}"/> </form:label>
+
                                             </div>
                                         </c:forEach>
+                                    </div>
+                                    <div class="w-100">
+                                        <form:errors cssClass="text-danger" path="reason" element="p"/>
+
                                     </div>
 
                                 </div>

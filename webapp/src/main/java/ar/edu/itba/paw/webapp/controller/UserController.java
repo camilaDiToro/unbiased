@@ -96,7 +96,8 @@ public class UserController {
                                 @PathVariable("newsOrder") String newsOrder,
                                 @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
                                 @RequestParam(name = "page", defaultValue = "1") int page,
-                                @RequestParam(name = "category", defaultValue = "MY_POSTS") String category) {
+                                @RequestParam(name = "category", defaultValue = "MY_POSTS") String category,
+                                @RequestParam(name = "hasErrors", defaultValue = "false") boolean hasErrors) {
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
         Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser.getId(), category);
@@ -111,6 +112,7 @@ public class UserController {
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
                 .withObject("userId", userId)
+                .withObject("hasErrors", hasErrors)
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
                    mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
@@ -127,7 +129,7 @@ public class UserController {
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
     public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
         if (errors.hasErrors()) {
-            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS");
+            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
         Long imageId = null;
         if(!userProfileForm.getImage().isEmpty() && userProfileForm.getImage().getBytes().length != 0){

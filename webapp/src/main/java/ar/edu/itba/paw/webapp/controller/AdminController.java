@@ -76,15 +76,7 @@ public class AdminController {
 
     }
 
-    @RequestMapping(value = "/admin/report_news/{newsId:[0-9]+}", method = RequestMethod.POST)
-    public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
-                                   final BindingResult errors) {
-//        if (errors.hasErrors()) {
-//            return
-//        }
-        adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
-        return new ModelAndView("redirect:/news/" + newsId);
-    }
+
 
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {

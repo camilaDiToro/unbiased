@@ -94,8 +94,19 @@ public class NewsController {
         return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
 
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/report", method = RequestMethod.POST)
+    public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                   final BindingResult errors) {
+        if (errors.hasErrors()) {
+            return showNews(newsId, reportNewsFrom, true);
+        }
+        adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        return new ModelAndView("redirect:/news/" + newsId);
+    }
+
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView profile(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom){
+    public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                 @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors){
 
         FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         News news = fullNews.getNews();
@@ -106,6 +117,7 @@ public class NewsController {
                 .withObject("fullNews", fullNews)
                 .withObject("hasReported", adminService.hasReported(newsId ))
                 .withObject("reportReasons", ReportReason.values())
+                .withObject("hasErrors", hasErrors)
                 .withObject("categories", newsService.getNewsCategory(fullNews)).build();
 
     }
