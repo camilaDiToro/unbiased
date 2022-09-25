@@ -42,13 +42,13 @@
                     <c:if test="${query == ''}">
                         <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
                             <li class="nav-item">
-                                <a class="text-capitalize nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                                <a style="background: transparent !important;" class="text-capitalize nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "query" value = "${param.query}"/>
                     </c:url>"><spring:message code="categories.all"/></a>
                             </li>
                             <c:forEach var="cat" items="${categories}">
                                 <li class="nav-item">
-                                    <a class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                                    <a style="background: transparent !important;" class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
 
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
@@ -113,11 +113,12 @@
                                                          <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                      </c:if>
                                                     <c:if test="${loggedUser == null}">
-                                                        <a href="<c:url value = "/create"/>">
+                                                        <%--href="<c:url value = "/create"/>"--%>
+                                                        <a data-toggle="modal" data-target="#cardModal">
                                                             <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
                                                         </a>
                                                         <div  ><c:out value="${positivityStats.netUpvotes}"/></div>
-                                                        <a href="<c:url value = "/create"/>">
+                                                        <a data-toggle="modal" data-target="#cardModal">
                                                             <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
                                                         </a>
 
@@ -192,7 +193,7 @@
                 </div>
             <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start" id="none_shadow">
 
-                <h4 style="padding-left: 35px; background-image: url('<c:url value="/resources/crown-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="card-title"><spring:message code="home.topCreators"/></h4>
+                <h5 style="padding-left: 35px; background-image: url('<c:url value="/resources/crown-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="card-title"><spring:message code="home.topCreators"/></h5>
 
 
                 <c:forEach var="creator" items="${topCreators}">
@@ -241,6 +242,50 @@
             </ul>
         </nav>
     </c:if>
+</div>
+
+<!-- Principal card modal-->
+<div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cardModalLabel"><spring:message code="home.modal.signIn"/> </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <c:url value="/login" var="loginUrl" />
+                <form action="${loginUrl}" method="post">
+                    <div >
+                        <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
+
+                    </div>
+                    <div style="margin-top: 2%" >
+                        <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
+                        <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
+                    </div>
+
+                    <c:if test="${param.error}">
+                        <div class="text-danger text-nowrap form-text d-inline-block">
+                            <spring:message code="login.error"/>
+                        </div>
+                    </c:if>
+                    <c:if test="${param.unable}">
+                        <div class="text-danger text-nowrap form-text d-inline-block">
+                            <spring:message code="login.emailNotVerified"/>
+                        </div>
+                        <div class="text-danger text-nowrap form-text d-inline-block">
+                            <spring:message code="login.emailResended"/>
+                        </div>
+                    </c:if>
+                    <button class="btn btn-lg btn-info btn-block" type="submit"><spring:message code="login.signIn"/></button>
+                </form>
+
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

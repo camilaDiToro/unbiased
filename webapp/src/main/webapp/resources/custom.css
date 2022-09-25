@@ -224,7 +224,12 @@
     min-width:inherit;
 }
 
-#bookmark,#upvote,#downvote {
+#bookmark{
+    cursor: pointer;
+    width: 25px !important;
+}
+
+#upvote,#downvote {
     cursor: pointer;
 }
 .upvote-div-profile {
