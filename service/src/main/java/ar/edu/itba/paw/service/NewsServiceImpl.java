@@ -164,6 +164,14 @@ public class NewsServiceImpl implements NewsService{
 //    public Rating upvoteState(News news, User user) {
 //        return newsDao.upvoteState(news, user);
 //    }
+    @Override
+    public FullNews getOrThrowException(long newsId) {
+        Optional<FullNews> maybeNews = getById(newsId);
+
+        if (!maybeNews.isPresent())
+            throw new NewsNotFoundException();
+        return maybeNews.get();
+    }
 
     @Override
     public void setRating(Long newsId, Long userId, Rating rating) {
@@ -195,6 +203,10 @@ public class NewsServiceImpl implements NewsService{
             newsDao.saveNews(news.getNews(), user);
         return true;
     }
+
+    private User getLoggedUserOrThrowException() {
+        return securityService.getCurrentUser().orElseThrow(() -> new HTTPException(400));
+    }
 //    @Override
 //    public boolean isSaved(News news, User user) {
 //        return newsDao.isSaved(news, user);
@@ -203,9 +215,19 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public void deleteNews(long newsId) {
         FullNews news = getById(newsId).orElseThrow(NewsNotFoundException::new);
-        User current = securityService.getCurrentUser().orElseThrow(() -> new HTTPException(400));
+        User current = getLoggedUserOrThrowException();
         if(!securityService.isCurrentUserAdmin() && news.getNews().getCreatorId() != current.getId())
             throw new UserNotAuthorized();
         newsDao.deleteNews(newsId);
+    }
+
+    @Override
+    public void addComment(News news, String comment) {
+        User user = getLoggedUserOrThrowException();
+        newsDao.addComment(user, news, comment);
+    }
+@Override
+    public Page<Comment> getComments(long newsId, int page) {
+        return newsDao.getComments(newsId, page);
     }
 }

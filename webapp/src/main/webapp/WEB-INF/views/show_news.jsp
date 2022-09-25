@@ -187,23 +187,58 @@
             </div>
         </div>
 
+<%--        <c:url value="/news/${newsId}/report" var="postUrl"/>--%>
+<%--        <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">--%>
 
+<%--        <div class="input-group">--%>
+
+<%--            <c:forEach var="item" items="${reportReasons}">--%>
+<%--                <div class="form-check w-100">--%>
+<%--                    <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}"/>--%>
+<%--                    <form:label path="reason" cssClass="form-check-label" for="flexRadioDefault1"> <spring:message code="${item.interCode}"/> </form:label>--%>
+
+<%--                </div>--%>
+<%--            </c:forEach>--%>
+<%--        </div>--%>
+<%--        <div class="w-100">--%>
+<%--            <form:errors cssClass="text-danger" path="reason" element="p"/>--%>
+
+<%--        </div>--%>
+
+<%--    </div>--%>
+<%--    <div class="modal-footer">--%>
+<%--        <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>--%>
+<%--            &lt;%&ndash;                                    <form method="post" action="">&ndash;%&gt;--%>
+<%--        <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>--%>
+<%--            &lt;%&ndash;                                    </form>&ndash;%&gt;--%>
+<%--    </div>--%>
+<%--    </form:form>--%>
         <div class="d-flex flex-column w-75 align-items-center justify-content-center align-self-center" id="comments">
             <h2 class="align-self-start my-2">Comments</h2>
+            <c:if test="${loggedUser != null}">
+
             <div class="d-flex flex-column w-100 mb-4">
 
-                <div class="bg-white p-2 px-4">
+                    <div class="bg-white p-2 px-4">
+                        <c:url value="/news/${newsId}/comment" var="postUrl"/>
+                        <form:form modelAttribute="commentNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post">
+                        <div class="d-flex flex-column mt-4 mb-4">
+                            <div class="form-group w-100">
+                                <form:textarea path="comment" class="form-control w-100" rows="5" id="comment"></form:textarea>
+                            </div>
+                            <div class="w-100">
+                                <form:errors cssClass="text-danger" path="comment" element="p"/>
 
-                    <div class="d-flex flex-column mt-4 mb-4">
-                        <div class="form-group w-100">
-                            <textarea class="form-control w-100" rows="5" id="comment"></textarea>
+                            </div>
+                            <button class="btn btn-primary flex-grow-0 align-self-end" type="submit">Comment</button>
+                            </form:form>
+
                         </div>
-                        <button class="btn btn-primary flex-grow-0 align-self-end" type="button">Comment</button>
 
                     </div>
-
-                </div>
             </div>
+            </c:if>
+
             <div class="d-flex flex-row w-100">
                 <div class="p-4 bg-white">
 

@@ -117,3 +117,14 @@ CREATE TABLE IF NOT EXISTS follows(
     FOREIGN KEY (follows) REFERENCES users(user_id) ON DELETE CASCADE,
     PRIMARY KEY (follows, user_id)
     );
+
+CREATE TABLE IF NOT EXISTS comments (
+                                          news_id           INTEGER         NOT NULL,
+                                          user_id           INTEGER         NOT NULL,
+                                          commented_date        TIMESTAMP       NOT NULL,
+                                          comment        TEXT       NOT NULL,
+
+                                          FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
+    PRIMARY KEY (news_id, user_id, commented_date)
+    );

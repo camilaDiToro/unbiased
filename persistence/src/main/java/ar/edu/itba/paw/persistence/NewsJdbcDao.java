@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.news.Category;
-import ar.edu.itba.paw.model.news.FullNews;
-import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +17,7 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -33,9 +31,14 @@ public class NewsJdbcDao implements NewsDao{
 
     private final SimpleJdbcInsert jdbcSavedNewsInsert;
 
+    private final SimpleJdbcInsert jdbcCommentsInsert;
+
+
     private final CategoryDao categoryDao;
 
     private static final double PAGE_SIZE = 10.0;
+
+    private static final double COMMENT_PAGE_SIZE = 5.0;
     private static final double PROFILE_PAGE_SIZE = 5.0;
 
 //    private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
@@ -80,6 +83,20 @@ public class NewsJdbcDao implements NewsDao{
         return new FullNews(news, creator, stats, loggedParams);
     };
 
+    private static final RowMapper<Comment> COMMENTS_ROW_MAPPER = (rs, rowNum) -> {
+        long userImageId = rs.getLong("image_id");
+        User creator = new User.UserBuilder(rs.getString("email"))
+                .username(rs.getString("username"))
+                .userId(rs.getLong("user_id"))
+                .pass(rs.getString("pass"))
+                .imageId(userImageId == 0 ? null : userImageId)
+                .status(rs.getString("status")).build();
+
+
+
+        return new Comment(creator, rs.getString("comment"), rs.getTimestamp("commented_date").toLocalDateTime());
+    };
+
 
     private static final RowMapper<Category> CATEGORIES_ROW_MAPPER = (rs, rowNum) ->
             Category.getById(rs.getLong("category_id"));
@@ -101,6 +118,7 @@ public class NewsJdbcDao implements NewsDao{
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("news").usingGeneratedKeyColumns("news_id");
         jdbcUpvoteInsert = new SimpleJdbcInsert(dataSource).withTableName("upvotes");
         jdbcSavedNewsInsert = new SimpleJdbcInsert(dataSource).withTableName("saved_news");
+        jdbcCommentsInsert = new SimpleJdbcInsert(dataSource).withTableName("comments");
 
         this.categoryDao = categoryDao;
     }
@@ -264,46 +282,10 @@ public class NewsJdbcDao implements NewsDao{
 
     }
 
-    /*
-SELECT * FROM saved_news JOIN (logged_news_parameters RIGHT JOIN full_news ON full_news.news_id = logged_news_parameters.news_id)
-                            ON saved_news.user_id = 1 AND saved_news.news_id = full_news.news_id
-                             WHERE user_id = 1 AND logged_user = 1;
-     */
 
-
-
-//    @Override
-//    public List<News> getSavedNewsFromUser(int page, long userId, NewsOrder ns) {
-//        return jdbcTemplate.query("SELECT * FROM news NATURAL JOIN saved_news WHERE user_id = ? ORDER BY " +  ns.getQuery() + " LIMIT ? OFFSET ? ",
-//                new Object[]{userId, PROFILE_PAGE_SIZE, (page-1)*PROFILE_PAGE_SIZE},NEWS_ROW_MAPPER);
-//    }
 
     private List<FullNews> getNewsWithRatingFromUser(int page, long userId, NewsOrder ns, Long loggedUser, boolean upvote) {
-        SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("userId", userId)
-                .addValue("pageSize", PROFILE_PAGE_SIZE)
-                .addValue("offset", (page-1)*PROFILE_PAGE_SIZE)
-                .addValue("loggedId", loggedUser)
-                .addValue("upvote", upvote);
 
-
-        if (loggedUser != null) {
-            return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
-                            "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM upvotes NATURAL JOIN full_news NATURAL LEFT JOIN logged_params " +
-                            " WHERE user_id = :userId AND upvote = :upvote " +
-                            "ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                    params,FULLNEWS_ROW_MAPPER);
-        }
-        /*
-        WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = 1)
-                   SELECT DISTINCT * FROM upvotes NATURAL JOIN full_news NATURAL LEFT JOIN logged_params
-                           WHERE user_id = 1 AND logged_user = 1 AND upvote = 1
-         */
-
-        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM upvotes NATURAL RIGHT JOIN full_news " +
-                        "    WHERE user_id = :userId AND upvote = :upvote " +
-                        "ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                params,FULLNEWS_ROW_MAPPER);
     }
 
     @Override
@@ -405,6 +387,47 @@ SELECT * FROM saved_news JOIN (logged_news_parameters RIGHT JOIN full_news ON fu
 
 
         jdbcSavedNewsInsert.execute(savedNewsData);
+
+    }
+
+
+    private int getTotalPagesComments(long newsId) {
+        int rowsCount = jdbcTemplate.queryForObject("SELECT count(*) FROM comments NATURAL JOIN users WHERE news_id = ?" ,
+                new Object[]{newsId},Integer.class);
+        int total = (int) Math.ceil(rowsCount/COMMENT_PAGE_SIZE);
+        return total==0?1:total;
+    }
+
+    @Override
+    public void addComment(User user, News news, String comment) {
+        final Map<String,Object> commentData = new HashMap<>();
+        commentData.put("news_id",news.getNewsId());
+        commentData.put("user_id", user.getId());
+        commentData.put("comment", comment);
+
+        commentData.put("commented_date", Timestamp.valueOf(LocalDateTime.now()));
+
+        jdbcCommentsInsert.execute(commentData);
+
+    }
+
+    @Override
+    public Page<Comment> getComments(long newsId, int page) {
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("newsId", newsId)
+                .addValue("pageSize", COMMENT_PAGE_SIZE)
+                .addValue("offset", (page - 1) * COMMENT_PAGE_SIZE)
+
+
+        List<Comment> comments = namedJdbcTemplate.query("SELECT * FROM comments NATURAL JOIN users " +
+                        " WHERE news_id = :newsId " +
+                        " LIMIT :pageSize OFFSET :offset ",
+                params, COMMENTS_ROW_MAPPER).stream().collect(Collectors.toList());
+
+        return new Page<>(comments, page, getTotalPagesComments(newsId));
+    }
+        /*
+
 
     }
 

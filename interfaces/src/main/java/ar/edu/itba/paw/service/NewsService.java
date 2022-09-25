@@ -29,6 +29,8 @@ public interface NewsService {
 
     boolean toggleSaveNews(FullNews news, User user);
 
+    FullNews getOrThrowException(long newsId);
+
 //    Optional<FullNews> getNewsById(long id);
 
 //    boolean isSaved(News news, User user);
@@ -36,4 +38,8 @@ public interface NewsService {
     void deleteNews(long newsId);
 
     Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String pc);
+
+    void addComment(News news, String comment);
+
+    Page<Comment> getComments(long newsId, int page);
 }

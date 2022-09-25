@@ -9,6 +9,7 @@ import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
@@ -98,14 +99,25 @@ public class NewsController {
     public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                    final BindingResult errors) {
         if (errors.hasErrors()) {
-            return showNews(newsId, reportNewsFrom, true);
+            return showNews(newsId, reportNewsFrom, null,true);
         }
         adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
+    public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsForm,
+                                    final BindingResult errors) {
+        if (errors.hasErrors()) {
+            return showNews(newsId, null,commentNewsForm, false);
+        }
+        newsService.addComment(newsService.getOrThrowException(newsId).getNews(), commentNewsForm.getComment());
+        return new ModelAndView("redirect:/news/" + newsId);
+    }
+
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                 @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsFrom,
                                  @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors){
 
         FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);

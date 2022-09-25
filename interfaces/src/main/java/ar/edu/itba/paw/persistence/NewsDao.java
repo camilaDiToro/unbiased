@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.news.Category;
-import ar.edu.itba.paw.model.news.FullNews;
-import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.User;
 
 import java.util.List;
@@ -28,6 +25,8 @@ public interface NewsDao {
 
     void setRating(Long newsId, Long userId, Rating rating);
 
+    void addComment(User user, News news, String comment);
+
 //    NewsStats getNewsStats(Long newsId);
 
     List<FullNews> getSavedNews(int page, long userId, NewsOrder ns, Long loggedUser);
@@ -36,7 +35,7 @@ public interface NewsDao {
 
 //    boolean isSaved(News news, User user);
 
-    void removeSaved(News news, User user);
+//    void removeSaved(News news, User user);
 
     List<FullNews> getAllNewsFromUser(int page, long userId, NewsOrder ns, Long loggedUser);
     int getTotalPagesNewsFromUser(int page, long userId);
@@ -53,6 +52,8 @@ public interface NewsDao {
     List<FullNews> getNewsUpvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser);
 
     List<FullNews> getNewsDownvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser);
+
+    Page<Comment> getComments(long newsId, int page);
 
 //    List<News> getSavedNewsFromUser(int page, long userId, NewsOrder ns, Long loggedUser);
 
