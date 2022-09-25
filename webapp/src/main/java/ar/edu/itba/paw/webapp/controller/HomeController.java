@@ -3,17 +3,13 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.*;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.service.EmailService;
-import ar.edu.itba.paw.service.NewsService;
-import ar.edu.itba.paw.service.SecurityService;
-import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
@@ -43,15 +39,13 @@ public class HomeController {
         this.ns = ns;
         this.ss = ss;
         this.es = es;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, ss.getCurrentUser());
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, ss);
         this.as = as;
     }
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
         return new ModelAndView("redirect:/TOP");
-//        return new ModelAndView("moderation-panel");
-
     }
 
     @RequestMapping("/{orderBy:TOP|NEW}")
@@ -74,11 +68,6 @@ public class HomeController {
     }
 
     private ResponseEntity<UpvoteActionResponse> toggleHandler(UpvoteAction payload, Rating action) {
-//        ObjectMapper mapper = new ObjectMapper();
-//        Map<String, Object> map = mapper.readValue(payload, Map.class);
-//        final String fmt = "{ \"upvotes\": %d, \"active\": %b }";
-
-//        final Long newsId = (Long.valueOf((String)map.get("newsId")));
         final Long newsId = payload.getNewsId();
         final boolean isActive = payload.isActive();
 
@@ -86,18 +75,14 @@ public class HomeController {
         boolean active;
 
         if (maybeUser.isPresent()) {
-//            active = (boolean)map.get("active");
             active = isActive;
-
             User user = maybeUser.get();
             ns.setRating(newsId,  user.getId(), active ? action : Rating.NO_RATING);
         }
         else {
-//            active = !(boolean)map.get("active");
             active = !isActive;
         }
         final FullNews news = ns.getById(newsId).orElseThrow(NewsNotFoundException::new);
-
 
         return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), active), HttpStatus.OK);
 //        return String.format(fmt, ns.getUpvotes(newsId), active);
@@ -113,12 +98,5 @@ public class HomeController {
     @ResponseBody
     public ResponseEntity<UpvoteActionResponse>  toggleDownvote(@RequestBody UpvoteAction payload){
         return toggleHandler(payload, Rating.DOWNVOTE);
-    }
-
-
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ModelAndView userNotFound()    {
-        return mavBuilderSupplier.supply("errors/userNotFound", "pageTitle.userNotFound", TextType.INTERCODE).build();
     }
 }

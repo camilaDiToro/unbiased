@@ -10,82 +10,22 @@
 <body>
 <c:set var="news" value="${newsPage.content}"/>
 <div class="d-flex h-100 flex-column">
-<%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
+
     <%@ include file="../../resources/navbar.jsp" %>
     <div class="d-flex flex-column h-100">
         <div class="flex-grow-1 d-flex flex-row">
 
             <%--LEFT SIDE--%>
                 <div class=" w-25 d-flex flex-column border-right mt-4 m-3">
-<%--                <div class="card" style="width: 18rem; height: 12rem; margin-top: 4%" id="right-card">--%>
 
-<%--                    <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">--%>
     <h3 class="text-secondary">Moderation panel</h3>
     <ul class="nav flex-column vertical-menu ">
         <li class="nav-item">
             <a class="nav-link selected" href="#">Reported articles</a>
         </li>
-<%--        <li class="nav-item">--%>
-<%--            <a class="nav-link" href="#">Reported users</a>--%>
-<%--        </li>--%>
-<%--        <li class="nav-item">--%>
-<%--            <a class="nav-link" href="#">Reported comments</a>--%>
-<%--        </li>--%>
-
     </ul>
 
-
-
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel"><spring:message code="profile.user.settings"/></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <c:url value="/profile/${profileUser.id}" var="postUrl"/>
-                            <form:form modelAttribute="userProfileForm" enctype="multipart/form-data" action="${postUrl}" method="post">
-                                <div class="modal-body">
-
-                                    <spring:message code="profile.modal.changeUsername" var="changeUsername"/>
-                                    <form:label path="image"><spring:message code="profile.modal.changeUsername"/></form:label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">@</span>
-                                        </div>
-                                        <form:input type="text" path="username" cssClass="form-control" placeholder="${changeUsername}"/>
-                                    </div>
-
-                                    <spring:message code="profile.modal.changeProfilePicture" var="changeUserPicture"/>
-                                    <form:label path="image"><spring:message code="profile.modal.changeProfilePicture"/> </form:label>
-                                    <div class="input-group mb-3">
-                                        <div class="custom-file">
-                                            <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
-                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
-                                        </div>
-
-                                        <script>
-                                            $('#fileInput').on('change',function(){
-                                                //get the file name
-                                                var fileName = $(this).val();
-                                                //replace the "Choose a file" label
-                                                $(this).next('.custom-file-label').html(fileName);
-                                            })
-                                        </script>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                    <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.save"/></button>
-                                </div>
-                            </form:form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    </div>
             <%--RIGHT SIDE--%>
             <div class="d-flex flex-column w-75">
 
@@ -96,8 +36,8 @@
                     <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
                         <c:forEach var="order" items="${orders}">
                             <li class="nav-item">
-                                <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${order}">
-                    <c:param name = "category" value = "${category}"/>
+                                <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_news/${order}">
+
                     </c:url>"><spring:message code="${order.interCode}"/></a>
                             </li>
                         </c:forEach>
@@ -109,11 +49,7 @@
                 <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
                     <c:if test="${empty news}" >
                         <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
-                            <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
-                                <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
-                            <p class="lead">
-                                <spring:message code="categories.notFound"/> "<spring:message code="${category.interCode}"/>"
-                            </p>
+
                         </div>
                     </c:if>
 
@@ -122,126 +58,76 @@
                         <div class="container-fluid">
                             <div class="row row-cols-1">
                                 <c:set var="maxLength" value="${100}"/>
-                                <c:forEach var="fullNews" items="${news}">
-                                    <c:set var="article" value="${fullNews.news}"/>
+                                <c:forEach var="reportedNews" items="${news}">
+                                    <c:set var="article" value="${reportedNews.news}"/>
 
                                     <c:set var="newsId" value="${article.newsId}"/>
-                                    <c:set var="loggedParams" value="${fullNews.loggedUserParameters}"/>
-                                    <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
-
-
+                                <c:set var="creator" value="${reportedNews.newsOwner}"/>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <spring:message code="profile.modal.msg"/>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                                    <form method="post" action="<c:url value="/admin/reported_news/${newsId}/delete"/>">
+                                                        <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="col mb-4">
-                                        <div class="card h-100 d-flex flex-row" id="left-card">
-                                            <c:set var="positivity" value="${positivityStats.positivity}"/>
-                                            <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
+                                        <div class="card h-100 d-flex flex-row p-3" id="left-card">
 
-                                            </div>
                                             <span class="reports-indicator badge badge-pill badge-danger" >
-                                                2 reports
+                                                ${reportedNews.reportCount} reports
                                             </span>
-                                            <div class="d-flex flex-column justify-content-between ${article.hasImage() ? 'w-60' : 'w-100'}">
-                                                <div class="d-flex w-100">
-                                                    <div class="upvote-div-profile d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
-                                                        <c:set var="rating" value="${loggedParams != null ? loggedParams.personalRating : ''}"/>
+                                            <div class="d-flex flex-column justify-content-between w-100">
+                                                <div class="d-flex w-100 ">
 
-                                                        <c:if test="${loggedUser != null}">
-                                                            <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
-                                                            <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                            <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
-                                                        </c:if>
-                                                        <c:if test="${loggedUser == null}">
-                                                            <a href="<c:url value = "/create"/>">
-                                                                <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
-                                                            </a>
-                                                            <div  ><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                            <a href="<c:url value = "/create"/>">
-                                                                <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
-                                                            </a>
-                                                        </c:if>
-                                                    </div>
-                                                    <div class="card-body-home">
-                                                            <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
+                                                    <div class="card-body-home pt-0">
                                                         <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                         <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
-                                                        <p class="text-sm-left text-secondary mb-0">
-                                                            <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px"/>
-                                                            <c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/>
-                                                        </p>
-                                                            <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
                                                     </div>
                                                 </div>
-                                                <div class="d-flex justify-content-between p-2 w-100">
+                                                <div class="d-flex justify-content-between w-100">
                                                     <div class="d-flex align-items-center w-auto gap-1">
                                                         <div class="img-container-article">
-                                                            <c:if test="${fullNews.user.hasImage()}">
-                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${fullNews.user.imageId}/image"/>" alt="">
+                                                            <c:if test="${creator.hasImage()}">
+                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.imageId}/image"/>" alt="">
                                                             </c:if>
-                                                            <c:if test="${!fullNews.user.hasImage()}">
+                                                            <c:if test="${!creator.hasImage()}">
                                                                 <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
                                                             </c:if>
                                                         </div>
                                                         <a href="<c:url value="/profile/${article.creatorId}"/>">
-                                                            <div class="text-secondary card-name-text text-ellipsis-1">${fullNews.user}</div>
-
+                                                            <div class="text-secondary card-name-text text-ellipsis-1">${creator}</div>
                                                         </a>
                                                     </div>
-                                                    <div class="d-flex align-items-center" role="group">
+                                                    <div class="d-flex align-items-center mr-2" role="group">
 
-                                                        <c:if test="${isMyProfile}">
-                                                            <%--<input type="image" alt="..." src="<c:url value="/resources/bin.png"/>" style="max-width: 20px; max-height: 20px">--%>
-                                                            <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px">
+                                                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px">
                                                                 <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
                                                             </button>
-                                                            <!-- Modal -->
-                                                            <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog modal-dialog-centered">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <spring:message code="profile.modal.msg"/>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                                                            <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
-                                                                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                            <a  class="text-info font-weight-bold hover-hand" href="<c:url value="/admin/reported_news_detail/${newsId}"/>">
+                                                                View details
+                                                            </a>
 
-                                                        </c:if>
-
-                                                        <c:if test="${loggedUser != null}">
-                                                            <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                                <img id="bookmark" onclick="handleBookmarkClick(this)" class=" svg-bookmark w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
-                                                            </div>
-                                                        </c:if>
-                                                            <%--                                                    <button type="button" class="btn btn-sm btn-outline-primary m-1 h-75 max-h-40px"><svg class="h-75" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 4H5a2 2 0 0 0-2 2v15l3.467-2.6a2 2 0 0 1 1.2-.4H19a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg></button>--%>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <c:if test="${article.hasImage()}">
-
-                                                <div class="bg-secondary position-relative w-40" style="border-radius: 15px">
-
-
-                                                    <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
-
-                                                        <%--                                            <c:if test="${!article.hasImage()}">--%>
-                                                        <%--                                                <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="..." >--%>
-                                                        <%--                                            </c:if>--%>
-                                                </div>
-                                            </c:if>
-
                                         </div>
                                     </div>
                                 </c:forEach>
@@ -259,25 +145,20 @@
         <c:if test="${not empty news}">
             <nav class="d-flex justify-content-center align-items-center">
                 <ul class="pagination">
-
-                    <li class="page-item"><a class="page-link" href="<c:url value = "/profile/${profileUser.id}/${newsOrder}">
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news/${newsOrder}">
                         <c:param name = "page" value = "1"/>
-                        <c:param name = "category" value = "${param.category}"/>
                         </c:url>"><spring:message code="home.pagination.first"/></a></li>
 
 
                     <c:forEach var = "i" begin = "${newsPage.minPage}" end = "${newsPage.maxPage}">
-                        <li class="page-item"><a class="page-link ${i == newsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/profile/${profileUser.id}/${newsOrder}">
+                        <li class="page-item"><a class="page-link ${i == newsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/admin/reported_news/${newsOrder}">
                         <c:param name = "page" value = "${i}"/>
-                        <c:param name = "category" value = "${param.category}"/>
                         </c:url>"><c:out value="${i}"/></a></li>
                     </c:forEach>
 
-                    <li class="page-item"><a class="page-link" href="<c:url value = "/profile/${profileUser.id}/${newsOrder}">
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news/${newsOrder}">
                         <c:param name = "page" value = "${newsPage.totalPages}"/>
-                        <c:param name = "category" value = "${param.category}"/>
                         </c:url>"><spring:message code="home.pagination.last"/></a></li>
-
                 </ul>
             </nav>
         </c:if>

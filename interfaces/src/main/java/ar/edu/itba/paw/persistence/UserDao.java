@@ -13,9 +13,12 @@ public interface UserDao {
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
     void verifyEmail(long id);
-
     List<User> getTopCreators(int qty);
-
     void updateUsername(long userId, String username);
     void updateImage(long userId, Long imageId);
+    void addFollow(long userId, long follows);
+
+    void unfollow(long userId, long follows);
+
+   boolean isFollowing(long userId, long followId);
 }

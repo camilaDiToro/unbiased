@@ -7,7 +7,13 @@
 <c:set var="signInOrCreate" scope="request" value="${false}"/>
 <%@include file="../../resources/head.jsp" %>
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
-
+<c:if test="${hasErrors}">
+    <script>
+        $(document).ready(function(){
+            $("#profileModal").modal('show');
+        });
+    </script>
+</c:if>
 
 <link href="<c:url value="/resources/profile.css"/>" rel="stylesheet">
 <body>
@@ -199,7 +205,7 @@
         <%--RIGHT SIDE--%>
             <c:set var="profilePositivityStats" value="${profileUser.getPositivityStats()}"/>
         <div style="display: flex; width: 30%; justify-content: center;">
-        <div class="card" style="width: 18rem; height: 12rem; margin-top: 4%" id="right-card">
+        <div class="card" style="width: 18rem; height: fit-content; margin-top: 4%" id="right-card">
             <c:set var="profilePositivity" value="${profilePositivityStats.getPositivity()}"/>
             <div class="quality-indicator <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="${profilePositivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${profilePositivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
             </div>
@@ -207,7 +213,18 @@
             <div class="card-body">
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
                 <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${profileUser.email}"/> </span>
+                <div class="d-flex justify-content-center align-items-center">
+                    <c:if test="${loggedUser != null && !isMyProfile}">
+                        <c:if test="${!isFollowing}">
+                            <a class="btn btn-info font-weight-bold text-white rounded-pill" href="<c:url value="/profile/${userId}/follow"/>">Follow</a>
+                        </c:if>
+                        <c:if test="${isFollowing}">
+                            <a class=" btn btn-danger font-weight-bold text-white rounded-pill" href="<c:url value="/profile/${userId}/unfollow"/>">Unfollow</a>
+                        </c:if>
+                    </c:if>
+                </div>
             </div>
+
         </div>
 
         <div class="profile">
@@ -222,7 +239,7 @@
 
         <c:if test="${isMyProfile}">
             <div class="pencil-edit">
-                <button style="border: none; background-color: white; outline: none" data-toggle="modal" data-target="#exampleModal">
+                <button style="border: none; background-color: white; outline: none" data-toggle="modal" data-target="#profileModal">
                 <span class="badge badge-pill badge-info">
                    <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
                     <spring:message code="profile.edit"/>
@@ -233,7 +250,7 @@
 
 
             <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -253,6 +270,10 @@
                                             <span class="input-group-text" id="basic-addon1">@</span>
                                         </div>
                                         <form:input type="text" path="username" cssClass="form-control" placeholder="${changeUsername}"/>
+                                        <div class="w-100">
+                                            <form:errors cssClass="text-danger" path="username" element="p"/>
+
+                                        </div>
                                     </div>
 
                                     <spring:message code="profile.modal.changeProfilePicture" var="changeUserPicture"/>
@@ -261,6 +282,10 @@
                                         <div class="custom-file">
                                             <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
                                             <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
+                                            <div class="w-100">
+                                                <form:errors cssClass="text-danger" path="image" element="p"/>
+
+                                            </div>
                                         </div>
 
                                         <script>

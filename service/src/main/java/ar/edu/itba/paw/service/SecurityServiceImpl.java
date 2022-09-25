@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.RoleDao;
+import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,7 +17,7 @@ import java.util.Optional;
 public class SecurityServiceImpl implements SecurityService {
 
     @Autowired
-    private UserService userService;
+    private UserDao userDao;
 
     @Autowired
     private RoleDao roleDao;
@@ -36,7 +37,7 @@ public class SecurityServiceImpl implements SecurityService {
 
         if (username == null) return Optional.empty();
 
-        return userService.findByEmail(getCurrentUserEmail());
+        return userDao.findByEmail(getCurrentUserEmail());
     }
 
     @Override
@@ -46,6 +47,6 @@ public class SecurityServiceImpl implements SecurityService {
             return false;
         User user= mayBeUser.get();
         List<String> roles = roleDao.getRoles(user.getId());
-        return roles.contains(Role.ADMIN);
+        return roles.contains(Role.ADMIN.getRole());
     }
 }

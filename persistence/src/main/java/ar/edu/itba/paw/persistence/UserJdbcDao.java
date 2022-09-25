@@ -19,6 +19,7 @@ public class UserJdbcDao implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert followJdbcInsert;
 
     private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User
             .UserBuilder(rs.getString("email"))
@@ -33,6 +34,7 @@ public class UserJdbcDao implements UserDao {
     public UserJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("user_id");
+        followJdbcInsert = new SimpleJdbcInsert(ds).withTableName("follows");
     }
 
     @Override
@@ -90,6 +92,26 @@ public class UserJdbcDao implements UserDao {
     @Override
     public void updateImage(long userId, Long imageId) {
         jdbcTemplate.update("UPDATE users SET image_id = ? WHERE user_id = ?", imageId, userId);
+    }
+
+    @Override
+    public void addFollow(long userId, long follows) {
+        final Map<String, Object> followData = new HashMap<>();
+        followData.put("user_id", userId);
+        followData.put("follows", follows);
+
+        followJdbcInsert.execute(followData);
+    }
+    @Override
+    public void unfollow(long userId, long follows) {
+        jdbcTemplate.update("DELETE FROM follows WHERE user_id = ? AND follows = ?", new Object[]{userId, follows});
+    }
+
+    @Override
+    public boolean isFollowing(long userId, long followId) {
+        return  jdbcTemplate.queryForObject("SELECT count(*) FROM follows WHERE user_id = ? AND follows = ?",
+                new Object[]{userId, followId}, Integer.class) > 0;
+
     }
 
     public List<User> getAll(int page){

@@ -197,7 +197,7 @@
 
 
                 <c:forEach var="creator" items="${topCreators}">
-                    <a class="m-1" href="<c:url value="/profile/${creator.id}"/>">
+                    <a class="m-1" href="<c:url value="/profile/${creator.id}"/>" >
                             <div class="card bg-primary text-white d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">
 <div class="img-container">
 <c:if test="${creator.hasImage()}">

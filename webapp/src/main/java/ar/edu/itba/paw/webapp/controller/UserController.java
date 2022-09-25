@@ -37,14 +37,13 @@ public class UserController {
     private final SecurityService securityService;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
-
     @Autowired
     public UserController(UserService userService, ImageService imageService, SecurityService securityService, NewsService newsService) {
         this.userService = userService;
         this.imageService = imageService;
         this.securityService = securityService;
         this.newsService = newsService;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
     @RequestMapping("/login")
@@ -77,13 +76,28 @@ public class UserController {
         return mav;
     }
 
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
+    public ModelAndView profileFollow(@PathVariable("userId") long userId) {
+        userService.followUser(userId);
+        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
+        return mav;
+    }
+
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
+    public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
+        userService.unfollowUser(userId);
+        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
+        return mav;
+    }
+
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("userId") long userId,
                                 @PathVariable("newsOrder") String newsOrder,
                                 @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
                                 @RequestParam(name = "page", defaultValue = "1") int page,
-                                @RequestParam(name = "category", defaultValue = "MY_POSTS") String category) {
+                                @RequestParam(name = "category", defaultValue = "MY_POSTS") String category,
+                                @RequestParam(name = "hasErrors", defaultValue = "false") boolean hasErrors) {
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
         Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser.getId(), category);
@@ -97,7 +111,12 @@ public class UserController {
                 .withObject("newsPage", fullNews)
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
+                .withObject("userId", userId)
+                .withObject("hasErrors", hasErrors)
                 .withStringParam(profileUser.toString());
+        if(securityService.getCurrentUser().isPresent()) {
+                   mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
+        }
 
         try {
             mavBuilder.withObject("category", ProfileCategory.valueOf(category));
@@ -110,7 +129,7 @@ public class UserController {
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
     public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
         if (errors.hasErrors()) {
-            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS");
+            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
         Long imageId = null;
         if(!userProfileForm.getImage().isEmpty() && userProfileForm.getImage().getBytes().length != 0){
