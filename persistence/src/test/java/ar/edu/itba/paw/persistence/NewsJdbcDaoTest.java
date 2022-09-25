@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
-import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +18,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +29,6 @@ import static org.junit.Assert.*;
 @Transactional
 public class NewsJdbcDaoTest {
     private NewsJdbcDao newsDao;
-    private AdminJdbcDao adminDao;
     private UserJdbcDao userDao;
     @Autowired
     private DataSource ds;
@@ -44,14 +40,13 @@ public class NewsJdbcDaoTest {
     protected static final String CATEGORY_TABLE = "news_category";
     protected static final String SAVED_TABLE = "saved_news";
     //USERS DATA
-    protected static final String EMAIL = "juan@gmail.com";
+    protected static final String EMAIL = "user@gmail.com";
 
     //NEWS DATA
     protected static final String TITTLE = "titulo";
     protected static final String SUBTITTLE = "subtitulo";
     protected static final String BODY = "cuerpo";
     protected static final int PAGE_SIZE = 1;
-    protected static LocalDateTime CREATE_TIME = LocalDateTime.now();
 
     private User getMockUser() {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
@@ -65,7 +60,7 @@ public class NewsJdbcDaoTest {
         newsDao = new NewsJdbcDao(ds, categoryDao);
         userDao = new UserJdbcDao(ds);
         categoryDao = new CategoryJdbcDao(ds);
-        adminDao = new AdminJdbcDao(ds);
+        //adminDao = new AdminJdbcDaoTest(ds);
     }
 
     @Test
@@ -73,11 +68,11 @@ public class NewsJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
         User user = getMockUser();
-        //Optional<User> mayBeUser = userDao.getUserById(user.getId());
+        Optional<User> mayBeUser = userDao.getUserById(user.getId());
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
 
-        assertNotNull(user);
+        assertTrue(mayBeUser.isPresent());
         assertNotNull(news);
         assertEquals(TITTLE, news.getTitle());
         assertEquals(BODY, news.getBody());
@@ -133,7 +128,7 @@ public class NewsJdbcDaoTest {
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> maybeNews = newsDao.getById(news.getNewsId(), null);
 
-        assertNotNull(news);
+        assertTrue(maybeNews.isPresent());
         assertEquals(maybeNews.get().getNews().getNewsId(), news.getNewsId());
     }
 
@@ -149,24 +144,6 @@ public class NewsJdbcDaoTest {
         List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, news.getCreatorId(), NewsOrder.NEW, null);
         assertEquals(0, newsList.size()); // TODO
     }
-
-//    @Test
-//    public void testGetNewsInCategoryDao(){
-//        // 1. precondiciones
-//        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-//
-//        // 2. ejercitacion
-//        User user = getMockUser();
-//        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
-//        News news = newsDao.create(nwBuilder);
-//        assertNotNull(news);
-//
-//        List<News> newsList = newsDao.getNews(PAGE_SIZE, NewsOrder.NEW, null);
-//
-//        // 3. validaciones
-//        assertEquals(PAGE_SIZE, newsList.size());
-//        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
-//    }
 
     @Test
     public void testGetNewsByCategory(){
@@ -291,21 +268,6 @@ public class NewsJdbcDaoTest {
         assertEquals(1, savedList.size());
     }
 
-    /*@Test
-    public void testGetSavedNewsFromUser(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, SAVED_TABLE);
-
-        User user = getMockUser();
-        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
-        News news = newsDao.create(nwBuilder);
-        newsDao.saveNews(news, user);
-
-//        List<News> savedList = newsDao.getSavedNewsFromUser(PAGE_SIZE, news.getCreatorId(), NewsOrder.NEW, null);
-//        assertEquals(1, savedList.size());
-        assertEquals(1,1); // TODO
-    }
-*/
     @Test
     public void testGetTotalPagesNewsFromUserSaved(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
@@ -412,10 +374,4 @@ public class NewsJdbcDaoTest {
         int rating = newsDao.getTotalPagesNewsFromUserDownvoted(PAGE_SIZE, news.getCreatorId());
         assertEquals(1, rating);
     }
-
-
-        /*
-    public double getPositivityValue(Long newsId) {
-
-*/
 }

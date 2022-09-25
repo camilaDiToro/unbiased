@@ -29,96 +29,95 @@ public class UserServiceImplTest {
     private static final String USERNAME = "username";
     private static final String EMAIL = "user@mail.com";
     private static final String PASS = "userpass";
-    static User.UserBuilder usBuilderTest = new User.UserBuilder(EMAIL);
-    private static final User testUser = new User(usBuilderTest);
-
+    private static LocalDateTime DATE = LocalDateTime.now().plusDays(1);
+    //static User.UserBuilder usBuilderTest = new User.UserBuilder(EMAIL);
+    //private static final User testUser = new User(usBuilderTest);
     @Mock
     private UserDao mockUserDao;
     @Mock
     private User mockUser;
     @Mock
-    private AdminService mockAdminService;
-    @Mock
     private VerificationTokenDao mockVerifDao;
     @Mock
     private PasswordEncoder mockPasswordEncoder;
     @Mock
-    private EmailService mockEmailService;
-    @Mock
     private VerificationTokenService mockVerificationTokenService;
-    @Mock
-    private RoleDao mockRoleDao;
-    @Mock
-    private ImageService mockImageService;
     @InjectMocks
     private UserServiceImpl userService;
 
     @Before
     public void setTest() {
-        LocaleContextHolder.setLocale(Locale.getDefault());
+        mockUser = new User.UserBuilder(EMAIL).build();
     }
 
     @Test
     public void testCreate() throws Exception {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        VerificationToken token = new VerificationToken(1, "token", testUser.getId(), LocalDateTime.now().plusDays(2));
-        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(testUser);
+        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
         Mockito.when(mockPasswordEncoder.encode(PASS)).thenReturn(PASS);
 
         User user = userService.create(usBuilder);
+
         Assert.assertNotNull(user);
-        Assert.assertEquals(testUser.getUsername(), user.getUsername());
-        Assert.assertEquals(testUser.getEmail(), user.getEmail());
-        Assert.assertEquals(testUser.getPass(), user.getPass());
+        Assert.assertEquals(mockUser.getUsername(), user.getUsername());
+        Assert.assertEquals(mockUser.getEmail(), user.getEmail());
+        Assert.assertEquals(mockUser.getPass(), user.getPass());
         Mockito.verify(mockUserDao).create(usBuilder);
     }
 
     @Test
-    public void testFindById(){
+    public void testFindByEmail(){
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(testUser);
-        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(testUser));
+        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
+        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(mockUser));
+
         User user = userService.create(usBuilder);
 
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getEmail(), user.getEmail());
+        /*Optional<User> userId = userService.findByEmail(EMAIL);
+
+        Assert.assertNotNull(userId);
+        Assert.assertEquals(userId.get().getEmail(), mockUser.getEmail());*/
     }
 
     @Test
     public void testFindByUsername() {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(testUser);
-        Mockito.when(mockUserDao.findByUsername(Mockito.eq(USERNAME))).thenReturn(Optional.of(testUser));
-        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(testUser.getId()), Mockito.eq(USERNAME));
+        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
+        Mockito.when(mockUserDao.findByUsername(Mockito.eq(USERNAME))).thenReturn(Optional.of(mockUser));
+        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(mockUser.getId()), Mockito.eq(USERNAME));
+
         User user = userService.create(usBuilder);
 
         Assert.assertNotNull(user);
-        Assert.assertEquals(user.getUsername(), testUser.getUsername());
+        Assert.assertEquals(user.getUsername(), mockUser.getUsername());
     }
 
     @Test
     public void testVerifyUserMail(){
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        VerificationToken token = new VerificationToken(1, "token", mockUser.getId(), LocalDateTime.now().plusDays(2));
-        Mockito.lenient().when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(testUser);
+        VerificationToken token = new VerificationToken(1, "token", mockUser.getId(), DATE);
+
+        Mockito.lenient().when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
         Mockito.when(mockVerifDao.getEmailToken(Mockito.anyString())).thenReturn((Optional.of(token)));
-        Mockito.doNothing().when(mockUserDao).verifyEmail((Mockito.eq(testUser.getId())));
+        Mockito.doNothing().when(mockUserDao).verifyEmail((Mockito.eq(mockUser.getId())));
+
         userService.verifyUserEmail("token");
 
-        Assert.assertEquals(testUser.getStatus(), UserStatus.UNREGISTERED);
+        Assert.assertEquals(mockUser.getStatus(), UserStatus.UNREGISTERED);
         //Mockito.verify(mockUserDao).verifyEmail(testUser.getId());
     }
 
     @Test
     public void testUpdateProfile() {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(testUser);
-        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(testUser.getId()), Mockito.eq(USERNAME));
-        Mockito.when(mockUser.getUsername()).thenReturn(testUser.getUsername());
+        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
+        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(mockUser.getId()), Mockito.eq(USERNAME));
 
-        //userService.updateProfile(testUser.getId(), USERNAME, null);
+        userService.updateProfile(mockUser.getId(), USERNAME, null);
 
-        Assert.assertEquals(testUser.getUsername(), mockUser.getUsername());
+        Assert.assertEquals(mockUser.getUsername(), USERNAME);
         //Mockito.verify(mockUserDao).updateUsername(Mockito.eq(testUser.getId()),Mockito.anyString());
     }
 

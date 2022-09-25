@@ -28,6 +28,15 @@
             text-align: center;
             color: #8ea7e8;
         }
+        .contenedor {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .contenedor > div {
+            width: 50%;
+        }
 
     </style>
 </head>
@@ -44,6 +53,22 @@
             <button th:text="#{email.verification.click}" class="btn btn-lg btn-info btn-block btn-share">
             </button>
         </a>
+    </div>
+    <div class="contenedor">
+        <div>
+            <p style="text-align: center">Encontra las ultimas noticias</p>
+            <a th:href="${verificationUrl}" class="takeme">
+                <button th:text="#{email.verification.click}" class="btn btn-lg btn-info btn-block btn-share">
+                </button>
+            </a>
+        </div>
+        <div>
+            <p style="text-align: center">Continua editando tu perfil aqui</p>
+            <a th:href="${verificationUrl}" class="takeme">
+                <button th:text="#{email.verification.click}" class="btn btn-lg btn-info btn-block btn-share">
+                </button>
+            </a>
+        </div>
     </div>
 </div>
 </body>

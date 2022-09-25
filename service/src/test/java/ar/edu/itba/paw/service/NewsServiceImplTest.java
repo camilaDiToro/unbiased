@@ -7,6 +7,7 @@ import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -26,13 +27,6 @@ public class NewsServiceImplTest {
     protected static final String SUBTITTLE = "subtitulo";
     protected static final String BODY = "cuerpo";
 
-    static User.UserBuilder usBuilderTest = new User.UserBuilder(EMAIL);
-    private static final User testUser = new User(usBuilderTest);
-    static News.NewsBuilder nsBuilderTest = new  News.NewsBuilder(1, BODY, TITTLE, SUBTITTLE);
-    private static final News testNews = new News(nsBuilderTest);
-
-    @Mock
-    private UserDao mockUserDao;
     @Mock
     private User mockUser;
     @Mock
@@ -41,32 +35,37 @@ public class NewsServiceImplTest {
     private News mockNews;
     @Mock
     private FullNews mockFullNews;
-    @InjectMocks
-    private UserServiceImpl userService;
+
     @InjectMocks
     private NewsServiceImpl newsService;
 
+    @Before
+    public void setTest() {
+        mockUser = new User.UserBuilder(EMAIL).build();
+        mockNews = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE).build();
+    }
 
     @Test
     public void testCreate() throws Exception {
-        News.NewsBuilder newsBuilder = new News.NewsBuilder(testUser.getId(), BODY, TITTLE, SUBTITTLE);
-        Mockito.when(mockNewsDao.create(Mockito.eq(newsBuilder))).thenReturn(testNews);
+        News.NewsBuilder newsBuilder = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
+        Mockito.when(mockNewsDao.create(Mockito.eq(newsBuilder))).thenReturn(mockNews);
+
         News news = newsService.create(newsBuilder);
 
         Assert.assertNotNull(news);
-        Assert.assertEquals(testNews.getTitle(), news.getTitle());
-        Assert.assertEquals(testNews.getBody(), news.getBody());
+        Assert.assertEquals(mockNews.getTitle(), news.getTitle());
+        Assert.assertEquals(mockNews.getBody(), news.getBody());
         Mockito.verify(mockNewsDao).create(newsBuilder);
     }
 
     @Test
     public void testFindByNewsId() {
-        News.NewsBuilder newsBuilder = new News.NewsBuilder(testUser.getId(), BODY, TITTLE, SUBTITTLE);
-        Mockito.when(mockNewsDao.create(Mockito.eq(newsBuilder))).thenReturn(testNews);
-        Mockito.when(mockNewsDao.getById(Mockito.eq(testNews.getNewsId()), null)).thenReturn(Optional.of(mockFullNews));
-        News news = newsService.create(newsBuilder);
+        News.NewsBuilder newsBuilder = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
+        Mockito.when(mockNewsDao.create(Mockito.eq(newsBuilder))).thenReturn(mockNews);
+        Mockito.when(mockNewsDao.getById(Mockito.eq(mockNews.getNewsId()), null)).thenReturn(Optional.of(mockFullNews));
 
-        Mockito.verify(mockNewsDao).create(newsBuilder);
-        Assert.assertEquals(testNews.getNewsId(), news.getNewsId());
+        Optional<FullNews> news = newsService.getById(mockNews.getNewsId());
+
+        Assert.assertEquals(mockFullNews.getNews().getNewsId(), news.get().getNews().getNewsId());
     }
 }
