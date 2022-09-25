@@ -59,8 +59,6 @@ public class NewsController {
 
     }
 
-
-
     @RequestMapping(value = "/news/create", method = RequestMethod.POST)
     public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
                                      final BindingResult errors) throws IOException {
@@ -84,7 +82,6 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
 
-//        Optional<News> maybeNews = newsService.getById(newsId);
         Optional<FullNews> maybeNews = newsService.getById(newsId);
 
         if (!maybeNews.isPresent()) {
