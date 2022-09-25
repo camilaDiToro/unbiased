@@ -76,10 +76,31 @@
                                 <c:set var="loggedParams" value="${fullNews.loggedUserParameters}"/>
                                 <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
 
-
+                                <!-- Modal -->
+                                <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <spring:message code="profile.modal.msg"/>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                                <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
+                                                    <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col mb-4">
-                                    <div class="card h-100 d-flex flex-row" id="none_shadow">
+                                    <div class="card h-100 d-flex flex-row">
                                         <c:set var="positivity" value="${positivityStats.positivity}"/>
                                         <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
 
@@ -139,28 +160,7 @@
                                                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px" id="bin_button">
                                                                 <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
                                                             </button>
-                                                        <!-- Modal -->
-                                                        <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog modal-dialog-centered">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
-                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <spring:message code="profile.modal.msg"/>
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                                                        <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
-                                                                            <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+
 
                                                     </c:if>
 
