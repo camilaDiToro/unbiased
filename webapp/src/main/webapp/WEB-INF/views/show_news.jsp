@@ -188,6 +188,63 @@
         </div>
 
 
+        <div class="d-flex flex-column w-100 align-items-center">
+            <div class="d-flex flex-column w-75 mb-4">
+
+                <div class="bg-white p-2 px-4">
+
+                    <div class="d-flex flex-column mt-4 mb-4">
+                        <div class="form-group w-100">
+                            <textarea class="form-control w-100" rows="5" id="comment"></textarea>
+                        </div>
+                        <button class="btn btn-primary flex-grow-0 align-self-end" type="button">Comment</button>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="d-flex flex-row w-75 ">
+                <div class="p-4 bg-white">
+
+                    <div >
+                       <div class="d-flex flex-row gap-1 align-items-center">
+                           <div class="img-container-navbar">
+                               <img class="object-fit-cover rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Image Description">
+                           </div>
+                           <h5 class="mb-0">John Doe</h5>
+                       </div>
+                        <span >5 days ago</span>
+                    </div>
+
+                    <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue
+                        felis in faucibus ras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p>
+
+<%--                    <ul class="list-inline d-sm-flex my-0">--%>
+<%--                        <li class="list-inline-item ">--%>
+<%--                            <a class="" href="#!">--%>
+<%--                                <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>--%>
+<%--                                178--%>
+<%--                            </a>--%>
+<%--                        </li>--%>
+<%--                        <li class="list-inline-item ">--%>
+<%--                            <a href="#!">--%>
+<%--                                <i ></i>--%>
+<%--                                34--%>
+<%--                            </a>--%>
+<%--                        </li>--%>
+<%--                        <li class="list-inline-item ml-auto">--%>
+<%--                            <a  href="#!">--%>
+<%--                                <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>--%>
+<%--                                Reply--%>
+<%--                            </a>--%>
+<%--                        </li>--%>
+<%--                    </ul>--%>
+                </div>
+            </div>
+
+        </div>
+
+
 
     </div>
 </div>
