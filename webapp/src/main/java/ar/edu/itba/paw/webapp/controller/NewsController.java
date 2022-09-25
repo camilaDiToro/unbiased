@@ -4,7 +4,6 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
@@ -36,9 +35,7 @@ public class NewsController {
     private final NewsService newsService;
     private final UserService userService;
     private final ImageService imageService;
-
     private final SecurityService securityService;
-
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
