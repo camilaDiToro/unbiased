@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.NewsOrder;
@@ -10,6 +11,8 @@ import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
+import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +39,7 @@ public class HomeController {
         this.ns = ns;
         this.ss = ss;
         this.es = es;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, ss.getCurrentUser());
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, ss);
         this.as = as;
     }
 
@@ -79,8 +82,10 @@ public class HomeController {
         else {
             active = !isActive;
         }
+        final FullNews news = ns.getById(newsId).orElseThrow(NewsNotFoundException::new);
 
-        return new ResponseEntity<>(new UpvoteActionResponse(ns.getUpvotes(newsId), active), HttpStatus.OK);
+        return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), active), HttpStatus.OK);
+//        return String.format(fmt, ns.getUpvotes(newsId), active);
     }
 
     @RequestMapping(value = "/change-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")

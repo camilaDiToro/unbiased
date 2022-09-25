@@ -1,16 +1,17 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
-import ar.edu.itba.paw.service.ImageService;
-import ar.edu.itba.paw.service.NewsService;
-import ar.edu.itba.paw.service.SecurityService;
-import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
+import ar.edu.itba.paw.webapp.form.ReportNewsForm;
+import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
+import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -36,17 +37,21 @@ public class NewsController {
     private final UserService userService;
     private final ImageService imageService;
     private final SecurityService securityService;
+    private final AdminService adminService;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
     @Autowired
-    public NewsController(final NewsService newsService, final UserService userService, ImageService imageService, SecurityService ss){
+    public NewsController(final AdminService adminService, final NewsService newsService, final UserService userService, ImageService imageService, SecurityService ss){
         this.newsService = newsService;
         this.userService = userService;
         this.imageService = imageService;
         this.securityService = ss;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService.getCurrentUser());
+        this.adminService = adminService;
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
+
+
 
     @RequestMapping(value = "/news/create", method = RequestMethod.POST)
     public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
@@ -70,22 +75,36 @@ public class NewsController {
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        FullNews news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         newsService.deleteNews(news);
-        return new ModelAndView("redirect:/profile/" + news.getCreatorId());
+        return new ModelAndView("redirect:/profile/" + news.getNews().getCreatorId());
+    }
+
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/report", method = RequestMethod.POST)
+    public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                   final BindingResult errors) {
+        if (errors.hasErrors()) {
+            return showNews(newsId, reportNewsFrom, true);
+        }
+        adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        return new ModelAndView("redirect:/news/" + newsId);
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView profile(@PathVariable("newsId") long newsId){
+    public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                 @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors){
 
-        FullNews fullNews = newsService.getFullNewsById(newsId).orElseThrow(NewsNotFoundException::new);
+        FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         News news = fullNews.getNews();
         Locale locale = LocaleContextHolder.getLocale();
 
         return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
-                .withObject("date", LocalDate.now().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
+                .withObject("date", news.getCreationDate().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
                 .withObject("fullNews", fullNews)
-                .withObject("categories", newsService.getNewsCategory(news)).build();
+                .withObject("hasReported", adminService.hasReported(newsId ))
+                .withObject("reportReasons", ReportReason.values())
+                .withObject("hasErrors", hasErrors)
+                .withObject("categories", newsService.getNewsCategory(fullNews)).build();
 
     }
 
@@ -107,7 +126,7 @@ public class NewsController {
     @ResponseBody
     public ResponseEntity<SavedResult> saveNews(@PathVariable(value = "newsId") long newsId){
         Optional<User> maybeUser = securityService.getCurrentUser();
-        Optional<News> maybeNews = newsService.getById(newsId);
+        Optional<FullNews> maybeNews = newsService.getById(newsId);
 
         if (!maybeUser.isPresent() || !maybeNews.isPresent()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -132,8 +151,10 @@ public class NewsController {
             return createArticleAndValidate(createNewsFrom, errors);
         }
 
+        String htmlText = TextUtils.convertMarkdownToHTML(createNewsFrom.getBody());
+
         final User user = securityService.getCurrentUser().get();
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), htmlText, createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
         for(String category : createNewsFrom.getCategories()){
             Category c = Category.getByInterCode(category);

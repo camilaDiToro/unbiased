@@ -36,33 +36,36 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public Optional<News> getById(long id) {
-        return newsDao.getById(id);
+    public Optional<FullNews> getById(long id) {
+        return newsDao.getById(id, getLoggedUserId());
     }
 
-    @Override
-    public Optional<FullNews> getFullNewsById(long id) {
-        Optional<News> maybeNews = newsDao.getById(id);
-        if (maybeNews.isPresent()) {
-            return Optional.of(getFullNews(maybeNews.get()));
-        }
+//    @Override
+//    public Optional<FullNews> getNewsById(long id) {
+//        Optional<News> maybeNews = newsDao.getById(id);
+//        if (maybeNews.isPresent()) {
+//            return Optional.of(getFullNews(maybeNews.get()));
+//        }
+//
+//        return Optional.empty();
+//
+//    }
 
-        return Optional.empty();
+//    private FullNews getFullNews(News news) {
+//        long newsId = news.getNewsId();
+////        NewsStats newsStats = newsDao.getNewsStats(newsId);
+//        Optional<User> maybeUser = securityService.getCurrentUser();
+//        LoggedUserParameters loggedUserParameters = null;
+//        if (maybeUser.isPresent()) {
+//            User user = maybeUser.get();
+//            loggedUserParameters = new LoggedUserParameters(upvoteState(news, user), isSaved(news, user));
+//
+//        }
+//        return new FullNews(news, userDao.getUserById(news.getCreatorId()).get(), newsDao.getNewsStats(newsId), loggedUserParameters);
+//    }
 
-    }
-
-    private FullNews getFullNews(News news) {
-        long newsId = news.getNewsId();
-        double positiveValue = newsDao.getPositivityValue(newsId);
-        Positivity positivity = Positivity.getPositivvity(positiveValue);
-        Optional<User> maybeUser = securityService.getCurrentUser();
-        LoggedUserParameters loggedUserParameters = null;
-        if (maybeUser.isPresent()) {
-            User user = maybeUser.get();
-            loggedUserParameters = new LoggedUserParameters(upvoteState(news, user), isSaved(news, user));
-
-        }
-        return new FullNews(news, userDao.getUserById(news.getCreatorId()).get(), newsDao.getUpvotes(newsId), positivity, positiveValue, loggedUserParameters);
+    private Long getLoggedUserId() {
+        return securityService.getCurrentUser().map(User::getId).orElse(null);
     }
 
     @Override
@@ -70,26 +73,28 @@ public class NewsServiceImpl implements NewsService{
         int totalPages;
         page = page <= 0 ? 1 : page;
 
+        Long loggedUser = getLoggedUserId();
+
         NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
-        List<News> ln;
+        List<FullNews> ln;
         if (category.equals("ALL")) {
             totalPages = newsDao.getTotalPagesAllNews(query);
             page = Math.min(page, totalPages);
-            ln = newsDao.getNews(page, query, newsOrderObject);
+            ln = newsDao.getNews(page, query, newsOrderObject, loggedUser);
         }
         else {
             Category catObject = Category.getByValue(category);
             totalPages = newsDao.getTotalPagesCategory(catObject);
             page = Math.min(page, totalPages);
-            ln = newsDao.getNewsByCategory(page, catObject, newsOrderObject);
+            ln = newsDao.getNewsByCategory(page, catObject, newsOrderObject, loggedUser);
         }
-        return new Page<>(ln.stream().map(this::getFullNews).collect(Collectors.toList()),page,totalPages);
+        return new Page<>(ln,page,totalPages);
     }
 
-    @Override
-    public Page<FullNews> getNewsFromUser(int page, String newsOrder, long userId) {
-        return getNewsForUserProfile(page, newsOrder, userId, ProfileCategory.MY_POSTS.toString());
-    }
+//    @Override
+//    public Page<FullNews> getNewsFromUser(int page, String newsOrder, long userId) {
+//        return getNewsForUserProfile(page, newsOrder, userId, ProfileCategory.MY_POSTS.toString());
+//    }
 
     @Override
     public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String profileCategory) {
@@ -97,89 +102,108 @@ public class NewsServiceImpl implements NewsService{
         NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
         int totalPages = 0;
 
-        List<News> ln = null;
+        Optional<User> maybeUser = securityService.getCurrentUser();
+
+        Long loggedUserId = maybeUser.map(User::getId).orElse(null);
+
+        List<FullNews> ln = null;
         ProfileCategory pc = ProfileCategory.valueOf(profileCategory);
         switch (pc) {
-            case SAVED: ln = newsDao.getSavedNewsFromUser(page,userId,newsOrderObject);
+            case SAVED:
                 totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, userId);
+                ln = newsDao.getSavedNews(page,userId,newsOrderObject, loggedUserId);
+
 
                 break;
 
-            case UPVOTED: ln = newsDao.getNewsUpvotedByUser(page,userId,newsOrderObject);
+            case UPVOTED:
                 totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
+                ln = newsDao.getNewsUpvotedByUser(page,userId,newsOrderObject, loggedUserId);
+
 
                 break;
 
-            case DOWNVOTED: ln = newsDao.getNewsDownvotedByUser(page,userId,newsOrderObject);
-                totalPages = newsDao.getTotalPagesNewsFromUserDownvoted(page, userId);
+            case DOWNVOTED:
+                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
+                ln = newsDao.getNewsDownvotedByUser(page,userId,newsOrderObject, loggedUserId);
 
                 break;
 
-            case MY_POSTS: ln  = newsDao.getAllNewsFromUser(page,userId,newsOrderObject);
+            case MY_POSTS:
                 totalPages = newsDao.getTotalPagesNewsFromUser(page, userId);
+                ln = newsDao.getAllNewsFromUser(page,userId,newsOrderObject, loggedUserId);
 
         };
 
         page = Math.min(page, totalPages);
 
-        return new Page<>(ln.stream().map(this::getFullNews).collect(Collectors.toList()), page, totalPages);
+        return new Page<>(ln, page, totalPages);
     }
 
-    @Override
-    public List<Category> getNewsCategory(News news) {
-        return newsDao.getNewsCategory(news);
-    }
+    /*@Override
+    public Page<News> getNewsFromUser(int page, String newsOrder, long userId) {
+        page = page <= 0 ? 1 : page;
+        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
+        int totalPages = newsDao.getTotalPagesNewsFromUser(page, userId, newsOrderObject);
+        page = Math.min(page, totalPages);
+        List<News> ln = newsDao.getAllNewsFromUser(page,userId,newsOrderObject);
+        return new Page<>(ln, page, totalPages);
+    }*/
 
     @Override
-    public int getUpvotes(Long newsId) {
-        return newsDao.getUpvotes(newsId);
+    public List<Category> getNewsCategory(FullNews news) {
+        return newsDao.getNewsCategory(news.getNews());
     }
-    @Override
 
-    public Rating upvoteState(News news, User user) {
-        return newsDao.upvoteState(news, user);
-    }
+//    @Override
+//    public int getUpvotes(Long newsId) {
+//        return newsDao.getUpvotes(newsId);
+//    }
+//    @Override
+//
+//    public Rating upvoteState(News news, User user) {
+//        return newsDao.upvoteState(news, user);
+//    }
 
     @Override
     public void setRating(Long newsId, Long userId, Rating rating) {
         newsDao.setRating(newsId, userId, rating);
     }
-    @Override
-    public double getPositivityValue(Long newsId) {
-        return newsDao.getPositivityValue(newsId);
-    }
+//
+
+//    @Override
+//    public Positivity getPositivityBracket(Long newsId) {
+//        return Positivity.getPositivvity(getPositivityValue(newsId));
+//    }
+
+//    @Override
+//    public List<FullNews> getSavedNews(int page, User user, NewsOrder ns) {
+////        List<FullNews> news = newsDao.getSavedNews(page, user.getId(), ns);
+//        return null;
+////        return news.stream().map(this::getFullNews).collect(Collectors.toList());
+//    }
 
     @Override
-    public Positivity getPositivityBracket(Long newsId) {
-        return Positivity.getPositivvity(getPositivityValue(newsId));
-    }
+    public boolean toggleSaveNews(FullNews news, User user) {
 
-    @Override
-    public List<FullNews> getSavedNews(int page, User user, NewsOrder ns) {
-        List<News> news = newsDao.getSavedNews(page, user, ns);
-        return news.stream().map(this::getFullNews).collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean toggleSaveNews(News news, User user) {
-        if (newsDao.isSaved(news, user)) {
-            newsDao.removeSaved(news, user);
+        if (news.getLoggedUserParameters().isSaved()) {
+            newsDao.removeSaved(news.getNews(), user);
             return false;
         }
 
         else
-            newsDao.saveNews(news, user);
+            newsDao.saveNews(news.getNews(), user);
         return true;
     }
-    @Override
-    public boolean isSaved(News news, User user) {
-        return newsDao.isSaved(news, user);
-    }
+//    @Override
+//    public boolean isSaved(News news, User user) {
+//        return newsDao.isSaved(news, user);
+//    }
 
     @Override
-    public void deleteNews(News news) {
-        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
+    public void deleteNews(FullNews news) {
+        if(news.getNews().getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
             throw new UserNotAuthorized();
-        newsDao.deleteNews(news.getNewsId());
+        newsDao.deleteNews(news.getNews().getNewsId());
     }
 }

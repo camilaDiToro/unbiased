@@ -17,7 +17,7 @@
         <div class="d-flex h-75 gap-2 align-items-center">
 <c:if test="${loggedUser != null}">
     <a href="<c:url value="/create_article"/>">
-        <button type="button" class="btn btn-info">
+        <button type="button" class="btn btn-info" style="border-radius: 999px">
             <spring:message code="home.createArticle.button"/>
         </button></a>
 </c:if>
@@ -30,7 +30,7 @@
             <c:if test="${loggedUser != null}">
                 <div class="dropdown dropdown-p">
                     <button class="btn btn-primary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <div class="w-fit d-flex flex-row align-items-center gap-1 border-info">
+                                                    <div class="w-fit d-flex flex-row align-items-center gap-1 border-info justify-content-center" style="min-width: 150px">
 
                                                         <div class="img-container-navbar">
                                                             <c:if test="${loggedUser.hasImage()}">
@@ -51,6 +51,9 @@
                     <div id="navbar-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>"><spring:message code="navbar.myProfile"/></a>
                         <a class="dropdown-item" href="<c:url value="/logout"/>"><spring:message code="navbar.logOut"/> </a>
+                        <c:if test="${isAdmin}">
+                            <a class="dropdown-item" href="<c:url value="/admin/reported_news"/>"><spring:message code="navbar.adminPanel"/> </a>
+                        </c:if>
                     </div>
 
                 </div>

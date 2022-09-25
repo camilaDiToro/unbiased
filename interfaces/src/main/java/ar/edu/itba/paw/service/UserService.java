@@ -23,6 +23,9 @@ public interface UserService {
     List<String> getRoles(long userId);
     void updateProfile(long userId, String username, Long imageId);
     Optional<User> findByUsername(String username);
+    boolean isFollowing(long followId);
 
     void followUser(long followId);
+
+    void unfollowUser(long followId);
 }

@@ -149,6 +149,20 @@ public class UserServiceImpl implements UserService {
         userDao.addFollow(user.getId(), followId);
     }
 
+    @Override
+    public void unfollowUser(long followId) {
+        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        User unfollow = getRegisteredUserById(followId).orElseThrow(UserNotFoundException::new);
+        userDao.unfollow(user.getId(), followId);
+    }
+
+    @Override
+    public boolean isFollowing(long followId) {
+        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        User follow = getRegisteredUserById(followId).orElseThrow(UserNotFoundException::new);
+        return userDao.isFollowing(user.getId(), followId);
+    }
+
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
     private void login(long userId) {
         final User user = getUserById(userId).get();

@@ -1,0 +1,137 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<html>
+<c:set var="pageTitle" scope="request" value="${pageTitle}"/>
+<%@ include file="../../resources/head.jsp" %>
+<script src="<c:url value="/resources/upvote-script.js"/>"></script>
+<body>
+<c:set var="reports" value="${reportedNewsPage.content}"/>
+<div class="d-flex h-100 flex-column">
+<%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
+    <%@ include file="../../resources/navbar.jsp" %>
+    <div class="d-flex flex-column h-100">
+        <div class="flex-grow-1 d-flex flex-row">
+
+            <%--LEFT SIDE--%>
+                <div class=" w-25 d-flex flex-column border-right mt-4 m-3">
+<%--                <div class="card" style="width: 18rem; height: 12rem; margin-top: 4%" id="right-card">--%>
+
+<%--                    <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">--%>
+    <h3 class="text-secondary">Moderation panel</h3>
+    <ul class="nav flex-column vertical-menu ">
+        <li class="nav-item">
+            <a class="nav-link selected" href="#">Reported articles</a>
+        </li>
+<%--        <li class="nav-item">--%>
+<%--            <a class="nav-link" href="#">Reported users</a>--%>
+<%--        </li>--%>
+<%--        <li class="nav-item">--%>
+<%--            <a class="nav-link" href="#">Reported comments</a>--%>
+<%--        </li>--%>
+
+    </ul>
+
+
+    </div>
+            <%--RIGHT SIDE--%>
+            <div class="d-flex w-75 flex-column">
+<%--                <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">--%>
+<%--                    <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>--%>
+<%--                    <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>--%>
+<%--                    <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">--%>
+<%--                        <c:forEach var="order" items="${orders}">--%>
+<%--                            <li class="nav-item">--%>
+<%--                                <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_news_detail/${newsId}/${order}">--%>
+
+<%--                    </c:url>"><spring:message code="${order.interCode}"/></a>--%>
+<%--                            </li>--%>
+<%--                        </c:forEach>--%>
+
+<%--                    </ul>--%>
+<%--                </div>--%>
+                <div class="w-100 my-2">
+                    <a  href="<c:url value="/admin/reported_news"/>">
+                        <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="width: 50px;">
+
+                    </a>
+                </div>
+                <table class="table flex-grow-0">
+                    <thead>
+                    <tr>
+                        <th scope="col">User</th>
+                        <th scope="col">Reason</th>
+                        <th scope="col">Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:set var="reports" value="${reportedNewsPage.content}"/>
+                    <c:forEach var="report" items="${reports}">
+                        <tr>
+                            <td><c:out value="${report.reporter}"/></td>
+                            <td><spring:message code="${report.reason.interCode}"/></td>
+                            <td><c:out value="${report.getFormattedDate(locale)}"/></td>
+                        </tr>
+                    </c:forEach>
+
+                    </tbody>
+                </table>
+                    <button data-toggle="modal" data-target="#binModal" class="btn btn-danger delete-btn">Delete article</button>
+
+                <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <spring:message code="profile.modal.msg"/>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                <form method="post" action="<c:url value="/admin/reported_news/${newsId}/delete"/>">
+                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <c:if test="${not empty reports}">
+            <nav class="d-flex justify-content-center align-items-center">
+                <ul class="pagination">
+
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news_detail/${newsId}">
+                        <c:param name = "page" value = "1"/>
+                        </c:url>"><spring:message code="home.pagination.first"/></a></li>
+
+
+                    <c:forEach var = "i" begin = "${reportedNewsPage.minPage}" end = "${reportedNewsPage.maxPage}">
+                        <li class="page-item"><a class="page-link ${i == reportedNewsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/admin/reported_news_detail/${newsId}">
+                        <c:param name = "page" value = "${i}"/>
+                        </c:url>"><c:out value="${i}"/></a></li>
+                    </c:forEach>
+
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news_detail/${newsId}">
+                        <c:param name = "page" value = "${reportedNewsPage.totalPages}"/>
+                        </c:url>"><spring:message code="home.pagination.last"/></a></li>
+
+                </ul>
+            </nav>
+        </c:if>
+
+
+    </div>
+</div>
+</body>
+</html>

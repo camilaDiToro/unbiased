@@ -17,4 +17,8 @@ public interface UserDao {
     void updateUsername(long userId, String username);
     void updateImage(long userId, Long imageId);
     void addFollow(long userId, long follows);
+
+    void unfollow(long userId, long follows);
+
+   boolean isFollowing(long userId, long followId);
 }

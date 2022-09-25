@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
@@ -11,33 +12,33 @@ import java.util.Optional;
 
 public interface NewsDao {
 
-    List<News> getNews(int page, NewsOrder ns);
+//    List<News> getNews(int page, NewsOrder ns, Long loggedUser);
     int getTotalPagesAllNews();
-    List<News> getNews(int page, String query, NewsOrder ns);
+    List<FullNews> getNews(int page, String query, NewsOrder ns, Long loggedUser);
     int getTotalPagesAllNews(String query);
     News create(News.NewsBuilder newsBuilder);
-    Optional<News> getById(long id);
-    List<News> getNewsByCategory(int page, Category category, NewsOrder ns);
+    Optional<FullNews> getById(long id, Long loggedUser);
+    List<FullNews> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser);
     int getTotalPagesCategory(Category category);
     List<Category> getNewsCategory(News news);
 
-    int getUpvotes(Long newsId);
+//    int getUpvotes(Long newsId);
 
-    Rating upvoteState(News news, User user);
+//    Rating upvoteState(News news, User user);
 
     void setRating(Long newsId, Long userId, Rating rating);
 
-    double getPositivityValue(Long newsId);
+//    NewsStats getNewsStats(Long newsId);
 
-    List<News> getSavedNews(int page, User user, NewsOrder ns);
+    List<FullNews> getSavedNews(int page, long userId, NewsOrder ns, Long loggedUser);
 
     void saveNews(News news, User user);
 
-    boolean isSaved(News news, User user);
+//    boolean isSaved(News news, User user);
 
     void removeSaved(News news, User user);
 
-    List<News> getAllNewsFromUser(int page, long userId, NewsOrder ns);
+    List<FullNews> getAllNewsFromUser(int page, long userId, NewsOrder ns, Long loggedUser);
     int getTotalPagesNewsFromUser(int page, long userId);
 
     int getTotalPagesNewsFromUserSaved(int page, long userId);
@@ -49,11 +50,11 @@ public interface NewsDao {
 
     void deleteNews(long newsId);
 
-    List<News> getNewsUpvotedByUser(int page, long userId, NewsOrder ns);
+    List<FullNews> getNewsUpvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser);
 
-    List<News> getNewsDownvotedByUser(int page, long userId, NewsOrder ns);
+    List<FullNews> getNewsDownvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser);
 
-    List<News> getSavedNewsFromUser(int page, long userId, NewsOrder ns);
+//    List<News> getSavedNewsFromUser(int page, long userId, NewsOrder ns, Long loggedUser);
 
 
 }

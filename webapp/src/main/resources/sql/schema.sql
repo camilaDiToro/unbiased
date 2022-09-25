@@ -80,12 +80,40 @@ CREATE TABLE IF NOT EXISTS report (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
     PRIMARY KEY (news_id, user_id)
-);
+    );
+
+DROP VIEW IF EXISTS full_news_with_logged_params;
+
+
+DROP VIEW IF EXISTS full_news;
+
+
+DROP VIEW IF EXISTS news_stats;
+
+DROP VIEW IF EXISTS user_positivity;
+
+
+CREATE OR REPLACE VIEW news_stats AS
+            SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, news_id FROM upvotes GROUP BY news_id;
+
+CREATE OR REPLACE VIEW logged_news_parameters AS
+SELECT user_id AS logged_user, news_id, upvote, saved_date
+FROM upvotes NATURAL FULL JOIN
+saved_news;
+
+CREATE OR REPLACE VIEW full_news AS
+SELECT  news.*, upvotes, downvotes, email, username, pass, status, users.image_id as user_image_id FROM news LEFT JOIN news_stats ON news_stats.news_id = news.news_id JOIN users ON creator = user_id;
+
+CREATE OR REPLACE VIEW full_news_with_logged_params AS
+SELECT upvote, saved_date, logged_news_parameters.logged_user, full_news.news_id, body, title, subtitle, creator, creation_date, accesses, image_id, upvotes, downvotes, email, username, pass, status, user_image_id  FROM logged_news_parameters RIGHT JOIN full_news ON full_news.news_id = logged_news_parameters.news_id;
+
+CREATE OR REPLACE VIEW user_positivity AS
+SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, creator AS user_id FROM upvotes NATURAL JOIN news GROUP BY creator;
 
 CREATE TABLE IF NOT EXISTS follows(
-  user_id           INTEGER     NOT NULL,
-  follows            INTEGER     NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (follows) REFERENCES users(user_id) ON DELETE CASCADE,
-  PRIMARY KEY (follows, user_id)
-);
+                                      user_id           INTEGER     NOT NULL,
+                                      follows            INTEGER     NOT NULL,
+                                      FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (follows) REFERENCES users(user_id) ON DELETE CASCADE,
+    PRIMARY KEY (follows, user_id)
+    );

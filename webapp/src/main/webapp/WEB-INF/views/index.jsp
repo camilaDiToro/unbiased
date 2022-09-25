@@ -9,6 +9,7 @@
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
 <body>
 <c:set var="news" value="${newsPage.content}"/>
+
 <div class="d-flex h-100 flex-column">
 <%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
     <%@ include file="../../resources/navbar.jsp" %>
@@ -41,13 +42,13 @@
                     <c:if test="${query == ''}">
                         <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
                             <li class="nav-item">
-                                <a class="text-capitalize nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                                <a style="background: transparent !important;" class="text-capitalize nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "query" value = "${param.query}"/>
                     </c:url>"><spring:message code="categories.all"/></a>
                             </li>
                             <c:forEach var="cat" items="${categories}">
                                 <li class="nav-item">
-                                    <a class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                                    <a style="background: transparent !important;" class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
 
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
@@ -94,26 +95,40 @@
                                 <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
                                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
 
-
-
-
                                 <div class="col mb-4">
                                     <div class="card h-100 d-flex flex-row" >
+                                        <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
 
-                                        <div class="d-flex flex-column justify-content-between w-60">
+                                        <c:set var="positivity" value="${positivityStats.positivity}"/>
+                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-between ${article.hasImage() ? 'w-60' : 'w-100'}">
                                             <div class="d-flex w-100">
-                                                <div class="w-10 d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
+                                                <div class="upvote-div-home d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
                                                     <c:set var="rating" value="${rating}"/>
 
-                                                        <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
-                                                    <div id="rating" class="${rating.toString()}"><c:out value="${fullNews.upvotes}"/></div>
-                                                    <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                     <c:if test="${loggedUser != null}">
+                                                         <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                         <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
+                                                         <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                     </c:if>
+                                                    <c:if test="${loggedUser == null}">
+                                                        <%--href="<c:url value = "/create"/>"--%>
+                                                        <a data-toggle="modal" data-target="#cardModal">
+                                                            <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
+                                                        </a>
+                                                        <div  ><c:out value="${positivityStats.netUpvotes}"/></div>
+                                                        <a data-toggle="modal" data-target="#cardModal">
+                                                            <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
+                                                        </a>
+
+                                                    </c:if>
 
                                                 </div>
                                                 <div class="card-body-home">
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
-                                                    <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
-                                                    <h6 class="card-subtitle py-1 text-ellipsis"><c:out value="${article.subtitle}"/></h6>
+                                                    <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
+                                                    <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
 
                                                     <div>
                                                         <p class="text-sm-left text-secondary mb-0">
@@ -145,31 +160,25 @@
 
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                            <img onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                            <img id="bookmark" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
                                                         </div>
                                                     </c:if>
 <%--                                                    <button type="button" class="btn btn-sm btn-outline-primary m-1 h-75 max-h-40px"><svg class="h-75" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 4H5a2 2 0 0 0-2 2v15l3.467-2.6a2 2 0 0 1 1.2-.4H19a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg></button>--%>
                                                 </div>
                                             </div>
                                         </div>
-                                            <div class="bg-secondary position-relative w-40">
-                                                <c:set var="positivity" value="${fullNews.positivity}"/>
-                                                <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">
-                                                </div>
-                                                <c:if test="${article.hasImage()}">
+
+                                        <c:if test="${article.hasImage()}">
+
+                                        <div class="bg-secondary position-relative w-40">
+
 
                                                 <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
-                                                </c:if>
-
-                                                <c:if test="${!article.hasImage()}">
-
-                                                    <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">
-                                                </c:if>
-
+<%--                                                <c:if test="${!article.hasImage()}">--%>
+<%--                                                    <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">--%>
+<%--                                                </c:if>--%>
                                             </div>
-
-
-
+                                        </c:if>
 
                                     </div>
                                 </div>
@@ -182,12 +191,14 @@
 
 
                 </div>
-            <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start">
-                <h4 class="card-title"><spring:message code="home.topCreators"/></h4>
+            <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start" id="none_shadow">
+
+                <h5 style="padding-left: 35px; background-image: url('<c:url value="/resources/crown-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="card-title"><spring:message code="home.topCreators"/></h5>
+
 
                 <c:forEach var="creator" items="${topCreators}">
-                    <a class="m-1" href="<c:url value="/profile/${creator.id}"/>">
-                            <div class="card bg-primary text-white d-flex flex-row p-2 creator-card align-items-center">
+                    <a class="m-1" href="<c:url value="/profile/${creator.id}"/>" >
+                            <div class="card bg-primary text-white d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">
 <div class="img-container">
 <c:if test="${creator.hasImage()}">
     <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.imageId}/image"/>" alt="">
@@ -198,7 +209,7 @@
 
     </c:if>
 </div>
-                                <div class="mx-2 text-ellipsis-1"><c:out value="${creator.username != null ? creator.username : creator.email}"/></div>
+                                <div id="name_card" class="mx-2 text-ellipsis-1"><c:out value="${creator.username != null ? creator.username : creator.email}"/></div>
                             </div>
                     </a>
                 </c:forEach>
@@ -231,6 +242,50 @@
             </ul>
         </nav>
     </c:if>
+</div>
+
+<!-- Principal card modal-->
+<div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cardModalLabel"><spring:message code="home.modal.signIn"/> </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <c:url value="/login" var="loginUrl" />
+                <form action="${loginUrl}" method="post">
+                    <div >
+                        <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
+
+                    </div>
+                    <div style="margin-top: 2%" >
+                        <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
+                        <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
+                    </div>
+
+                    <c:if test="${param.error}">
+                        <div class="text-danger text-nowrap form-text d-inline-block">
+                            <spring:message code="login.error"/>
+                        </div>
+                    </c:if>
+                    <c:if test="${param.unable}">
+                        <div class="text-danger text-nowrap form-text d-inline-block">
+                            <spring:message code="login.emailNotVerified"/>
+                        </div>
+                        <div class="text-danger text-nowrap form-text d-inline-block">
+                            <spring:message code="login.emailResended"/>
+                        </div>
+                    </c:if>
+                    <button class="btn btn-lg btn-info btn-block" type="submit"><spring:message code="login.signIn"/></button>
+                </form>
+
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller;
+package ar.edu.itba.paw.webapp.model;
 
 import ar.edu.itba.paw.model.news.TextType;
 
