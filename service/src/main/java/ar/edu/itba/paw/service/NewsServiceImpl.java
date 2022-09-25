@@ -5,13 +5,13 @@ import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.LoggedUserParameters;
+import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.ws.http.HTTPException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -177,11 +177,9 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public void deleteNews(long newsId) {
-        News news = newsDao.getById(newsId).orElseThrow(NewsNotFoundException::new);
-
+    public void deleteNews(News news) {
         if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
             throw new UserNotAuthorized();
-        newsDao.deleteNews(newsId);
+        newsDao.deleteNews(news.getNewsId());
     }
 }

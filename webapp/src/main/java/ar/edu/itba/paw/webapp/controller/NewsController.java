@@ -70,14 +70,8 @@ public class NewsController {
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-
-        Optional<News> maybeNews = newsService.getById(newsId);
-        if (!maybeNews.isPresent()) {
-            throw new NewsNotFoundException();
-        }
-
-        News news = maybeNews.get();
-        newsService.deleteNews(news.getNewsId());
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.deleteNews(news);
         return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
 

@@ -45,7 +45,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public void deleteNews(long newsId) {
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        newsService.deleteNews(newsId);
+        newsService.deleteNews(news);
     }
 
     @Override
