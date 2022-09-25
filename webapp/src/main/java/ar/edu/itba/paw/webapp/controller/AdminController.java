@@ -83,7 +83,7 @@ public class AdminController {
 //            return
 //        }
         adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
-        return new ModelAndView("redirect:/admin/reported_news");
+        return new ModelAndView("redirect:/news/" + newsId);
     }
 
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)

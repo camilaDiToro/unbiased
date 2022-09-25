@@ -64,20 +64,22 @@
 
         </c:if>
         <div class="d-flex align-items-center justify-content-between">
-            <div class="d-flex gap-1 align-items-center justify-content-center">
+            <div class="d-flex gap-1 align-items-center justify-content-between w-100">
                 <div class="d-flex align-items-center justify-content-center">
                     <h4 class="text-lg-left mb-0"><c:out value="${news.subtitle}"/></h4>
 
                 </div>
                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
-                <c:if test="${user != null}">
-                    <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center" >
-                        <img id="bookmark" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
-                    </div>
+                <c:if test="${loggedUser != null}">
+                    <div class="d-flex flex-row">
+                        <div class="ml-2 news-bookmark d-flex justify-content-center align-items-center" >
+                            <img id="bookmark" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
+                        </div>
 
-                        <div class=" m-1 news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
+                        <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
                             <img ${hasReported ? '' : 'data-toggle="modal" data-target="#binModal"'} class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
                         </div>
+                    </div>
 
                     <!-- Modal -->
                     <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
@@ -126,24 +128,26 @@
             </div>
         <p class="text-sm-left text-secondary"><c:out value="${date}"/>&nbsp · &nbsp<c:out value="${fullNews.readTime}"/> min read</p>
 
-            <div class="w-fit">
-                <a href="<c:url value="/profile/${user.id}"/>" class="w-fit">
-                    <div class="card w-fit d-flex flex-row align-items-center p-2 gap-1">
+        <div class="w-fit">
+            <a href="<c:url value="/profile/${user.id}"/>" class="w-fit">
+                <div class="w-fit d-flex flex-row align-items-center p-2 gap-1">
 
-                <div class="img-container-article">
-                    <c:if test="${user.hasImage()}">
-                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
+                    <div class="img-container-article">
+                        <c:if test="${user.hasImage()}">
+                            <img class="rounded-circle object-fit-cover mr-1"
+                                 src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
 
-                    </c:if>
-                    <c:if test="${!user.hasImage()}">
-                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+                        </c:if>
+                        <c:if test="${!user.hasImage()}">
+                            <img class="rounded-circle object-fit-cover mr-1"
+                                 src="<c:url value="/resources/profile-image.png"/>" alt="">
 
-                    </c:if>
-                </div>
-                <b><c:out value="${user.username != null ? user.username : user.email}"/></b>
+                        </c:if>
                     </div>
-                </a>
-            </div>
+                    <b><c:out value="${user.username != null ? user.username : user.email}"/></b>
+                </div>
+            </a>
+        </div>
         <div class="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
             <c:if test="${not empty categories}">
                 <div class="text-sm-left font-weight-bold">
