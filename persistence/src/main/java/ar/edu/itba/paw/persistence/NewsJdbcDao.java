@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 
 @Repository
-public class NewsJdbcDao implements NewsDao{
+public class NewsJdbcDao implements NewsDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
@@ -52,7 +52,7 @@ public class NewsJdbcDao implements NewsDao{
 //                    .build();
 
     private static final RowMapper<FullNews> FULLNEWS_ROW_MAPPER = (rs, rowNum) -> {
-        News news = new News.NewsBuilder(   rs.getLong("creator"),
+        News news = new News.NewsBuilder(rs.getLong("creator"),
                 rs.getString("body"),
                 rs.getString("title"),
                 rs.getString("subtitle"))
@@ -68,7 +68,6 @@ public class NewsJdbcDao implements NewsDao{
                 .pass(rs.getString("pass"))
                 .imageId(userImageId == 0 ? null : userImageId)
                 .status(rs.getString("status")).build();
-
 
 
         PositivityStats stats = new PositivityStats(rs.getInt("upvotes"), rs.getInt("downvotes"));
@@ -93,7 +92,6 @@ public class NewsJdbcDao implements NewsDao{
                 .status(rs.getString("status")).build();
 
 
-
         return new Comment(creator, rs.getString("comment"), rs.getTimestamp("commented_date").toLocalDateTime());
     };
 
@@ -108,10 +106,8 @@ public class NewsJdbcDao implements NewsDao{
     private final static RowMapper<Integer> UPVOTES_MAPPER = (rs, rowNum) -> rs.getInt("upvotes");
 
 
-
-
     @Autowired
-    public NewsJdbcDao(final DataSource dataSource, final CategoryDao categoryDao){
+    public NewsJdbcDao(final DataSource dataSource, final CategoryDao categoryDao) {
         jdbcTemplate = new JdbcTemplate(dataSource);
         namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
@@ -126,10 +122,10 @@ public class NewsJdbcDao implements NewsDao{
     @Override
     public News create(News.NewsBuilder newsBuilder) {
 
-        final Map<String,Object> newsData = new HashMap<>();
-        newsData.put("body",newsBuilder.getBody());
+        final Map<String, Object> newsData = new HashMap<>();
+        newsData.put("body", newsBuilder.getBody());
         newsData.put("title", newsBuilder.getTitle());
-        newsData.put("subtitle",newsBuilder.getSubtitle());
+        newsData.put("subtitle", newsBuilder.getSubtitle());
         newsData.put("creator", newsBuilder.getCreatorId());
         newsData.put("creation_date", Timestamp.valueOf(newsBuilder.getCreationDate()));
         newsData.put("image_id", newsBuilder.getImageId());
@@ -137,7 +133,7 @@ public class NewsJdbcDao implements NewsDao{
 
         final long newsId = jdbcInsert.executeAndReturnKey(newsData).longValue();
 
-        for(Category c : newsBuilder.getCategories()){
+        for (Category c : newsBuilder.getCategories()) {
             categoryDao.addCategoryToNews(newsId, c);
         }
 
@@ -151,57 +147,55 @@ public class NewsJdbcDao implements NewsDao{
 
     @Override
     public int getTotalPagesAllNews() {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news" , ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
-        return total==0?1:total;
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news", ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount / PAGE_SIZE);
+        return total == 0 ? 1 : total;
     }
 
     @Override
     public List<FullNews> getNews(int page, String query, NewsOrder ns, Long loggedUser) {
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("pageSize", PAGE_SIZE)
-                .addValue("offset", (page-1)*PAGE_SIZE)
+                .addValue("offset", (page - 1) * PAGE_SIZE)
                 .addValue("loggedId", loggedUser)
                 .addValue("query", "%" + query.toLowerCase() + "%");
         if (loggedUser != null) {
             return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
                             "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM full_news NATURAL LEFT JOIN logged_params " +
-                            "WHERE LOWER(title) LIKE :query ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                    params,FULLNEWS_ROW_MAPPER);
+                            "WHERE LOWER(title) LIKE :query ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
 
         }
-        return namedJdbcTemplate.query("SELECT *,null as logged_user FROM full_news WHERE LOWER(title) LIKE :query ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                params,FULLNEWS_ROW_MAPPER);
+        return namedJdbcTemplate.query("SELECT *,null as logged_user FROM full_news WHERE LOWER(title) LIKE :query ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                params, FULLNEWS_ROW_MAPPER);
     }
-
 
 
     @Override
     public int getTotalPagesAllNews(String query) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?" ,
-                new Object[]{"%" + query.toLowerCase() + "%"},ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
-        return total==0?1:total;
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?",
+                new Object[]{"%" + query.toLowerCase() + "%"}, ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount / PAGE_SIZE);
+        return total == 0 ? 1 : total;
     }
 
 
     @Override
     public Optional<FullNews> getById(long id, Long loggedUser) {
         Optional<FullNews> news;
-       if (loggedUser != null) {
-           news =  jdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = ?) " +
-                           "SELECT full_news.*, upvote, saved_date, ? AS logged_user FROM full_news NATURAL LEFT JOIN logged_params WHERE news_id = ?",
-                   new Object[] { loggedUser, loggedUser, id }, FULLNEWS_ROW_MAPPER).stream().findFirst();
+        if (loggedUser != null) {
+            news = jdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = ?) " +
+                            "SELECT full_news.*, upvote, saved_date, ? AS logged_user FROM full_news NATURAL LEFT JOIN logged_params WHERE news_id = ?",
+                    new Object[]{loggedUser, loggedUser, id}, FULLNEWS_ROW_MAPPER).stream().findFirst();
 
-       }
-       else {
-           news =  jdbcTemplate.query(
-                           "SELECT *, null as logged_user FROM full_news  WHERE news_id = ?",
-                   new Object[] { id }, FULLNEWS_ROW_MAPPER).stream().findFirst();
-       }
+        } else {
+            news = jdbcTemplate.query(
+                    "SELECT *, null as logged_user FROM full_news  WHERE news_id = ?",
+                    new Object[]{id}, FULLNEWS_ROW_MAPPER).stream().findFirst();
+        }
 
-        jdbcTemplate.update("UPDATE news SET accesses = accesses + 1 WHERE news_id = ?",id);
-       return news;
+        jdbcTemplate.update("UPDATE news SET accesses = accesses + 1 WHERE news_id = ?", id);
+        return news;
 
     }
 
@@ -212,47 +206,46 @@ public class NewsJdbcDao implements NewsDao{
 //    }
 
 
-
     @Override
     public List<FullNews> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser) {
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("pageSize", PAGE_SIZE)
-                .addValue("offset", (page-1)*PAGE_SIZE)
+                .addValue("offset", (page - 1) * PAGE_SIZE)
                 .addValue("loggedId", loggedUser)
                 .addValue("category", category.getId());
-        if(loggedUser != null) {
+        if (loggedUser != null) {
             return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
                             "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM full_news NATURAL JOIN news_category NATURAL LEFT JOIN logged_params WHERE category_id = :category" +
-                            " ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                    params,FULLNEWS_ROW_MAPPER);
+                            " ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
         }
-        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM full_news NATURAL JOIN news_category WHERE category_id = :category ORDER BY " +  ns.getQuery() +
+        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM full_news NATURAL JOIN news_category WHERE category_id = :category ORDER BY " + ns.getQuery() +
                         " LIMIT :pageSize OFFSET :offset ",
-                params,FULLNEWS_ROW_MAPPER);
+                params, FULLNEWS_ROW_MAPPER);
     }
 
     @Override
     public List<Category> getNewsCategory(News news) {
-        List<Category> categories =  jdbcTemplate.query("SELECT category_id FROM news NATURAL JOIN news_category WHERE news_id = ?",
-                new Object[]{news.getNewsId()},CATEGORIES_ROW_MAPPER);
+        List<Category> categories = jdbcTemplate.query("SELECT category_id FROM news NATURAL JOIN news_category WHERE news_id = ?",
+                new Object[]{news.getNewsId()}, CATEGORIES_ROW_MAPPER);
         return categories;
     }
 
     @Override
     public List<FullNews> getAllNewsFromUser(int page, long userId, NewsOrder ns, Long loggedUser) {
-       SqlParameterSource params = new MapSqlParameterSource()
-               .addValue("creatorId", userId)
-               .addValue("pageSize", PROFILE_PAGE_SIZE)
-               .addValue("offset", (page-1)*PROFILE_PAGE_SIZE)
-               .addValue("loggedId", loggedUser);
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("creatorId", userId)
+                .addValue("pageSize", PROFILE_PAGE_SIZE)
+                .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE)
+                .addValue("loggedId", loggedUser);
         if (loggedUser != null) {
             return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
                             "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM full_news NATURAL LEFT JOIN logged_params" +
-                            " WHERE creator = :creatorId ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                    params,FULLNEWS_ROW_MAPPER);
+                            " WHERE creator = :creatorId ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
         }
-        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM full_news WHERE creator = :creatorId ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                params,FULLNEWS_ROW_MAPPER);
+        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM full_news WHERE creator = :creatorId ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                params, FULLNEWS_ROW_MAPPER);
 
     }
 
@@ -262,30 +255,53 @@ public class NewsJdbcDao implements NewsDao{
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("userId", userId)
                 .addValue("pageSize", PROFILE_PAGE_SIZE)
-                .addValue("offset", (page-1)*PROFILE_PAGE_SIZE);
+                .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE);
 
 
         if (loggedUser != null) {
-            params.addValue("loggedId", (long)loggedUser);
+            params.addValue("loggedId", (long) loggedUser);
             return namedJdbcTemplate.query(
                     "WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
                             "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM saved_news NATURAL JOIN full_news NATURAL LEFT JOIN logged_params " +
                             " WHERE user_id = :userId  " +
-                            "ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                    params,FULLNEWS_ROW_MAPPER);
+                            "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
         }
 
         return namedJdbcTemplate.query("SELECT *, null as logged_user FROM saved_news NATURAL JOIN full_news " +
                         "    WHERE user_id = :userId " +
-                        "ORDER BY " +  ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                params,FULLNEWS_ROW_MAPPER);
+                        "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                params, FULLNEWS_ROW_MAPPER);
 
     }
 
 
-
     private List<FullNews> getNewsWithRatingFromUser(int page, long userId, NewsOrder ns, Long loggedUser, boolean upvote) {
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("pageSize", PROFILE_PAGE_SIZE)
+                .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE)
+                .addValue("loggedId", loggedUser)
+                .addValue("upvote", upvote);
 
+
+        if (loggedUser != null) {
+            return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
+                            "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM upvotes NATURAL JOIN full_news NATURAL LEFT JOIN logged_params " +
+                            " WHERE user_id = :userId AND upvote = :upvote " +
+                            "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
+        }
+        /*
+        WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = 1)
+                   SELECT DISTINCT * FROM upvotes NATURAL JOIN full_news NATURAL LEFT JOIN logged_params
+                           WHERE user_id = 1 AND logged_user = 1 AND upvote = 1
+         */
+
+        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM upvotes NATURAL RIGHT JOIN full_news " +
+                        "    WHERE user_id = :userId AND upvote = :upvote " +
+                        "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                params, FULLNEWS_ROW_MAPPER);
     }
 
     @Override
@@ -300,17 +316,17 @@ public class NewsJdbcDao implements NewsDao{
 
     @Override
     public int getTotalPagesNewsFromUser(int page, long userId) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE creator = ?" ,
-                new Object[]{userId},ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount/PROFILE_PAGE_SIZE);
-        return total==0?1:total;
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE creator = ?",
+                new Object[]{userId}, ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount / PROFILE_PAGE_SIZE);
+        return total == 0 ? 1 : total;
     }
 
     private int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN upvotes WHERE user_id = ? AND upvote = ?" ,
-                new Object[]{userId, upvoted},ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount/PROFILE_PAGE_SIZE);
-        return total==0?1:total;
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN upvotes WHERE user_id = ? AND upvote = ?",
+                new Object[]{userId, upvoted}, ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount / PROFILE_PAGE_SIZE);
+        return total == 0 ? 1 : total;
     }
 
     @Override
@@ -325,23 +341,23 @@ public class NewsJdbcDao implements NewsDao{
 
     @Override
     public int getTotalPagesNewsFromUserSaved(int page, long userId) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN saved_news WHERE user_id = ?" ,
-                new Object[]{userId},ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount/PROFILE_PAGE_SIZE);
-        return total==0?1:total;
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN saved_news WHERE user_id = ?",
+                new Object[]{userId}, ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount / PROFILE_PAGE_SIZE);
+        return total == 0 ? 1 : total;
     }
 
     @Override
     public void deleteNews(long newsId) {
-        jdbcTemplate.update("DELETE FROM news WHERE news_id = ?",newsId);
+        jdbcTemplate.update("DELETE FROM news WHERE news_id = ?", newsId);
     }
 
     @Override
     public int getTotalPagesCategory(Category category) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?" ,
-                new Object[]{category.getId()},ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
-        return total==0?1:total;
+        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?",
+                new Object[]{category.getId()}, ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount / PAGE_SIZE);
+        return total == 0 ? 1 : total;
     }
 
 //    @Override
@@ -358,17 +374,16 @@ public class NewsJdbcDao implements NewsDao{
         if (rating.equals(Rating.NO_RATING))
             return;
 
-        final Map<String,Object> ratingData = new HashMap<>();
-        ratingData.put("news_id",newsId);
+        final Map<String, Object> ratingData = new HashMap<>();
+        ratingData.put("news_id", newsId);
         ratingData.put("user_id", userId);
-        ratingData.put("upvote",rating.equals(Rating.UPVOTE));
+        ratingData.put("upvote", rating.equals(Rating.UPVOTE));
         ratingData.put("interaction_date", Timestamp.valueOf(LocalDateTime.now()));
 
 
         jdbcUpvoteInsert.execute(ratingData);
 
     }
-
 
 
     @Override
@@ -379,9 +394,8 @@ public class NewsJdbcDao implements NewsDao{
 //            return;
 
 
-
-        final Map<String,Object> savedNewsData = new HashMap<>();
-        savedNewsData.put("news_id",news.getNewsId());
+        final Map<String, Object> savedNewsData = new HashMap<>();
+        savedNewsData.put("news_id", news.getNewsId());
         savedNewsData.put("user_id", user.getId());
         savedNewsData.put("saved_date", Timestamp.valueOf(LocalDateTime.now()));
 
@@ -392,16 +406,16 @@ public class NewsJdbcDao implements NewsDao{
 
 
     private int getTotalPagesComments(long newsId) {
-        int rowsCount = jdbcTemplate.queryForObject("SELECT count(*) FROM comments NATURAL JOIN users WHERE news_id = ?" ,
-                new Object[]{newsId},Integer.class);
-        int total = (int) Math.ceil(rowsCount/COMMENT_PAGE_SIZE);
-        return total==0?1:total;
+        int rowsCount = jdbcTemplate.queryForObject("SELECT count(*) FROM comments NATURAL JOIN users WHERE news_id = ?",
+                new Object[]{newsId}, Integer.class);
+        int total = (int) Math.ceil(rowsCount / COMMENT_PAGE_SIZE);
+        return total == 0 ? 1 : total;
     }
 
     @Override
     public void addComment(User user, News news, String comment) {
-        final Map<String,Object> commentData = new HashMap<>();
-        commentData.put("news_id",news.getNewsId());
+        final Map<String, Object> commentData = new HashMap<>();
+        commentData.put("news_id", news.getNewsId());
         commentData.put("user_id", user.getId());
         commentData.put("comment", comment);
 
@@ -416,7 +430,7 @@ public class NewsJdbcDao implements NewsDao{
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("newsId", newsId)
                 .addValue("pageSize", COMMENT_PAGE_SIZE)
-                .addValue("offset", (page - 1) * COMMENT_PAGE_SIZE)
+                .addValue("offset", (page - 1) * COMMENT_PAGE_SIZE);
 
 
         List<Comment> comments = namedJdbcTemplate.query("SELECT * FROM comments NATURAL JOIN users " +
@@ -426,38 +440,5 @@ public class NewsJdbcDao implements NewsDao{
 
         return new Page<>(comments, page, getTotalPagesComments(newsId));
     }
-        /*
-
-
-    }
-
-//    @Override
-//    public Rating upvoteState(News news, User user) {
-//        Optional<Boolean> rating = jdbcTemplate.query("SELECT upvote AS upvote FROM upvotes WHERE user_id = ? AND news_id = ?",
-//                new Object[]{user.getId(), news.getNewsId()},RATING_MAPPER).stream().findFirst();
-//        return rating.map(aBoolean -> aBoolean ? Rating.UPVOTE : Rating.DOWNVOTE).orElse(Rating.NO_RATING);
-//    }
-//
-//    @Override
-//    public boolean isSaved(News news, User user) {
-//        return jdbcTemplate.query("SELECT count(*) AS is_saved FROM saved_news WHERE news_id = ? AND user_id = ?",
-//                new Object[]{news.getNewsId(), user.getId()}, (rs, rowNum) -> rs.getInt("is_saved") > 0).stream().findFirst().get();
-//    }
-
-//    @Override
-//    public LoggedUserParameters getLoggedUserParameters(News news, User user) {
-//        return jdbcTemplate.query("SELECT count(*) AS is_saved, upvote  FROM saved_news WHERE news_id = ? AND user_id = ?",
-//                new Object[]{news.getNewsId(), user.getId()}, (rs, rowNum) -> rs.getInt("is_saved") > 0).stream().findFirst().get();
-//    }
-
-    @Override
-    public void removeSaved(News news, User user) {
-        jdbcTemplate.update("DELETE FROM saved_news WHERE news_id = ? AND user_id = ?",new Object[]{news.getNewsId(), user.getId()});
-    }
-
-
-
-
-
-
 }
+
