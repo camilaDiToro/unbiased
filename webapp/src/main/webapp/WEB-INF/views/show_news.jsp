@@ -35,7 +35,7 @@
 
 
 <div class="d-flex align-items-center justify-content-center w-100 py-4">
-    <div class="h-auto w-75">
+    <div class="h-auto w-75 d-flex flex-column ">
         <div class="d-flex align-items-center  ">
             <div class="d-flex flex-column align-items-center" news-id="<c:out value="${news.newsId}"/>">
                 <c:if test="${loggedUser != null}">
@@ -181,15 +181,16 @@
 <%--            <span class="badge badge-pill badge-primary">Messi</span>--%>
 <%--        </div>--%>
 
-        <div class="d-flex w-100 justify-content-center align-items-center">
+        <div class="d-flex w-100 min-vh-65 justify-content-center align-items-start">
             <div class="article-body">
                 <c:out value="${news.body}" escapeXml="false"/>
             </div>
         </div>
 
 
-        <div class="d-flex flex-column w-100 align-items-center">
-            <div class="d-flex flex-column w-75 mb-4">
+        <div class="d-flex flex-column w-75 align-items-center justify-content-center align-self-center" id="comments">
+            <h2 class="align-self-start my-2">Comments</h2>
+            <div class="d-flex flex-column w-100 mb-4">
 
                 <div class="bg-white p-2 px-4">
 
@@ -203,7 +204,7 @@
 
                 </div>
             </div>
-            <div class="d-flex flex-row w-75 ">
+            <div class="d-flex flex-row w-100">
                 <div class="p-4 bg-white">
 
                     <div >
