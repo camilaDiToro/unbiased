@@ -59,7 +59,6 @@ public class NewsJdbcDaoTest {
         newsDao = new NewsJdbcDao(ds, categoryDao);
         userDao = new UserJdbcDao(ds);
         categoryDao = new CategoryJdbcDao(ds);
-        //adminDao = new AdminJdbcDaoTest(ds);
     }
 
     @Test
@@ -67,55 +66,48 @@ public class NewsJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
         User user = getMockUser();
-        Optional<User> mayBeUser = userDao.getUserById(user.getId());
+        Optional<User> optionalUser = userDao.getUserById(user.getId());
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
 
-        assertTrue(mayBeUser.isPresent());
-        assertNotNull(news);
+        optionalUser.ifPresent(opt -> assertNotNull(news));
         assertEquals(TITTLE, news.getTitle());
         assertEquals(BODY, news.getBody());
     }
 
-    //loggedUser = null
     @Test
-    public void testFindByNewsId() {
+    public void testFindByNewsIdNotLoggedUser() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
         User user = getMockUser();
 
-        //loggedUser = null
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalNews = newsDao.getById(news.getNewsId(), null);
-        if (optionalNews.isPresent())
-            assertEquals(news.getNewsId(), optionalNews.get().getNews().getNewsId());
 
+        optionalNews.ifPresent(opt -> assertEquals(news.getNewsId(), optionalNews.get().getNews().getNewsId()));
     }
 
-    //loggedUser != null
-    /*@Test
-    public void testFindByNewsId() {
+    @Test
+    public void testFindByNewsIdLoggedUser() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
         User user = getMockUser();
 
-        //loggedUser != null
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        PositivityStats positivityStats = new PositivityStats(0, 0);
-        LoggedUserParameters loggedUserParameters = new LoggedUserParameters(Rating.UPVOTE, false);
         FullNews fullnews = new FullNews(news, user, null);
         News news1 = fullnews.getNews();
         Optional<FullNews> optionalNews = newsDao.getById(news1.getNewsId(), null);
-        //if (optionalNews.isPresent())
-        //    assertEquals(news.getNewsId(), optionalNews.get().getNews().getNewsId());
-    }*/
+
+        optionalNews.ifPresent(opt -> assertEquals(news.getNewsId(), optionalNews.get().getNews().getNewsId()));
+    }
 
     @Test
     public void testFindByNewsIdFailure() {
-        Optional<FullNews> news = newsDao.getById(80, null);
-        assertFalse(news.isPresent());
+        Optional<FullNews> optionalFullNews = newsDao.getById(80, null);
+
+        assertFalse(optionalFullNews.isPresent());
     }
 
     @Test
@@ -125,10 +117,9 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        Optional<FullNews> maybeNews = newsDao.getById(news.getNewsId(), null);
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
 
-        assertTrue(maybeNews.isPresent());
-        assertEquals(maybeNews.get().getNews().getNewsId(), news.getNewsId());
+        optionalFullNews.ifPresent(opt -> assertEquals(optionalFullNews.get().getNews().getNewsId(), news.getNewsId()));
     }
 
     @Test
@@ -139,9 +130,9 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         newsDao.deleteNews(news.getCreatorId());
-
         List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, news.getCreatorId(), NewsOrder.NEW, null);
-        assertEquals(0, newsList.size()); // TODO
+
+        assertEquals(0, newsList.size());
     }
 
     @Test
@@ -154,7 +145,8 @@ public class NewsJdbcDaoTest {
         boolean addCategory = categoryDao.addCategoryToNews(news.getNewsId(), Category.SPORTS);
         List<FullNews> newsList = newsDao.getNewsByCategory(PAGE_SIZE, Category.SPORTS, NewsOrder.NEW, null);
 
-        assertEquals(1, newsList.size());
+        if(addCategory)
+            assertEquals(1, newsList.size());
     }
 
     @Test
@@ -206,8 +198,8 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-
         List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, news.getCreatorId(), NewsOrder.NEW, null);
+
         assertEquals(1, newsList.size());
 
     }
@@ -219,8 +211,8 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-
         int newsList = newsDao.getTotalPagesNewsFromUser(PAGE_SIZE, news.getCreatorId());
+
         assertEquals(PAGE_SIZE, newsList);
     }
 
@@ -232,10 +224,10 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-
         newsDao.saveNews(news, user);
-        FullNews fullNews = newsDao.getById(user.getId(), user.getId()).get();
-        assertTrue(fullNews.getLoggedUserParameters().isSaved());
+        Optional<FullNews> optionalFullNews = newsDao.getById(user.getId(), 1L);
+
+        optionalFullNews.ifPresent(opt -> assertTrue(optionalFullNews.get().getLoggedUserParameters().isSaved()));
     }
 
     @Test
@@ -246,10 +238,10 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-
         newsDao.saveNews(news, user);
         newsDao.removeSaved(news, user);
-        assertTrue(newsDao.getSavedNews(PAGE_SIZE, user.getId(), NewsOrder.NEW, null).isEmpty()); //TODO
+
+        assertTrue(newsDao.getSavedNews(PAGE_SIZE, user.getId(), NewsOrder.NEW, null).isEmpty());
 
     }
 
@@ -262,8 +254,8 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         newsDao.saveNews(news, user);
+        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, user.getId(), NewsOrder.NEW, 1L); //TODO
 
-        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, user.getId(), NewsOrder.NEW, null); //TODO
         assertEquals(1, savedList.size());
     }
 
@@ -276,8 +268,8 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         newsDao.saveNews(news, user);
-
         int savedPages = newsDao.getTotalPagesNewsFromUserSaved(PAGE_SIZE, news.getCreatorId());
+
         assertEquals(PAGE_SIZE, savedPages);
     }
 
@@ -315,7 +307,7 @@ public class NewsJdbcDaoTest {
         News news = newsDao.create(nwBuilder);
         FullNews fullNews = newsDao.getById(news.getNewsId(), user.getId()).get();
 
-        newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.UPVOTE);
+        newsDao.setRating(fullNews.getNews().getNewsId(), fullNews.getNews().getCreatorId(), Rating.UPVOTE);
         int rating = fullNews.getPositivityStats().getNetUpvotes();
         assertEquals(1, rating);
     }
@@ -327,10 +319,9 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        FullNews fullNews = newsDao.getById(news.getNewsId(), user.getId()).get();
-
         newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.UPVOTE);
         List<FullNews> rating = newsDao.getNewsUpvotedByUser(PAGE_SIZE, news.getCreatorId(), NewsOrder.NEW, null);
+
         assertEquals(1, rating.size());
     }
 
@@ -355,10 +346,10 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-
         newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.UPVOTE);
         int rating = newsDao.getTotalPagesNewsFromUserUpvoted(PAGE_SIZE, news.getCreatorId());
-        assertEquals(1, rating);
+
+        assertEquals(PAGE_SIZE, rating);
     }
 
     @Test
@@ -368,9 +359,9 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-
         newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.DOWNVOTE);
         int rating = newsDao.getTotalPagesNewsFromUserDownvoted(PAGE_SIZE, news.getCreatorId());
-        assertEquals(1, rating);
+
+        assertEquals(PAGE_SIZE, rating);
     }
 }

@@ -26,12 +26,14 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class UserJdbcDaoTest {
+    //TABLAS
     private static final String USER_TABLE = "users";
     protected static final String TOKEN_TABLE = "email_verification_token";
 
+    //USER DATA
     private static final String USERNAME = "username";
-
     private static final String EMAIL = "user@gmail.com";
+
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
     private UserJdbcDao userDao;
@@ -67,10 +69,9 @@ public class UserJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         User us = userDao.create(usBuilder);
-        Optional<User> mayBeUser = userDao.getUserById(1);
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
 
-        assertNotNull(mayBeUser);
-        assertEquals(mayBeUser.get().getId(), us.getId());
+        optionalUser.ifPresent(opt -> assertEquals(optionalUser.get().getId(), us.getId()));
     }
 
     @Test
@@ -92,17 +93,16 @@ public class UserJdbcDaoTest {
 //        Number key = jdbcInsert.executeAndReturnKey(userData);
         User us = userDao.create(usBuilder);
 
-        Optional<User> mayBeUser = userDao.getUserById(us.getId());
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
 
-        assertTrue(mayBeUser.isPresent());
-        assertEquals(EMAIL, mayBeUser.get().getEmail());
+        optionalUser.ifPresent(opt -> assertEquals(EMAIL, optionalUser.get().getEmail()));
     }
 
     @Test
     public void testFailFindByEmail() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        final Optional<User> usr = userDao.findByEmail(EMAIL);
+        Optional<User> usr = userDao.findByEmail(EMAIL);
 
         assertFalse(usr.isPresent());
     }
@@ -131,7 +131,7 @@ public class UserJdbcDaoTest {
         userDao.updateUsername(mayBeUser.get().getId(), USERNAME);
 
         assertTrue(mayBeUser.isPresent());
-        //assertEquals("username", mayBeUser.get().getUsername());
+        assertEquals(USERNAME, mayBeUser.get().getUsername());
     }
 
     @Test
