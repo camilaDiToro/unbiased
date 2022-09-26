@@ -135,10 +135,10 @@ public class NewsServiceImpl implements NewsService{
     }
 
     @Override
-    public void deleteNews(FullNews news) {
-        if(news.getNews().getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
+    public void deleteNews(News news) {
+        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
             throw new UserNotAuthorized();
-        newsDao.deleteNews(news.getNews().getNewsId());
+        newsDao.deleteNews(news.getNewsId());
     }
 
     @Override
@@ -146,5 +146,10 @@ public class NewsServiceImpl implements NewsService{
         int totalPages = newsDao.getTodayNewsPageCount();
         page = Math.min(Math.max(page, 1), totalPages);
         return new Page<>(newsDao.getRecommendation(page, user),page, totalPages);
+    }
+
+    @Override
+    public Optional<News> getSimpleNewsById(long id) {
+        return newsDao.getSimpleNewsById(id);
     }
 }

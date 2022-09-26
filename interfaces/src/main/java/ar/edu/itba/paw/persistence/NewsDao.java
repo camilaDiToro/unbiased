@@ -17,6 +17,7 @@ public interface NewsDao {
     int getTotalPagesAllNews(String query);
     News create(News.NewsBuilder newsBuilder);
     Optional<FullNews> getById(long id, Long loggedUser);
+    Optional<News> getSimpleNewsById(long id);
     List<FullNews> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser);
     int getTotalPagesCategory(Category category);
     List<Category> getNewsCategory(News news);

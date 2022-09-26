@@ -34,10 +34,9 @@ public class AdminServiceImpl implements AdminService{
         return securityService.getCurrentUser().map(User::getId).orElse(null);
     }
 
-
     @Override
-    public void reportNews(long newsId, ReportReason reportReason) {
-        adminDao.reportNews(newsId,getLoggedUserId(),reportReason);
+    public void reportNews(News news, ReportReason reportReason) {
+        adminDao.reportNews(news,getLoggedUserId(),reportReason);
     }
 
     @Override
@@ -46,25 +45,22 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
-        FullNews n = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        return adminDao.getReportedNewsDetail(page, newsId);
+    public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
+        return adminDao.getReportedNewsDetail(page, news);
     }
 
     @Override
-    public boolean hasReported(long newsId) {
-        return adminDao.hasReported(newsId, getLoggedUserId());
+    public boolean hasReported(News news) {
+        return adminDao.hasReported(news, getLoggedUserId());
     }
 
     @Override
-    public void deleteNews(long newsId) {
-        FullNews news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+    public void deleteNews(News news) {
         newsService.deleteNews(news);
     }
 
     @Override
-    public void makeUserAdmin(long userId) {
-        User user = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
-        adminDao.makeUserAdmin(userId);
+    public void makeUserAdmin(User user) {
+        adminDao.makeUserAdmin(user);
     }
 }

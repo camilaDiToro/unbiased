@@ -68,6 +68,16 @@ public class NewsJdbcDao implements NewsDao{
         return new FullNews(news, creator, stats, loggedParams);
     };
 
+    private static final RowMapper<News> NEWS_ROW_MAPPER = (rs, rowNum) ->
+            new News.NewsBuilder(   rs.getLong("creator"),
+                    rs.getString("body"),
+                    rs.getString("title"),
+                    rs.getString("subtitle"))
+                    .newsId(rs.getLong("news_id"))
+                    .imageId(rs.getObject("image_id") == null ? null : rs.getLong("image_id"))
+                    .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
+                    .build();
+
 
     private static final RowMapper<Category> CATEGORIES_ROW_MAPPER = (rs, rowNum) ->
             Category.getById(rs.getLong("category_id"));
@@ -163,6 +173,12 @@ public class NewsJdbcDao implements NewsDao{
         jdbcTemplate.update("UPDATE news SET accesses = accesses + 1 WHERE news_id = ?",id);
        return news;
 
+    }
+
+    @Override
+    public Optional<News> getSimpleNewsById(long id) {
+        return jdbcTemplate.query("SELECT * FROM news WHERE news_id = ?",
+                new Object[] { id }, NEWS_ROW_MAPPER).stream().findFirst();
     }
 
     @Override

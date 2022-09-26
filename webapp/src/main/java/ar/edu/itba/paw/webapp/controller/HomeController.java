@@ -31,7 +31,6 @@ public class HomeController {
     private final EmailService es;
     private final AdminService as;
     private final MAVBuilderSupplier mavBuilderSupplier;
-;
 
     @Autowired
     public HomeController(final UserService us, final NewsService ns, SecurityService ss, EmailService es, AdminService as){
@@ -85,7 +84,6 @@ public class HomeController {
         final FullNews news = ns.getById(newsId).orElseThrow(NewsNotFoundException::new);
 
         return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), active), HttpStatus.OK);
-//        return String.format(fmt, ns.getUpvotes(newsId), active);
     }
 
     @RequestMapping(value = "/change-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")

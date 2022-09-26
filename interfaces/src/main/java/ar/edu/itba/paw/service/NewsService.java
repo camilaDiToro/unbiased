@@ -15,7 +15,8 @@ public interface NewsService {
     List<Category> getNewsCategory(FullNews news);
     void setRating(Long newsId, Long userId, Rating rating);
     boolean toggleSaveNews(FullNews news, User user);
-    void deleteNews(FullNews news);
+    void deleteNews(News news);
     Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String pc);
     Page<FullNews> getRecommendation(int page, User user);
+    Optional<News> getSimpleNewsById(long id);
 }
