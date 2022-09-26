@@ -224,6 +224,14 @@
     min-width:inherit;
 }
 
+#navbar-dropdown .dropdown-item:hover{
+    background-color: #8ea7e8;
+}
+
+#navbar-dropdown.dropdown-menu{
+    padding-left: 0.7rem!important;
+}
+
 #bookmark{
     cursor: pointer;
     width: 25px !important;
