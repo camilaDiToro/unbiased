@@ -128,7 +128,7 @@ public class UserJdbcDaoTest {
 
         User us = userDao.create(usBuilder);
         Optional<User> mayBeUser = userDao.getUserById(us.getId());
-        userDao.updateUsername(mayBeUser.get().getId(), USERNAME);
+        userDao.updateUsername(mayBeUser.get(), USERNAME);
 
         assertTrue(mayBeUser.isPresent());
         assertEquals(USERNAME, mayBeUser.get().getUsername());

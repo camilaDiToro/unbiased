@@ -93,7 +93,8 @@ public class UserServiceImpl implements UserService {
         }
         userDao.verifyEmail(vt.getUserId());
         login(vt.getUserId());
-        verificationTokenService.deleteEmailToken(vt.getUserId());
+        User user = userDao.getUserById(vt.getUserId()).get();
+        verificationTokenService.deleteEmailToken(user);
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
 
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService {
         if(!mayBeUser.isPresent())
             return VerificationToken.Status.NOT_EXISTS;
         User user = mayBeUser.get();
-        verificationTokenService.deleteEmailToken(user.getId());
+        verificationTokenService.deleteEmailToken(user);
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
         LocaleContextHolder.setLocale(locale, true);
@@ -112,27 +113,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addRole(long userId, Role role) {
-        roleDao.addRole(userId, role);
+    public void addRole(User user, Role role) {
+        roleDao.addRole(user, role);
     }
 
     @Override
-    public List<String> getRoles(long userId) {
-        return roleDao.getRoles(userId);
+    public List<String> getRoles(User user) {
+        return roleDao.getRoles(user);
     }
 
     @Override
-    public void updateProfile(long userId, String username, Long imageId) {
-        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+    public void updateProfile(User user, String username, Long imageId) {
+        User maybeUser = userDao.getUserById(user.getId()).orElseThrow(UserNotFoundException::new);
 
         if(imageId!=null){
-            if(user.getImageId()!=null)
-                imageService.deleteImage(user.getImageId());
-            userDao.updateImage(userId,imageId);
+            if(maybeUser.getImageId()!=null)
+                imageService.deleteImage(maybeUser.getImageId());
+            userDao.updateImage(maybeUser,imageId);
         }
 
         if(username!= null && !username.isEmpty())
-            userDao.updateUsername(userId,username);
+            userDao.updateUsername(maybeUser,username);
     }
 
     @Override

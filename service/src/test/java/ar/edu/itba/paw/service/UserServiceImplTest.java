@@ -86,7 +86,7 @@ public class UserServiceImplTest {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
         Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
         Mockito.when(mockUserDao.findByUsername(Mockito.eq(USERNAME))).thenReturn(Optional.of(mockUser));
-        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(mockUser.getId()), Mockito.eq(USERNAME));
+        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(mockUser), Mockito.eq(USERNAME));
 
         User user = userService.create(usBuilder);
 
@@ -113,9 +113,9 @@ public class UserServiceImplTest {
     public void testUpdateProfile() {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
         Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
-        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(mockUser.getId()), Mockito.eq(USERNAME));
+        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(mockUser), Mockito.eq(USERNAME));
 
-        userService.updateProfile(mockUser.getId(), USERNAME, null);
+        userService.updateProfile(mockUser, USERNAME, null);
 
         Assert.assertEquals(mockUser.getUsername(), USERNAME);
         //Mockito.verify(mockUserDao).updateUsername(Mockito.eq(testUser.getId()),Mockito.anyString());

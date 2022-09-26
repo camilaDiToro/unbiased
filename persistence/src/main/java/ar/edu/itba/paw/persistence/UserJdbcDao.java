@@ -83,13 +83,13 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public void updateUsername(long userId, String username) {
-        jdbcTemplate.update("UPDATE users SET username = ? WHERE user_id = ?", username, userId);
+    public void updateUsername(User user, String username) {
+        jdbcTemplate.update("UPDATE users SET username = ? WHERE user_id = ?", username, user.getId());
     }
 
     @Override
-    public void updateImage(long userId, Long imageId) {
-        jdbcTemplate.update("UPDATE users SET image_id = ? WHERE user_id = ?", imageId, userId);
+    public void updateImage(User user, Long imageId) {
+        jdbcTemplate.update("UPDATE users SET image_id = ? WHERE user_id = ?", imageId, user.getId());
     }
 
     public List<User> getAll(int page){

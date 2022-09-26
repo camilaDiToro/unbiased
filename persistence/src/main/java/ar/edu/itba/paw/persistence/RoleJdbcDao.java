@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Role;
+import ar.edu.itba.paw.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -27,16 +28,16 @@ public class RoleJdbcDao implements RoleDao{
     }
 
     @Override
-    public void addRole(long userId, Role role) {
+    public void addRole(User user, Role role) {
         final Map<String, Object> roleData = new HashMap<>();
         roleData.put("user_role", role.getRole());
-        roleData.put("user_id", userId);
+        roleData.put("user_id", user.getId());
 
         jdbcInsert.execute(roleData);
     }
 
     @Override
-    public List<String> getRoles(long userId) {
-        return  jdbcTemplate.query("SELECT * FROM user_role WHERE user_id = ?", new Object[]{userId}, ROLE_ROW_MAPPER);
+    public List<String> getRoles(User user) {
+        return  jdbcTemplate.query("SELECT * FROM user_role WHERE user_id = ?", new Object[]{user.getId()}, ROLE_ROW_MAPPER);
     }
 }

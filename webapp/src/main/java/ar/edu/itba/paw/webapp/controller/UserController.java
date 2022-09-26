@@ -108,16 +108,16 @@ public class UserController {
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
-    public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
+    public ModelAndView profilePicture(@PathVariable("userId") User user, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
         if (errors.hasErrors()) {
-            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS");
+            return profile(user.getId(), "NEW",userProfileForm, 1, "MY_POSTS");
         }
         Long imageId = null;
         if(!userProfileForm.getImage().isEmpty() && userProfileForm.getImage().getBytes().length != 0){
             imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
         }
-        userService.updateProfile(userId, userProfileForm.getUsername(), imageId);
-        return new ModelAndView("redirect:/profile/" + userId);
+        userService.updateProfile(user, userProfileForm.getUsername(), imageId);
+        return new ModelAndView("redirect:/profile/" + user.getId());
     }
 
     @RequestMapping("/verify_email")

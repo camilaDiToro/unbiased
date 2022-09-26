@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.VerificationToken;
+import ar.edu.itba.paw.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -49,8 +50,8 @@ public class VerificationTokenJdbcDao implements VerificationTokenDao{
     }
 
     @Override
-    public void deleteEmailToken(long userId) {
-        jdbcTemplate.update("DELETE FROM email_verification_token WHERE user_id = ? ", userId);
+    public void deleteEmailToken(User user) {
+        jdbcTemplate.update("DELETE FROM email_verification_token WHERE user_id = ? ", user.getId());
     }
 
 }

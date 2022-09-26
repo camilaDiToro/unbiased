@@ -13,9 +13,7 @@ public interface UserDao {
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
     void verifyEmail(long id);
-
     List<User> getTopCreators(int qty);
-
-    void updateUsername(long userId, String username);
-    void updateImage(long userId, Long imageId);
+    void updateUsername(User user, String username);
+    void updateImage(User user, Long imageId);
 }

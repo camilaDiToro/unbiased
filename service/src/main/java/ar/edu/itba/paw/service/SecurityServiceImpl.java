@@ -45,7 +45,7 @@ public class SecurityServiceImpl implements SecurityService {
         if(!mayBeUser.isPresent())
             return false;
         User user= mayBeUser.get();
-        List<String> roles = roleDao.getRoles(user.getId());
+        List<String> roles = roleDao.getRoles(user);
         return roles.contains(Role.ADMIN.getRole());
     }
 }

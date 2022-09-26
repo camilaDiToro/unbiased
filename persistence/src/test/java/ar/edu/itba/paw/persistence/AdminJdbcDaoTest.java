@@ -75,7 +75,7 @@ public class AdminJdbcDaoTest {
 
         User user = getMockUser();
         adminDao.makeUserAdmin(user);
-        List<String> roleList = roleDao.getRoles(user.getId());
+        List<String> roleList = roleDao.getRoles(user);
 
         assertEquals(Role.ADMIN.getRole(), roleList.get(0));
     }
