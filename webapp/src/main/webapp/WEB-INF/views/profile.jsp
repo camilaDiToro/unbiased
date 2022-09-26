@@ -238,7 +238,7 @@
 
         <c:if test="${isMyProfile}">
             <div class="pencil-edit">
-                <button style="border: none; background-color: white; outline: none" data-toggle="modal" data-target="#profileModal">
+                <button style="border: none; background-color: transparent; outline: none" data-toggle="modal" data-target="#profileModal">
                 <span class="badge badge-pill badge-info">
                    <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
                     <spring:message code="profile.edit"/>
