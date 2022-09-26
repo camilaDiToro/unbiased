@@ -134,7 +134,7 @@ public class AdminJdbcDao implements AdminDao{
     }
 
     private int getTotalReportedNews() {
-        return getPageCount(jdbcTemplate.query(" with grouped_reports as (SELECT news_id FROM report group by news_id)\n" +
+        return getPageCount(jdbcTemplate.query(" with grouped_reports as (SELECT news_id FROM report group by news_id) " +
                 "SELECT count(*) AS report_count from grouped_reports" , ROW_COUNT_MAPPER).stream().findFirst().get());
     }
 

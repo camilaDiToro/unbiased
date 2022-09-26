@@ -104,8 +104,6 @@ public class NewsJdbcDao implements NewsDao {
     private final static RowMapper<Integer> UPVOTES_MAPPER = (rs, rowNum) -> rs.getInt("upvotes");
 
 
-
-
     @Autowired
     public NewsJdbcDao(final DataSource dataSource, final CategoryDao categoryDao) {
         jdbcTemplate = new JdbcTemplate(dataSource);
@@ -393,9 +391,7 @@ public class NewsJdbcDao implements NewsDao {
         jdbcCommentsInsert.execute(commentData);
 
     }
-/*
-SELECT * FROM comments NATURAL JOIN users WHERE news_id = :newsId LIMIT :pageSize OFFSET :offset
- */
+
     @Override
     public Page<Comment> getComments(long newsId, int page) {
         SqlParameterSource params = new MapSqlParameterSource()

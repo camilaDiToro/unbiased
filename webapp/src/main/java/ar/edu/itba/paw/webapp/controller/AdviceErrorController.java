@@ -36,7 +36,7 @@ public class AdviceErrorController {
 
     @ExceptionHandler(UserNotAuthorized.class)
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public ModelAndView invalidUser(UserNotFoundException ex) {
+    public ModelAndView invalidUser(UserNotAuthorized ex) {
         return new ModelAndView("errors/invalid_user");
     }
 
