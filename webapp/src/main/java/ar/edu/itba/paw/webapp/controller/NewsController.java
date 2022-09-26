@@ -23,10 +23,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.validation.Valid;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
@@ -77,9 +75,9 @@ public class NewsController {
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        FullNews news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        newsService.deleteNews(news.getNews());
-        return new ModelAndView("redirect:/profile/" + news.getNews().getCreatorId());
+        News news = newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.deleteNews(news);
+        return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/report", method = RequestMethod.POST)
@@ -88,7 +86,7 @@ public class NewsController {
         if (errors.hasErrors()) {
             return showNews(newsId, reportNewsFrom, null,true, 1);
         }
-        adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        adminService.reportNews(newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new), ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
@@ -115,7 +113,7 @@ public class NewsController {
         return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getCreationDate().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
                 .withObject("fullNews", fullNews)
-                .withObject("hasReported", adminService.hasReported(newsId ))
+                .withObject("hasReported", adminService.hasReported(news))
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", LocaleContextHolder.getLocale())

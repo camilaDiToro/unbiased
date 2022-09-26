@@ -106,14 +106,12 @@ public class NewsServiceImpl implements NewsService {
                 totalPages = newsDao.getTotalPagesNewsFromUser(page, userId);
                 ln = newsDao.getAllNewsFromUser(page, userId, newsOrderObject, loggedUserId);
 
-        }
-        ;
+        };
 
         page = Math.min(page, totalPages);
 
         return new Page<>(ln, page, totalPages);
     }
-
 
     @Override
     public List<Category> getNewsCategory(News news) {
@@ -121,6 +119,14 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public FullNews getOrThrowException(long newsId) {
+        Optional<FullNews> maybeNews = getById(newsId);
+
+        if (!maybeNews.isPresent())
+            throw new NewsNotFoundException();
+        return maybeNews.get();
+    }
+
     public FullNews getOrThrowException(long newsId) {
         Optional<FullNews> maybeNews = getById(newsId);
 
@@ -150,16 +156,24 @@ public class NewsServiceImpl implements NewsService {
     private User getLoggedUserOrThrowException() {
         return securityService.getCurrentUser().orElseThrow(() -> new HTTPException(400));
     }
-//    @Override
-//    public boolean isSaved(News news, User user) {
-//        return newsDao.isSaved(news, user);
-//    }
 
     @Override
-    public void deleteNews(News news) {
-        if (news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
+    public void deleteNews(FullNews news) {
+        if(news.getNews().getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
             throw new UserNotAuthorized();
         newsDao.deleteNews(news.getNewsId());
+    }
+
+    @Override
+    public Page<FullNews> getRecommendation(int page, User user) {
+        int totalPages = newsDao.getTodayNewsPageCount();
+        page = Math.min(Math.max(page, 1), totalPages);
+        return new Page<>(newsDao.getRecommendation(page, user),page, totalPages);
+    }
+
+    @Override
+    public Optional<News> getSimpleNewsById(long id) {
+        return newsDao.getSimpleNewsById(id);
     }
 
     @Override

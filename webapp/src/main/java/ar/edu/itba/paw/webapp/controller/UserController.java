@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.news.FullNews;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.ProfileCategory;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -74,6 +76,12 @@ public class UserController {
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
         final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
+        Page<FullNews> ln = newsService.getRecommendation(1,userService.getUserById(userId).get());
+        System.out.println(ln.getContent().isEmpty());
+        System.out.println(ln.getTotalPages());
+        for(FullNews f : ln.getContent()){
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%" + f.getNews().getTitle());
+        }
         return mav;
     }
 

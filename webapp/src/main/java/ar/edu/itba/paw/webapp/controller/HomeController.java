@@ -31,7 +31,6 @@ public class HomeController {
     private final EmailService es;
     private final AdminService as;
     private final MAVBuilderSupplier mavBuilderSupplier;
-;
 
     @Autowired
     public HomeController(final UserService us, final NewsService ns, SecurityService ss, EmailService es, AdminService as){
@@ -68,7 +67,7 @@ public class HomeController {
     }
 
     private ResponseEntity<UpvoteActionResponse> toggleHandler(UpvoteAction payload, Rating action) {
-        final long newsId = payload.getNewsId();
+        final Long newsId = payload.getNewsId();
         final boolean isActive = payload.isActive();
 
         ns.setRating(ns.getOrThrowException(newsId).getNews(), isActive ? action : Rating.NO_RATING);
