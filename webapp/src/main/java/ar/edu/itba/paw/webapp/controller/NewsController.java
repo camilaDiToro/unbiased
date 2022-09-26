@@ -5,11 +5,10 @@ import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
+import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
@@ -39,11 +38,8 @@ public class NewsController {
     private final NewsService newsService;
     private final UserService userService;
     private final ImageService imageService;
-
     private final SecurityService securityService;
-
     private final AdminService adminService;
-
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
@@ -54,10 +50,10 @@ public class NewsController {
         this.imageService = imageService;
         this.securityService = ss;
         this.adminService = adminService;
-
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
-
     }
+
+
 
     @RequestMapping(value = "/news/create", method = RequestMethod.POST)
     public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
@@ -81,16 +77,9 @@ public class NewsController {
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-
-        Optional<FullNews> maybeNews = newsService.getById(newsId);
-
-        if (!maybeNews.isPresent()) {
-            throw new NewsNotFoundException();
-        }
-
-        News news = maybeNews.get().getNews();
-        newsService.deleteNews(news.getNewsId());
-        return new ModelAndView("redirect:/profile/" + news.getCreatorId());
+        FullNews news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.deleteNews(news);
+        return new ModelAndView("redirect:/profile/" + news.getNews().getCreatorId());
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/report", method = RequestMethod.POST)
