@@ -37,7 +37,7 @@ public class NewsServiceImplTest {
     @Before
     public void setTest() {
         mockUser = new User.UserBuilder(EMAIL).build();
-        mockNews = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE).build();
+        mockNews = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE).newsId(8).build();
     }
 
     @Test
@@ -53,14 +53,4 @@ public class NewsServiceImplTest {
         Mockito.verify(mockNewsDao).create(newsBuilder);
     }
 
-    @Test
-    public void testFindByNewsId() {
-        News.NewsBuilder newsBuilder = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
-        Mockito.when(mockNewsDao.create(Mockito.eq(newsBuilder))).thenReturn(mockNews);
-        Mockito.when(mockNewsDao.getById(Mockito.eq(mockNews.getNewsId()), null)).thenReturn(Optional.of(mockFullNews));
-
-        Optional<FullNews> news = newsService.getById(mockNews.getNewsId());
-
-        Assert.assertEquals(mockFullNews.getNews().getNewsId(), news.get().getNews().getNewsId());
-    }
 }

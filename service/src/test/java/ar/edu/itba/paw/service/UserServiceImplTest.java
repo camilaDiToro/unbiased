@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.VerificationToken;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
+import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.VerificationTokenDao;
 import org.junit.Assert;
@@ -35,9 +36,18 @@ public class UserServiceImplTest {
     @Mock
     private VerificationTokenDao mockVerifDao;
     @Mock
+    private RoleDao mockRoleDao;
+    @Mock
     private PasswordEncoder mockPasswordEncoder;
+    @Mock
+    private VerificationTokenService mockVerifService;
+    @Mock
+    private EmailService mockEmailService;
+    @Mock
+    private ImageService mockImageService;
+
     @InjectMocks
-    private UserServiceImpl userService;
+    private UserServiceImpl userService = new UserServiceImpl(mockUserDao, mockPasswordEncoder, mockEmailService, mockVerifService, mockRoleDao, mockImageService);
 
     @Before
     public void setTest() {
@@ -68,11 +78,7 @@ public class UserServiceImplTest {
         User user = userService.create(usBuilder);
 
         Assert.assertNotNull(user);
-        Assert.assertEquals(user.getEmail(), user.getEmail());
-        /*Optional<User> userId = userService.findByEmail(EMAIL);
-
-        Assert.assertNotNull(userId);
-        Assert.assertEquals(userId.get().getEmail(), mockUser.getEmail());*/
+        Assert.assertEquals(user.getEmail(), mockUser.getEmail());
     }
 
     @Test

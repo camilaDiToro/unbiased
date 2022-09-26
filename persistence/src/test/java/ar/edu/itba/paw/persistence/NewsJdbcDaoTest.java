@@ -143,7 +143,7 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         boolean addCategory = categoryDao.addCategoryToNews(news.getNewsId(), Category.SPORTS);
-        List<FullNews> newsList = newsDao.getNewsByCategory(PAGE_SIZE, Category.SPORTS, NewsOrder.NEW, null);
+        List<FullNews> newsList = newsDao.getNewsByCategory(PAGE_SIZE, Category.SPORTS, NewsOrder.NEW, 1L);
 
         if(addCategory)
             assertEquals(1, newsList.size());
@@ -274,18 +274,6 @@ public class NewsJdbcDaoTest {
     }
 
     @Test
-    public void testSetRating(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
-        User user = getMockUser();
-        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
-        News news = newsDao.create(nwBuilder);
-
-        newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.DOWNVOTE);
-        //assertTrue(newsDao.getUpvotes(news.getNewsId()).  );
-    }
-
-    @Test
     public void testUpvoteState(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
 
@@ -293,8 +281,8 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         FullNews fullNews = newsDao.getById(news.getNewsId(), user.getId()).get();
-
         newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.UPVOTE);
+
         assertEquals(Rating.UPVOTE, fullNews.getLoggedUserParameters().getPersonalRating());
     }
 
@@ -309,6 +297,7 @@ public class NewsJdbcDaoTest {
 
         newsDao.setRating(fullNews.getNews().getNewsId(), fullNews.getNews().getCreatorId(), Rating.UPVOTE);
         int rating = fullNews.getPositivityStats().getNetUpvotes();
+
         assertEquals(1, rating);
     }
 
