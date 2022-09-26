@@ -115,9 +115,9 @@
                                                     <c:set var="rating" value="${rating}"/>
 
                                                      <c:if test="${loggedUser != null}">
-                                                         <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                         <img style="width: 24px" url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                          <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                         <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                         <img style="width: 24px" id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                      </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <%--href="<c:url value = "/create"/>"--%>
@@ -134,7 +134,7 @@
                                                 </div>
                                                 <div class="card-body-home">
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
-                                                    <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
+                                                    <a id="title-principal-card" style="max-height: 10%; text-decoration: none" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
 
                                                     <div>
@@ -167,7 +167,7 @@
 
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                            <img id="bookmark" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                            <img style="width: 24px !important;" id="bookmark" onclick="handleBookmarkClick(this)" class="svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
                                                         </div>
                                                     </c:if>
 <%--                                                    <button type="button" class="btn btn-sm btn-outline-primary m-1 h-75 max-h-40px"><svg class="h-75" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 4H5a2 2 0 0 0-2 2v15l3.467-2.6a2 2 0 0 1 1.2-.4H19a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg></button>--%>
@@ -204,8 +204,8 @@
 
 
                 <c:forEach var="creator" items="${topCreators}">
-                    <a class="m-1" href="<c:url value="/profile/${creator.id}"/>" >
-                            <div class="card bg-primary text-white d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">
+                    <a style="text-decoration: none" class="m-1" href="<c:url value="/profile/${creator.id}"/>" >
+                            <div class="card text-white d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">
 <div class="img-container">
 <c:if test="${creator.hasImage()}">
     <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.imageId}/image"/>" alt="">

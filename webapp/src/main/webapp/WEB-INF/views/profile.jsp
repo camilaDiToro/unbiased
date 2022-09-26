@@ -29,7 +29,7 @@
     <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
         <c:forEach var="cat" items="${categories}">
             <li class="nav-item">
-                <a class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${orderBy}">
+                <a style="background: transparent !important;" class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
             </li>
@@ -117,18 +117,18 @@
                                                     <c:set var="rating" value="${loggedParams != null ? loggedParams.personalRating : ''}"/>
 
                                                    <c:if test="${loggedUser != null}">
-                                                       <img url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                       <img style="width: 24px" url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                        <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                       <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                       <img style="width: 24px" id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
                                                    </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <a href="<c:url value = "/create"/>">
-                                                            <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
+                                                            <img style="width: 24px" class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
                                                         </a>
                                                         <div  ><c:out value="${positivityStats.getNetUpvotes()}"/></div>
                                                         <a href="<c:url value = "/create"/>">
-                                                            <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
+                                                            <img style="width: 24px" class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
                                                         </a>
                                                     </c:if>
                                                 </div>
@@ -163,7 +163,7 @@
 
                                                     <c:if test="${isMyProfile && loggedUser == fullNews.user}">
                                                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px" id="bin_button">
-                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
+                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="width: 26px"/>
                                                             </button>
 
 
@@ -171,7 +171,7 @@
 
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                            <img id="bookmark" onclick="handleBookmarkClick(this)" class=" svg-bookmark w-100 h-100 svg-btn" src="<c:url value="/resources/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                            <img style="width: 24px" id="bookmark" onclick="handleBookmarkClick(this)" class=" svg-bookmark svg-btn" src="<c:url value="/resources/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
                                                         </div>
                                                     </c:if>
                                                         <%--                                                    <button type="button" class="btn btn-sm btn-outline-primary m-1 h-75 max-h-40px"><svg class="h-75" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 4H5a2 2 0 0 0-2 2v15l3.467-2.6a2 2 0 0 1 1.2-.4H19a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg></button>--%>
@@ -239,7 +239,7 @@
         <c:if test="${isMyProfile}">
             <div class="pencil-edit">
                 <button style="border: none; background-color: transparent; outline: none" data-toggle="modal" data-target="#profileModal">
-                <span class="badge badge-pill badge-info">
+                <span class="badge badge-pill badge-info" id="pencil_button">
                    <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
                     <spring:message code="profile.edit"/>
                 </span>

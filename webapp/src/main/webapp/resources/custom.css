@@ -105,12 +105,12 @@
 }
 
 .upvoted {
-    color: #ff4500;
+    color: #8ea7e8;
     font-weight: bold;
 }
 
 .downvoted {
-    color: #4e76db;
+    color: #E84646 ;
     font-weight: bold;
 }
 
@@ -228,9 +228,9 @@
     background-color: #8ea7e8;
 }
 
-#navbar-dropdown.dropdown-menu{
+/*#navbar-dropdown.dropdown-menu{
     padding-left: 0.7rem!important;
-}
+}*/
 
 #bookmark{
     cursor: pointer;
@@ -332,15 +332,29 @@
     transform: none;
     transition: none;
     box-shadow: none;
-    color: #8ea7e8 !important;
+    color: white !important;
 }
 
 #none_shadow_creator.card{
     box-shadow: none;
 }
 
+#none_shadow_creator{
+    background: rgb(30,30,45);
+    background: linear-gradient(125deg, rgba(30,30,45,1) 0%, rgba(142,167,232,1) 53%, rgba(167,185,235,1) 93%);
+    -webkit-transition: background-color 2s ease-out !important;
+    -moz-transition: background-color 2s ease-out !important;
+    -o-transition: background-color 2s ease-out !important;
+    transition: background-color 2s ease-out !important;
+}
+
+#none_shadow_creator:hover{
+    background: rgba(30,30,45,1);
+    cursor: pointer;
+}
+
 #name_card:hover{
-    color: #8ea7e8;
+    color: white;
 }
 
 body{
@@ -351,5 +365,13 @@ body{
 
 #bin_button:focus{
     box-shadow: none;
+}
+
+#title-principal-card:hover{
+    color: #8ea7e8;
+}
+
+#pencil_button:hover{
+    color: white;
 }
 
