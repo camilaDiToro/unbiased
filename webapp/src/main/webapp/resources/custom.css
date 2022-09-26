@@ -35,7 +35,8 @@
 
 .article-body {
     width: 65%;
-    white-space: pre-wrap; !important
+    white-space: pre-wrap!important;
+    color: white;
 }
 
 
@@ -405,5 +406,17 @@ body{
 }
 
 #profile_name_card{
+    color: white;
+}
+
+#profile_name_card_show_news{
+    color: white;
+}
+
+#profile_name_card_show_news:hover{
+    color: #8ea7e8;
+}
+
+#span_category:hover{
     color: white;
 }
