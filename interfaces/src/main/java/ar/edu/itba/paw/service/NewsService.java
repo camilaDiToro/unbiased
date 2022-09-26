@@ -17,13 +17,13 @@ public interface NewsService {
 
 //    Page<FullNews> getNewsFromUser(int page, String newsOrder, long userId);
 
-    List<Category> getNewsCategory(FullNews news);
+    List<Category> getNewsCategory(News news);
 
 //    int getUpvotes(Long newsId);
 
 //    Rating upvoteState(News news, User user);
 
-    void setRating(Long newsId, Long userId, Rating rating);
+    void setRating(News news, Rating rating);
 
 
 
@@ -35,10 +35,10 @@ public interface NewsService {
 
 //    boolean isSaved(News news, User user);
 
-    void deleteNews(FullNews news);
-    Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String pc);
+    void deleteNews(News news);
+    Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String pc);
 
     void addComment(News news, String comment);
 
-    Page<Comment> getComments(long newsId, int page);
+    Page<Comment> getComments(News news, int page);
 }

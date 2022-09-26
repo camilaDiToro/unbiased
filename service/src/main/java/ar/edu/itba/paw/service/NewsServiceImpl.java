@@ -69,7 +69,7 @@ public class NewsServiceImpl implements NewsService {
 
 
     @Override
-    public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String profileCategory) {
+    public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
         page = page <= 0 ? 1 : page;
         NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
         int totalPages = 0;
@@ -77,6 +77,7 @@ public class NewsServiceImpl implements NewsService {
         Optional<User> maybeUser = securityService.getCurrentUser();
 
         Long loggedUserId = maybeUser.map(User::getId).orElse(null);
+        long userId = user.getId();
 
         List<FullNews> ln = null;
         ProfileCategory pc = ProfileCategory.valueOf(profileCategory);
@@ -115,8 +116,8 @@ public class NewsServiceImpl implements NewsService {
 
 
     @Override
-    public List<Category> getNewsCategory(FullNews news) {
-        return newsDao.getNewsCategory(news.getNews());
+    public List<Category> getNewsCategory(News news) {
+        return newsDao.getNewsCategory(news);
     }
 
     @Override
@@ -129,8 +130,10 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public void setRating(Long newsId, Long userId, Rating rating) {
-        newsDao.setRating(newsId, userId, rating);
+    public void setRating(News news, Rating rating) {
+        Long loggedUser = getLoggedUserId();
+
+        newsDao.setRating(news.getNewsId(), loggedUser, rating);
     }
 
     @Override
@@ -153,10 +156,10 @@ public class NewsServiceImpl implements NewsService {
 //    }
 
     @Override
-    public void deleteNews(FullNews news) {
-        if (news.getNews().getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
+    public void deleteNews(News news) {
+        if (news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
             throw new UserNotAuthorized();
-        newsDao.deleteNews(news.getNews().getNewsId());
+        newsDao.deleteNews(news.getNewsId());
     }
 
     @Override
@@ -166,7 +169,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<Comment> getComments(long newsId, int page) {
-        return newsDao.getComments(newsId, page);
+    public Page<Comment> getComments(News news, int page) {
+        return newsDao.getComments(news.getNewsId(), page);
     }
 }

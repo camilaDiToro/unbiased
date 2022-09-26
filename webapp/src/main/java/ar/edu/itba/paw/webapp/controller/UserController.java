@@ -101,7 +101,7 @@ public class UserController {
                                 @RequestParam(name = "hasErrors", defaultValue = "false") boolean hasErrors) {
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
-        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser.getId(), category);
+        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, category);
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
 
@@ -132,10 +132,8 @@ public class UserController {
         if (errors.hasErrors()) {
             return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
-        Long imageId = null;
-        if(!userProfileForm.getImage().isEmpty() && userProfileForm.getImage().getBytes().length != 0){
-            imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
-        }
+        Long imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
+
         userService.updateProfile(userId, userProfileForm.getUsername(), imageId);
         return new ModelAndView("redirect:/profile/" + userId);
     }

@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface ImageService {
     Optional<Image> getImageById(long id);
-    long uploadImage(byte[] bytes, String dataType);
+    Long uploadImage(byte[] bytes, String dataType);
     void deleteImage(long id);
 }

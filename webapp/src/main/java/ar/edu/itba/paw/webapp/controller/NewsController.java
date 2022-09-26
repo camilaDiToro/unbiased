@@ -78,7 +78,7 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
         FullNews news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        newsService.deleteNews(news);
+        newsService.deleteNews(news.getNews());
         return new ModelAndView("redirect:/profile/" + news.getNews().getCreatorId());
     }
 
@@ -119,8 +119,8 @@ public class NewsController {
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", LocaleContextHolder.getLocale())
-                .withObject("commentsPage", newsService.getComments(newsId,page))
-                .withObject("categories", newsService.getNewsCategory(fullNews)).build();
+                .withObject("commentsPage", newsService.getComments(news,page))
+                .withObject("categories", newsService.getNewsCategory(fullNews.getNews())).build();
 
     }
 
