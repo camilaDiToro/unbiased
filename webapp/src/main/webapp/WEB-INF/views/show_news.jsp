@@ -55,7 +55,7 @@
                 </c:if>
             </div>
 
-                <h1 class="text-xl-center mx-auto max-w-75 m-3"><c:out value="${news.title}"/></h1>
+                <h1 class="text-xl-center mx-auto max-w-75 m-3 text-white"><c:out value="${news.title}"/></h1>
 <div>
     <div class="d-inline-block quality-indicator-news-view <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
     </div>
@@ -72,7 +72,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex gap-1 align-items-center justify-content-between w-100">
                 <div class="d-flex align-items-center justify-content-center">
-                    <h4 class="text-lg-left mb-0"><c:out value="${news.subtitle}"/></h4>
+                    <h4 class="text-lg-left mb-0 text-white"><c:out value="${news.subtitle}"/></h4>
 
                 </div>
                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
@@ -140,7 +140,7 @@
         <p class="text-sm-left text-secondary"><c:out value="${date}"/>&nbsp · &nbsp<c:out value="${fullNews.readTime}"/> min read</p>
 
         <div class="w-fit">
-            <a href="<c:url value="/profile/${user.id}"/>" class="w-fit">
+            <a style="text-decoration: none" href="<c:url value="/profile/${user.id}"/>" class="w-fit">
                 <div class="w-fit d-flex flex-row align-items-center p-2 gap-1">
 
                     <div class="img-container-article">
@@ -155,13 +155,13 @@
 
                         </c:if>
                     </div>
-                    <b><c:out value="${user.username != null ? user.username : user.email}"/></b>
+                    <b id="profile_name_card_show_news"><c:out value="${user.username != null ? user.username : user.email}"/></b>
                 </div>
             </a>
         </div>
         <div class="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
             <c:if test="${not empty categories}">
-                <div class="text-sm-left font-weight-bold">
+                <div class="text-sm-left font-weight-bold text-white">
                     <spring:message code="showNews.categories"/>
                 </div>
             </c:if>
@@ -169,7 +169,7 @@
 
             <a href="<c:url value = "/TOP">
             <c:param name = "category" value = "${category}"/>
-            </c:url>"> <span class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
+            </c:url>"> <span id="span_category" class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
                 </a>
             </c:forEach>
         </div>
@@ -214,7 +214,7 @@
 <%--    </div>--%>
 <%--    </form:form>--%>
         <div class="d-flex flex-column w-75 align-items-center justify-content-center align-self-center" id="comments">
-            <h2 class="align-self-start my-2">Comments</h2>
+            <h2 class="align-self-start my-2 text-white">Comments</h2>
             <c:if test="${loggedUser != null}">
 
             <div class="d-flex flex-column w-100 mb-4">
