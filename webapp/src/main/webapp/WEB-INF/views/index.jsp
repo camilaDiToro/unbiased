@@ -7,6 +7,13 @@
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
 <%@ include file="../../resources/head.jsp" %>
 <script src="<c:url value="/resources/upvote-script.js"/>"></script>
+<c:if test="${param.unable || param.error}">
+    <script>
+        $(document).ready(function(){
+            $("#cardModal").modal('show');
+        });
+    </script>
+</c:if>
 <body>
 <c:set var="news" value="${newsPage.content}"/>
 
@@ -255,7 +262,10 @@
                 </button>
             </div>
             <div class="modal-body">
-                <c:url value="/login?home=true" var="loginUrl" />
+                <c:url value="/login?home=true" var="loginUrl" >
+                    <c:param name="order" value="${orderBy}" />
+                    <c:param name="category" value="${category}" />
+                    </c:url>
                 <form action="${loginUrl}" method="post">
                     <div >
                         <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>

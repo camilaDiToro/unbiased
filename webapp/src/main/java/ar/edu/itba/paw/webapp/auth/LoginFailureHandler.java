@@ -25,8 +25,17 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
                                         AuthenticationException exception) throws IOException, ServletException {
 
         String baseUrl = "/login";
-        if(request.getParameter("home")!= null && request.getParameter("home").equals("true")){
+        if(request.getParameter("home")!= null && request.getParameter("home").equals("true")) {
             baseUrl = "/";
+            String order = request.getParameter("order");
+            if (order!= null)
+                baseUrl += order;
+            else
+                baseUrl += "TOP";
+
+            String category = request.getParameter("category");
+            if (category != null && !category.equals("ALL"))
+                baseUrl += "?category=" + category;
         }
 
         String redirectURL = baseUrl+"?error=true";
