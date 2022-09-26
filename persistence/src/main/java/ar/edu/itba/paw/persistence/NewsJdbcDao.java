@@ -365,14 +365,14 @@ SELECT * FROM saved_news JOIN (logged_news_parameters RIGHT JOIN full_news ON fu
 //    }
 
     @Override
-    public void setRating(News news, User user, Rating rating) {
+    public void setRating(long newsId, User user, Rating rating) {
         jdbcTemplate.update("DELETE FROM upvotes WHERE user_id = ? AND news_id = ?",
-                new Object[]{user.getId(), news.getNewsId()});
+                new Object[]{user.getId(), newsId});
         if (rating.equals(Rating.NO_RATING))
             return;
 
         final Map<String,Object> ratingData = new HashMap<>();
-        ratingData.put("news_id",news.getNewsId());
+        ratingData.put("news_id",newsId);
         ratingData.put("user_id", user.getId());
         ratingData.put("upvote",rating.equals(Rating.UPVOTE));
         ratingData.put("interaction_date", Timestamp.valueOf(LocalDateTime.now()));

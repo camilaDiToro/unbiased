@@ -110,32 +110,32 @@ public class AdminJdbcDao implements AdminDao{
     }
 
     @Override
-    public void reportNews(long newsId, Long loggedUser, ReportReason reportReason) {
+    public void reportNews(News news, Long loggedUser, ReportReason reportReason) {
 //        if (loggedUser == null)
 //            throw new ;
         final Map<String, Object> reportData = new HashMap<>();
-        reportData.put("news_id", newsId);
+        reportData.put("news_id", news.getNewsId());
         reportData.put("user_id", loggedUser);
         reportData.put("report_date", Timestamp.valueOf(LocalDateTime.now()));
         reportData.put("reason", reportReason.getDescription());
         jdbcReportInsert.execute(reportData);
     }
     @Override
-    public boolean hasReported(long newsId, Long loggedUser) {
+    public boolean hasReported(News news, Long loggedUser) {
         if (loggedUser == null)
             return false;
-        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) AS report_count FROM report WHERE user_id = ? AND news_id = ?", new Object[]{loggedUser, newsId}, ROW_COUNT_MAPPER).stream().findFirst().orElse(0);
+        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) AS report_count FROM report WHERE user_id = ? AND news_id = ?", new Object[]{loggedUser, news.getNewsId()}, ROW_COUNT_MAPPER).stream().findFirst().orElse(0);
         return rowsCount > 0;
     }
 
     @Override
-    public void makeUserAdmin(long userId) {
-        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as report_count FROM user_role WHERE user_id = ? AND user_role = ?", new Object[]{userId, Role.ADMIN.getRole()}, ROW_COUNT_MAPPER).stream().findFirst().orElse(0);
+    public void makeUserAdmin(User user) {
+        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as report_count FROM user_role WHERE user_id = ? AND user_role = ?", new Object[]{user.getId(), Role.ADMIN.getRole()}, ROW_COUNT_MAPPER).stream().findFirst().orElse(0);
         if(rowsCount!=0)
             return;
         final Map<String, Object> adminData = new HashMap<>();
         adminData.put("user_role", Role.ADMIN.getRole());
-        adminData.put("user_id", userId);
+        adminData.put("user_id", user.getId());
         jdbcAdminInsert.execute(adminData);
     }
 
@@ -174,17 +174,17 @@ public class AdminJdbcDao implements AdminDao{
     }
 
     @Override
-    public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
+    public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
 
         List<ReportDetail> rd = jdbcTemplate.query("SELECT * FROM report NATURAL JOIN users WHERE news_id = ? ORDER BY report_date DESC LIMIT ? OFFSET ?",
-                                                    new Object[]{newsId, PAGE_SIZE, (page-1)*PAGE_SIZE}, REPORT_DETAIL_ROW_MAPPER);
+                                                    new Object[]{news.getNewsId(), PAGE_SIZE, (page-1)*PAGE_SIZE}, REPORT_DETAIL_ROW_MAPPER);
 
-        return new Page<>(rd, page, getTotalReportsOfANews(newsId));
+        return new Page<>(rd, page, getTotalReportsOfANews(news));
     }
 
 
-    private int getTotalReportsOfANews(long newsId){
-        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as report_count FROM report WHERE news_id = ?" ,new Object[]{newsId}, ROW_COUNT_MAPPER).stream().findFirst().get();
+    private int getTotalReportsOfANews(News news){
+        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as report_count FROM report WHERE news_id = ?" ,new Object[]{news.getNewsId()}, ROW_COUNT_MAPPER).stream().findFirst().get();
         int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
         return total==0?1:total;
     }

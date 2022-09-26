@@ -23,7 +23,7 @@ public interface NewsService {
 
 //    Rating upvoteState(News news, User user);
 
-    void setRating(News news, User user, Rating rating);
+    void setRating(long newsId, User user, Rating rating);
 
     boolean toggleSaveNews(FullNews news, User user);
 
@@ -33,5 +33,5 @@ public interface NewsService {
 
     void deleteNews(News news);
 
-    Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String pc);
+    Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String pc);
 }

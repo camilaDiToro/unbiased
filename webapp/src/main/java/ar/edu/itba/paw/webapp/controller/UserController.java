@@ -86,7 +86,7 @@ public class UserController {
                                 @RequestParam(name = "category", defaultValue = "MY_POSTS") String category) {
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
-        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser.getId(), category);
+        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, category);
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
 

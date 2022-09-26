@@ -166,8 +166,8 @@ public class NewsServiceImpl implements NewsService{
 //    }
 
     @Override
-    public void setRating(News news, User user, Rating rating) {
-        newsDao.setRating(news, user, rating);
+    public void setRating(long newsId, User user, Rating rating) {
+        newsDao.setRating(newsId, user, rating);
     }
 //
 

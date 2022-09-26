@@ -107,7 +107,7 @@ public class AdminJdbcDaoTest {
 
         News news = getMockNews();
         adminDao.reportNews(news, 1L, ReportReason.LIE);
-        Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(PAGE_SIZE, news.getNewsId());
+        Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(PAGE_SIZE, news);
 
         assertEquals(ReportReason.LIE, reportList.getContent().get(0).getReason());
     }

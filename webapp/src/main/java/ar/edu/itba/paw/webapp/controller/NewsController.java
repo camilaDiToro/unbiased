@@ -76,22 +76,22 @@ public class NewsController {
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView profile(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom){
+    public ModelAndView profile(@PathVariable("newsId") News news,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom){
 
         Optional<User> maybeUser = securityService.getCurrentUser();
 
 
         //TODO: check if there is a better way of doing this.
-        FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        News news = fullNews.getNews();
+        FullNews fullNews = newsService.getById(news.getNewsId()).orElseThrow(NewsNotFoundException::new);
+        News news1 = fullNews.getNews();
 
 
         Locale locale = LocaleContextHolder.getLocale();
 
-        return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
-                .withObject("date", news.getCreationDate().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
+        return mavBuilderSupplier.supply("show_news", news1.getTitle(), TextType.LITERAL)
+                .withObject("date", news1.getCreationDate().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
                 .withObject("fullNews", fullNews)
-                .withObject("hasReported", adminService.hasReported(newsId ))
+                .withObject("hasReported", adminService.hasReported(news))
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("categories", newsService.getNewsCategory(fullNews)).build();
 

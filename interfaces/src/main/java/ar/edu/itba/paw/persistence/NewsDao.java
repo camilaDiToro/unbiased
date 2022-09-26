@@ -26,7 +26,7 @@ public interface NewsDao {
 
 //    Rating upvoteState(News news, User user);
 
-    void setRating(News news,  User user, Rating rating);
+    void setRating(long newsId,  User user, Rating rating);
 
 //    NewsStats getNewsStats(Long newsId);
 
