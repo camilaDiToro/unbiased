@@ -23,10 +23,16 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
-        String redirectURL = request.getServletPath()+"?error=true";
+
+        String baseUrl = "/login";
+        if(request.getParameter("home")!= null && request.getParameter("home").equals("true")){
+            baseUrl = "/";
+        }
+
+        String redirectURL = baseUrl+"?error=true";
         Optional<User> mayBeUser = userService.findByEmail(request.getParameter("username"));
         if(mayBeUser.isPresent() && !mayBeUser.get().getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus())) {
-            redirectURL = request.getServletPath()+"?unable=true";
+            redirectURL = baseUrl+"?unable=true";
             userService.resendEmailVerification(request.getParameter("username"));
         }
         super.setDefaultFailureUrl(redirectURL);

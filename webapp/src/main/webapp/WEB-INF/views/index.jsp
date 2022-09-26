@@ -255,7 +255,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <c:url value="/login" var="loginUrl" />
+                <c:url value="/login?home=true" var="loginUrl" />
                 <form action="${loginUrl}" method="post">
                     <div >
                         <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
