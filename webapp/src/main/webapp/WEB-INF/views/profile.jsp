@@ -161,8 +161,7 @@
                                                 </div>
                                                 <div class="d-flex align-items-center" role="group">
 
-                                                    <c:if test="${isMyProfile}">
-                                                        <%--<input type="image" alt="..." src="<c:url value="/resources/bin.png"/>" style="max-width: 20px; max-height: 20px">--%>
+                                                    <c:if test="${isMyProfile && loggedUser == fullNews.user}">
                                                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px" id="bin_button">
                                                                 <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
                                                             </button>

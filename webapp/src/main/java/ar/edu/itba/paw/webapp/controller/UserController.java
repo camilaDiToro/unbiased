@@ -4,8 +4,10 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.news.FullNews;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -73,6 +76,12 @@ public class UserController {
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
         final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
+        Page<FullNews> ln = newsService.getRecommendation(1,userService.getUserById(userId).get());
+        System.out.println(ln.getContent().isEmpty());
+        System.out.println(ln.getTotalPages());
+        for(FullNews f : ln.getContent()){
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%" + f.getNews().getTitle());
+        }
         return mav;
     }
 
@@ -100,7 +109,7 @@ public class UserController {
                                 @RequestParam(name = "hasErrors", defaultValue = "false") boolean hasErrors) {
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
-        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser.getId(), category);
+        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, category);
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
 
@@ -131,10 +140,8 @@ public class UserController {
         if (errors.hasErrors()) {
             return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
-        Long imageId = null;
-        if(!userProfileForm.getImage().isEmpty() && userProfileForm.getImage().getBytes().length != 0){
-            imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
-        }
+        Long imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
+
         userService.updateProfile(userId, userProfileForm.getUsername(), imageId);
         return new ModelAndView("redirect:/profile/" + userId);
     }

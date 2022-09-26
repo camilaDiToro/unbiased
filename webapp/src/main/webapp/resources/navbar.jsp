@@ -49,11 +49,19 @@
                                                     </div>
                     </button>
                     <div id="navbar-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>"><spring:message code="navbar.myProfile"/></a>
-                        <a class="dropdown-item" href="<c:url value="/logout"/>"><spring:message code="navbar.logOut"/> </a>
+                        <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>" style="padding-left: 30px; background-image: url('<c:url value="/resources/profile-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%">
+                            <spring:message code="navbar.myProfile"/>
+                        </a>
+
                         <c:if test="${isAdmin}">
-                            <a class="dropdown-item" href="<c:url value="/admin/reported_news"/>"><spring:message code="navbar.adminPanel"/> </a>
+                            <a class="dropdown-item" href="<c:url value="/admin/reported_news"/>" style="padding-left: 30px; background-image: url('<c:url value="/resources/panel-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%">
+                                <spring:message code="navbar.adminPanel"/>
+                            </a>
                         </c:if>
+
+                        <a class="dropdown-item" href="<c:url value="/logout"/>" style="padding-left: 30px; background-image: url('<c:url value="/resources/log-out-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;">
+                            <spring:message code="navbar.logOut"/>
+                        </a>
                     </div>
 
                 </div>

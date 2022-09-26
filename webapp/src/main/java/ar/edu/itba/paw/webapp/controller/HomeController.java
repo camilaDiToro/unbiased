@@ -31,7 +31,6 @@ public class HomeController {
     private final EmailService es;
     private final AdminService as;
     private final MAVBuilderSupplier mavBuilderSupplier;
-;
 
     @Autowired
     public HomeController(final UserService us, final NewsService ns, SecurityService ss, EmailService es, AdminService as){
@@ -71,21 +70,10 @@ public class HomeController {
         final Long newsId = payload.getNewsId();
         final boolean isActive = payload.isActive();
 
-        Optional<User> maybeUser = ss.getCurrentUser();
-        boolean active;
-
-        if (maybeUser.isPresent()) {
-            active = isActive;
-            User user = maybeUser.get();
-            ns.setRating(newsId,  user.getId(), active ? action : Rating.NO_RATING);
-        }
-        else {
-            active = !isActive;
-        }
+        ns.setRating(ns.getOrThrowException(newsId).getNews(), isActive ? action : Rating.NO_RATING);
         final FullNews news = ns.getById(newsId).orElseThrow(NewsNotFoundException::new);
 
-        return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), active), HttpStatus.OK);
-//        return String.format(fmt, ns.getUpvotes(newsId), active);
+        return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/change-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")

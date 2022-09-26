@@ -21,7 +21,7 @@
     <h3 class="text-secondary">Moderation panel</h3>
     <ul class="nav flex-column vertical-menu ">
         <li class="nav-item">
-            <a class="nav-link selected" href="#">Reported articles</a>
+            <a class="nav-link selected" href="#"><spring:message code="moderation.reportedArticles"/></a>
         </li>
     </ul>
 
@@ -90,7 +90,7 @@
                                         <div class="card h-100 d-flex flex-row p-3" id="left-card">
 
                                             <span class="reports-indicator badge badge-pill badge-danger" >
-                                                ${reportedNews.reportCount} reports
+                                                ${reportedNews.reportCount} <spring:message code="moderation.reports"/>
                                             </span>
                                             <div class="d-flex flex-column justify-content-between w-100">
                                                 <div class="d-flex w-100 ">
@@ -122,7 +122,7 @@
                                                                 <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
                                                             </button>
                                                             <a  class="text-info font-weight-bold hover-hand" href="<c:url value="/admin/reported_news_detail/${newsId}"/>">
-                                                                View details
+                                                                <spring:message code="moderation.details"/>
                                                             </a>
 
                                                     </div>

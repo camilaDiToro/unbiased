@@ -10,30 +10,16 @@ import java.util.Optional;
 
 public interface NewsService {
     News create(News.NewsBuilder newsBuilder);
-
     Optional<FullNews> getById(long id);
-
     Page<FullNews> getNews(int page, String category, String newsOrder, String query);
-
-//    Page<FullNews> getNewsFromUser(int page, String newsOrder, long userId);
-
-    List<Category> getNewsCategory(FullNews news);
-
-//    int getUpvotes(Long newsId);
-
-//    Rating upvoteState(News news, User user);
-
-    void setRating(Long newsId, Long userId, Rating rating);
-
-
-
+    List<Category> getNewsCategory(News news);
+    void setRating(News news, Rating rating);
     boolean toggleSaveNews(FullNews news, User user);
-
-//    Optional<FullNews> getNewsById(long id);
-
-//    boolean isSaved(News news, User user);
-
-    void deleteNews(long newsId);
-
-    Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String pc);
+    void deleteNews(News news);
+    Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String pc);
+    Page<FullNews> getRecommendation(int page, User user);
+    Optional<News> getSimpleNewsById(long id);
+    FullNews getOrThrowException(long newsId);
+    void addComment(News news, String comment);
+    Page<Comment> getComments(News news, int page);
 }

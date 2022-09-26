@@ -224,9 +224,22 @@
     min-width:inherit;
 }
 
+#navbar-dropdown .dropdown-item:hover{
+    background-color: #8ea7e8;
+}
+
+#navbar-dropdown.dropdown-menu{
+    padding-left: 0.7rem!important;
+}
+
 #bookmark{
     cursor: pointer;
     width: 25px !important;
+}
+
+#bookmark-news{
+    cursor: pointer;
+    width: 35px !important;
 }
 
 #upvote,#downvote {
@@ -256,6 +269,10 @@
     position: fixed;
     bottom: 50px;
     right: 50px;
+}
+
+#comment {
+    white-space: pre;
 }
 
 
