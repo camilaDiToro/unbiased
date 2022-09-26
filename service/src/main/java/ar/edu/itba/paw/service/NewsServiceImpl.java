@@ -127,14 +127,6 @@ public class NewsServiceImpl implements NewsService {
         return maybeNews.get();
     }
 
-    public FullNews getOrThrowException(long newsId) {
-        Optional<FullNews> maybeNews = getById(newsId);
-
-        if (!maybeNews.isPresent())
-            throw new NewsNotFoundException();
-        return maybeNews.get();
-    }
-
     @Override
     public void setRating(News news, Rating rating) {
         Long loggedUser = getLoggedUserId();
@@ -158,8 +150,8 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public void deleteNews(FullNews news) {
-        if(news.getNews().getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
+    public void deleteNews(News news) {
+        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
             throw new UserNotAuthorized();
         newsDao.deleteNews(news.getNewsId());
     }
