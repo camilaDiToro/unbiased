@@ -371,3 +371,7 @@ body{
     color: #8ea7e8;
 }
 
+#pencil_button:hover{
+    color: white;
+}
+

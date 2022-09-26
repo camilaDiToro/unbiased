@@ -124,11 +124,11 @@
                                                    </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <a href="<c:url value = "/create"/>">
-                                                            <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
+                                                            <img style="width: 24px" class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
                                                         </a>
                                                         <div  ><c:out value="${positivityStats.getNetUpvotes()}"/></div>
                                                         <a href="<c:url value = "/create"/>">
-                                                            <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
+                                                            <img style="width: 24px" class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
                                                         </a>
                                                     </c:if>
                                                 </div>
@@ -239,7 +239,7 @@
         <c:if test="${isMyProfile}">
             <div class="pencil-edit">
                 <button style="border: none; background-color: white; outline: none" data-toggle="modal" data-target="#profileModal">
-                <span class="badge badge-pill badge-info">
+                <span class="badge badge-pill badge-info" id="pencil_button">
                    <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
                     <spring:message code="profile.edit"/>
                 </span>
