@@ -90,7 +90,7 @@ public class HomeController {
             active = isActive;
 
             User user = maybeUser.get();
-            ns.setRating(newsId,  user.getId(), active ? action : Rating.NO_RATING);
+            ns.setRating(newsId,  user, active ? action : Rating.NO_RATING);
         }
         else {
 //            active = !(boolean)map.get("active");

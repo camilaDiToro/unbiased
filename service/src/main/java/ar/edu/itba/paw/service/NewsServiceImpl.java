@@ -97,7 +97,7 @@ public class NewsServiceImpl implements NewsService{
 //    }
 
     @Override
-    public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String profileCategory) {
+    public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
         page = page <= 0 ? 1 : page;
         NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
         int totalPages = 0;
@@ -110,28 +110,28 @@ public class NewsServiceImpl implements NewsService{
         ProfileCategory pc = ProfileCategory.valueOf(profileCategory);
         switch (pc) {
             case SAVED:
-                totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, userId);
-                ln = newsDao.getSavedNews(page,userId,newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, user);
+                ln = newsDao.getSavedNews(page,user,newsOrderObject, loggedUserId);
 
 
                 break;
 
             case UPVOTED:
-                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
-                ln = newsDao.getNewsUpvotedByUser(page,userId,newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, user);
+                ln = newsDao.getNewsUpvotedByUser(page,user,newsOrderObject, loggedUserId);
 
 
                 break;
 
             case DOWNVOTED:
-                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
-                ln = newsDao.getNewsDownvotedByUser(page,userId,newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, user);
+                ln = newsDao.getNewsDownvotedByUser(page,user, newsOrderObject, loggedUserId);
 
                 break;
 
             case MY_POSTS:
-                totalPages = newsDao.getTotalPagesNewsFromUser(page, userId);
-                ln = newsDao.getAllNewsFromUser(page,userId,newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUser(page, user);
+                ln = newsDao.getAllNewsFromUser(page,user,newsOrderObject, loggedUserId);
 
         };
 
@@ -166,8 +166,8 @@ public class NewsServiceImpl implements NewsService{
 //    }
 
     @Override
-    public void setRating(Long newsId, Long userId, Rating rating) {
-        newsDao.setRating(newsId, userId, rating);
+    public void setRating(News news, User user, Rating rating) {
+        newsDao.setRating(news, user, rating);
     }
 //
 
@@ -201,11 +201,11 @@ public class NewsServiceImpl implements NewsService{
 //    }
 
     @Override
-    public void deleteNews(long newsId) {
-        FullNews news = getById(newsId).orElseThrow(NewsNotFoundException::new);
+    public void deleteNews(News news) {
+        FullNews fullNews = getById(news.getNewsId()).orElseThrow(NewsNotFoundException::new);
         User current = securityService.getCurrentUser().orElseThrow(() -> new HTTPException(400));
-        if(!securityService.isCurrentUserAdmin() && news.getNews().getCreatorId() != current.getId())
+        if(!securityService.isCurrentUserAdmin() && fullNews.getNews().getCreatorId() != current.getId())
             throw new UserNotAuthorized();
-        newsDao.deleteNews(newsId);
+        newsDao.deleteNews(news);
     }
 }

@@ -26,11 +26,11 @@ public interface NewsDao {
 
 //    Rating upvoteState(News news, User user);
 
-    void setRating(Long newsId, Long userId, Rating rating);
+    void setRating(News news,  User user, Rating rating);
 
 //    NewsStats getNewsStats(Long newsId);
 
-    List<FullNews> getSavedNews(int page, long userId, NewsOrder ns, Long loggedUser);
+    List<FullNews> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser);
 
     void saveNews(News news, User user);
 
@@ -38,21 +38,21 @@ public interface NewsDao {
 
     void removeSaved(News news, User user);
 
-    List<FullNews> getAllNewsFromUser(int page, long userId, NewsOrder ns, Long loggedUser);
-    int getTotalPagesNewsFromUser(int page, long userId);
+    List<FullNews> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser);
+    int getTotalPagesNewsFromUser(int page, User user);
 
-    int getTotalPagesNewsFromUserSaved(int page, long userId);
+    int getTotalPagesNewsFromUserSaved(int page, User user);
 
-    int getTotalPagesNewsFromUserUpvoted(int page, long userId);
+    int getTotalPagesNewsFromUserUpvoted(int page, User user);
 
-    int getTotalPagesNewsFromUserDownvoted(int page, long userId);
+    int getTotalPagesNewsFromUserDownvoted(int page, User user);
 
 
-    void deleteNews(long newsId);
+    void deleteNews(News news);
 
-    List<FullNews> getNewsUpvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser);
+    List<FullNews> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser);
 
-    List<FullNews> getNewsDownvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser);
+    List<FullNews> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser);
 
 //    List<News> getSavedNewsFromUser(int page, long userId, NewsOrder ns, Long loggedUser);
 

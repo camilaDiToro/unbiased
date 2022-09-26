@@ -74,7 +74,7 @@ public class AdminJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, ROLE_TABLE);
 
         User user = getMockUser();
-        adminDao.makeUserAdmin(user.getId());
+        adminDao.makeUserAdmin(user);
         List<String> roleList = roleDao.getRoles(user.getId());
 
         assertEquals(Role.ADMIN.getRole(), roleList.get(0));
@@ -85,9 +85,9 @@ public class AdminJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, REPORT_TABLE);
 
         News news = getMockNews();
-        adminDao.reportNews(news.getNewsId(), 1L, ReportReason.LIE);
+        adminDao.reportNews(news, 1L, ReportReason.LIE);
 
-        assertTrue(adminDao.hasReported(news.getNewsId(), 1L));
+        assertTrue(adminDao.hasReported(news, 1L));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class AdminJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, REPORT_TABLE);
 
         News news = getMockNews();
-        adminDao.reportNews(news.getNewsId(), 1L, ReportReason.LIE);
+        adminDao.reportNews(news, 1L, ReportReason.LIE);
         Page<ReportedNews> reportList = adminDao.getReportedNews(PAGE_SIZE, NewsOrder.NEW);
 
         assertEquals(PAGE_SIZE, reportList.getTotalPages());
@@ -106,7 +106,7 @@ public class AdminJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, REPORT_TABLE);
 
         News news = getMockNews();
-        adminDao.reportNews(news.getNewsId(), 1L, ReportReason.LIE);
+        adminDao.reportNews(news, 1L, ReportReason.LIE);
         Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(PAGE_SIZE, news.getNewsId());
 
         assertEquals(ReportReason.LIE, reportList.getContent().get(0).getReason());

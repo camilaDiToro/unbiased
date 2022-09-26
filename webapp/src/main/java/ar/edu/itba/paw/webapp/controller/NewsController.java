@@ -71,7 +71,7 @@ public class NewsController {
         }
 
         News news = maybeNews.get().getNews();
-        newsService.deleteNews(news.getNewsId());
+        newsService.deleteNews(news);
         return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
 
