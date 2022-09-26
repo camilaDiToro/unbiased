@@ -74,11 +74,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createIfNotExists(User.UserBuilder userBuilder) {
-        return userDao.createIfNotExists(userBuilder);
-    }
-
-    @Override
     public Optional<User> findByEmail(String email) {
         return userDao.findByEmail(email);
     }

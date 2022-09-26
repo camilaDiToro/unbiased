@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.ProfileCategory;
@@ -22,17 +23,20 @@ public class NewsServiceImpl implements NewsService {
 
     private final NewsDao newsDao;
     private final SecurityService securityService;
-    private final UserDao userDao;
+    private final UserService userService;
 
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserDao userDao) {
+    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService) {
         this.newsDao = newsDao;
-        this.userDao = userDao;
+        this.userService = userService;
         this.securityService = securityService;
     }
 
     @Override
     public News create(News.NewsBuilder newsBuilder) {
+        if(!userService.getRoles(newsBuilder.getCreatorId()).contains(Role.JOURNALIST.getRole())){
+            userService.addRole(newsBuilder.getCreatorId(),Role.JOURNALIST);
+        }
         return this.newsDao.create(newsBuilder);
     }
 
