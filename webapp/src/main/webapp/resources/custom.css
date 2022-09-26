@@ -228,9 +228,9 @@
     background-color: #8ea7e8;
 }
 
-#navbar-dropdown.dropdown-menu{
+/*#navbar-dropdown.dropdown-menu{
     padding-left: 0.7rem!important;
-}
+}*/
 
 #bookmark{
     cursor: pointer;
@@ -351,5 +351,9 @@ body{
 
 #bin_button:focus{
     box-shadow: none;
+}
+
+#title-principal-card:hover{
+    color: #8ea7e8;
 }
 

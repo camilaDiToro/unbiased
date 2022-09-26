@@ -29,7 +29,7 @@
     <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
         <c:forEach var="cat" items="${categories}">
             <li class="nav-item">
-                <a class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${orderBy}">
+                <a style="background: transparent !important;" class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
             </li>
