@@ -100,6 +100,8 @@ public class UserServiceImpl implements UserService {
         if(!mayBeUser.isPresent())
             return VerificationToken.Status.NOT_EXISTS;
         User user = mayBeUser.get();
+        if(user.getStatus().equals(UserStatus.REGISTERED))
+            return VerificationToken.Status.ALREADY_VERIFIED;
         verificationTokenService.deleteEmailToken(user.getId());
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();

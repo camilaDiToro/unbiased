@@ -174,7 +174,9 @@ public class UserController {
             return resendVerificationEmail(userForm, status);
         }
 
-        userService.resendEmailVerification(userForm.getEmail());
+        VerificationToken.Status s = userService.resendEmailVerification(userForm.getEmail());
+        if(s.equals(VerificationToken.Status.ALREADY_VERIFIED))
+            return new ModelAndView("email_already_verified");
         return new ModelAndView("email_verification_pending");
     }
 
