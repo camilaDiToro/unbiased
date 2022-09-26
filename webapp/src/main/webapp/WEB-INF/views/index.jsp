@@ -14,9 +14,9 @@
 <%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
     <%@ include file="../../resources/navbar.jsp" %>
     <div class="container-xxl container-fluid flex-grow-1">
-        <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
+        <c:set var = "activeClasses" scope = "session" value = "bg-info active"/>
         <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
-        <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
+        <ul class="my-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ">
             <c:forEach var="order" items="${orders}">
                 <li class="nav-item">
                     <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
@@ -40,15 +40,15 @@
         <div class="d-flex flex-column flex-xl-row ">
             <div class="w-100 w-xl-75 ">
                     <c:if test="${query == ''}">
-                        <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
+                        <ul style="border-bottom: transparent" class="my-2 nav nav-tabs justify-content-center text-light p-2">
                             <li class="nav-item">
-                                <a style="background: transparent !important;" class="text-capitalize nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                                <a id="navLink-a" style="background: transparent !important;" class="text-capitalize text-white nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "query" value = "${param.query}"/>
                     </c:url>"><spring:message code="categories.all"/></a>
                             </li>
                             <c:forEach var="cat" items="${categories}">
                                 <li class="nav-item">
-                                    <a style="background: transparent !important;" class="text-capitalize nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                                    <a id="navLink-b" style="background: transparent !important;" class="text-capitalize text-white nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
 
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
@@ -128,11 +128,11 @@
                                                 <div class="card-body-home">
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                     <a id="title-principal-card" style="max-height: 10%; text-decoration: none" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
-                                                    <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
+                                                    <h6 class="card-subtitle py-1 text-ellipsis-2 text-white"><c:out value="${article.subtitle}"/></h6>
 
                                                     <div>
-                                                        <p class="text-sm-left text-secondary mb-0">
-                                                            <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px"/>
+                                                        <p class="text-sm-left text-secondary mb-0 text-white d-flex align-content-center gap-1" style="opacity: 0.9">
+                                                            <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px; margin-top: 1px"/>
                                                             <c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/>
                                                         </p>
                                                     </div>
@@ -151,8 +151,8 @@
                                                             <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
                                                         </c:if>
                                                     </div>
-                                                    <a href="<c:url value="/profile/${article.creatorId}"/>">
-                                                        <div class="text-secondary card-name-text text-ellipsis-1">${fullNews.user}</div>
+                                                    <a style="text-decoration: none" href="<c:url value="/profile/${article.creatorId}"/>">
+                                                        <div id="profile_name_card" class="card-name-text text-ellipsis-1">${fullNews.user}</div>
 
                                                     </a>
                                                 </div>
@@ -193,7 +193,7 @@
                 </div>
             <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start" id="none_shadow">
 
-                <h5 style="padding-left: 35px; background-image: url('<c:url value="/resources/crown-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="card-title"><spring:message code="home.topCreators"/></h5>
+                <h5 style="color: white; padding-left: 35px; background-image: url('<c:url value="/resources/crown-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="card-title"><spring:message code="home.topCreators"/></h5>
 
 
                 <c:forEach var="creator" items="${topCreators}">
@@ -219,7 +219,7 @@
     </div>
     <c:if test="${not empty news}">
         <nav class="d-flex justify-content-center align-items-center">
-            <ul class="pagination">
+            <ul class="pagination" >
 
                 <li class="page-item"><a class="page-link" href="<c:url value = "/${orderBy}">
             <c:param name = "page" value = "1"/>

@@ -8,6 +8,7 @@
     object-fit: cover;
 }
 
+
 .min-vh-65 {
     min-height: 64vh; !important
 }
@@ -316,6 +317,7 @@
 .card{
     /*box-shadow: 0 2px 2px rgba(0,0,0,.25);*/
     border-radius: 6px;
+    background: linear-gradient(rgb(58, 60, 74), rgb(36, 38, 50));
 }
 
 #none_shadow.card:hover{
@@ -340,17 +342,19 @@
 }
 
 #none_shadow_creator{
-    background: rgb(30,30,45);
+    /*background: rgb(30,30,45);
     background: linear-gradient(125deg, rgba(30,30,45,1) 0%, rgba(142,167,232,1) 53%, rgba(167,185,235,1) 93%);
     -webkit-transition: background-color 2s ease-out !important;
     -moz-transition: background-color 2s ease-out !important;
     -o-transition: background-color 2s ease-out !important;
-    transition: background-color 2s ease-out !important;
+    transition: background-color 2s ease-out !important;*/
+    background: #1e1e2d;
 }
 
 #none_shadow_creator:hover{
-    background: rgba(30,30,45,1);
-    cursor: pointer;
+    /*background: rgba(30,30,45,1);
+    cursor: pointer;*/
+    background: #8ea7e8;
 }
 
 #name_card:hover{
@@ -360,7 +364,8 @@
 body{
     /*background: rgb(30,30,45);
     background: linear-gradient(180deg, rgba(30,30,45,1) 0%, rgba(142,167,232,1) 20%, rgba(167,185,235,1) 43%, rgba(217,219,241,1) 67%, rgba(255,246,246,1) 100%);*/
-    background: #fff6f6;
+    /*background: #fff6f6;*/
+    background: radial-gradient(#1C1F2C 30%, #0D0E14);
 }
 
 #bin_button:focus{
@@ -371,7 +376,34 @@ body{
     color: #8ea7e8;
 }
 
+#title-principal-card{
+    color: white;
+}
+
 #pencil_button:hover{
     color: white;
 }
 
+#navLink-a.nav-link{
+    border: 0;
+}
+
+#navLink-b.nav-link{
+    border: 0;
+}
+
+#navLink-a.nav-link.active{
+    border-bottom: 1px solid white;
+}
+
+#navLink-b.nav-link.active{
+    border-bottom: 1px solid white;
+}
+
+#profile_name_card:hover{
+    color: #8ea7e8;
+}
+
+#profile_name_card{
+    color: white;
+}
