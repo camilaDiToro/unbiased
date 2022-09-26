@@ -40,30 +40,6 @@ public class NewsServiceImpl implements NewsService{
         return newsDao.getById(id, getLoggedUserId());
     }
 
-//    @Override
-//    public Optional<FullNews> getNewsById(long id) {
-//        Optional<News> maybeNews = newsDao.getById(id);
-//        if (maybeNews.isPresent()) {
-//            return Optional.of(getFullNews(maybeNews.get()));
-//        }
-//
-//        return Optional.empty();
-//
-//    }
-
-//    private FullNews getFullNews(News news) {
-//        long newsId = news.getNewsId();
-////        NewsStats newsStats = newsDao.getNewsStats(newsId);
-//        Optional<User> maybeUser = securityService.getCurrentUser();
-//        LoggedUserParameters loggedUserParameters = null;
-//        if (maybeUser.isPresent()) {
-//            User user = maybeUser.get();
-//            loggedUserParameters = new LoggedUserParameters(upvoteState(news, user), isSaved(news, user));
-//
-//        }
-//        return new FullNews(news, userDao.getUserById(news.getCreatorId()).get(), newsDao.getNewsStats(newsId), loggedUserParameters);
-//    }
-
     private Long getLoggedUserId() {
         return securityService.getCurrentUser().map(User::getId).orElse(null);
     }
@@ -90,11 +66,6 @@ public class NewsServiceImpl implements NewsService{
         }
         return new Page<>(ln,page,totalPages);
     }
-
-//    @Override
-//    public Page<FullNews> getNewsFromUser(int page, String newsOrder, long userId) {
-//        return getNewsForUserProfile(page, newsOrder, userId, ProfileCategory.MY_POSTS.toString());
-//    }
 
     @Override
     public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, long userId, String profileCategory) {
@@ -140,48 +111,15 @@ public class NewsServiceImpl implements NewsService{
         return new Page<>(ln, page, totalPages);
     }
 
-    /*@Override
-    public Page<News> getNewsFromUser(int page, String newsOrder, long userId) {
-        page = page <= 0 ? 1 : page;
-        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
-        int totalPages = newsDao.getTotalPagesNewsFromUser(page, userId, newsOrderObject);
-        page = Math.min(page, totalPages);
-        List<News> ln = newsDao.getAllNewsFromUser(page,userId,newsOrderObject);
-        return new Page<>(ln, page, totalPages);
-    }*/
-
     @Override
     public List<Category> getNewsCategory(FullNews news) {
         return newsDao.getNewsCategory(news.getNews());
     }
 
-//    @Override
-//    public int getUpvotes(Long newsId) {
-//        return newsDao.getUpvotes(newsId);
-//    }
-//    @Override
-//
-//    public Rating upvoteState(News news, User user) {
-//        return newsDao.upvoteState(news, user);
-//    }
-
     @Override
     public void setRating(Long newsId, Long userId, Rating rating) {
         newsDao.setRating(newsId, userId, rating);
     }
-//
-
-//    @Override
-//    public Positivity getPositivityBracket(Long newsId) {
-//        return Positivity.getPositivvity(getPositivityValue(newsId));
-//    }
-
-//    @Override
-//    public List<FullNews> getSavedNews(int page, User user, NewsOrder ns) {
-////        List<FullNews> news = newsDao.getSavedNews(page, user.getId(), ns);
-//        return null;
-////        return news.stream().map(this::getFullNews).collect(Collectors.toList());
-//    }
 
     @Override
     public boolean toggleSaveNews(FullNews news, User user) {
@@ -195,15 +133,18 @@ public class NewsServiceImpl implements NewsService{
             newsDao.saveNews(news.getNews(), user);
         return true;
     }
-//    @Override
-//    public boolean isSaved(News news, User user) {
-//        return newsDao.isSaved(news, user);
-//    }
 
     @Override
     public void deleteNews(FullNews news) {
         if(news.getNews().getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
             throw new UserNotAuthorized();
         newsDao.deleteNews(news.getNews().getNewsId());
+    }
+
+    @Override
+    public Page<FullNews> getRecommendation(int page, User user) {
+        int totalPages = newsDao.getTodayNewsPageCount();
+        page = Math.min(Math.max(page, 1), totalPages);
+        return new Page<>(newsDao.getRecommendation(page, user),page, totalPages);
     }
 }

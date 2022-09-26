@@ -39,7 +39,7 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Optional<User> getUserById(long id) {
-        List<User> query= jdbcTemplate.query("SELECT * FROM Users NATURAL JOIN user_positivity WHERE user_id = ?",
+        List<User> query= jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity WHERE user_id = ?",
                 new Object[] { id }, ROW_MAPPER);
         return query.stream().findFirst();
     }
@@ -69,13 +69,13 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return jdbcTemplate.query("SELECT * FROM Users NATURAL JOIN user_positivity WHERE email = ?",
+        return jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity WHERE email = ?",
                 new Object[] { email }, ROW_MAPPER).stream().findFirst();
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return jdbcTemplate.query("SELECT * FROM Users NATURAL JOIN user_positivity WHERE username = ?",
+        return jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity WHERE username = ?",
                 new Object[] { username }, ROW_MAPPER).stream().findFirst();
     }
 
