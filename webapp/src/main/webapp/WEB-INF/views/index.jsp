@@ -26,7 +26,7 @@
         <ul class="${empty query ? 'my-4' :''} mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ${type == 'creator' ? 'invisible' : 'visible'}">
             <c:forEach var="order" items="${orders}">
                 <li class="nav-item">
-                    <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
+                    <a class="text-capitalize nav-link fromLeft rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
                     <c:param name = "category" value = "${category}"/>
                     <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
                     </c:url>"><spring:message code="${order.interCode}"/></a>

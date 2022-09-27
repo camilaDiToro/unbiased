@@ -2,10 +2,12 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Role;
+import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
-import ar.edu.itba.paw.model.VerificationToken;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
@@ -101,6 +103,8 @@ public class UserServiceImpl implements UserService {
         if(!mayBeUser.isPresent())
             return VerificationToken.Status.NOT_EXISTS;
         User user = mayBeUser.get();
+        if(user.getStatus().equals(UserStatus.REGISTERED))
+            return VerificationToken.Status.ALREADY_VERIFIED;
         verificationTokenService.deleteEmailToken(user.getId());
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();

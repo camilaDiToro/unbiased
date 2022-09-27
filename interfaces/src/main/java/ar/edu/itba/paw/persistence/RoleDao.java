@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.Role;
+import ar.edu.itba.paw.model.user.Role;
 
 import java.util.List;
 

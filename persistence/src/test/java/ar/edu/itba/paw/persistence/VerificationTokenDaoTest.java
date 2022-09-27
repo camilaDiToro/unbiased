@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 
-import ar.edu.itba.paw.model.VerificationToken;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.model.user.User;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,7 +16,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 

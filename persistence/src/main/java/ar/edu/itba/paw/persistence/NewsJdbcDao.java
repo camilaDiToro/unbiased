@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.LoggedUserParameters;
+import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,13 +24,10 @@ public class NewsJdbcDao implements NewsDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
-
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert jdbcUpvoteInsert;
     private final SimpleJdbcInsert jdbcSavedNewsInsert;
-
     private final SimpleJdbcInsert jdbcCommentsInsert;
-
 
     private final CategoryDao categoryDao;
 
@@ -415,7 +413,7 @@ public class NewsJdbcDao implements NewsDao {
 
 
     @Override
-    public List<FullNews> getRecommendation(int page, User user) {
+    public List<FullNews> getRecommendation(int page, User user, NewsOrder newsOrder) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("pageSize", RECOMMENDATION_PAGE_SIZE)
                 .addValue("offset", (page-1)*RECOMMENDATION_PAGE_SIZE)
@@ -436,7 +434,7 @@ public class NewsJdbcDao implements NewsDao {
                         "NATURAL LEFT JOIN logged_params WHERE full_news.creation_date >= :date " +
                         "AND creator NOT IN (SELECT creator FROM news NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId) " +
                         "AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId))" +
-                        "ORDER BY priority, creation_date LIMIT :pageSize OFFSET :offset ",
+                        "ORDER BY priority, " + newsOrder.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                 params, FULLNEWS_ROW_MAPPER);
         return fullNews;
     }

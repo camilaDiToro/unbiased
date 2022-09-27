@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.model;
+package ar.edu.itba.paw.model.user;
 
 import java.time.LocalDateTime;
 
@@ -37,20 +37,26 @@ public class VerificationToken {
     }
 
     public enum Status{
-        SUCCESFFULLY_VERIFIED("SUCCESFULLY_VERIFIED"),
-        SUCCESSFULLY_RESENDED("SUCCESSFULLY_RESENDED"),
-        EXPIRED("EXPIRED"),
-        NOT_EXISTS("NOT_EXISTS"),
-        ALREADY_VERIFIED("ALREADY_VERIFIED");
+        SUCCESFFULLY_VERIFIED("SUCCESFULLY_VERIFIED", "verificationToken.succesfullyVerified"),
+        SUCCESSFULLY_RESENDED("SUCCESSFULLY_RESENDED","verificationToken.succesfullyResended"),
+        EXPIRED("EXPIRED","verificationToken.expired"),
+        NOT_EXISTS("NOT_EXISTS","verificationToken.notExists"),
+        ALREADY_VERIFIED("ALREADY_VERIFIED","verificationToken.alreadyVerified");
 
         private final String status;
+        private final String code;
 
-        Status(String status){
+        Status(String status, String code){
             this.status = status;
+            this.code = code;
         }
 
         public String getStatus() {
             return status;
+        }
+
+        public String getCode() {
+            return code;
         }
     }
 }
