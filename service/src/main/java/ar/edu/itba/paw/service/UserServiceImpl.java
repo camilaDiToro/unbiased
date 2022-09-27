@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.EXPIRED;
         }
         userDao.verifyEmail(vt.getUserId());
-        login(vt.getUserId());
+        login(getUserById(vt.getUserId()).orElseThrow(UserNotFoundException::new));
         verificationTokenService.deleteEmailToken(vt.getUserId());
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
@@ -112,27 +112,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addRole(long userId, Role role) {
-        roleDao.addRole(userId, role);
+    public void addRole(User user, Role role) {
+        roleDao.addRole(user.getId(), role);
     }
 
     @Override
-    public List<String> getRoles(long userId) {
-        return roleDao.getRoles(userId);
+    public List<String> getRoles(User user) {
+        return roleDao.getRoles(user.getId());
     }
 
     @Override
-    public void updateProfile(long userId, String username, Long imageId) {
-        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
-
+    public void updateProfile(User user, String username, Long imageId) {
+        long id = user.getId();
         if(imageId!=null){
             if(user.getImageId()!=null)
                 imageService.deleteImage(user.getImageId());
-            userDao.updateImage(userId,imageId);
+            userDao.updateImage(id,imageId);
         }
 
         if(username!= null && !username.isEmpty())
-            userDao.updateUsername(userId,username);
+            userDao.updateUsername(id,username);
     }
 
     @Override
@@ -141,17 +140,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void followUser(long followId) {
-        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        User follow = getRegisteredUserById(followId).orElseThrow(UserNotFoundException::new);
-        userDao.addFollow(user.getId(), followId);
+    public void followUser(User user) {
+        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        userDao.addFollow(myUser.getId(), user.getId());
     }
 
     @Override
-    public void unfollowUser(long followId) {
-        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        User unfollow = getRegisteredUserById(followId).orElseThrow(UserNotFoundException::new);
-        userDao.unfollow(user.getId(), followId);
+    public void unfollowUser(User user) {
+        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        userDao.unfollow(myUser.getId(), user.getId());
     }
 
     @Override
@@ -159,16 +156,13 @@ public class UserServiceImpl implements UserService {
         return userDao.searchUsers(page, search);
     }
 
-    @Override
-    public boolean isFollowing(long followId) {
-        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        User follow = getRegisteredUserById(followId).orElseThrow(UserNotFoundException::new);
-        return userDao.isFollowing(user.getId(), followId);
+    public boolean isFollowing(User user) {
+        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        return userDao.isFollowing(myUser.getId(), user.getId());
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
-    private void login(long userId) {
-        final User user = getUserById(userId).get();
+    private void login(User user) {
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
     }

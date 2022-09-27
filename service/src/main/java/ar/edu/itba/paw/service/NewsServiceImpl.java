@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
@@ -31,8 +32,8 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public News create(News.NewsBuilder newsBuilder) {
-        if(!userService.getRoles(newsBuilder.getCreatorId()).contains(Role.JOURNALIST.getRole())){
-            userService.addRole(newsBuilder.getCreatorId(),Role.JOURNALIST);
+        if(!userService.getRoles(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new)).contains(Role.JOURNALIST.getRole())){
+            userService.addRole(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new),Role.JOURNALIST);
         }
         return this.newsDao.create(newsBuilder);
     }

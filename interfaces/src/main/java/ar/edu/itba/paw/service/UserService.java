@@ -16,12 +16,12 @@ public interface UserService {
     List<User> getTopCreators(int qty);
     VerificationToken.Status verifyUserEmail(String token);
     VerificationToken.Status resendEmailVerification(String email);
-    void addRole(long userId, Role role);
-    List<String> getRoles(long userId);
-    void updateProfile(long userId, String username, Long imageId);
+    void addRole(User user, Role role);
+    List<String> getRoles(User user);
+    void updateProfile(User user, String username, Long imageId);
     Optional<User> findByUsername(String username);
-    boolean isFollowing(long followId);
-    void followUser(long followId);
-    void unfollowUser(long followId);
     Page<User> searchUsers(int page, String search);
+    boolean isFollowing(User user);
+    void followUser(User user);
+    void unfollowUser(User user);
 }

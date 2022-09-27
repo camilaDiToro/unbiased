@@ -64,8 +64,8 @@
                         </ul>
                     </c:if>
                     <c:if test="${query != ''}">
-                        <div class="m-4">
-                            <a href="<c:url value="/${orderBy}"/>"><spring:message code="search.filter"/> <c:out value=": \"${query}\""/></a>
+                        <div class="m-4 ">
+                            <a class="link" href="<c:url value="/${orderBy}"/>"><div class="link-text"><spring:message code="search.filter" arguments="${query}"/></div></a>
                         </div>
                     </c:if>
                     <c:if test="${empty news}" >
