@@ -1,18 +1,20 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.PositivityStats;
 import ar.edu.itba.paw.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class UserJdbcDao implements UserDao {
@@ -20,6 +22,9 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert followJdbcInsert;
+    private final NamedParameterJdbcTemplate namedJdbcTemplate;
+
+    public static final double PAGE_SIZE = 10.0;
 
     private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User
             .UserBuilder(rs.getString("email"))
@@ -30,9 +35,12 @@ public class UserJdbcDao implements UserDao {
             .status(rs.getString("status"))
             .positivity(new PositivityStats(rs.getInt("upvotes"),rs.getInt("downvotes"))).build();
 
+    private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("userCount");
+
     @Autowired
     public UserJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
+        namedJdbcTemplate = new NamedParameterJdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds).withTableName("users").usingGeneratedKeyColumns("user_id");
         followJdbcInsert = new SimpleJdbcInsert(ds).withTableName("follows");
     }
@@ -112,6 +120,24 @@ public class UserJdbcDao implements UserDao {
         return  jdbcTemplate.queryForObject("SELECT count(*) FROM follows WHERE user_id = ? AND follows = ?",
                 new Object[]{userId, followId}, Integer.class) > 0;
 
+    }
+
+    @Override
+    public Page<User> searchUsers(int page, String search) {
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("pageSize", PAGE_SIZE)
+                .addValue("offset", (page - 1) * PAGE_SIZE)
+                .addValue("search", "%" + search.toLowerCase() + "%");
+        List<User> users = namedJdbcTemplate.query("SELECT * FROM users NATURAL LEFT JOIN user_positivity " +
+                        "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params, ROW_MAPPER);
+
+        int rowsCount = namedJdbcTemplate.query("SELECT count(*) AS userCount FROM users NATURAL LEFT JOIN user_positivity " +
+                        "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params,
+                ROW_COUNT_MAPPER).stream().findFirst().get();
+        int total = (int) Math.ceil(rowsCount / PAGE_SIZE);
+        total =  total == 0 ? 1 : total;
+
+        return new Page<>(users,page,total);
     }
 
     public List<User> getAll(int page){

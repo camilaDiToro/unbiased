@@ -76,7 +76,6 @@ public class UserController {
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
         final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
-        Page<FullNews> ln = newsService.getRecommendation(1,userService.getUserById(userId).get());
         return mav;
     }
 

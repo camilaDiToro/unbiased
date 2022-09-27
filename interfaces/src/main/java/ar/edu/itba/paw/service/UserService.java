@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.VerificationToken;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-
     Optional<User> getUserById(long id);
     Optional<User> getRegisteredUserById(long id);
     User create(User.UserBuilder userBuilder);
@@ -23,4 +23,5 @@ public interface UserService {
     boolean isFollowing(long followId);
     void followUser(long followId);
     void unfollowUser(long followId);
+    Page<User> searchUsers(int page, String search);
 }

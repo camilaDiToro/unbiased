@@ -34,6 +34,4 @@ public interface NewsDao {
     List<FullNews> getRecommendation(int page, User user);
     int getTodayNewsPageCount();
     Page<Comment> getComments(long newsId, int page);
-
-
 }

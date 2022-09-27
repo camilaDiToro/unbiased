@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.user.User;
@@ -151,6 +152,11 @@ public class UserServiceImpl implements UserService {
         User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         User unfollow = getRegisteredUserById(followId).orElseThrow(UserNotFoundException::new);
         userDao.unfollow(user.getId(), followId);
+    }
+
+    @Override
+    public Page<User> searchUsers(int page, String search) {
+        return userDao.searchUsers(page, search);
     }
 
     @Override

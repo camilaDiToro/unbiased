@@ -23,13 +23,10 @@ public class NewsJdbcDao implements NewsDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
-
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert jdbcUpvoteInsert;
     private final SimpleJdbcInsert jdbcSavedNewsInsert;
-
     private final SimpleJdbcInsert jdbcCommentsInsert;
-
 
     private final CategoryDao categoryDao;
 
