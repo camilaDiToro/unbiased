@@ -104,7 +104,7 @@ public class NewsController {
     public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                  @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsFrom,
                                  @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors,
-                                 @RequestParam(name="page", defaultValue="1") int page){
+    @RequestParam(name="page", defaultValue="1") int page){
 
         FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         News news = fullNews.getNews();

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.VerificationToken;
@@ -23,4 +24,6 @@ public interface UserService {
     boolean isFollowing(User user);
     void followUser(User user);
     void unfollowUser(User user);
+
+    Page<User> getUsersByQuery(String query, int page);
 }

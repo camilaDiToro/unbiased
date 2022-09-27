@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @Repository
 public class UserJdbcDao implements UserDao {
+    private static final double USERS_PAGE_SIZE = 12.0;
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
@@ -123,5 +124,22 @@ public class UserJdbcDao implements UserDao {
         return jdbcTemplate.query("WITH interactions AS (SELECT creator AS user_id, count(*) AS interaction_count FROM upvotes JOIN news ON upvotes.news_id = news.news_id " +
                 "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator LIMIT ?) SELECT * FROM interactions NATURAL JOIN users NATURAL JOIN user_positivity ORDER BY interaction_count DESC", new Object[]{qty},ROW_MAPPER);
 
+    }
+
+    @Override
+    public List<User> getUsersByQuery(String query, int page) {
+        return jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity " +
+                "WHERE LOWER(username) LIKE ? OR " +
+                "LOWER(email) LIKE ? LIMIT ? OFFSET ?", new Object[]{ "%" + query + "%","%" + query + "%", USERS_PAGE_SIZE,(page-1)*USERS_PAGE_SIZE},ROW_MAPPER);
+    }
+
+    @Override
+    public int getUsersByQueryTotalPages(String query) {
+        int rowsCount =  jdbcTemplate.queryForObject("SELECT count(*) FROM Users NATURAL LEFT JOIN user_positivity " +
+                "WHERE LOWER(username) LIKE ? OR " +
+                "LOWER(email) LIKE ?", new Object[]{ "%" + query + "%","%" + query + "%"},Integer.class);
+
+        int total = (int) Math.ceil(rowsCount / USERS_PAGE_SIZE);
+        return total == 0 ? 1 : total;
     }
 }
