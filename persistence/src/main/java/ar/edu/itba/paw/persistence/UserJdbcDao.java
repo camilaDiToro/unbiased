@@ -24,7 +24,6 @@ public class UserJdbcDao implements UserDao {
     private final SimpleJdbcInsert followJdbcInsert;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
-    public static final double PAGE_SIZE = 10.0;
 
     private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User
             .UserBuilder(rs.getString("email"))
@@ -125,8 +124,8 @@ public class UserJdbcDao implements UserDao {
     @Override
     public Page<User> searchUsers(int page, String search) {
         SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("pageSize", PAGE_SIZE)
-                .addValue("offset", (page - 1) * PAGE_SIZE)
+                .addValue("pageSize", USERS_PAGE_SIZE)
+                .addValue("offset", (page - 1) * USERS_PAGE_SIZE)
                 .addValue("search", "%" + search.toLowerCase() + "%");
         List<User> users = namedJdbcTemplate.query("SELECT * FROM users NATURAL LEFT JOIN user_positivity " +
                         "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params, ROW_MAPPER);
@@ -134,7 +133,7 @@ public class UserJdbcDao implements UserDao {
         int rowsCount = namedJdbcTemplate.query("SELECT count(*) AS userCount FROM users NATURAL LEFT JOIN user_positivity " +
                         "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params,
                 ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount / PAGE_SIZE);
+        int total = (int) Math.ceil(rowsCount / USERS_PAGE_SIZE);
         total =  total == 0 ? 1 : total;
 
         return new Page<>(users,page,total);
@@ -151,20 +150,5 @@ public class UserJdbcDao implements UserDao {
 
     }
 
-    @Override
-    public List<User> getUsersByQuery(String query, int page) {
-        return jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity " +
-                "WHERE LOWER(username) LIKE ? OR " +
-                "LOWER(email) LIKE ? LIMIT ? OFFSET ?", new Object[]{ "%" + query + "%","%" + query + "%", USERS_PAGE_SIZE,(page-1)*USERS_PAGE_SIZE},ROW_MAPPER);
-    }
 
-    @Override
-    public int getUsersByQueryTotalPages(String query) {
-        int rowsCount =  jdbcTemplate.queryForObject("SELECT count(*) FROM Users NATURAL LEFT JOIN user_positivity " +
-                "WHERE LOWER(username) LIKE ? OR " +
-                "LOWER(email) LIKE ?", new Object[]{ "%" + query + "%","%" + query + "%"},Integer.class);
-
-        int total = (int) Math.ceil(rowsCount / USERS_PAGE_SIZE);
-        return total == 0 ? 1 : total;
-    }
 }

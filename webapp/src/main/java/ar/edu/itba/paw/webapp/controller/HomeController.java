@@ -58,7 +58,7 @@ public class HomeController {
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
         if (type.equals("creator")) {
-            builder.withObject("usersPage", us.getUsersByQuery(query, page));
+            builder.withObject("usersPage", us.searchUsers(page, query));
         }
         else if (type.equals("article")) {
             builder.withObject("newsPage", newsPage);

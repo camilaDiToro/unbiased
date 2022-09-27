@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.Role;
-import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.user.User;
@@ -171,7 +169,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> getUsersByQuery(String query, int page) {
-        return new Page<>(userDao.getUsersByQuery(query, page), page, userDao.getUsersByQueryTotalPages(query));
+    public Page<User> searchUsers(int page, String search) {
+        return userDao.searchUsers(page, search);
     }
+
+
 }

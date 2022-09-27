@@ -21,7 +21,5 @@ public interface UserDao {
 
    boolean isFollowing(long userId, long followId);
 
-    List<User> getUsersByQuery(String query, int page);
-
-    int getUsersByQueryTotalPages(String query);
+    Page<User> searchUsers(int page, String search);
 }
