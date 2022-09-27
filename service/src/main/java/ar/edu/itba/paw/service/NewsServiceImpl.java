@@ -71,9 +71,18 @@ public class NewsServiceImpl implements NewsService {
             ln = newsDao.getNews(page, query, newsOrderObject, loggedUser);
         } else {
             Category catObject = Category.getByValue(category);
-            totalPages = newsDao.getTotalPagesCategory(catObject);
-            page = Math.min(page, totalPages);
-            ln = newsDao.getNewsByCategory(page, catObject, newsOrderObject, loggedUser);
+
+            if (catObject.equals(Category.FOR_ME)) {
+                totalPages = newsDao.getTodayNewsPageCount();
+                page = Math.min(page, totalPages);
+                ln = newsDao.getRecommendation(page, getLoggedUserOrThrowException(), newsOrderObject);
+            }
+            else {
+                totalPages = newsDao.getTotalPagesCategory(catObject);
+                page = Math.min(page, totalPages);
+                ln = newsDao.getNewsByCategory(page, catObject, newsOrderObject, loggedUser);
+            }
+
         }
         return new Page<>(ln, page, totalPages);
     }
@@ -93,6 +102,7 @@ public class NewsServiceImpl implements NewsService {
         List<FullNews> ln = null;
         ProfileCategory pc = ProfileCategory.valueOf(profileCategory);
         switch (pc) {
+
             case SAVED:
                 totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, userId);
                 ln = newsDao.getSavedNews(page, userId, newsOrderObject, loggedUserId);
