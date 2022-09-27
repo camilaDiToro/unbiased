@@ -260,7 +260,11 @@
 
 .selected {
     font-weight: bold;
-    color: #4e76db;
+    color: white;
+}
+
+.selected:hover{
+    color: #8ea7e8;
 }
 
 .hover-hand {
