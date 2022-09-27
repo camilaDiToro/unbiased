@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NewsService {
-    News create(News.NewsBuilder newsBuilder);
+    News create(News.NewsBuilder newsBuilder, String[] categories);
     Optional<FullNews> getById(long id);
     Page<FullNews> getNews(int page, String category, String newsOrder, String query);
     List<Category> getNewsCategory(News news);

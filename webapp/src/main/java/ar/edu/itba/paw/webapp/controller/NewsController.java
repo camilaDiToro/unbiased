@@ -52,7 +52,7 @@ public class NewsController {
 
 
 
-    @RequestMapping(value = "/news/create", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/news/create", method = RequestMethod.POST)
     public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
                                      final BindingResult errors) throws IOException {
         if(errors.hasErrors()){
@@ -70,7 +70,7 @@ public class NewsController {
 
         final News news = newsService.create(newsBuilder);
         return new ModelAndView("redirect:/news/" + news.getNewsId());
-    }
+    }*/
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
@@ -169,18 +169,11 @@ public class NewsController {
         final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), htmlText, createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-        for(String category : createNewsFrom.getCategories()){
-            Category c = Category.getByInterCode(category);
-            if(c==null)
-                throw new InvalidCategoryException();
-            newsBuilder.addCategory(c);
-        }
-
         if(!createNewsFrom.getImage().isEmpty()){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
-        final News news = newsService.create(newsBuilder);
+        final News news = newsService.create(newsBuilder, createNewsFrom.getCategories());
         return new ModelAndView("redirect:/news/" + news.getNewsId());
     }
 }
