@@ -87,14 +87,14 @@ public class UserController {
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
     public ModelAndView profileFollow(@PathVariable("userId") long userId) {
-        userService.followUser(userId);
+        userService.followUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
         final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
         return mav;
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
     public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
-        userService.unfollowUser(userId);
+        userService.unfollowUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
         final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
         return mav;
     }
@@ -124,7 +124,7 @@ public class UserController {
                 .withObject("hasErrors", hasErrors)
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
-                   mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
+                   mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
         }
 
         try {
@@ -142,7 +142,7 @@ public class UserController {
         }
         Long imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
 
-        userService.updateProfile(userId, userProfileForm.getUsername(), imageId);
+        userService.updateProfile(userService.getUserById(userId).orElseThrow(UserNotFoundException::new), userProfileForm.getUsername(), imageId);
         return new ModelAndView("redirect:/profile/" + userId);
     }
 

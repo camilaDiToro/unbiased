@@ -34,8 +34,8 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public News create(News.NewsBuilder newsBuilder) {
-        if(!userService.getRoles(newsBuilder.getCreatorId()).contains(Role.JOURNALIST.getRole())){
-            userService.addRole(newsBuilder.getCreatorId(),Role.JOURNALIST);
+        if(!userService.getRoles(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new)).contains(Role.JOURNALIST.getRole())){
+            userService.addRole(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new),Role.JOURNALIST);
         }
         return this.newsDao.create(newsBuilder);
     }
