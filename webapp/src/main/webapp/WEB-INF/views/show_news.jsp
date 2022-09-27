@@ -77,7 +77,7 @@
                 </div>
                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
                 <c:if test="${loggedUser != null}">
-                    <div class="d-flex flex-row">
+                    <div class="d-flex flex-row align-items-center">
                         <div class="ml-2 news-bookmark d-flex justify-content-center align-items-center" >
                             <img id="bookmark-news" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
                         </div>
@@ -85,6 +85,35 @@
                         <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
                             <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportModal"'} class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
                         </div>
+
+                        <c:if test="${loggedUser != null && news.creatorId == loggedUser.id}">
+                            <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand">
+                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark"/>
+                            </div>
+
+                            <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"><spring:message code="profile.modal.question"/></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <spring:message code="profile.modal.msg"/>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                            <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
+                                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </c:if>
                     </div>
 
                     <!-- Modal -->
