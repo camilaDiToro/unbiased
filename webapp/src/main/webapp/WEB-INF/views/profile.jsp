@@ -29,7 +29,7 @@
     <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
         <c:forEach var="cat" items="${categories}">
             <li class="nav-item">
-                <a style="background: transparent !important;" class="text-capitalize nav-link <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${orderBy}">
+                <a style="background: transparent !important;" class="text-capitalize nav-link tabs <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
             </li>
@@ -44,9 +44,9 @@
 
             <%--TAB (top, new)--%>
             <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
-                <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
+                <c:set var = "activeClasses" scope = "session" value = "active"/>
                 <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
-                <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
+                <ul class="my-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ">
                     <c:forEach var="order" items="${orders}">
                         <li class="nav-item">
                             <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${order}">
@@ -134,8 +134,8 @@
                                                 </div>
                                                 <div class="card-body-home">
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
-                                                    <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
-                                                    <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
+                                                    <a class="link" style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis"><c:out value="${article.title}"/></h5></a>
+                                                    <h6 class="  card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
                                                     <p class="text-sm-left text-secondary mb-0">
                                                         <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px"/>
                                                         <c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/>
@@ -154,8 +154,8 @@
                                                             <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
                                                         </c:if>
                                                     </div>
-                                                    <a href="<c:url value="/profile/${article.creatorId}"/>">
-                                                        <div class="text-secondary card-name-text text-ellipsis-1">${fullNews.user}</div>
+                                                    <a class="link" href="<c:url value="/profile/${article.creatorId}"/>">
+                                                        <div class="link-text card-name-text text-ellipsis-1">${fullNews.user}</div>
 
                                                     </a>
                                                 </div>

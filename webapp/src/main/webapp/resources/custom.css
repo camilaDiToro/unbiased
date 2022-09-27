@@ -381,28 +381,51 @@ body{
     color: white;
 }
 
+* {
+    color: white;
+}
+
 #pencil_button:hover{
     color: white;
 }
 
-#navLink-a.nav-link{
+.nav-link.active.rounded-pill {
+    background-color: #8ea7e8 !important;
+}
+.nav-link.tabs {
+    background: transparent !important;
     border: 0;
+    color: white;
+
+}
+.nav-link.tabs:hover {
+    color: white;
 }
 
-#navLink-b.nav-link{
-    border: 0;
+.nav-link.tabs.active:hover {
+    color: white;
 }
-
-#navLink-a.nav-link.active{
+.nav-link.tabs.active {
     border-bottom: 1px solid white;
-}
-
-#navLink-b.nav-link.active{
-    border-bottom: 1px solid white;
+    color: white;
 }
 
 #profile_name_card:hover{
     color: #8ea7e8;
+}
+
+.link {
+    text-decoration: none !important;
+    color: white;
+}
+
+.link .link-text:hover {
+    color: #8ea7e8 !important;
+    text-decoration: none;
+}
+
+.nav.nav-tabs {
+    border: 0;
 }
 
 #profile_name_card{

@@ -47,15 +47,15 @@
         <div class="d-flex flex-column flex-xl-row ">
             <div class="w-100 w-xl-75 ">
                     <c:if test="${query == ''}">
-                        <ul style="border-bottom: transparent" class="my-2 nav nav-tabs justify-content-center text-light p-2">
+                        <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
                             <li class="nav-item">
-                                <a id="navLink-a" style="background: transparent !important;" class="text-capitalize text-white nav-link <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                                <a class="text-capitalize text-white nav-link tabs <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "query" value = "${param.query}"/>
                     </c:url>"><spring:message code="categories.all"/></a>
                             </li>
                             <c:forEach var="cat" items="${categories}">
                                 <li class="nav-item">
-                                    <a id="navLink-b" style="background: transparent !important;" class="text-capitalize text-white nav-link <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                                    <a class="text-capitalize text-white nav-link tabs <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
 
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
@@ -134,7 +134,7 @@
                                                 </div>
                                                 <div class="card-body-home">
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
-                                                    <a id="title-principal-card" style="max-height: 10%; text-decoration: none" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
+                                                    <a id="title-principal-card" class="link" style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis-2 text-white"><c:out value="${article.subtitle}"/></h6>
 
                                                     <div>
@@ -158,7 +158,7 @@
                                                             <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
                                                         </c:if>
                                                     </div>
-                                                    <a style="text-decoration: none" href="<c:url value="/profile/${article.creatorId}"/>">
+                                                    <a class="link" href="<c:url value="/profile/${article.creatorId}"/>">
                                                         <div id="profile_name_card" class="card-name-text text-ellipsis-1">${fullNews.user}</div>
 
                                                     </a>
