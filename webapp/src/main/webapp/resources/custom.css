@@ -339,7 +339,7 @@
     transform: none;
     transition: none;
     box-shadow: none;
-    color: white !important;
+    color: #1e1e2d !important;
 }
 
 #none_shadow_creator.card{
@@ -360,6 +360,7 @@
     /*background: rgba(30,30,45,1);
     cursor: pointer;*/
     background: #8ea7e8;
+    transition: background-color 1s ease !important;
 }
 
 #name_card:hover{
@@ -410,9 +411,23 @@ body{
     color: white;
 }
 .nav-link.tabs.active {
-    border-bottom: 1px solid white;
-    color: white;
+    border-bottom: none;
+    color: #8ea7e8!important;
 }
+
+.nav-link.tabs:after{
+    display:block;
+    content: '';
+    border-bottom: solid 3px white;
+    transform: scaleX(0);
+    transition: transform 250ms ease-in-out;
+}
+
+.nav-link.tabs:hover:after{
+    transform: scaleX(1);
+}
+
+.nav-link.fromLeft:after{  transform-origin:  0% 50%; }
 
 #profile_name_card:hover{
     color: #8ea7e8;

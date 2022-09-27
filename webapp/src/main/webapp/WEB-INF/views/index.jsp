@@ -26,7 +26,7 @@
         <ul class="my-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ">
             <c:forEach var="order" items="${orders}">
                 <li class="nav-item">
-                    <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
+                    <a class="text-capitalize nav-link fromLeft rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
                     <c:param name = "category" value = "${category}"/>
                     <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
                     </c:url>"><spring:message code="${order.interCode}"/></a>
@@ -205,7 +205,7 @@
 
                 <c:forEach var="creator" items="${topCreators}">
                     <a style="text-decoration: none" class="m-1" href="<c:url value="/profile/${creator.id}"/>" >
-                            <div class="card text-white d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">
+                            <div class="card d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">
 <div class="img-container">
 <c:if test="${creator.hasImage()}">
     <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.imageId}/image"/>" alt="">
