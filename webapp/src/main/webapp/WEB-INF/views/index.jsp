@@ -127,7 +127,7 @@
                                         <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
 
                                         <c:set var="positivity" value="${positivityStats.positivity}"/>
-                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
+                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" >
                                         </div>
                                         <div class="d-flex flex-column justify-content-between ${article.hasImage() ? 'w-60' : 'w-100'}">
                                             <div class="d-flex w-100">
@@ -160,7 +160,7 @@
                                                     <div>
                                                         <p class="text-sm-left text-secondary mb-0 text-white d-flex align-content-center gap-1" style="opacity: 0.9">
                                                             <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px; margin-top: 1px"/>
-                                                            <c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/>
+                                                            <spring:message code="home.read" arguments="${fullNews.readTime}"/>
                                                         </p>
                                                     </div>
 
@@ -238,7 +238,7 @@
                                         <c:set var="positivityStats" value="${user.positivityStats}"/>
 
                                         <c:set var="positivity" value="${positivityStats.positivity}"/>
-                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
+                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" >
                                         </div>
                                         <div class="d-flex justify-content-between p-2 w-100">
                                             <div class="d-flex align-items-center w-auto gap-1">

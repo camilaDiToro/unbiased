@@ -108,7 +108,7 @@
                                 <div class="col mb-4">
                                     <div class="card h-100 d-flex flex-row">
                                         <c:set var="positivity" value="${positivityStats.positivity}"/>
-                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
+                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" >
 
                                         </div>
                                         <div class="d-flex flex-column justify-content-between ${article.hasImage() ? 'w-60' : 'w-100'}">
@@ -138,7 +138,7 @@
                                                     <h6 class="  card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
                                                     <p class="text-sm-left text-secondary mb-0">
                                                         <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px"/>
-                                                        <c:out value="${fullNews.readTime}"/> <spring:message code="home.read"/>
+                                                        <spring:message code="home.read" arguments="${fullNews.readTime}"/>
                                                     </p>
                                                         <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
@@ -206,7 +206,7 @@
         <div style="display: flex; width: 30%; justify-content: center;">
         <div class="card" style="width: 18rem; height: fit-content; margin-top: 4%" id="right-card">
             <c:set var="profilePositivity" value="${profilePositivityStats.getPositivity()}"/>
-            <div class="quality-indicator <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="${profilePositivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${profilePositivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
+            <div class="quality-indicator <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${profilePositivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${profilePositivityStats.getInteractions()}"/>" >
             </div>
             <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">
             <div class="card-body">
