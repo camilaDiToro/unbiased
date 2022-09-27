@@ -31,7 +31,7 @@ public interface NewsDao {
     void deleteNews(long newsId);
     List<FullNews> getNewsUpvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser);
     List<FullNews> getNewsDownvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser);
-    List<FullNews> getRecommendation(int page, User user);
+    List<FullNews> getRecommendation(int page, User user, NewsOrder newsOrder);
     int getTodayNewsPageCount();
     Page<Comment> getComments(long newsId, int page);
 }

@@ -3,20 +3,17 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
-import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.ws.http.HTTPException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -161,10 +158,10 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<FullNews> getRecommendation(int page, User user) {
+    public Page<FullNews> getRecommendation(int page, User user, NewsOrder newsOrder) {
         int totalPages = newsDao.getTodayNewsPageCount();
         page = Math.min(Math.max(page, 1), totalPages);
-        return new Page<>(newsDao.getRecommendation(page, user),page, totalPages);
+        return new Page<>(newsDao.getRecommendation(page, user, newsOrder),page, totalPages);
     }
 
     @Override

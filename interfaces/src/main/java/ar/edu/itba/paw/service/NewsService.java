@@ -17,7 +17,7 @@ public interface NewsService {
     boolean toggleSaveNews(FullNews news, User user);
     void deleteNews(News news);
     Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String pc);
-    Page<FullNews> getRecommendation(int page, User user);
+    Page<FullNews> getRecommendation(int page, User user, NewsOrder newsOrder);
     Optional<News> getSimpleNewsById(long id);
     FullNews getOrThrowException(long newsId);
     void addComment(News news, String comment);
