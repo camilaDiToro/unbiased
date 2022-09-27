@@ -12,7 +12,11 @@
 
 
 <form:form cssClass="form-signin" modelAttribute="registerForm" action="${postUrl}" method="post">
-    <h1 class="logo mb-4 text-info">unbiased</h1>
+    <h1 class="logo mb-4">
+        <a style="text-decoration: none" class="text-info" href="<c:url value="/TOP"/>">
+            unbiased
+        </a>
+    </h1>
     <h1 class="h3 mb-3 font-weight-normal text-light"><spring:message code="views.register.title"/></h1>
 
     <div>

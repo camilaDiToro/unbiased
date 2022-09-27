@@ -8,6 +8,7 @@
     object-fit: cover;
 }
 
+
 .min-vh-65 {
     min-height: 64vh; !important
 }
@@ -34,7 +35,8 @@
 
 .article-body {
     width: 65%;
-    white-space: pre-wrap; !important
+    white-space: pre-wrap!important;
+    color: white;
 }
 
 
@@ -258,7 +260,11 @@
 
 .selected {
     font-weight: bold;
-    color: #4e76db;
+    color: white;
+}
+
+.selected:hover{
+    color: #8ea7e8;
 }
 
 .hover-hand {
@@ -316,6 +322,7 @@
 .card{
     /*box-shadow: 0 2px 2px rgba(0,0,0,.25);*/
     border-radius: 6px;
+    background: linear-gradient(rgb(58, 60, 74), rgb(36, 38, 50));
 }
 
 #none_shadow.card:hover{
@@ -332,7 +339,7 @@
     transform: none;
     transition: none;
     box-shadow: none;
-    color: white !important;
+    color: #1e1e2d !important;
 }
 
 #none_shadow_creator.card{
@@ -340,17 +347,20 @@
 }
 
 #none_shadow_creator{
-    background: rgb(30,30,45);
+    /*background: rgb(30,30,45);
     background: linear-gradient(125deg, rgba(30,30,45,1) 0%, rgba(142,167,232,1) 53%, rgba(167,185,235,1) 93%);
     -webkit-transition: background-color 2s ease-out !important;
     -moz-transition: background-color 2s ease-out !important;
     -o-transition: background-color 2s ease-out !important;
-    transition: background-color 2s ease-out !important;
+    transition: background-color 2s ease-out !important;*/
+    background: #1e1e2d;
 }
 
 #none_shadow_creator:hover{
-    background: rgba(30,30,45,1);
-    cursor: pointer;
+    /*background: rgba(30,30,45,1);
+    cursor: pointer;*/
+    background: #8ea7e8;
+    transition: background-color 1s ease !important;
 }
 
 #name_card:hover{
@@ -360,7 +370,8 @@
 body{
     /*background: rgb(30,30,45);
     background: linear-gradient(180deg, rgba(30,30,45,1) 0%, rgba(142,167,232,1) 20%, rgba(167,185,235,1) 43%, rgba(217,219,241,1) 67%, rgba(255,246,246,1) 100%);*/
-    background: #fff6f6;
+    /*background: #fff6f6;*/
+    background: radial-gradient(#1C1F2C 30%, #0D0E14);
 }
 
 #bin_button:focus{
@@ -371,3 +382,83 @@ body{
     color: #8ea7e8;
 }
 
+#title-principal-card{
+    color: white;
+}
+
+* {
+    color: white;
+}
+
+#pencil_button:hover{
+    color: white;
+}
+
+.nav-link.active.rounded-pill {
+    background-color: #8ea7e8 !important;
+}
+.nav-link.tabs {
+    background: transparent !important;
+    border: 0;
+    color: white;
+
+}
+.nav-link.tabs:hover {
+    color: white;
+}
+
+.nav-link.tabs.active:hover {
+    color: white;
+}
+.nav-link.tabs.active {
+    border-bottom: none;
+    color: #8ea7e8!important;
+}
+
+.nav-link.tabs:after{
+    display:block;
+    content: '';
+    border-bottom: solid 3px white;
+    transform: scaleX(0);
+    transition: transform 250ms ease-in-out;
+}
+
+.nav-link.tabs:hover:after{
+    transform: scaleX(1);
+}
+
+.nav-link.fromLeft:after{  transform-origin:  0% 50%; }
+
+#profile_name_card:hover{
+    color: #8ea7e8;
+}
+
+.link {
+    text-decoration: none !important;
+    color: white;
+}
+
+.link .link-text:hover {
+    color: #8ea7e8 !important;
+    text-decoration: none;
+}
+
+.nav.nav-tabs {
+    border: 0;
+}
+
+#profile_name_card{
+    color: white;
+}
+
+#profile_name_card_show_news{
+    color: white;
+}
+
+#profile_name_card_show_news:hover{
+    color: #8ea7e8;
+}
+
+#span_category:hover{
+    color: white;
+}
