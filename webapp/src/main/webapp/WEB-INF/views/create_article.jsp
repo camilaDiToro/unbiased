@@ -21,10 +21,10 @@
 
 <body>
 <%@include file="../../resources/navbar.jsp" %>
-<div style="position: absolute ; margin-left: 4%; margin-top: 2%">
-    <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%" data-toggle="modal" data-target="#exampleModal">
+<div class="back-button" >
+    <input class="back-button-img" type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..."  data-toggle="modal" data-target="#exampleModal">
 </div>
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: center" class="h-auto p-5">
+<div class="d-flex flex-col align-items-center justify-content-center p-5">
 
 
     <c:url value="/create_article" var="postUrl"/>
@@ -99,7 +99,7 @@
         </div>
     </div>
 
-    <div style="width: 100%; display: flex; justify-content: end">
+    <div class="w-100 d-flex justify-content-end">
         <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
     </div>
     </div>
@@ -107,26 +107,9 @@
 
 
 
-<%--        <div>--%>
-<%--            <form:label path="creatorEmail"><spring:message code="createArticle.email"/></form:label>--%>
-<%--            <div class="form-group">--%>
-<%--                <spring:message code="createArticle.email.placeholder"  var="emailPlaceholder" />--%>
-<%--                <form:input placeholder="${emailPlaceholder}" type="email" cssClass="form-control ${errors != null && errors.getFieldErrorCount('creatorEmail') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}" path="creatorEmail"/>--%>
-<%--                <form:errors path="creatorEmail" element="p" cssClass="invalid-feedback"/>--%>
-<%--            </div>--%>
-<%--        </div>--%>
-
 
 
 </div>
-
-
-<%--        <form:label path="image">--%>
-<%--            insertar imagen--%>
-<%--        </form:label>--%>
-<%--        <form:input type="file" path="image" accept="image/png, image/jpeg" />--%>
-<%--        <form:errors path="image" element="p" cssStyle="color:red"/>--%>
-
 
 
 

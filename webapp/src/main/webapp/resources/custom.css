@@ -218,6 +218,13 @@
     font-weight: 400;
     text-align: center;
 }
+.back-button {
+    position: absolute ;
+    margin-left: 4%;
+    margin-top: 2%
+}
+
+.back-button-img {max-width: 7%; max-height: 7%}
 
 .news-bookmark {
     height: 30px;
@@ -253,12 +260,19 @@
     width: 25px !important;
 }
 
+.top-creators {
+    color: white; padding-left: 35px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 10%;
+}
+
 #bookmark-news{
     cursor: pointer;
     width: 35px !important;
 }
 
-#upvote,#downvote {
+.upvote,.downvote {
     cursor: pointer;
 }
 .upvote-div-profile {
@@ -400,10 +414,20 @@ body{
 
 #title-principal-card{
     color: white;
+    max-height: 10%;
 }
 
 * {
     color: white;
+}
+
+.op-09 {
+    opacity: 0.9;
+}
+
+.read-clock {
+    width: 15px;
+    margin-top: 1px
 }
 
 #pencil_button:hover{

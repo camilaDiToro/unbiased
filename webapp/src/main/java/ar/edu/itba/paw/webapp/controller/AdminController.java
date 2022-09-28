@@ -56,7 +56,7 @@ public class AdminController {
                                      @PathVariable("newsOrder") String newsOrder) {
 
         Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, NewsOrder.NEW);
-        return mavBuilderSupplier.supply("moderation-panel", "Moderation Panel", TextType.LITERAL)
+        return mavBuilderSupplier.supply("moderation_panel", "Moderation Panel", TextType.LITERAL)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", NewsOrder.valueOf(newsOrder)).build();
@@ -72,7 +72,7 @@ public class AdminController {
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
         Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new));
-        return mavBuilderSupplier.supply("moderation-panel-detail", "Moderation View", TextType.LITERAL)
+        return mavBuilderSupplier.supply("moderation_panel_detail", "Moderation View", TextType.LITERAL)
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("newsId", newsId)

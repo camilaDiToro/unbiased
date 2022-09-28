@@ -73,17 +73,6 @@
                     <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
                     </c:url>"><spring:message code="home.type.creator"/></a>
                             </li>
-
-
-
-<%--                        <c:forEach var="cat" items="${categories}">--%>
-<%--                            <li class="nav-item">--%>
-<%--                                <a class="text-capitalize text-white nav-link tabs <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">--%>
-<%--                    <c:param name = "category" value = "${cat}"/>--%>
-
-<%--                    </c:url>"><spring:message code="${cat.interCode}"/></a>--%>
-<%--                            </li>--%>
-<%--                        </c:forEach>--%>
                     </ul>
                 </c:if>
 
@@ -93,14 +82,17 @@
                                 <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
                             <p class="lead">
                                 <c:if test="${query == '' && category.toString() != 'ALL'}">
-                                    <spring:message code="categories.notFound"/> "<spring:message code="${category.interCode}"/>"
+                                    <spring:message code="${category.interCode}" var="categoryCode"/>
+                                    <spring:message code="categories.notFound" arguments="${categoryCode}"/>
                                 </c:if>
                                 <c:if test="${ query != ''}">
-                                    <spring:message code="search.notFound"/> "<c:out value="${query}"/>"
+
+                                    <spring:message code="search.notFound" arguments="${query}"/>
                                 </c:if>
 
                                 <c:if test="${category.toString() == 'ALL' && query == ''}">
-                                    <spring:message code="categories.notFound"/> "<spring:message code="categories.all"/>"
+                                    <spring:message code="categories.all" var="categoryAll"/>
+                                    <spring:message code="categories.notFound" arguments="${categoryAll}"/>
                                 </c:if>
 
 
@@ -135,18 +127,17 @@
                                                     <c:set var="rating" value="${rating}"/>
 
                                                      <c:if test="${loggedUser != null}">
-                                                         <img style="width: 24px" url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                         <img  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                          <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                         <img style="width: 24px" id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                         <img  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                      </c:if>
                                                     <c:if test="${loggedUser == null}">
-                                                        <%--href="<c:url value = "/create"/>"--%>
                                                         <a data-toggle="modal" data-target="#cardModal">
-                                                            <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
+                                                            <img   class="svg-btn hover-hand" src="<c:url value="/resources/upvote.svg"/>"/>
                                                         </a>
                                                         <div  ><c:out value="${positivityStats.netUpvotes}"/></div>
                                                         <a data-toggle="modal" data-target="#cardModal">
-                                                            <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
+                                                            <img    class="svg-btn hover-hand" src="<c:url value="/resources/downvote.svg"/>"/>
                                                         </a>
 
                                                     </c:if>
@@ -154,12 +145,12 @@
                                                 </div>
                                                 <div class="card-body-home">
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
-                                                    <a id="title-principal-card" class="link" style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
+                                                    <a  class="link title-principal-card"  href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis-2 text-white"><c:out value="${article.subtitle}"/></h6>
 
                                                     <div>
-                                                        <p class="text-sm-left text-secondary mb-0 text-white d-flex align-content-center gap-1" style="opacity: 0.9">
-                                                            <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px; margin-top: 1px"/>
+                                                        <p class="text-sm-left text-secondary mb-0 text-white d-flex align-content-center gap-1 op-09">
+                                                            <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." class="read-clock"/>
                                                             <spring:message code="home.read" arguments="${fullNews.readTime}"/>
                                                         </p>
                                                     </div>
@@ -186,10 +177,9 @@
 
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                            <img style="width: 24px !important;" class="bookmark" onclick="handleBookmarkClick(this)" class="svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                            <img   onclick="handleBookmarkClick(this)" class="svg-btn svg-bookmark bookmark" src="<c:url value="/resources/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
                                                         </div>
                                                     </c:if>
-<%--                                                    <button type="button" class="btn btn-sm btn-outline-primary m-1 h-75 max-h-40px"><svg class="h-75" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 4H5a2 2 0 0 0-2 2v15l3.467-2.6a2 2 0 0 1 1.2-.4H19a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg></button>--%>
                                                 </div>
                                             </div>
                                         </div>
@@ -197,12 +187,8 @@
                                         <c:if test="${article.hasImage()}">
 
                                         <div class="bg-secondary position-relative w-40">
-
-
                                                 <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
-<%--                                                <c:if test="${!article.hasImage()}">--%>
-<%--                                                    <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="...">--%>
-<%--                                                </c:if>--%>
+
                                             </div>
                                         </c:if>
 
@@ -220,7 +206,7 @@
                             <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
                         <p class="lead">
                             <c:if test="${ query != ''}">
-                                <spring:message code="search.notFound"/> "<c:out value="${query}"/>"
+                                <spring:message code="search.notFound" arguments="${query}"/>
                             </c:if>
 
                         </p>
@@ -272,11 +258,11 @@
             </div>
             <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start" id="none_shadow">
 
-                <h5 style="color: white; padding-left: 35px; background-image: url('<c:url value="/resources/crown-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;" class="card-title"><spring:message code="home.topCreators"/></h5>
+                <h5 style="background-image: url('<c:url value="/resources/crown-svgrepo-com.svg"/>')" class="card-title top-creators"><spring:message code="home.topCreators"/></h5>
 
 
                 <c:forEach var="creator" items="${topCreators}">
-                    <a style="text-decoration: none" class="m-1 link" href="<c:url value="/profile/${creator.id}"/>" >
+                    <a class="m-1 link" href="<c:url value="/profile/${creator.id}"/>" >
                             <div class="card text-white d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">
 <div class="img-container">
 <c:if test="${creator.hasImage()}">
@@ -352,7 +338,7 @@
                         <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
 
                     </div>
-                    <div style="margin-top: 2%" >
+                    <div class="mt-1" >
                         <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
                         <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
                     </div>
