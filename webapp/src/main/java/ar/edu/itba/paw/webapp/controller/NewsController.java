@@ -50,28 +50,6 @@ public class NewsController {
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
-
-
-    /*@RequestMapping(value = "/news/create", method = RequestMethod.POST)
-    public ModelAndView postNewsForm(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
-                                     final BindingResult errors) throws IOException {
-        if(errors.hasErrors()){
-            return createArticle(createNewsFrom);
-        }
-
-        String htmlText = TextUtils.convertMarkdownToHTML(TextUtils.extractTextFromHTML(createNewsFrom.getBody()));
-
-        final User user = securityService.getCurrentUser().get();
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(),htmlText , createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
-
-        if(createNewsFrom.getImage()!=null && createNewsFrom.getImage().getBytes().length!=0){
-            newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
-        }
-
-        final News news = newsService.create(newsBuilder);
-        return new ModelAndView("redirect:/news/" + news.getNewsId());
-    }*/
-
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
         News news = newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new);
