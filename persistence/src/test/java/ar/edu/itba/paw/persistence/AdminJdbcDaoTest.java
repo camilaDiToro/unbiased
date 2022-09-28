@@ -1,12 +1,12 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.Role;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +75,7 @@ public class AdminJdbcDaoTest {
 
         User user = getMockUser();
         adminDao.makeUserAdmin(user);
-        List<String> roleList = roleDao.getRoles(user);
+        List<String> roleList = roleDao.getRoles(user.getId());
 
         assertEquals(Role.ADMIN.getRole(), roleList.get(0));
     }

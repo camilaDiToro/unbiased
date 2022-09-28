@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
@@ -12,8 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewsServiceImplTest {
@@ -28,8 +25,6 @@ public class NewsServiceImplTest {
     private NewsDao mockNewsDao;
     @Mock
     private News mockNews;
-    @Mock
-    private FullNews mockFullNews;
 
     @InjectMocks
     private NewsServiceImpl newsService;
@@ -43,9 +38,10 @@ public class NewsServiceImplTest {
     @Test
     public void testCreate(){
         News.NewsBuilder newsBuilder = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
+        String[] categories = new String[0];
         Mockito.when(mockNewsDao.create(Mockito.eq(newsBuilder))).thenReturn(mockNews);
 
-        News news = newsService.create(newsBuilder);
+        News news = newsService.create(newsBuilder, categories);
 
         Assert.assertNotNull(news);
         Assert.assertEquals(mockNews.getTitle(), news.getTitle());

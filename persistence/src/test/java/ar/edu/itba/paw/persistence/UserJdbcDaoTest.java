@@ -1,8 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-
-import ar.edu.itba.paw.model.VerificationToken;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

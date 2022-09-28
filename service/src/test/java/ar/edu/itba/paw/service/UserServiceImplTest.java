@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.VerificationToken;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.VerificationTokenDao;
@@ -45,9 +45,11 @@ public class UserServiceImplTest {
     private EmailService mockEmailService;
     @Mock
     private ImageService mockImageService;
+    @Mock
+    private SecurityService mockSecurityService;
 
     @InjectMocks
-    private UserServiceImpl userService = new UserServiceImpl(mockUserDao, mockPasswordEncoder, mockEmailService, mockVerifService, mockRoleDao, mockImageService);
+    private UserServiceImpl userService = new UserServiceImpl(mockUserDao, mockPasswordEncoder, mockEmailService, mockVerifService, mockRoleDao, mockImageService, mockSecurityService);
 
     @Before
     public void setTest() {

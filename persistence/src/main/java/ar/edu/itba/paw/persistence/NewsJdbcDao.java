@@ -220,9 +220,9 @@ public class NewsJdbcDao implements NewsDao {
     }
 
     @Override
-    public List<FullNews> getAllNewsFromUser(int page, long userId, NewsOrder ns, Long loggedUser) {
+    public List<FullNews> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
         SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("creatorId", userId)
+                .addValue("creatorId", user.getId())
                 .addValue("pageSize", PROFILE_PAGE_SIZE)
                 .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE)
                 .addValue("loggedId", loggedUser);
@@ -287,19 +287,19 @@ public class NewsJdbcDao implements NewsDao {
     }
 
     @Override
-    public List<FullNews> getNewsUpvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser) {
-        return getNewsWithRatingFromUser(page, userId, ns, loggedUser, true);
+    public List<FullNews> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
+        return getNewsWithRatingFromUser(page, user.getId(), ns, loggedUser, true);
     }
 
     @Override
-    public List<FullNews> getNewsDownvotedByUser(int page, long userId, NewsOrder ns, Long loggedUser) {
-        return getNewsWithRatingFromUser(page, userId, ns, loggedUser, false);
+    public List<FullNews> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
+        return getNewsWithRatingFromUser(page, user.getId(), ns, loggedUser, false);
     }
 
     @Override
-    public int getTotalPagesNewsFromUser(int page, long userId) {
+    public int getTotalPagesNewsFromUser(int page, User user) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE creator = ?",
-                new Object[]{userId}, ROW_COUNT_MAPPER).stream().findFirst().get();
+                new Object[]{user.getId()}, ROW_COUNT_MAPPER).stream().findFirst().get();
         int total = (int) Math.ceil(rowsCount / PROFILE_PAGE_SIZE);
         return total == 0 ? 1 : total;
     }
@@ -312,26 +312,26 @@ public class NewsJdbcDao implements NewsDao {
     }
 
     @Override
-    public int getTotalPagesNewsFromUserUpvoted(int page, long userId) {
-        return getTotalPagesNewsFromUserRating(page, userId, true);
+    public int getTotalPagesNewsFromUserUpvoted(int page, User user) {
+        return getTotalPagesNewsFromUserRating(page, user.getId(), true);
     }
 
     @Override
-    public int getTotalPagesNewsFromUserDownvoted(int page, long userId) {
-        return getTotalPagesNewsFromUserRating(page, userId, false);
+    public int getTotalPagesNewsFromUserDownvoted(int page, User user) {
+        return getTotalPagesNewsFromUserRating(page, user.getId(), false);
     }
 
     @Override
-    public int getTotalPagesNewsFromUserSaved(int page, long userId) {
+    public int getTotalPagesNewsFromUserSaved(int page, User user) {
         int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN saved_news WHERE user_id = ?",
-                new Object[]{userId}, ROW_COUNT_MAPPER).stream().findFirst().get();
+                new Object[]{user.getId()}, ROW_COUNT_MAPPER).stream().findFirst().get();
         int total = (int) Math.ceil(rowsCount / PROFILE_PAGE_SIZE);
         return total == 0 ? 1 : total;
     }
 
     @Override
-    public void deleteNews(long newsId) {
-        jdbcTemplate.update("DELETE FROM news WHERE news_id = ?", newsId);
+    public void deleteNews(News news) {
+        jdbcTemplate.update("DELETE FROM news WHERE news_id = ?", news.getNewsId());
     }
 
     @Override

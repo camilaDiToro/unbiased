@@ -241,7 +241,7 @@ public class NewsJdbcDaoTest {
         newsDao.saveNews(news, user);
         newsDao.removeSaved(news, user);
 
-        assertTrue(newsDao.getSavedNews(PAGE_SIZE, user, NewsOrder.NEW, null).isEmpty());
+        assertTrue(newsDao.getSavedNews(PAGE_SIZE, user.getId(), NewsOrder.NEW, null).isEmpty());
 
     }
 
@@ -254,7 +254,7 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         newsDao.saveNews(news, user);
-        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, user, NewsOrder.NEW, 1L); //TODO
+        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, user.getId(), NewsOrder.NEW, 1L); //TODO
 
         assertEquals(1, savedList.size());
     }
@@ -283,7 +283,7 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        newsDao.setRating(news.getNewsId(), user, Rating.UPVOTE);
+        newsDao.setRating(news.getNewsId(), user.getId(), Rating.UPVOTE);
         List<FullNews> rating = newsDao.getNewsUpvotedByUser(PAGE_SIZE, user, NewsOrder.NEW, 1L);
 
         assertEquals(1, rating.size());
@@ -312,7 +312,7 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        newsDao.setRating(news.getNewsId(), user, Rating.UPVOTE);
+        newsDao.setRating(news.getNewsId(), user.getId(), Rating.UPVOTE);
         int rating = newsDao.getTotalPagesNewsFromUserUpvoted(PAGE_SIZE, user);
 
         assertEquals(PAGE_SIZE, rating);
@@ -325,7 +325,7 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        newsDao.setRating(news.getNewsId(), user, Rating.DOWNVOTE);
+        newsDao.setRating(news.getNewsId(), user.getId(), Rating.DOWNVOTE);
         int rating = newsDao.getTotalPagesNewsFromUserDownvoted(PAGE_SIZE, user);
 
         assertEquals(PAGE_SIZE, rating);
