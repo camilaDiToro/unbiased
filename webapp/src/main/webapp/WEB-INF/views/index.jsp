@@ -344,8 +344,7 @@
             </div>
             <div class="modal-body">
                 <c:url value="/login?home=true" var="loginUrl" >
-                    <c:param name="order" value="${orderBy}" />
-                    <c:param name="category" value="${category}" />
+                    <c:param name="redirectTo" value="/${orderBy}?category=${category}&query=${query}"/>
                     </c:url>
                 <form action="${loginUrl}" method="post">
                     <div >
