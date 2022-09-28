@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -44,9 +45,14 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
+
+        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setDefaultTargetUrl("/");
+        successHandler.setAlwaysUseDefaultTargetUrl(false);
+        successHandler.setTargetUrlParameter("redirectTo");
+
         http.sessionManagement()
                 .invalidSessionUrl("/")
-                //.invalidSessionUrl("/login")
                 .and().authorizeRequests()
                     .antMatchers("/login", "/create").anonymous()
                     .antMatchers("/admin/**").hasRole("ADMIN")
@@ -55,7 +61,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().formLogin()
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/", false)
+                    .successHandler(successHandler)
                     .loginPage("/login")
                     .failureHandler(loginFailureHandler)
                 .and().rememberMe()

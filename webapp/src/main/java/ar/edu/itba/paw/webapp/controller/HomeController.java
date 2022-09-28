@@ -45,7 +45,11 @@ public class HomeController {
             @RequestParam(name = "query", defaultValue = "") final String query,
             @RequestParam(name = "category", defaultValue = "ALL") final String category){
 
+
+        System.out.println("%%%%%%%%%%%%%%%%" + category);
+
         Page<FullNews> newsPage = ns.getNews(page,category,orderBy,query);
+
 
         return mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
                 .withObject("topCreators", us.getTopCreators(5))
