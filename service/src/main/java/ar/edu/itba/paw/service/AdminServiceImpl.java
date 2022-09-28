@@ -47,7 +47,6 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
-        FullNews n = newsService.getById(news.getNewsId()).orElseThrow(NewsNotFoundException::new);
         return adminDao.getReportedNewsDetail(page, news);
     }
 
@@ -58,13 +57,11 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public void deleteNews(News news) {
-        FullNews fullNews = newsService.getById(news.getNewsId()).orElseThrow(NewsNotFoundException::new);
         newsService.deleteNews(news);
     }
 
     @Override
     public void makeUserAdmin(User user) {
-        User maybeUser = userService.getRegisteredUserById(user.getId()).orElseThrow(UserNotFoundException::new);
         adminDao.makeUserAdmin(user);
     }
 }

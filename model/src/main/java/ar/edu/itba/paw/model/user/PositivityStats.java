@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.model;
+package ar.edu.itba.paw.model.user;
 
 import java.util.Arrays;
 import java.util.Iterator;

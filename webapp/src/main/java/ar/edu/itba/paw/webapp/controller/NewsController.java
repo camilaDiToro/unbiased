@@ -1,14 +1,14 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.webapp.form.CommentNewsForm;
+import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
@@ -22,10 +22,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.validation.Valid;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
@@ -37,11 +35,8 @@ public class NewsController {
     private final NewsService newsService;
     private final UserService userService;
     private final ImageService imageService;
-
     private final SecurityService securityService;
-
     private final AdminService adminService;
-
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
@@ -52,48 +47,57 @@ public class NewsController {
         this.imageService = imageService;
         this.securityService = ss;
         this.adminService = adminService;
-
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
-
     }
-
 
 
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-
-//        Optional<News> maybeNews = newsService.getById(newsId);
-        Optional<FullNews> maybeNews = newsService.getById(newsId);
-
-        if (!maybeNews.isPresent()) {
-            throw new NewsNotFoundException();
-        }
-
-        News news = maybeNews.get().getNews();
+        News news = newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new);
         newsService.deleteNews(news);
         return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
 
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/report", method = RequestMethod.POST)
+    public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                   final BindingResult errors) {
+        if (errors.hasErrors()) {
+            return showNews(newsId, reportNewsFrom, null,true, 1);
+        }
+        adminService.reportNews(newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new), ReportReason.valueOf(reportNewsFrom.getReason()));
+        return new ModelAndView("redirect:/news/" + newsId);
+    }
+
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
+    public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsForm,
+                                    final BindingResult errors) {
+        if (errors.hasErrors()) {
+            return showNews(newsId, null,commentNewsForm, false, 1);
+        }
+        newsService.addComment(newsService.getOrThrowException(newsId).getNews(), commentNewsForm.getComment());
+        return new ModelAndView("redirect:/news/" + newsId);
+    }
+
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView profile(@PathVariable("newsId") News news,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom){
+    public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                 @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsFrom,
+                                 @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors,
+    @RequestParam(name="page", defaultValue="1") int page){
 
-        Optional<User> maybeUser = securityService.getCurrentUser();
-
-
-        //TODO: check if there is a better way of doing this.
-        FullNews fullNews = newsService.getById(news.getNewsId()).orElseThrow(NewsNotFoundException::new);
-        News news1 = fullNews.getNews();
-
-
+        FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = fullNews.getNews();
         Locale locale = LocaleContextHolder.getLocale();
 
-        return mavBuilderSupplier.supply("show_news", news1.getTitle(), TextType.LITERAL)
-                .withObject("date", news1.getCreationDate().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
+        return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
+                .withObject("date", news.getCreationDate().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
                 .withObject("fullNews", fullNews)
                 .withObject("hasReported", adminService.hasReported(news))
                 .withObject("reportReasons", ReportReason.values())
-                .withObject("categories", newsService.getNewsCategory(fullNews)).build();
+                .withObject("hasErrors", hasErrors)
+                .withObject("locale", LocaleContextHolder.getLocale())
+                .withObject("commentsPage", newsService.getComments(news,page))
+                .withObject("categories", newsService.getNewsCategory(fullNews.getNews())).build();
 
     }
 
@@ -109,7 +113,6 @@ public class NewsController {
         return mavBuilderSupplier.supply("create_article", "pageTitle.createArticle", TextType.INTERCODE)
                 .withObject("categories", Category.values())
                 .withObject("validate", false).build();
-
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
@@ -141,28 +144,14 @@ public class NewsController {
             return createArticleAndValidate(createNewsFrom, errors);
         }
 
-        String htmlText = TextUtils.convertMarkdownToHTML(createNewsFrom.getBody());
-
         final User user = securityService.getCurrentUser().get();
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), htmlText, createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
-
-
-        for(String category : createNewsFrom.getCategories()){
-            Category c = Category.getByInterCode(category);
-            if(c==null)
-                throw new InvalidCategoryException();
-            newsBuilder.addCategory(c);
-        }
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
         if(!createNewsFrom.getImage().isEmpty()){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
-        final News news = newsService.create(newsBuilder);
+        final News news = newsService.create(newsBuilder, createNewsFrom.getCategories());
         return new ModelAndView("redirect:/news/" + news.getNewsId());
     }
-
-
-
-
 }

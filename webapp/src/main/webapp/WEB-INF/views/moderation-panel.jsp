@@ -18,10 +18,15 @@
             <%--LEFT SIDE--%>
                 <div class=" w-25 d-flex flex-column border-right mt-4 m-3">
 
-    <h3 class="text-secondary">Moderation panel</h3>
+    <h3 class="text-white">Moderation panel</h3>
     <ul class="nav flex-column vertical-menu ">
         <li class="nav-item">
-            <a class="nav-link selected" href="#">Reported articles</a>
+            <div class="d-flex flex-row">
+                <img style="width: 24px; padding-right: 5px" src="<c:url value="/resources/warning-svgrepo-com.svg"/> " alt="...">
+                <a style="padding-left: 0" class="nav-link selected" href="#">
+                    <spring:message code="moderation.reportedArticles"/>
+                </a>
+            </div>
         </li>
     </ul>
 
@@ -31,9 +36,9 @@
 
                 <%--TAB (top, new)--%>
                 <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
-                    <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>
+                    <c:set var = "activeClasses" scope = "session" value = "bg-info active"/>
                     <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
-                    <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">
+                    <ul class="my-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ">
                         <c:forEach var="order" items="${orders}">
                             <li class="nav-item">
                                 <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_news/${order}">
@@ -63,19 +68,50 @@
 
                                     <c:set var="newsId" value="${article.newsId}"/>
                                 <c:set var="creator" value="${reportedNews.newsOwner}"/>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <spring:message code="profile.modal.msg"/>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                                    <form method="post" action="<c:url value="/admin/reported_news/${newsId}/delete"/>">
+                                                        <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="col mb-4">
                                         <div class="card h-100 d-flex flex-row p-3" id="left-card">
 
-                                            <span class="reports-indicator badge badge-pill badge-danger" >
-                                                ${reportedNews.reportCount} reports
+                                            <div>
+                                                <%--<h6 >${reportedNews.reportCount}</h6>--%>
+                                                <span style="border-radius: 50%!important; width: 24px; height: 24px" class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center" >
+                                                    <%--${reportedNews.reportCount} <spring:message code="moderation.reports"/>--%>
+                                                    5!
                                             </span>
+                                            </div>
+
+                                            <%--<div class="d-flex flex-row align-items-center gap-1">
+                                                <h6>${reportedNews.reportCount}/></h6>
+                                            </div>--%>
+
                                             <div class="d-flex flex-column justify-content-between w-100">
                                                 <div class="d-flex w-100 ">
 
 
                                                     <div class="card-body-home pt-0">
-                                                        <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="text-ellipsis"><c:out value="${article.title}"/></h5></a>
+                                                        <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>" class="link"><h5 class="text-ellipsis link-text"><c:out value="${article.title}"/></h5></a>
                                                         <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
 
                                                     </div>
@@ -90,40 +126,22 @@
                                                                 <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
                                                             </c:if>
                                                         </div>
-                                                        <a href="<c:url value="/profile/${article.creatorId}"/>">
-                                                            <div class="text-secondary card-name-text text-ellipsis-1">${creator}</div>
+                                                        <a href="<c:url value="/profile/${article.creatorId}"/>" class="link">
+                                                            <div class="card-name-text text-ellipsis-1 link-text">${creator}</div>
                                                         </a>
                                                     </div>
                                                     <div class="d-flex align-items-center mr-2" role="group">
 
                                                              <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px">
-                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="height: 40px"/>
+                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="width: 24px; margin-top: 2px"/>
                                                             </button>
-                                                            <a  class="text-info font-weight-bold hover-hand" href="<c:url value="/admin/reported_news_detail/${newsId}"/>">
-                                                                View details
-                                                            </a>
-                                                            <!-- Modal -->
-                                                            <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog modal-dialog-centered">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <spring:message code="profile.modal.msg"/>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                                                            <form method="post" action="<c:url value="/admin/reported_news/${newsId}/delete"/>">
-                                                                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
+                                                            <a   class="font-weight-bold hover-hand link" href="<c:url value="/admin/reported_news_detail/${newsId}"/>">
+
+                                                                <div class="link-text">
+                                                                    <spring:message code="moderation.details"/>
                                                                 </div>
-                                                            </div>
+                                                            </a>
+
                                                     </div>
                                                 </div>
                                             </div>

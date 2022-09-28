@@ -17,7 +17,7 @@
         <div class="d-flex h-75 gap-2 align-items-center">
 <c:if test="${loggedUser != null}">
     <a href="<c:url value="/create_article"/>">
-        <button type="button" class="btn btn-info">
+        <button type="button" class="btn btn-info" style="border-radius: 999px">
             <spring:message code="home.createArticle.button"/>
         </button></a>
 </c:if>
@@ -48,12 +48,47 @@
 
                                                     </div>
                     </button>
-                    <div id="navbar-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>"><spring:message code="navbar.myProfile"/></a>
-                        <a class="dropdown-item" href="<c:url value="/logout"/>"><spring:message code="navbar.logOut"/> </a>
+                    <div id="navbar-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="background: #181414">
+                        <%--<a class="dropdown-item" href="<c:url value="/profile/${loggedUser.id}"/>" style="padding-left: 30px; background-image: url('<c:url value="/resources/profile-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%">
+                            <spring:message code="navbar.myProfile"/>
+                        </a>
+
                         <c:if test="${isAdmin}">
-                            <a class="dropdown-item" href="<c:url value="/admin/reported_news"/>"><spring:message code="navbar.adminPanel"/> </a>
+                            <a class="dropdown-item" href="<c:url value="/admin/reported_news"/>" style="padding-left: 30px; background-image: url('<c:url value="/resources/panel-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%">
+                                <spring:message code="navbar.adminPanel"/>
+                            </a>
                         </c:if>
+
+                        <a class="dropdown-item" href="<c:url value="/logout"/>" style="padding-left: 30px; background-image: url('<c:url value="/resources/log-out-svgrepo-com.svg"/>'); background-repeat: no-repeat; background-position: left center; background-size: 10%;">
+                            <spring:message code="navbar.logOut"/>
+                        </a>--%>
+
+                        <div class="dropdown-item">
+                            <img style="width: 24px; padding-right: 5px" class="svg-btn" src="<c:url value="/resources/profile-svgrepo-com.svg"/> " alt="...">
+                            <a style="text-decoration: none; color: white" href="<c:url value="/profile/${loggedUser.id}"/>">
+                                <spring:message code="navbar.myProfile"/>
+                            </a>
+                        </div>
+
+
+                        <c:if test="${isAdmin}">
+                            <div class="dropdown-item">
+                                <img style="width: 24px; padding-right: 5px" class="svg-btn" src="<c:url value="/resources/panel-svgrepo-com.svg"/> " alt="...">
+                                <a style="text-decoration: none; color: white" href="<c:url value="/admin/reported_news"/>">
+                                    <spring:message code="navbar.adminPanel"/>
+                                </a>
+                            </div>
+
+                        </c:if>
+
+                        <div class="dropdown-item">
+                            <img style="width: 24px; padding-right: 5px" class="svg-btn" src="<c:url value="/resources/log-out-svgrepo-com.svg"/> " alt="...">
+                            <a style="text-decoration: none; color: white" href="<c:url value="/logout"/>">
+                                <spring:message code="navbar.logOut"/>
+                            </a>
+                        </div>
+
+
                     </div>
 
                 </div>

@@ -4,14 +4,18 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.news.FullNews;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.ResendVerificationEmail;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
@@ -26,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 
 @Controller
@@ -36,7 +41,6 @@ public class UserController {
     private final ImageService imageService;
     private final SecurityService securityService;
     private final MAVBuilderSupplier mavBuilderSupplier;
-
 
     @Autowired
     public UserController(UserService userService, ImageService imageService, SecurityService securityService, NewsService newsService) {
@@ -77,13 +81,28 @@ public class UserController {
         return mav;
     }
 
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
+    public ModelAndView profileFollow(@PathVariable("userId") long userId) {
+        userService.followUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
+        return mav;
+    }
+
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
+    public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
+        userService.unfollowUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
+        return mav;
+    }
+
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("userId") long userId,
                                 @PathVariable("newsOrder") String newsOrder,
                                 @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
                                 @RequestParam(name = "page", defaultValue = "1") int page,
-                                @RequestParam(name = "category", defaultValue = "MY_POSTS") String category) {
+                                @RequestParam(name = "category", defaultValue = "MY_POSTS") String category,
+                                @RequestParam(name = "hasErrors", defaultValue = "false") boolean hasErrors) {
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
         Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, category);
@@ -97,7 +116,12 @@ public class UserController {
                 .withObject("newsPage", fullNews)
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
+                .withObject("userId", userId)
+                .withObject("hasErrors", hasErrors)
                 .withStringParam(profileUser.toString());
+        if(securityService.getCurrentUser().isPresent()) {
+                   mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
+        }
 
         try {
             mavBuilder.withObject("category", ProfileCategory.valueOf(category));
@@ -108,24 +132,56 @@ public class UserController {
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
-    public ModelAndView profilePicture(@PathVariable("userId") User user, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
+    public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
         if (errors.hasErrors()) {
-            return profile(user.getId(), "NEW",userProfileForm, 1, "MY_POSTS");
+            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
-        Long imageId = null;
-        if(!userProfileForm.getImage().isEmpty() && userProfileForm.getImage().getBytes().length != 0){
-            imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
-        }
-        userService.updateProfile(user, userProfileForm.getUsername(), imageId);
-        return new ModelAndView("redirect:/profile/" + user.getId());
+        Long imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
+
+        userService.updateProfile(userService.getUserById(userId).orElseThrow(UserNotFoundException::new), userProfileForm.getUsername(), imageId);
+        return new ModelAndView("redirect:/profile/" + userId);
     }
 
     @RequestMapping("/verify_email")
     public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
-        userService.verifyUserEmail(token);
-        return mavBuilderSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.LITERAL)
-                .build();
+        VerificationToken.Status status = userService.verifyUserEmail(token);
+        ModelAndView mav;
+        if(status.equals(VerificationToken.Status.SUCCESFFULLY_VERIFIED)){
+            mav = mavBuilderSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.LITERAL)
+                    .build();
+        }else{
+            mav = new ModelAndView("redirect:/email_not_verified/"+status.getStatus().toLowerCase(Locale.ROOT));
+        }
+        return mav;
     }
+
+    @RequestMapping(value = "/email_not_verified/{status:expired|not_exists}", method = RequestMethod.GET)
+    public ModelAndView resendVerificationEmail(@ModelAttribute("resendEmailForm") final ResendVerificationEmail userForm, @PathVariable("status") String status) {
+
+        MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("email_not_verified", "pageTitle.emailVerified", TextType.INTERCODE)
+                .withObject("status",status);
+
+        if(status.equals("expired")){
+            mavBuilder.withObject("errorMsg",VerificationToken.Status.EXPIRED.getCode());
+        }else{
+            mavBuilder.withObject("errorMsg",VerificationToken.Status.NOT_EXISTS.getCode());
+        }
+        return mavBuilder.build();
+    }
+
+    @RequestMapping(value = "/email_not_verified/{status:expired|not_exists}", method = RequestMethod.POST)
+    public ModelAndView resendVerificationEmail(@Valid @ModelAttribute("resendEmailForm") final ResendVerificationEmail userForm, final BindingResult errors, @PathVariable("status") String status) {
+        if (errors.hasErrors()) {
+            return resendVerificationEmail(userForm, status);
+        }
+
+        VerificationToken.Status s = userService.resendEmailVerification(userForm.getEmail());
+        if(s.equals(VerificationToken.Status.ALREADY_VERIFIED))
+            return new ModelAndView("email_already_verified");
+        return new ModelAndView("email_verification_pending");
+    }
+
+
 
     @RequestMapping( value = "/profile/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
             produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})

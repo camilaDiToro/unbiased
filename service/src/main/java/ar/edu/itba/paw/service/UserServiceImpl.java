@@ -1,9 +1,11 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.Role;
+import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.user.Role;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
-import ar.edu.itba.paw.model.VerificationToken;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
@@ -29,17 +31,18 @@ public class UserServiceImpl implements UserService {
     private final VerificationTokenService verificationTokenService;
     private final RoleDao roleDao;
     private final ImageService imageService;
-
+    private final SecurityService securityService;
 
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
         this.roleDao = roleDao;
         this.imageService = imageService;
+        this.securityService = securityService;
     }
 
 
@@ -72,11 +75,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createIfNotExists(User.UserBuilder userBuilder) {
-        return userDao.createIfNotExists(userBuilder);
-    }
-
-    @Override
     public Optional<User> findByEmail(String email) {
         return userDao.findByEmail(email);
     }
@@ -92,9 +90,8 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.EXPIRED;
         }
         userDao.verifyEmail(vt.getUserId());
-        login(vt.getUserId());
-        User user = userDao.getUserById(vt.getUserId()).get();
-        verificationTokenService.deleteEmailToken(user);
+        login(getUserById(vt.getUserId()).orElseThrow(UserNotFoundException::new));
+        verificationTokenService.deleteEmailToken(vt.getUserId());
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
 
@@ -104,7 +101,9 @@ public class UserServiceImpl implements UserService {
         if(!mayBeUser.isPresent())
             return VerificationToken.Status.NOT_EXISTS;
         User user = mayBeUser.get();
-        verificationTokenService.deleteEmailToken(user);
+        if(user.getStatus().equals(UserStatus.REGISTERED))
+            return VerificationToken.Status.ALREADY_VERIFIED;
+        verificationTokenService.deleteEmailToken(user.getId());
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
         LocaleContextHolder.setLocale(locale, true);
@@ -114,26 +113,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addRole(User user, Role role) {
-        roleDao.addRole(user, role);
+        roleDao.addRole(user.getId(), role);
     }
 
     @Override
     public List<String> getRoles(User user) {
-        return roleDao.getRoles(user);
+        return roleDao.getRoles(user.getId());
     }
 
     @Override
     public void updateProfile(User user, String username, Long imageId) {
-        User maybeUser = userDao.getUserById(user.getId()).orElseThrow(UserNotFoundException::new);
-
+        long id = user.getId();
         if(imageId!=null){
-            if(maybeUser.getImageId()!=null)
-                imageService.deleteImage(maybeUser.getImageId());
-            userDao.updateImage(maybeUser,imageId);
+            if(user.getImageId()!=null)
+                imageService.deleteImage(user.getImageId());
+            userDao.updateImage(id,imageId);
         }
 
         if(username!= null && !username.isEmpty())
-            userDao.updateUsername(maybeUser,username);
+            userDao.updateUsername(id,username);
     }
 
     @Override
@@ -141,9 +139,26 @@ public class UserServiceImpl implements UserService {
         return userDao.findByUsername(username);
     }
 
+    @Override
+    public void followUser(User user) {
+        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        userDao.addFollow(myUser.getId(), user.getId());
+    }
+
+    @Override
+    public void unfollowUser(User user) {
+        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        userDao.unfollow(myUser.getId(), user.getId());
+    }
+
+    @Override
+    public boolean isFollowing(User user) {
+        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        return userDao.isFollowing(myUser.getId(), user.getId());
+    }
+
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
-    private void login(long userId) {
-        final User user = getUserById(userId).get();
+    private void login(User user) {
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
@@ -152,4 +167,11 @@ public class UserServiceImpl implements UserService {
     public List<User> getTopCreators(int qty) {
         return userDao.getTopCreators(qty);
     }
+
+    @Override
+    public Page<User> searchUsers(int page, String search) {
+        return userDao.searchUsers(page, search);
+    }
+
+
 }

@@ -20,10 +20,10 @@
 <%--                <div class="card" style="width: 18rem; height: 12rem; margin-top: 4%" id="right-card">--%>
 
 <%--                    <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">--%>
-    <h3 class="text-secondary">Moderation panel</h3>
+    <h3 class="text-secondary"><spring:message code="moderation.panel"/></h3>
     <ul class="nav flex-column vertical-menu ">
         <li class="nav-item">
-            <a class="nav-link selected" href="#">Reported articles</a>
+            <a class="nav-link selected" href="#"><spring:message code="moderation.reportedArticles"/></a>
         </li>
 <%--        <li class="nav-item">--%>
 <%--            <a class="nav-link" href="#">Reported users</a>--%>
@@ -61,9 +61,9 @@
                 <table class="table flex-grow-0">
                     <thead>
                     <tr>
-                        <th scope="col">User</th>
-                        <th scope="col">Reason</th>
-                        <th scope="col">Date</th>
+                        <th scope="col"><spring:message code="moderation.user"/></th>
+                        <th scope="col"><spring:message code="moderation.reason"/></th>
+                        <th scope="col"><spring:message code="moderation.date"/></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -78,7 +78,7 @@
 
                     </tbody>
                 </table>
-                    <button data-toggle="modal" data-target="#binModal" class="btn btn-danger delete-btn">Delete article</button>
+                    <button data-toggle="modal" data-target="#binModal" class="btn btn-danger delete-btn"><spring:message code="moderation.delete"/></button>
 
                 <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">

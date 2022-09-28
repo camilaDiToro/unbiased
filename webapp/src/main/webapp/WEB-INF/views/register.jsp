@@ -7,28 +7,16 @@
 <%@include file="../../resources/head.jsp" %>
 <link href="<c:url value="/resources/login.css"/>" rel="stylesheet">
 <body class="text-center">
-<%--<h2><spring:message code="views.register.title"/></h2>--%>
 <c:url value="/create" var="postUrl"/>
-<%--<form:form modelAttribute="registerForm" action="${postUrl}" method="post" >--%>
-<%--    <div>--%>
-<%--        <form:errors path="email" element="p" cssStyle="color: red"/>--%>
-<%--        <form:label path="email">Email:</form:label>--%>
-<%--        <form:input type="text" path="email"/>--%>
-<%--    </div>--%>
-<%--    <div>--%>
-<%--        <form:errors path="password" element="p" cssStyle="color: red"/>--%>
-<%--        <form:label path="password">Password: </form:label>--%>
-<%--        <form:input type="password" path="password" />--%>
-<%--    </div>--%>
-<%--    <div>--%>
-<%--        <input type="submit" value="Register!"/>--%>
-<%--    </div>--%>
-<%--</form:form>--%>
 
 
 
 <form:form cssClass="form-signin" modelAttribute="registerForm" action="${postUrl}" method="post">
-    <h1 class="logo mb-4 text-info">unbiased</h1>
+    <h1 class="logo mb-4">
+        <a style="text-decoration: none" class="text-info" href="<c:url value="/TOP"/>">
+            unbiased
+        </a>
+    </h1>
     <h1 class="h3 mb-3 font-weight-normal text-light"><spring:message code="views.register.title"/></h1>
 
     <div>

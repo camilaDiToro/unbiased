@@ -10,9 +10,16 @@ public class TextUtils {
 
     private static final int WPM = 265;
 
+    public static void main(String[] args) {
+        System.out.println(convertMarkdownToHTML("# hola"));
+    }
+
     public static String convertMarkdownToHTML(String markdown) {
         Parser parser = Parser.builder().build();
         Node document = parser.parse(StringEscapeUtils.escapeHtml4(markdown));
+//        Node document = parser.parse(markdown);
+//        return StringEscapeUtils.escapeHtml4(markdown);
+
         HtmlRenderer htmlRenderer = HtmlRenderer.builder().build();
         return htmlRenderer.render(document);
     }

@@ -1,37 +1,49 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.LoggedUserParameters;
+import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
-import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.ws.http.HTTPException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
-public class NewsServiceImpl implements NewsService{
+public class NewsServiceImpl implements NewsService {
 
     private final NewsDao newsDao;
     private final SecurityService securityService;
-    private final UserDao userDao;
+    private final UserService userService;
 
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserDao userDao) {
+    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService) {
         this.newsDao = newsDao;
-        this.userDao=userDao;
+        this.userService = userService;
         this.securityService = securityService;
     }
 
     @Override
-    public News create(News.NewsBuilder newsBuilder) {
+    public News create(News.NewsBuilder newsBuilder, String[] categories) {
+        if(!userService.getRoles(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new)).contains(Role.JOURNALIST.getRole())){
+            userService.addRole(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new),Role.JOURNALIST);
+        }
+
+        for(String category : categories){
+            Category c = Category.getByInterCode(category);
+            if(c==null)
+                throw new InvalidCategoryException();
+            newsBuilder.addCategory(c);
+        }
+
         return this.newsDao.create(newsBuilder);
     }
 
@@ -39,30 +51,6 @@ public class NewsServiceImpl implements NewsService{
     public Optional<FullNews> getById(long id) {
         return newsDao.getById(id, getLoggedUserId());
     }
-
-//    @Override
-//    public Optional<FullNews> getNewsById(long id) {
-//        Optional<News> maybeNews = newsDao.getById(id);
-//        if (maybeNews.isPresent()) {
-//            return Optional.of(getFullNews(maybeNews.get()));
-//        }
-//
-//        return Optional.empty();
-//
-//    }
-
-//    private FullNews getFullNews(News news) {
-//        long newsId = news.getNewsId();
-////        NewsStats newsStats = newsDao.getNewsStats(newsId);
-//        Optional<User> maybeUser = securityService.getCurrentUser();
-//        LoggedUserParameters loggedUserParameters = null;
-//        if (maybeUser.isPresent()) {
-//            User user = maybeUser.get();
-//            loggedUserParameters = new LoggedUserParameters(upvoteState(news, user), isSaved(news, user));
-//
-//        }
-//        return new FullNews(news, userDao.getUserById(news.getCreatorId()).get(), newsDao.getNewsStats(newsId), loggedUserParameters);
-//    }
 
     private Long getLoggedUserId() {
         return securityService.getCurrentUser().map(User::getId).orElse(null);
@@ -81,20 +69,24 @@ public class NewsServiceImpl implements NewsService{
             totalPages = newsDao.getTotalPagesAllNews(query);
             page = Math.min(page, totalPages);
             ln = newsDao.getNews(page, query, newsOrderObject, loggedUser);
-        }
-        else {
+        } else {
             Category catObject = Category.getByValue(category);
-            totalPages = newsDao.getTotalPagesCategory(catObject);
-            page = Math.min(page, totalPages);
-            ln = newsDao.getNewsByCategory(page, catObject, newsOrderObject, loggedUser);
+
+            if (catObject.equals(Category.FOR_ME)) {
+                totalPages = newsDao.getTodayNewsPageCount();
+                page = Math.min(page, totalPages);
+                ln = newsDao.getRecommendation(page, getLoggedUserOrThrowException(), newsOrderObject);
+            }
+            else {
+                totalPages = newsDao.getTotalPagesCategory(catObject);
+                page = Math.min(page, totalPages);
+                ln = newsDao.getNewsByCategory(page, catObject, newsOrderObject, loggedUser);
+            }
+
         }
-        return new Page<>(ln,page,totalPages);
+        return new Page<>(ln, page, totalPages);
     }
 
-//    @Override
-//    public Page<FullNews> getNewsFromUser(int page, String newsOrder, long userId) {
-//        return getNewsForUserProfile(page, newsOrder, userId, ProfileCategory.MY_POSTS.toString());
-//    }
 
     @Override
     public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
@@ -105,33 +97,35 @@ public class NewsServiceImpl implements NewsService{
         Optional<User> maybeUser = securityService.getCurrentUser();
 
         Long loggedUserId = maybeUser.map(User::getId).orElse(null);
+        long userId = user.getId();
 
         List<FullNews> ln = null;
         ProfileCategory pc = ProfileCategory.valueOf(profileCategory);
         switch (pc) {
+
             case SAVED:
-                totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, user);
-                ln = newsDao.getSavedNews(page,user,newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, userId);
+                ln = newsDao.getSavedNews(page, userId, newsOrderObject, loggedUserId);
 
 
                 break;
 
             case UPVOTED:
-                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, user);
-                ln = newsDao.getNewsUpvotedByUser(page,user,newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
+                ln = newsDao.getNewsUpvotedByUser(page, userId, newsOrderObject, loggedUserId);
 
 
                 break;
 
             case DOWNVOTED:
-                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, user);
-                ln = newsDao.getNewsDownvotedByUser(page,user, newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
+                ln = newsDao.getNewsDownvotedByUser(page, userId, newsOrderObject, loggedUserId);
 
                 break;
 
             case MY_POSTS:
-                totalPages = newsDao.getTotalPagesNewsFromUser(page, user);
-                ln = newsDao.getAllNewsFromUser(page,user,newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUser(page, userId);
+                ln = newsDao.getAllNewsFromUser(page, userId, newsOrderObject, loggedUserId);
 
         };
 
@@ -140,48 +134,26 @@ public class NewsServiceImpl implements NewsService{
         return new Page<>(ln, page, totalPages);
     }
 
-    /*@Override
-    public Page<News> getNewsFromUser(int page, String newsOrder, long userId) {
-        page = page <= 0 ? 1 : page;
-        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
-        int totalPages = newsDao.getTotalPagesNewsFromUser(page, userId, newsOrderObject);
-        page = Math.min(page, totalPages);
-        List<News> ln = newsDao.getAllNewsFromUser(page,userId,newsOrderObject);
-        return new Page<>(ln, page, totalPages);
-    }*/
-
     @Override
-    public List<Category> getNewsCategory(FullNews news) {
-        return newsDao.getNewsCategory(news.getNews());
+    public List<Category> getNewsCategory(News news) {
+        return newsDao.getNewsCategory(news);
     }
 
-//    @Override
-//    public int getUpvotes(Long newsId) {
-//        return newsDao.getUpvotes(newsId);
-//    }
-//    @Override
-//
-//    public Rating upvoteState(News news, User user) {
-//        return newsDao.upvoteState(news, user);
-//    }
+    @Override
+    public FullNews getOrThrowException(long newsId) {
+        Optional<FullNews> maybeNews = getById(newsId);
+
+        if (!maybeNews.isPresent())
+            throw new NewsNotFoundException();
+        return maybeNews.get();
+    }
 
     @Override
-    public void setRating(long newsId, User user, Rating rating) {
-        newsDao.setRating(newsId, user, rating);
+    public void setRating(News news, Rating rating) {
+        Long loggedUser = getLoggedUserId();
+
+        newsDao.setRating(news.getNewsId(), loggedUser, rating);
     }
-//
-
-//    @Override
-//    public Positivity getPositivityBracket(Long newsId) {
-//        return Positivity.getPositivvity(getPositivityValue(newsId));
-//    }
-
-//    @Override
-//    public List<FullNews> getSavedNews(int page, User user, NewsOrder ns) {
-////        List<FullNews> news = newsDao.getSavedNews(page, user.getId(), ns);
-//        return null;
-////        return news.stream().map(this::getFullNews).collect(Collectors.toList());
-//    }
 
     @Override
     public boolean toggleSaveNews(FullNews news, User user) {
@@ -189,23 +161,42 @@ public class NewsServiceImpl implements NewsService{
         if (news.getLoggedUserParameters().isSaved()) {
             newsDao.removeSaved(news.getNews(), user);
             return false;
-        }
-
-        else
+        } else
             newsDao.saveNews(news.getNews(), user);
         return true;
     }
-//    @Override
-//    public boolean isSaved(News news, User user) {
-//        return newsDao.isSaved(news, user);
-//    }
+
+    private User getLoggedUserOrThrowException() {
+        return securityService.getCurrentUser().orElseThrow(() -> new HTTPException(400));
+    }
 
     @Override
     public void deleteNews(News news) {
-        FullNews fullNews = getById(news.getNewsId()).orElseThrow(NewsNotFoundException::new);
-        User current = securityService.getCurrentUser().orElseThrow(() -> new HTTPException(400));
-        if(!securityService.isCurrentUserAdmin() && fullNews.getNews().getCreatorId() != current.getId())
+        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
             throw new UserNotAuthorized();
-        newsDao.deleteNews(news);
+        newsDao.deleteNews(news.getNewsId());
+    }
+
+    @Override
+    public Page<FullNews> getRecommendation(int page, User user, NewsOrder newsOrder) {
+        int totalPages = newsDao.getTodayNewsPageCount();
+        page = Math.min(Math.max(page, 1), totalPages);
+        return new Page<>(newsDao.getRecommendation(page, user, newsOrder),page, totalPages);
+    }
+
+    @Override
+    public Optional<News> getSimpleNewsById(long id) {
+        return newsDao.getSimpleNewsById(id);
+    }
+
+    @Override
+    public void addComment(News news, String comment) {
+        User user = getLoggedUserOrThrowException();
+        newsDao.addComment(user, news, comment);
+    }
+
+    @Override
+    public Page<Comment> getComments(News news, int page) {
+        return newsDao.getComments(news.getNewsId(), page);
     }
 }

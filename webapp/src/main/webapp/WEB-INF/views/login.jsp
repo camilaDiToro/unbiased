@@ -10,7 +10,12 @@
 <c:url value="/login" var="loginUrl" />
 
 <form class="form-signin" action="${loginUrl}" method="post">
-    <h1 class="logo mb-4 text-info">unbiased</h1>
+
+    <h1 id="title-log" class="logo mb-4">
+        <a style="text-decoration: none" class="text-info" href="<c:url value="/TOP"/>">
+            unbiased
+        </a>
+    </h1>
     <h1 class="h3 mb-3 font-weight-normal text-light"> </h1>
 
         <div >

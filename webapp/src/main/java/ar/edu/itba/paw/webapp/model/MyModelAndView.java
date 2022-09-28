@@ -12,7 +12,6 @@ public class MyModelAndView extends ModelAndView {
     private MyModelAndView(String viewName, String pageTitle, TextType textType, Optional<User> loggedUser, boolean isAdmin) {
         super(viewName);
         addObject("pageTitle", pageTitle);
-
         User user = loggedUser.orElse(null);
 
         addObject("loggedUser", user);

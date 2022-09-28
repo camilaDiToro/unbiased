@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.model.news;
 
-import ar.edu.itba.paw.model.PositivityStats;
+import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.User;
 
