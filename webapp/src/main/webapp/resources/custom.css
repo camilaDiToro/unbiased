@@ -234,6 +234,20 @@
     padding-left: 0.7rem!important;
 }*/
 
+.bottom-left {
+    position: fixed;
+    top:100vh;
+    left: 1%;
+    transform:translateY(-110%);
+    width:23%;
+}
+
+#add-admin:hover{
+    transform: translateY(-110%);
+    transition: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,.25);
+}
+
 .bookmark{
     cursor: pointer;
     width: 25px !important;
@@ -313,6 +327,8 @@
     width: 500px;
 }
 
+
+
 .card:hover{
     transform: translateY(-5px);
     transition: 0.3s;
@@ -326,9 +342,9 @@
 }
 
 #none_shadow.card:hover{
-    transform: none;
-    transition: none;
-    box-shadow: none;
+    transform: none !important;
+    transition: none !important;
+    box-shadow: none !important;
 }
 
 #none_shadow.card{

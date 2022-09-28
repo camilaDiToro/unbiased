@@ -2,6 +2,8 @@
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 
 <html>
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
@@ -10,6 +12,7 @@
 <body>
 <c:set var="news" value="${newsPage.content}"/>
 <div class="d-flex h-100 flex-column">
+
 
     <%@ include file="../../resources/navbar.jsp" %>
     <div class="d-flex flex-column h-100">
@@ -29,6 +32,18 @@
             </div>
         </li>
     </ul>
+                    <c:url value="/admin/add_admin" var="postUrl"/>
+                    <div id="add-admin" class="card m-1 bottom-left">
+                        <form:form modelAttribute="createAdminForm" action="${postUrl}" method="GET" >
+
+                            <div class="form-group m-2">
+                                <form:label cssClass="w-100 font-weight-bold" path="email">Make user admin</form:label>
+                                    <form:input placeholder="Email:" path="email" cssClass="form-control w-100"/>
+                                    <form:errors cssClass="text-danger mt-1" path="email" element="small"/>
+
+                            </div>
+                        </form:form>
+                    </div>
 
     </div>
             <%--RIGHT SIDE--%>

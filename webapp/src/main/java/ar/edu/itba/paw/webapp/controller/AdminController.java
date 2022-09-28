@@ -8,13 +8,17 @@ import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.service.*;
+import ar.edu.itba.paw.webapp.form.CreateAdminForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
 
 @Controller
 public class AdminController {
@@ -34,8 +38,21 @@ public class AdminController {
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
+    @RequestMapping(value = "/admin/add_admin", method = RequestMethod.GET)
+    public ModelAndView addAdmin(@Valid @ModelAttribute("createAdminForm") CreateAdminForm form, final BindingResult errors) {
+        if (errors.hasErrors())
+            return reportedNews(
+                    1,
+                    form,
+                    "TOP");
+
+        adminService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
+        return new ModelAndView("redirect:/admin/reported_news");
+    }
+
     @RequestMapping(value = "/admin/reported_news/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
+                                     @ModelAttribute("createAdminForm") CreateAdminForm form,
                                      @PathVariable("newsOrder") String newsOrder) {
 
         Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, NewsOrder.NEW);
@@ -68,9 +85,5 @@ public class AdminController {
         return new ModelAndView("redirect:/admin/reported_news");
     }
 
-    @RequestMapping(value = "/admin/add_admin/{userId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView addAdmin(@PathVariable("userId") long userId) {
-        adminService.makeUserAdmin(userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new));
-        return new ModelAndView("redirect:/admin/reported_news");
-    }
+
 }
