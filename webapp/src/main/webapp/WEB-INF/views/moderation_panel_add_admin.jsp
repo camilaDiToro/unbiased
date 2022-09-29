@@ -41,7 +41,6 @@
                             </c:if>
                         </div>
                         <button class="btn btn-info" type="submit">Submit</button>
-
                     </form:form>
                 </div>
                 <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">

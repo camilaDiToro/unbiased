@@ -59,7 +59,7 @@ public class HomeController {
                 .withObject("orderBy", orderBy)
                 .withObject("query", query)
                 .withObject("type", type)
-                .withObject("categories", Arrays.stream(Category.values()).filter(c -> c != Category.FOR_ME || ss.getCurrentUser().isPresent()).toArray())
+                .withObject("categories", ns.getHomeCategories())
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
         if (type.equals("creator")) {

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -117,8 +118,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<String> getRoles(User user) {
-        return roleDao.getRoles(user.getId());
+    public List<Role> getRoles(User user) {
+        return roleDao.getRoles(user.getId()).stream().map(Role::getRole).collect(Collectors.toList());
     }
 
     @Override

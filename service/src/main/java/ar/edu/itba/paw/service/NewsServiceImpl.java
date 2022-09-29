@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.ws.http.HTTPException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -175,6 +177,26 @@ public class NewsServiceImpl implements NewsService {
         if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
             throw new UserNotAuthorized();
         newsDao.deleteNews(news.getNewsId());
+    }
+
+    @Override
+    public Iterable<ProfileCategory> getProfileCategories(User user) {
+        Optional<User> currentUser =  securityService.getCurrentUser();
+        boolean isMyProfile = user.equals(currentUser.orElse(null));
+        return Arrays.stream(ProfileCategory.values()).filter(c -> {
+            if (!isMyProfile && c.equals(ProfileCategory.SAVED)) {
+                return false;
+            }
+            else if (c.equals(ProfileCategory.MY_POSTS) && !userService.getRoles(user).contains(Role.JOURNALIST)) {
+                return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<Category> getHomeCategories() {
+        return Arrays.stream(Category.values()).filter(c ->  c != Category.FOR_ME || securityService.getCurrentUser().isPresent()).collect(Collectors.toList());
     }
 
     @Override
