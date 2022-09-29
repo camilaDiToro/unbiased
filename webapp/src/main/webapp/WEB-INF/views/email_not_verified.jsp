@@ -17,7 +17,7 @@
     <div>
         <form:label path="email" cssClass="sr-only"><spring:message code="register.mail.address" var="mailAddressMsg"/></form:label>
         <form:input type="text" path="email"  cssClass="form-control" placeholder="Email address" required="${mailAddressMsg}" autofocus=""/>
-        <form:errors path="email" element="p" cssStyle="color: red"/>
+        <form:errors path="email" element="p" cssClass="text-danger"/>
     </div>
 
     <button class="btn btn-lg btn-info btn-block" type="submit"><spring:message code="login.resendVerificationEmail.button"/></button>

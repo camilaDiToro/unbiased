@@ -47,18 +47,28 @@ public class HomeController {
             @PathVariable("orderBy") final String orderBy,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "query", defaultValue = "") final String query,
-            @RequestParam(name = "category", defaultValue = "ALL") final String category){
+            @RequestParam(name = "category", defaultValue = "ALL") final String category,
+            @RequestParam(name="type", defaultValue="article") String type){
 
         Page<FullNews> newsPage = ns.getNews(page,category,orderBy,query);
 
-        return mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
+        MyModelAndView.Builder builder= mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
                 .withObject("topCreators", us.getTopCreators(5))
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", orderBy)
                 .withObject("query", query)
+                .withObject("type", type)
                 .withObject("categories", Category.values())
-                .withObject("category", category.equals("ALL")? category:Category.getByValue(category))
-                .withObject("newsPage", newsPage).build();
+                .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
+
+        if (type.equals("creator")) {
+            builder.withObject("usersPage", us.searchUsers(page, query));
+        }
+        else if (type.equals("article")) {
+            builder.withObject("newsPage", newsPage);
+        }
+
+        return builder.build();
     }
 
     private ResponseEntity<UpvoteActionResponse> toggleHandler(UpvoteAction payload, Rating action) {

@@ -152,10 +152,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> searchUsers(int page, String search) {
-        return userDao.searchUsers(page, search);
-    }
-
     public boolean isFollowing(User user) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         return userDao.isFollowing(myUser.getId(), user.getId());
@@ -171,4 +167,11 @@ public class UserServiceImpl implements UserService {
     public List<User> getTopCreators(int qty) {
         return userDao.getTopCreators(qty);
     }
+
+    @Override
+    public Page<User> searchUsers(int page, String search) {
+        return userDao.searchUsers(page, search);
+    }
+
+
 }

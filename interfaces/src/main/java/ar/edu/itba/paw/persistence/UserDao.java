@@ -18,6 +18,8 @@ public interface UserDao {
     void updateImage(long userId, Long imageId);
     void addFollow(long userId, long follows);
     void unfollow(long userId, long follows);
-    boolean isFollowing(long userId, long followId);
+
+   boolean isFollowing(long userId, long followId);
+
     Page<User> searchUsers(int page, String search);
 }

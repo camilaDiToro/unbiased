@@ -218,6 +218,13 @@
     font-weight: 400;
     text-align: center;
 }
+.back-button {
+    position: absolute ;
+    margin-left: 4%;
+    margin-top: 2%
+}
+
+.back-button-img {max-width: 7%; max-height: 7%}
 
 .news-bookmark {
     height: 30px;
@@ -234,9 +241,61 @@
     padding-left: 0.7rem!important;
 }*/
 
-#bookmark{
+.bottom-left {
+    position: fixed;
+    top:100vh;
+    left: 1%;
+    transform:translateY(-110%);
+    width:23%;
+}
+
+#add-admin:hover{
+    transform: translateY(-110%);
+    transition: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,.25);
+}
+
+.bookmark{
     cursor: pointer;
     width: 25px !important;
+}
+
+.report-count {
+    border-radius: 50%!important;
+    width: 24px;
+    height: 24px
+}
+
+.moderation-img {
+    width: 24px;
+    padding-right: 5px
+}
+
+.mh-10 {
+    max-height: 10%;
+}
+
+.bin-image {
+    width: 24px;
+    margin-top: 2px
+}
+
+.bin-modal {
+    background: none; outline: none; margin-bottom: 4px
+}
+
+.tab {
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+    margin: 0 auto
+}
+
+.top-creators {
+    color: white; padding-left: 35px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 10%;
 }
 
 #bookmark-news{
@@ -244,7 +303,7 @@
     width: 35px !important;
 }
 
-#upvote,#downvote {
+.upvote,.downvote {
     cursor: pointer;
 }
 .upvote-div-profile {
@@ -313,6 +372,8 @@
     width: 500px;
 }
 
+
+
 .card:hover{
     transform: translateY(-5px);
     transition: 0.3s;
@@ -326,9 +387,9 @@
 }
 
 #none_shadow.card:hover{
-    transform: none;
-    transition: none;
-    box-shadow: none;
+    transform: none !important;
+    transition: none !important;
+    box-shadow: none !important;
 }
 
 #none_shadow.card{
@@ -384,10 +445,20 @@ body{
 
 #title-principal-card{
     color: white;
+    max-height: 10%;
 }
 
 * {
     color: white;
+}
+
+.op-09 {
+    opacity: 0.9;
+}
+
+.read-clock {
+    width: 15px;
+    margin-top: 1px
 }
 
 #pencil_button:hover{

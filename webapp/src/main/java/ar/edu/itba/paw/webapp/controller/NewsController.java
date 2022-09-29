@@ -87,7 +87,7 @@ public class NewsController {
     public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                  @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsFrom,
                                  @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors,
-                                 @RequestParam(name="page", defaultValue="1") int page){
+    @RequestParam(name="page", defaultValue="1") int page){
 
         FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         News news = fullNews.getNews();
@@ -148,10 +148,8 @@ public class NewsController {
             return createArticleAndValidate(createNewsFrom, errors);
         }
 
-        String htmlText = TextUtils.convertMarkdownToHTML(createNewsFrom.getBody());
-
         final User user = securityService.getCurrentUser().get();
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), htmlText, createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
         if(!createNewsFrom.getImage().isEmpty()){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));

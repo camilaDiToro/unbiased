@@ -12,7 +12,7 @@
 <form class="form-signin" action="${loginUrl}" method="post">
 
     <h1 id="title-log" class="logo mb-4">
-        <a style="text-decoration: none" class="text-info" href="<c:url value="/TOP"/>">
+        <a style="link" class="text-info" href="<c:url value="/TOP"/>">
             unbiased
         </a>
     </h1>
@@ -23,7 +23,7 @@
             <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
 
         </div>
-        <div style="margin-top: 2%" >
+        <div class="mt-1">
             <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
             <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
 
@@ -45,18 +45,8 @@
         <label class="text-light">
             <input type="checkbox" name="rememberme"> <spring:message code="login.rememberMe"/>
         </label>
-
     </div>
     <button class="btn btn-lg btn-info btn-block" type="submit"><spring:message code="login.signIn"/></button>
-
-    <%--<c:if test="${param.unable}">
-        <a href="<c:url value = "/resend_verification_email">
-                    <c:param name = "email" value = "${param.email}"/>
-                    </c:url>">
-            <button type="button" class="btn btn-lg btn-info btn-block">
-                <spring:message code="login.resendVerificationEmail.button"/>
-            </button></a>
-    </c:if> --%>
     <p class="mt-5 mb-3 text-muted">© 2022-2022</p>
     </form>
 

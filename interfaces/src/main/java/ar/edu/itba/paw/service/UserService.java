@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
+
     Optional<User> getUserById(long id);
     Optional<User> getRegisteredUserById(long id);
     User create(User.UserBuilder userBuilder);
@@ -20,8 +21,9 @@ public interface UserService {
     List<String> getRoles(User user);
     void updateProfile(User user, String username, Long imageId);
     Optional<User> findByUsername(String username);
-    Page<User> searchUsers(int page, String search);
     boolean isFollowing(User user);
     void followUser(User user);
     void unfollowUser(User user);
+
+    Page<User> searchUsers(int page, String search);
 }

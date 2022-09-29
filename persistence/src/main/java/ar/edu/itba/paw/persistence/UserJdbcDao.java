@@ -17,13 +17,13 @@ import java.util.*;
 
 @Repository
 public class UserJdbcDao implements UserDao {
+    private static final double USERS_PAGE_SIZE = 12.0;
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert followJdbcInsert;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
-    public static final double PAGE_SIZE = 10.0;
 
     private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User
             .UserBuilder(rs.getString("email"))
@@ -124,8 +124,8 @@ public class UserJdbcDao implements UserDao {
     @Override
     public Page<User> searchUsers(int page, String search) {
         SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("pageSize", PAGE_SIZE)
-                .addValue("offset", (page - 1) * PAGE_SIZE)
+                .addValue("pageSize", USERS_PAGE_SIZE)
+                .addValue("offset", (page - 1) * USERS_PAGE_SIZE)
                 .addValue("search", "%" + search.toLowerCase() + "%");
         List<User> users = namedJdbcTemplate.query("SELECT * FROM users NATURAL LEFT JOIN user_positivity " +
                         "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params, ROW_MAPPER);
@@ -133,7 +133,7 @@ public class UserJdbcDao implements UserDao {
         int rowsCount = namedJdbcTemplate.query("SELECT count(*) AS userCount FROM users NATURAL LEFT JOIN user_positivity " +
                         "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params,
                 ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount / PAGE_SIZE);
+        int total = (int) Math.ceil(rowsCount / USERS_PAGE_SIZE);
         total =  total == 0 ? 1 : total;
 
         return new Page<>(users,page,total);
@@ -149,4 +149,6 @@ public class UserJdbcDao implements UserDao {
                 "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator LIMIT ?) SELECT * FROM interactions NATURAL JOIN users NATURAL JOIN user_positivity ORDER BY interaction_count DESC", new Object[]{qty},ROW_MAPPER);
 
     }
+
+
 }

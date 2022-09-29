@@ -2,6 +2,8 @@
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 
 <html>
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
@@ -10,6 +12,7 @@
 <body>
 <c:set var="news" value="${newsPage.content}"/>
 <div class="d-flex h-100 flex-column">
+
 
     <%@ include file="../../resources/navbar.jsp" %>
     <div class="d-flex flex-column h-100">
@@ -22,20 +25,32 @@
     <ul class="nav flex-column vertical-menu ">
         <li class="nav-item">
             <div class="d-flex flex-row">
-                <img style="width: 24px; padding-right: 5px" src="<c:url value="/resources/warning-svgrepo-com.svg"/> " alt="...">
-                <a style="padding-left: 0" class="nav-link selected" href="#">
+                <img class="moderation-img" src="<c:url value="/resources/warning-svgrepo-com.svg"/>" alt="...">
+                <a class="nav-link selected pl-0" href="#">
                     <spring:message code="moderation.reportedArticles"/>
                 </a>
             </div>
         </li>
     </ul>
+                    <c:url value="/admin/add_admin" var="postUrl"/>
+                    <div id="add-admin" class="card m-1 bottom-left">
+                        <form:form modelAttribute="createAdminForm" action="${postUrl}" method="GET" >
+
+                            <div class="form-group m-2">
+                                <form:label cssClass="w-100 font-weight-bold" path="email">Make user admin</form:label>
+                                    <form:input placeholder="Email:" path="email" cssClass="form-control w-100"/>
+                                    <form:errors cssClass="text-danger mt-1" path="email" element="small"/>
+
+                            </div>
+                        </form:form>
+                    </div>
 
     </div>
             <%--RIGHT SIDE--%>
             <div class="d-flex flex-column w-75">
 
                 <%--TAB (top, new)--%>
-                <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
+                <div class="tab">
                     <c:set var = "activeClasses" scope = "session" value = "bg-info active"/>
                     <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
                     <ul class="my-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ">
@@ -51,7 +66,7 @@
                 </div>
 
                 <%--CARDS--%>
-                <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
+                <div class="tab">
                     <c:if test="${empty news}" >
                         <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
 
@@ -95,25 +110,16 @@
                                         <div class="card h-100 d-flex flex-row p-3" id="left-card">
 
                                             <div>
-                                                <%--<h6 >${reportedNews.reportCount}</h6>--%>
-                                                <span style="border-radius: 50%!important; width: 24px; height: 24px" class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center" >
-                                                    <%--${reportedNews.reportCount} <spring:message code="moderation.reports"/>--%>
-                                                    5!
+                                                <span class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" >
+                                                    <c:out value="${reportedNews.reportCount}"/>
                                             </span>
                                             </div>
 
-                                            <%--<div class="d-flex flex-row align-items-center gap-1">
-                                                <h6>${reportedNews.reportCount}/></h6>
-                                            </div>--%>
-
                                             <div class="d-flex flex-column justify-content-between w-100">
                                                 <div class="d-flex w-100 ">
-
-
                                                     <div class="card-body-home pt-0">
-                                                        <a style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>" class="link"><h5 class="text-ellipsis link-text"><c:out value="${article.title}"/></h5></a>
+                                                        <a href="<c:url value="/news/${article.newsId}"/>" class="link mh-10"><h5 class="text-ellipsis link-text"><c:out value="${article.title}"/></h5></a>
                                                         <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
-
                                                     </div>
                                                 </div>
                                                 <div class="d-flex justify-content-between w-100">
@@ -132,11 +138,10 @@
                                                     </div>
                                                     <div class="d-flex align-items-center mr-2" role="group">
 
-                                                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px">
-                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="width: 24px; margin-top: 2px"/>
+                                                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn bin-modal">
+                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." class="bin-image"/>
                                                             </button>
                                                             <a   class="font-weight-bold hover-hand link" href="<c:url value="/admin/reported_news_detail/${newsId}"/>">
-
                                                                 <div class="link-text">
                                                                     <spring:message code="moderation.details"/>
                                                                 </div>

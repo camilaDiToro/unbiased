@@ -3,6 +3,7 @@ package ar.edu.itba.paw.model.news;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 
 public enum Category {
+    FOR_ME("categories.forMe"),
 
     TOURISM("categories.tourism"),
     SHOW("categories.entertainment"),
