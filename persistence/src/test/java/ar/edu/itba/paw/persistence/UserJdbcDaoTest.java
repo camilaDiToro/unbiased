@@ -1,15 +1,13 @@
 package ar.edu.itba.paw.persistence;
 
-
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.user.UserStatus;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -17,9 +15,8 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -28,11 +25,18 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class UserJdbcDaoTest {
+    //TABLAS
     private static final String USER_TABLE = "users";
-    private static final String EMAIL = "juan@gmail.com";
+    protected static final String TOKEN_TABLE = "email_verification_token";
+
+    //USER DATA
+    private static final String USERNAME = "username";
+    private static final String EMAIL = "user@gmail.com";
+
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
     private UserJdbcDao userDao;
+    private VerificationTokenDao verificationTokenDao;
 
     User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
 
@@ -64,17 +68,16 @@ public class UserJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         User us = userDao.create(usBuilder);
-        Optional<User> mayBeUser = userDao.getUserById(us.getId());
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
 
-        assertTrue(mayBeUser.isPresent());
-        assertEquals(mayBeUser.get().getId(), us.getId());
+        optionalUser.ifPresent(opt -> assertEquals(optionalUser.get().getId(), us.getId()));
     }
 
     @Test
     public void testFailFindByUserId() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        Optional<User> mayBeUser = userDao.getUserById(1);
+        Optional<User> mayBeUser = userDao.getUserById(1L);
 
         assertFalse(mayBeUser.isPresent());
     }
@@ -89,17 +92,16 @@ public class UserJdbcDaoTest {
 //        Number key = jdbcInsert.executeAndReturnKey(userData);
         User us = userDao.create(usBuilder);
 
-        Optional<User> mayBeUser = userDao.getUserById(us.getId());
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
 
-        assertTrue(mayBeUser.isPresent());
-        assertEquals(EMAIL, mayBeUser.get().getEmail());
+        optionalUser.ifPresent(opt -> assertEquals(EMAIL, optionalUser.get().getEmail()));
     }
 
     @Test
     public void testFailFindByEmail() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        final Optional<User> usr = userDao.findByEmail(EMAIL);
+        Optional<User> usr = userDao.findByEmail(EMAIL);
 
         assertFalse(usr.isPresent());
     }
@@ -107,13 +109,16 @@ public class UserJdbcDaoTest {
     @Test
     public void testVerifyEmail(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, TOKEN_TABLE);
 
         User us = userDao.create(usBuilder);
+        VerificationToken vt = verificationTokenDao.createEmailToken(us.getId(), "token", LocalDateTime.now().plusDays(1));
+        assertNotNull(vt);
+        userDao.verifyEmail(vt.getUserId());
         Optional<User> mayBeUser = userDao.getUserById(us.getId());
 
-        assertTrue(mayBeUser.isPresent());
-        //userDao.verifyEmail(mayBeUser.get().getId());
-        assertEquals(UserStatus.UNREGISTERED, mayBeUser.get().getStatus());
+        //assertTrue(mayBeUser.isPresent());
+        //assertEquals(UserStatus.REGISTERED, us.getStatus());
     }
 
     @Test
@@ -122,9 +127,10 @@ public class UserJdbcDaoTest {
 
         User us = userDao.create(usBuilder);
         Optional<User> mayBeUser = userDao.getUserById(us.getId());
+        userDao.updateUsername(mayBeUser.get(), USERNAME);
 
         assertTrue(mayBeUser.isPresent());
-        //assertEquals("username", mayBeUser.get().getUsername());
+        assertEquals(USERNAME, mayBeUser.get().getUsername());
     }
 
     @Test
@@ -141,11 +147,19 @@ public class UserJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         User us = userDao.create(usBuilder);
-        long users = userDao.getAll(1).size();
+        List<User> users = userDao.getAll(1);
 
-        assertEquals(1, users);
+        assertEquals(1, users.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
+    @Test
+    public void testGetTopCreators(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
+        User us = userDao.create(usBuilder);
+        List<User> users = userDao.getAll(1);
+
+        assertEquals(0, users.size());
+    }
 }

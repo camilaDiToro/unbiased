@@ -533,3 +533,21 @@ body{
 #span_category:hover{
     color: white;
 }
+
+
+.modal-header{
+    background: #1e1e2d;
+    border: none;
+}
+
+.modal-body{
+    background: #1e1e2d;
+}
+
+.modal-content{
+    background-color: #1e1e2d;
+}
+
+.modal-footer{
+    background: #1e1e2d;
+}

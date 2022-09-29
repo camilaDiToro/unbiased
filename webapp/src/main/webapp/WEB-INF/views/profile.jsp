@@ -98,7 +98,7 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
                                                 <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
-                                                    <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                    <button type="submit" class="btn btn-info"><spring:message code="profile.modal.accept"/></button>
                                                 </form>
                                             </div>
                                         </div>
@@ -266,9 +266,9 @@
                                     <form:label path="image"><spring:message code="profile.modal.changeUsername"/></form:label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">@</span>
+                                            <span class="input-group-text bg-transparent" id="basic-addon1">@</span>
                                         </div>
-                                        <form:input type="text" path="username" cssClass="form-control" placeholder="${changeUsername}"/>
+                                        <form:input type="text" path="username" cssClass="form-control bg-transparent" placeholder="${changeUsername}"/>
                                         <div class="w-100">
                                             <form:errors cssClass="text-danger" path="username" element="p"/>
 
@@ -280,7 +280,7 @@
                                     <div class="input-group mb-3">
                                         <div class="custom-file">
                                             <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
-                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
+                                            <form:label path="image" cssClass="custom-file-label bg-transparent" for="inputGroupFile01">${changeUserPicture}</form:label>
                                             <div class="w-100">
                                                 <form:errors cssClass="text-danger" path="image" element="p"/>
 
@@ -299,7 +299,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.save"/></button>
+                                <button type="submit" class="btn btn-info"><spring:message code="profile.modal.save"/></button>
                             </div>
                         </form:form>
                     </div>
