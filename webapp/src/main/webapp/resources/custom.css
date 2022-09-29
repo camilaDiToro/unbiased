@@ -269,7 +269,9 @@ input:-webkit-autofill:focus {
     position: absolute ; margin-left: 50px; margin-top: 50px
 }
 
-.back-button-img {max-width: 7%; max-height: 7%}
+.back-button-img {
+    max-width: 7%; max-height: 7%
+}
 
 
 
@@ -747,4 +749,9 @@ body{
 .custom-file-input:focus{
     border: none;
 }
+
+.back-btn{
+    height: 24px;
+}
+
 

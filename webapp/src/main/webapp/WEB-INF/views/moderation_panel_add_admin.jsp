@@ -23,7 +23,8 @@
 
                 <div class="w-100 my-2">
                     <a  href="<c:url value="/admin/reported_news"/>">
-                        <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." class="w-50px">
+                        <%--<input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." class="w-50px">--%>
+                        <img class="svg-btn hover-hand back-btn mt-3" src="<c:url value="/resources/back-svgrepo-com.svg"/>" alt="..." data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> " />
                     </a>
                 </div>
                 <c:url value="/admin/add_admin" var="postUrl"/>

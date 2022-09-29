@@ -21,8 +21,12 @@
 
 <body>
 <%@include file="../../resources/navbar.jsp" %>
-<div class="back-button" >
-    <input class="back-button-img" type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..."  data-toggle="modal" data-target="#exampleModal">
+<div class="back-button" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> ">
+    <%--<input class="back-button-img" type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..."  data-toggle="modal" data-target="#exampleModal">--%>
+    <a data-toggle="modal" data-target="#exampleModal">
+        <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/back-svgrepo-com.svg"/>" alt="..."/>
+    </a>
+
 </div>
 <div class="d-flex flex-col align-items-center justify-content-center p-5">
 

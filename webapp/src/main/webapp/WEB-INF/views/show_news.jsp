@@ -30,7 +30,7 @@
 
 
 <a href="../TOP" class="back-button-show-news">
-    <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." class="back-button-img">
+    <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/back-svgrepo-com.svg"/>" alt="..."/>
 </a>
 
 
