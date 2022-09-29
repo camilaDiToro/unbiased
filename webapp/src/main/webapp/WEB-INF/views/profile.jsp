@@ -19,7 +19,6 @@
 <body>
 <c:set var="news" value="${newsPage.content}"/>
 
-<%--<%@include file="../../resources/navbar.jsp" %>--%>
 <div class="d-flex h-100 flex-column">
 
 <%@include file="../../resources/navbar.jsp" %>
@@ -29,7 +28,7 @@
     <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
         <c:forEach var="cat" items="${categories}">
             <li class="nav-item">
-                <a style="background: transparent !important;" class="text-capitalize nav-link tabs <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${orderBy}">
+                <a class="text-capitalize nav-link tabs <c:out value = "${category == cat ? 'active': ''}"/> bg-transparent" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
             </li>
@@ -40,10 +39,10 @@
 <div class="d-flex flex-column h-100">
     <div class="flex-grow-1 d-flex flex-row">
         <%--LEFT SIDE--%>
-        <div style="display: flex; width: 70%; flex-direction: column">
+        <div class="d-flex flex-column w-70">
 
             <%--TAB (top, new)--%>
-            <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
+            <div class="tab">
                 <c:set var = "activeClasses" scope = "session" value = "active"/>
                 <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
                 <ul class="my-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ">
@@ -59,13 +58,13 @@
             </div>
 
             <%--CARDS--%>
-            <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">
+            <div class="tab">
                 <c:if test="${empty news}" >
                     <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
                         <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
-                            <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
                         <p class="lead">
-                            <spring:message code="categories.notFound"/> "<spring:message code="${category.interCode}"/>"
+                            <spring:message code="${category.interCode}" var="catString"/>
+                            <spring:message code="categories.notFound" arguments="${catString}"/>
                         </p>
                     </div>
                 </c:if>
@@ -117,30 +116,29 @@
                                                     <c:set var="rating" value="${loggedParams != null ? loggedParams.personalRating : ''}"/>
 
                                                    <c:if test="${loggedUser != null}">
-                                                       <img style="width: 24px" url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                       <img  url="<c:url value = "/change-upvote"/>" id="upvote" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                        <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                       <img style="width: 24px" id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                       <img  id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
 
                                                    </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <a href="<c:url value = "/create"/>">
-                                                            <img style="width: 24px" class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
+                                                            <img  class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
                                                         </a>
                                                         <div  ><c:out value="${positivityStats.getNetUpvotes()}"/></div>
                                                         <a href="<c:url value = "/create"/>">
-                                                            <img style="width: 24px" class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
+                                                            <img class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
                                                         </a>
                                                     </c:if>
                                                 </div>
                                                 <div class="card-body-home">
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
-                                                    <a class="link" style="max-height: 10%" href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis"><c:out value="${article.title}"/></h5></a>
+                                                    <a class="link max-h-10"  href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="  card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
                                                     <p class="text-sm-left text-secondary mb-0">
-                                                        <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." style="width: 15px"/>
+                                                        <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." class="read-clock"/>
                                                         <spring:message code="home.read" arguments="${fullNews.readTime}"/>
                                                     </p>
-                                                        <%--                                    <p class="card-text"><c:out value="${fn:substring(article.body, 0, maxLength)}${fn:length(article.body) > maxLength ? '...' : ''}"/></p>--%>
 
                                                 </div>
                                             </div>
@@ -162,8 +160,8 @@
                                                 <div class="d-flex align-items-center" role="group">
 
                                                     <c:if test="${isMyProfile && loggedUser == fullNews.user}">
-                                                            <button data-toggle="modal" data-target="#binModal${newsId}" class="btn" style="background: none; outline: none; margin-bottom: 4px" id="bin_button">
-                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." style="width: 26px"/>
+                                                            <button data-toggle="modal" data-target="#binModal${newsId}" class="btn bin-modal" id="bin_button">
+                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." class="w-25px"/>
                                                             </button>
 
 
@@ -171,23 +169,19 @@
 
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                            <img style="width: 24px" id="bookmark" onclick="handleBookmarkClick(this)" class=" svg-bookmark svg-btn" src="<c:url value="/resources/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                            <img class="w-25px" id="bookmark" onclick="handleBookmarkClick(this)" class=" svg-bookmark svg-btn" src="<c:url value="/resources/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
                                                         </div>
                                                     </c:if>
-                                                        <%--                                                    <button type="button" class="btn btn-sm btn-outline-primary m-1 h-75 max-h-40px"><svg class="h-75" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 4H5a2 2 0 0 0-2 2v15l3.467-2.6a2 2 0 0 1 1.2-.4H19a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path></svg></button>--%>
                                                 </div>
                                             </div>
                                         </div>
                                         <c:if test="${article.hasImage()}">
 
-                                        <div class="bg-secondary position-relative w-40" style="border-radius: 15px">
+                                        <div class="bg-secondary position-relative w-40 border-15px">
 
 
                                                 <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
 
-<%--                                            <c:if test="${!article.hasImage()}">--%>
-<%--                                                <img src="<c:url value="/resources/stock_photo.webp"/>" class="object-fit-cover" alt="..." >--%>
-<%--                                            </c:if>--%>
                                         </div>
                                         </c:if>
 
@@ -203,8 +197,8 @@
         </div>
         <%--RIGHT SIDE--%>
             <c:set var="profilePositivityStats" value="${profileUser.getPositivityStats()}"/>
-        <div style="display: flex; width: 30%; justify-content: center;">
-        <div class="card" style="width: 18rem; height: fit-content; margin-top: 4%" id="right-card">
+        <div class="d-flex w-30 justify-content-center">
+        <div class="card right-card" id="right-card">
             <c:set var="profilePositivity" value="${profilePositivityStats.getPositivity()}"/>
             <div class="quality-indicator <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${profilePositivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${profilePositivityStats.getInteractions()}"/>" >
             </div>
@@ -238,7 +232,7 @@
 
         <c:if test="${isMyProfile}">
             <div class="pencil-edit">
-                <button style="border: none; background-color: transparent; outline: none" data-toggle="modal" data-target="#profileModal">
+                <button class="border-0 bg-transparent outline-none" data-toggle="modal" data-target="#profileModal">
                 <span class="badge badge-pill badge-info" id="pencil_button">
                    <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
                     <spring:message code="profile.edit"/>

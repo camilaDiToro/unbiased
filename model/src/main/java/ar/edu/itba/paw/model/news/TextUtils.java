@@ -2,6 +2,7 @@ package ar.edu.itba.paw.model.news;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.commonmark.node.Node;
+import org.commonmark.node.Text;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jsoup.Jsoup;
@@ -9,6 +10,10 @@ import org.jsoup.Jsoup;
 public class TextUtils {
 
     private static final int WPM = 265;
+
+    private TextUtils() {
+
+    }
 
     public static void main(String[] args) {
         System.out.println(convertMarkdownToHTML("# hola"));

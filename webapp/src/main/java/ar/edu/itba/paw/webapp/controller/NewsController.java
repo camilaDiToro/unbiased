@@ -38,7 +38,6 @@ public class NewsController {
     private final AdminService adminService;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
-
     @Autowired
     public NewsController(final AdminService adminService, final NewsService newsService, final UserService userService, ImageService imageService, SecurityService ss){
         this.newsService = newsService;
@@ -48,8 +47,6 @@ public class NewsController {
         this.adminService = adminService;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
-
-
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {

@@ -79,23 +79,18 @@
                     <c:if test="${type=='article'  && empty newsPage.content}" >
                         <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
                             <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
-                                <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
                             <p class="lead">
                                 <c:if test="${query == '' && category.toString() != 'ALL'}">
-                                    <spring:message code="${category.interCode}" var="categoryCode"/>
-                                    <spring:message code="categories.notFound" arguments="${categoryCode}"/>
+                                    <spring:message code="${category.interCode}" var="categoryMsg"/>
+                                    <spring:message code="categories.notFound" arguments="${categoryMsg}"/>
                                 </c:if>
                                 <c:if test="${ query != ''}">
-
                                     <spring:message code="search.notFound" arguments="${query}"/>
                                 </c:if>
-
                                 <c:if test="${category.toString() == 'ALL' && query == ''}">
                                     <spring:message code="categories.all" var="categoryAll"/>
                                     <spring:message code="categories.notFound" arguments="${categoryAll}"/>
                                 </c:if>
-
-
                             </p>
                         </div>
                     </c:if>

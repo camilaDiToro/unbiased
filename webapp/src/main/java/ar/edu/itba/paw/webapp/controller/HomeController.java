@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Arrays;
+
 @Controller
 public class HomeController {
 
@@ -57,7 +59,7 @@ public class HomeController {
                 .withObject("orderBy", orderBy)
                 .withObject("query", query)
                 .withObject("type", type)
-                .withObject("categories", Category.values())
+                .withObject("categories", Arrays.stream(Category.values()).filter(c -> c != Category.FOR_ME || ss.getCurrentUser().isPresent()).toArray())
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
         if (type.equals("creator")) {

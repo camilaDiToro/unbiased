@@ -266,6 +266,14 @@
     height: 24px
 }
 
+.w-50px {
+    width: 50px;
+}
+
+.w-70 {
+    width: 70%;
+}
+
 .moderation-img {
     width: 24px;
     padding-right: 5px
@@ -284,11 +292,37 @@
     background: none; outline: none; margin-bottom: 4px
 }
 
+.right-card {
+    width: 18rem;
+    height: fit-content;
+    margin-top: 4%
+}
+
+.w-30 {
+    width: 30%;
+}
+
+.border-15px {
+    border-radius: 15px;
+}
+
+.w-25px {
+    width: 25px;
+}
+
 .tab {
     display: flex;
     flex-direction: column;
     width: 85%;
     margin: 0 auto
+}
+
+.outline-none {
+    outline: none;
+}
+
+.max-h-10 {
+    max-height: 10%;
 }
 
 .top-creators {
