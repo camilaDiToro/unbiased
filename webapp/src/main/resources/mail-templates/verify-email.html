@@ -17,10 +17,12 @@
             background-color: transparent;
             border-color: #8ea7e8;
             box-shadow: 0 0 2px #888;
-
         }
         .h-color{
             color: #8ea7e8;
+        }
+        .p-color{
+            color: #FFFFFF;
         }
         .title {
             font-size: 60px;
@@ -29,29 +31,64 @@
             color: #8ea7e8;
         }
         .contenedor {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
+            display:flex;
+            margin:0 0.5rem;
         }
-
-        .contenedor > div {
-            width: 50%;
+        .img-contenedor{
+            max-height:5rem;
+            margin:auto 1.5rem
         }
 
     </style>
 </head>
+
 <body>
 <div class="bg">
     <div style="text-align: center">
         <h1 class="title">unbiased</h1>
     </div>
+
     <div style="text-align: center">
         <h3 class="h-color" th:text="#{email.verification.text}"></h3>
     </div>
+
+
+    <div class="contenedor">
+        <img class="img-contenedor" src="..\webapp\src\main\webapp\resources\images\news.png"
+             alt="news_logo" data-image-whitelisted="">
+        <div style="margin:auto">
+            <p class="h-color" th:text="#{email.verification.postTitle}"></p>
+            <p class="p-color" th:text="#{email.verification.postSentence}"></p>
+        </div>
+    </div>
+
+
+    <div class="contenedor">
+        <div style="margin:auto">
+            <p class="h-color" th:text="#{email.verification.searchTitle}"></p>
+            <p class="p-color" th:text="#{email.verification.searchSentence}"></p>
+        </div>
+        <img class="img-contenedor" src="..\webapp\src\main\webapp\resources\images\nav_news.png"
+             alt="nav_logo" data-image-whitelisted="">
+    </div>
+
+    <div class="contenedor">
+        <img class="img-ontenedor" src="..\webapp\src\main\webapp\resources\images\crown.png"
+             alt="top_logo" data-image-whitelisted="">
+        <div style="margin:auto">
+            <p class="h-color" th:text="#{email.verification.topTitle}"></p>
+            <p class="p-color" th:text="#{email.verification.topSentence}"></p>
+        </div>
+    </div>
+
+    <br/>
+    <div style="text-align: center">
+        <h3 class="h-color" th:text="#{email.verification.button}"></h3>
+    </div>
+
     <div class="col-12 d-flex justify-content-center align-items-center">
         <a th:href="${verificationUrl}" class="takeme">
-            <button th:text="#{email.verification.click}" class="btn btn-lg btn-info btn-block btn-share">
-            </button>
+            <button th:text="#{email.verification.click}" class="btn btn-lg btn-info btn-block btn-share"></button>
         </a>
     </div>
 

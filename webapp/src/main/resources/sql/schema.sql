@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS image(
     image_id        SERIAL          PRIMARY KEY,
     bytes           BYTEA           NOT NULL,

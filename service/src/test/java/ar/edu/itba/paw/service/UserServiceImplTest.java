@@ -49,7 +49,8 @@ public class UserServiceImplTest {
     private SecurityService mockSecurityService;
 
     @InjectMocks
-    private UserServiceImpl userService = new UserServiceImpl(mockUserDao, mockPasswordEncoder, mockEmailService, mockVerifService, mockRoleDao, mockImageService, mockSecurityService);
+    private UserServiceImpl userService = Mockito.mock(UserServiceImpl.class);
+            //new UserServiceImpl(mockUserDao, mockPasswordEncoder, mockEmailService, mockVerifService, mockRoleDao, mockImageService, mockSecurityService);
 
     @Before
     public void setTest() {
