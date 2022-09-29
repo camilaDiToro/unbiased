@@ -59,7 +59,7 @@ public class NewsController {
     public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                    final BindingResult errors) {
         if (errors.hasErrors()) {
-            return showNews(newsId, reportNewsFrom, null,true, 1);
+            return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1);
         }
         adminService.reportNews(newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new), ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
@@ -69,7 +69,7 @@ public class NewsController {
     public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsForm,
                                     final BindingResult errors) {
         if (errors.hasErrors()) {
-            return showNews(newsId, null,commentNewsForm, false, 1);
+            return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1);
         }
         newsService.addComment(newsService.getOrThrowException(newsId).getNews(), commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId);
@@ -90,6 +90,8 @@ public class NewsController {
                 .withObject("fullNews", fullNews)
                 .withObject("hasReported", adminService.hasReported(news))
                 .withObject("reportReasons", ReportReason.values())
+                .withObject("reportNewsForm", reportNewsFrom)
+                .withObject("commentNewsForm", commentNewsFrom)
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("commentsPage", newsService.getComments(news,page))

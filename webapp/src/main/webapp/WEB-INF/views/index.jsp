@@ -48,7 +48,7 @@
                     <c:forEach var="order" items="${orders}">
                         <li class="nav-item">
                             <a class="text-capitalize nav-link fromLeft rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
-                    <c:param name = "category" value = "${category}"/>
+                    <c:param name = "category" value = "${param.category}"/>
                     <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
                     </c:url>"><spring:message code="${order.interCode}"/></a>
                         </li>
