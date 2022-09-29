@@ -599,3 +599,99 @@ body{
 #span_category:hover{
     color: white;
 }
+
+.modal-header{
+    background: #181414;
+}
+
+.modal-content{
+    background: #181414;
+}
+
+.modal-footer{
+    background: #181414;
+}
+
+#username-input{
+    background: #2c2c2c80;
+    border-radius: 0.5rem;
+    border-color: #2c2c2c80;
+}
+
+#basic-addon1{
+    background: #181414;
+    border-radius: 0.5rem;
+    border-color: transparent;
+}
+
+#file-input-label{
+    background: #2c2c2c80;
+    border-radius: 0.5rem;
+    border-color: #2c2c2c80;
+}
+
+#file-input{
+    cursor: pointer;
+}
+
+.custom-file-label::after {
+    background: transparent;
+}
+
+.form-signin-index {
+    width: 100%;
+    max-width: 375px;
+    padding: 15px;
+    margin: auto;
+}
+.form-signin-index .checkbox {
+    font-weight: 400;
+}
+.form-signin-index .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+.form-signin-index .form-control:focus {
+    z-index: 2;
+}
+.form-signin-index input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.form-signin-index input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#form-login-index .form-control{
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid #F2F2F2;
+    background: none;
+    color: #C2C2CC;
+}
+
+#form-login-index .form-control::placeholder{
+    color: #C2C2CC;
+}
+
+#form-login-index .form-control:focus{
+    background: none;
+    box-shadow: none;
+    border-bottom: 1px solid #F2F2F2;
+    color: #C2C2CC;
+}
+
+#form-login-index input:-webkit-autofill,
+#form-login-index input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
+
+.size-img-modal-login{
+    height: 24px;
+}
