@@ -161,6 +161,7 @@
 
 .svg-btn:hover {
     filter: brightness(80%);
+    cursor: pointer;
 }
 
 .container-xxl {
@@ -224,7 +225,13 @@
     margin-top: 2%
 }
 
+.back-button-show-news {
+    position: absolute ; margin-left: 50px; margin-top: 50px
+}
+
 .back-button-img {max-width: 7%; max-height: 7%}
+
+
 
 .news-bookmark {
     height: 30px;

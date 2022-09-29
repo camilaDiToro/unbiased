@@ -13,7 +13,7 @@
 
 <form:form cssClass="form-signin" modelAttribute="registerForm" action="${postUrl}" method="post">
     <h1 class="logo mb-4">
-        <a style="text-decoration: none" class="text-info" href="<c:url value="/TOP"/>">
+        <a class="text-info text-decoration-none" href="<c:url value="/TOP"/>">
             unbiased
         </a>
     </h1>
@@ -22,12 +22,12 @@
     <div>
         <form:label path="email" cssClass="sr-only"><spring:message code="register.mail.address" var="mailAddressMsg"/></form:label>
         <form:input type="text" path="email"  cssClass="form-control" placeholder="Email address" required="${mailAddressMsg}" autofocus=""/>
-                    <form:errors path="email" element="p" cssStyle="color: red"/>
+                    <form:errors path="email" element="p" cssClass="text-danger"/>
     </div>
     <div>
         <form:label path="password" cssClass="sr-only"><spring:message code="register.password" var="passwordMsg"/></form:label>
         <form:input path="password" type="password"  cssClass="form-control" placeholder="${passwordMsg}"/>
-        <form:errors path="password" element="p" cssStyle="color: red"/>
+        <form:errors path="password" element="p" cssClass="text-danger"/>
 
     </div>
 

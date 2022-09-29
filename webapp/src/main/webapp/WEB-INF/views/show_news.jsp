@@ -29,8 +29,8 @@
 
 
 
-<a href="../TOP" style="position: absolute ; margin-left: 50px; margin-top: 50px">
-    <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%">
+<a href="../TOP" class="back-button-show-news">
+    <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." class="back-button-img">
 </a>
 
 
@@ -57,7 +57,7 @@
 
                 <h1 class="text-xl-center mx-auto max-w-75 m-3 text-white"><c:out value="${news.title}"/></h1>
 <div>
-    <div class="d-inline-block quality-indicator-news-view <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >
+    <div class="d-inline-block quality-indicator-news-view <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" >
     </div>
 
     </div>
@@ -148,9 +148,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                        <%--                                    <form method="post" action="">--%>
                                     <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
-                                        <%--                                    </form>--%>
                                 </div>
                                 </form:form>
 
@@ -160,16 +158,12 @@
                 </c:if>
             </div>
 
-<%--            <div class="progress w-25" data-toggle="tooltip" data-placement="top" title="<spring:message code="${positivity.getInterCode()}"/>">--%>
-<%--&lt;%&ndash;                <div class="progress-bar progress-bar-striped <c:out value="${fullNews.positivity}"/>" role="progressbar" style="width: ${fullNews.positiveValue*100}%"  aria-valuemin="0" aria-valuemax="100"></div>&ndash;%&gt;--%>
-<%--    <div class="quality-indicator-news-view <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="${positivityStats.getPercentageUpvoted()}% <spring:message code="home.upvotes"/> - ${positivityStats.getInteractions()} <spring:message code="home.interactions"/>" >--%>
-<%--    </div>--%>
 
             </div>
         <p class="text-sm-left text-secondary"><c:out value="${date}"/>&nbsp · &nbsp<c:out value="${fullNews.readTime}"/> min read</p>
 
         <div class="w-fit">
-            <a style="text-decoration: none" href="<c:url value="/profile/${user.id}"/>" class="w-fit">
+            <a  href="<c:url value="/profile/${user.id}"/>" class="w-fit link">
                 <div class="w-fit d-flex flex-row align-items-center p-2 gap-1">
 
                     <div class="img-container-article">
@@ -203,45 +197,12 @@
             </c:forEach>
         </div>
 
-<%--        <div class="w-50 d-flex flex-wrap align-items-center gap-1">--%>
-<%--            <div class="text-sm-left font-weight-bold">--%>
-<%--                Tags:--%>
-<%--            </div>--%>
-<%--            <span class="badge badge-pill badge-primary">Messi</span>--%>
-<%--        </div>--%>
-
         <div class="d-flex w-100 min-vh-65 justify-content-center align-items-start">
             <div class="article-body">
                 <c:out value="${news.body}" escapeXml="false"/>
             </div>
         </div>
 
-<%--        <c:url value="/news/${newsId}/report" var="postUrl"/>--%>
-<%--        <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">--%>
-
-<%--        <div class="input-group">--%>
-
-<%--            <c:forEach var="item" items="${reportReasons}">--%>
-<%--                <div class="form-check w-100">--%>
-<%--                    <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}"/>--%>
-<%--                    <form:label path="reason" cssClass="form-check-label" for="flexRadioDefault1"> <spring:message code="${item.interCode}"/> </form:label>--%>
-
-<%--                </div>--%>
-<%--            </c:forEach>--%>
-<%--        </div>--%>
-<%--        <div class="w-100">--%>
-<%--            <form:errors cssClass="text-danger" path="reason" element="p"/>--%>
-
-<%--        </div>--%>
-
-<%--    </div>--%>
-<%--    <div class="modal-footer">--%>
-<%--        <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>--%>
-<%--            &lt;%&ndash;                                    <form method="post" action="">&ndash;%&gt;--%>
-<%--        <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>--%>
-<%--            &lt;%&ndash;                                    </form>&ndash;%&gt;--%>
-<%--    </div>--%>
-<%--    </form:form>--%>
         <div class="d-flex flex-column w-75 align-items-center justify-content-center align-self-center" id="comments">
             <h2 class="align-self-start my-2 text-white">Comments</h2>
             <c:if test="${loggedUser != null}">
@@ -253,7 +214,7 @@
                         <form:form modelAttribute="commentNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post">
                         <div class="d-flex flex-column mt-4 mb-4">
                             <div class="form-group w-100">
-                                <form:textarea path="comment" class="form-control w-100" rows="5" id="comment"></form:textarea>
+                                <form:textarea path="comment" cssClass="form-control w-100" rows="5" id="comment"></form:textarea>
                             </div>
                             <div class="w-100">
                                 <form:errors cssClass="text-danger" path="comment" element="p"/>
