@@ -2,6 +2,7 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
+import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
@@ -41,8 +42,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<ReportedNews> getReportedNews(int page, NewsOrder ns) {
-        return adminDao.getReportedNews(page, ns);
+    public Page<ReportedNews> getReportedNews(int page, ReportOrder reportOrder) {
+        return adminDao.getReportedNews(page, reportOrder);
     }
 
     @Override

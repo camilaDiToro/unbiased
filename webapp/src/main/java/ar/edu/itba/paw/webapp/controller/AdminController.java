@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
+import ar.edu.itba.paw.model.admin.ReportOrder;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
@@ -38,7 +40,7 @@ public class AdminController {
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("newsOrder") String newsOrder) {
 
-        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, NewsOrder.NEW);
+        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, ReportOrder.REP_COUNT_DESC);
         return mavBuilderSupplier.supply("moderation-panel", "Moderation Panel", TextType.LITERAL)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", NewsOrder.values())
