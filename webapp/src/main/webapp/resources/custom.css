@@ -66,14 +66,14 @@
     height: 40px; /*any size*/
 }
 .object-fit-cover {
-    border-radius: 0 0 0.5rem 0.5rem;
+    border-radius: 0 0.5rem 0.5rem 0;
     width: 100%;
     height: 100%;
     object-fit: cover; /*magic*/
 }
 
 .custom-rounded-corners{
-    border-radius: 0 0 0.5rem 0.5rem;
+    border-radius: 0 0.5rem 0.5rem 0;
 }
 
 .gap-1 {
@@ -602,7 +602,7 @@ body{
 }
 
 .link .link-text:hover {
-    color: #8ea7e8 !important;
+    color: white !important;
     text-decoration: none;
 }
 
