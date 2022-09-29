@@ -23,38 +23,39 @@
     <div class="container-xxl container-fluid flex-grow-1">
         <c:set var = "activeClasses" scope = "session" value = "bg-info active"/>
         <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
-        <ul class="${empty query ? 'my-4' :''} mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ${type == 'creator' ? 'invisible' : 'visible'}">
-            <c:forEach var="order" items="${orders}">
+        <c:if test="${query == ''}">
+            <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
                 <li class="nav-item">
-                    <a class="text-capitalize nav-link fromLeft rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
-                    <c:param name = "category" value = "${category}"/>
-                    <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
-                    </c:url>"><spring:message code="${order.interCode}"/></a>
-                </li>
-            </c:forEach>
-
-
-        </ul>
-
-        <div class="d-flex flex-column flex-xl-row ">
-            <div class="w-100 w-xl-75 ">
-                    <c:if test="${query == ''}">
-                        <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
-                            <li class="nav-item">
-                                <a class="text-capitalize text-white nav-link tabs <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                    <a class="text-capitalize text-white nav-link tabs <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "query" value = "${param.query}"/>
                     </c:url>"><spring:message code="categories.all"/></a>
-                            </li>
-                            <c:forEach var="cat" items="${categories}">
-                                <li class="nav-item">
-                                    <a class="text-capitalize text-white nav-link tabs <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                </li>
+                <c:forEach var="cat" items="${categories}">
+                    <li class="nav-item">
+                        <a class="text-capitalize text-white nav-link tabs <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
 
                     </c:url>"><spring:message code="${cat.interCode}"/></a>
-                                </li>
-                            </c:forEach>
-                        </ul>
-                    </c:if>
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:if>
+
+        <div class="d-flex flex-column flex-xl-row ">
+            <div class="w-100 w-xl-75 ">
+
+                <ul class="${empty query ? 'my-4' :''} mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ${type == 'creator' ? 'invisible' : 'visible'}">
+                    <c:forEach var="order" items="${orders}">
+                        <li class="nav-item">
+                            <a class="text-capitalize nav-link fromLeft rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
+                    <c:param name = "category" value = "${category}"/>
+                    <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
+                    </c:url>"><spring:message code="${order.interCode}"/></a>
+                        </li>
+                    </c:forEach>
+
+
+                </ul>
                 <c:if test="${query != ''}">
                     <div class="m-3 ">
                         <a class="link" href="<c:url value="/${orderBy}"/>"><div class="link-text"><spring:message code="search.filter" arguments="${query}"/></div></a>
@@ -122,9 +123,9 @@
                                                     <c:set var="rating" value="${rating}"/>
 
                                                      <c:if test="${loggedUser != null}">
-                                                         <img  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                         <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                          <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                         <img  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                         <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                      </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <a data-toggle="modal" data-target="#cardModal">

@@ -2,6 +2,8 @@
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 
 <html>
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
@@ -16,37 +18,31 @@
 
             <%--LEFT SIDE--%>
                 <%@ include file="../../resources/moderation-left-side.jsp" %>
-
             <%--RIGHT SIDE--%>
-            <div class="d-flex w-75 flex-column">
+            <div class="d-flex w-75 flex-column align-items-center">
 
                 <div class="w-100 my-2">
                     <a  href="<c:url value="/admin/reported_news"/>">
                         <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." class="w-50px">
                     </a>
                 </div>
-                <table class="table flex-grow-0">
-                    <thead>
-                    <tr>
-                        <th scope="col"><spring:message code="moderation.user"/></th>
-                        <th scope="col"><spring:message code="moderation.reason"/></th>
-                        <th scope="col"><spring:message code="moderation.date"/></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:set var="reports" value="${reportedNewsPage.content}"/>
-                    <c:forEach var="report" items="${reports}">
-                        <tr>
-                            <td><c:out value="${report.reporter}"/></td>
-                            <td><spring:message code="${report.reason.interCode}"/></td>
-                            <td><c:out value="${report.getFormattedDate(locale)}"/></td>
-                        </tr>
-                    </c:forEach>
+                <c:url value="/admin/add_admin" var="postUrl"/>
+                <div id="add-admin" class="card m-2 w-50 max-w-750px ">
+                    <form:form modelAttribute="createAdminForm" action="${postUrl}" method="GET" cssClass="d-flex flex-column align-items-center">
 
-                    </tbody>
-                </table>
-                    <button data-toggle="modal" data-target="#binModal" class="btn btn-danger delete-btn"><spring:message code="moderation.delete"/></button>
-
+                        <div class="form-group m-2 w-100 p-3">
+                            <form:label cssClass="w-100 font-weight-bold" path="email">Make user admin</form:label>
+                            <form:input placeholder="Email:" path="email" cssClass="form-control w-100"/>
+                            <form:errors cssClass="text-danger mt-4" path="email" element="small"/>
+                            <c:if test="${addedAdmin}">
+                                <small class="text-success mt-4">
+                                    Admin added successfully!
+                                </small>
+                            </c:if>
+                        </div>
+                        <button class="btn btn-info" type="submit">Submit</button>
+                    </form:form>
+                </div>
                 <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">

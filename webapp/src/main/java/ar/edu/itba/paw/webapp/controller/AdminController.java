@@ -41,18 +41,16 @@ public class AdminController {
     @RequestMapping(value = "/admin/add_admin", method = RequestMethod.GET)
     public ModelAndView addAdmin(@Valid @ModelAttribute("createAdminForm") CreateAdminForm form, final BindingResult errors) {
         if (errors.hasErrors())
-            return reportedNews(
-                    1,
-                    form,
-                    "TOP");
+            return addAdminPanel(form);
 
         adminService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
-        return new ModelAndView("redirect:/admin/reported_news");
+        return mavBuilderSupplier.supply("moderation_panel_add_admin", "Moderation Panel", TextType.LITERAL)
+                .withObject("addedAdmin", true)
+                .build();
     }
 
     @RequestMapping(value = "/admin/reported_news/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
-                                     @ModelAttribute("createAdminForm") CreateAdminForm form,
                                      @PathVariable("newsOrder") String newsOrder) {
 
         Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, NewsOrder.NEW);
@@ -60,6 +58,13 @@ public class AdminController {
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", NewsOrder.valueOf(newsOrder)).build();
+    }
+
+    @RequestMapping(value = "/admin/add_admin_page", method = RequestMethod.GET)
+    public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form) {
+
+        return mavBuilderSupplier.supply("moderation_panel_add_admin", "Moderation Panel", TextType.LITERAL)
+                .build();
     }
 
     @RequestMapping("/admin/reported_news")

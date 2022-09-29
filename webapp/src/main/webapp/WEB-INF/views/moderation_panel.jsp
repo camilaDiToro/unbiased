@@ -19,39 +19,8 @@
         <div class="flex-grow-1 d-flex flex-row">
 
             <%--LEFT SIDE--%>
-                <div class=" w-25 d-flex flex-column border-right mt-4 m-3">
+                <%@ include file="../../resources/moderation-left-side.jsp" %>
 
-    <h3 class="text-white">Moderation panel</h3>
-    <ul class="nav flex-column vertical-menu ">
-        <li class="nav-item">
-            <div class="d-flex flex-row">
-                <img class="moderation-img" src="<c:url value="/resources/warning-svgrepo-com.svg"/>" alt="...">
-                <a class="nav-link selected pl-0" href="<c:url value="/admin/reported_articles"/>">
-                    <spring:message code="moderation.reportedArticles"/>
-                </a>
-            </div>
-            <div class="d-flex flex-row">
-                <img class="moderation-img" src="<c:url value="/resources/warning-svgrepo-com.svg"/>" alt="...">
-                <a class="nav-link selected pl-0" href="#">
-                    Add admin
-                </a>
-            </div>
-        </li>
-    </ul>
-                    <c:url value="/admin/add_admin" var="postUrl"/>
-                    <div id="add-admin" class="card m-1 bottom-left">
-                        <form:form modelAttribute="createAdminForm" action="${postUrl}" method="GET" >
-
-                            <div class="form-group m-2">
-                                <form:label cssClass="w-100 font-weight-bold" path="email">Make user admin</form:label>
-                                    <form:input placeholder="Email:" path="email" cssClass="form-control w-100"/>
-                                    <form:errors cssClass="text-danger mt-1" path="email" element="small"/>
-
-                            </div>
-                        </form:form>
-                    </div>
-
-    </div>
             <%--RIGHT SIDE--%>
             <div class="d-flex flex-column w-75">
 

@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 
 import java.util.List;
@@ -16,6 +17,9 @@ public interface NewsService {
     void setRating(News news, Rating rating);
     boolean toggleSaveNews(FullNews news, User user);
     void deleteNews(News news);
+
+    Iterable<ProfileCategory> getProfileCategories(User user);
+    Iterable<Category> getHomeCategories();
     Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String pc);
     Page<FullNews> getRecommendation(int page, User user, NewsOrder newsOrder);
     Optional<News> getSimpleNewsById(long id);
