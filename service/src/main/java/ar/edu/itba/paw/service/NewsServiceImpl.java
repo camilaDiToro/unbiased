@@ -162,8 +162,6 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public void deleteNews(News news) {
-        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
-            throw new UserNotAuthorized();
         newsDao.deleteNews(news.getNewsId());
     }
 
