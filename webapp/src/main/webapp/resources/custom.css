@@ -225,6 +225,31 @@
     margin-top: 2%
 }
 
+.profile-img {
+    width: 24px;
+    padding-right: 5px
+}
+
+.bg-dropdown {
+    background: #181414
+}
+
+.min-w-150px {
+    min-width: 150px
+}
+
+.search-form {
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 10%;
+    height: 30px;
+    padding-left: 35px;
+}
+
+.border-red {
+    border: solid red
+}
+
 .back-button-show-news {
     position: absolute ; margin-left: 50px; margin-top: 50px
 }

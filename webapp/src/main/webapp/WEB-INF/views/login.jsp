@@ -12,7 +12,7 @@
 <form class="form-signin" action="${loginUrl}" method="post">
 
     <h1 id="title-log" class="logo mb-4">
-        <a style="link" class="text-info" href="<c:url value="/TOP"/>">
+        <a  class="text-info link" href="<c:url value="/TOP"/>">
             unbiased
         </a>
     </h1>
