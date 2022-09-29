@@ -66,9 +66,14 @@
     height: 40px; /*any size*/
 }
 .object-fit-cover {
+    border-radius: 0 0 0.5rem 0.5rem;
     width: 100%;
     height: 100%;
     object-fit: cover; /*magic*/
+}
+
+.custom-rounded-corners{
+    border-radius: 0 0 0.5rem 0.5rem;
 }
 
 .gap-1 {
@@ -469,7 +474,7 @@ input:-webkit-autofill:focus {
 
 .card{
     /*box-shadow: 0 2px 2px rgba(0,0,0,.25);*/
-    border-radius: 6px;
+    border-radius: 0.5rem;
     background: linear-gradient(rgb(58, 60, 74), rgb(36, 38, 50));
 }
 

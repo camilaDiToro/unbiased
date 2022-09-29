@@ -182,10 +182,9 @@
 
                                         <c:if test="${article.hasImage()}">
 
-                                        <div class="bg-secondary position-relative w-40">
+                                        <div class="bg-secondary position-relative w-40 custom-rounded-corners">
                                                 <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
-
-                                            </div>
+                                        </div>
                                         </c:if>
 
                                     </div>

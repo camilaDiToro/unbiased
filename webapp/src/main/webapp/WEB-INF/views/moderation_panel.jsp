@@ -85,7 +85,7 @@
                                         <div class="card h-100 d-flex flex-row p-3" id="left-card">
 
                                             <div>
-                                                <span class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" >
+                                                <span class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="moderation.reportsNum"/> " >
                                                     <c:out value="${reportedNews.reportCount}"/>
                                             </span>
                                             </div>
