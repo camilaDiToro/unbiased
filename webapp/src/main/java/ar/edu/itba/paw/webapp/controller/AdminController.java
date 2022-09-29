@@ -44,7 +44,7 @@ public class AdminController {
             return addAdminPanel(form);
 
         adminService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
-        return mavBuilderSupplier.supply("moderation_panel_add_admin", "Moderation Panel", TextType.LITERAL)
+        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("addedAdmin", true)
                 .build();
     }
@@ -53,8 +53,9 @@ public class AdminController {
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("newsOrder") String newsOrder) {
 
+
         Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, NewsOrder.NEW);
-        return mavBuilderSupplier.supply("moderation_panel", "Moderation Panel", TextType.LITERAL)
+        return mavBuilderSupplier.supply("moderation_panel", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", NewsOrder.valueOf(newsOrder)).build();
@@ -63,7 +64,7 @@ public class AdminController {
     @RequestMapping(value = "/admin/add_admin_page", method = RequestMethod.GET)
     public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form) {
 
-        return mavBuilderSupplier.supply("moderation_panel_add_admin", "Moderation Panel", TextType.LITERAL)
+        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .build();
     }
 
@@ -77,7 +78,7 @@ public class AdminController {
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
         Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new));
-        return mavBuilderSupplier.supply("moderation_panel_detail", "Moderation View", TextType.LITERAL)
+        return mavBuilderSupplier.supply("moderation_panel_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("newsId", newsId)

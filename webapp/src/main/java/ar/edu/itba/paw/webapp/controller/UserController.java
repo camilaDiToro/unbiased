@@ -150,7 +150,7 @@ public class UserController {
         VerificationToken.Status status = userService.verifyUserEmail(token);
         ModelAndView mav;
         if(status.equals(VerificationToken.Status.SUCCESFFULLY_VERIFIED)){
-            mav = mavBuilderSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.LITERAL)
+            mav = mavBuilderSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                     .build();
         }else{
             mav = new ModelAndView("redirect:/email_not_verified/"+status.getStatus().toLowerCase(Locale.ROOT));
