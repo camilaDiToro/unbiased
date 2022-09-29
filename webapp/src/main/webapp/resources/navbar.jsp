@@ -16,15 +16,18 @@
         <div class="d-flex h-75 gap-2 align-items-center">
 <c:if test="${loggedUser != null}">
     <a href="<c:url value="/create_article"/>">
-        <button type="button" class="btn btn-info rounded-pill" >
+        <button type="button" class="btn btn-sm rounded-pill btn-info create_article_navbar_btn" >
             <spring:message code="home.createArticle.button"/>
         </button></a>
 </c:if>
 
             <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP"/>">
-                <spring:message code="navbar.search"  var="searchPlaceholder" />
-                <input  style="background-image: url('<c:url value="/resources/images/lupa.png"/>');" class="search-form search form-control ml-2 btn-outline-info text-white bg-primary"
-                       type="search" placeholder="${searchPlaceholder}" id="query" name="query"/>
+                <div>
+                    <spring:message code="navbar.search"  var="searchPlaceholder" />
+                    <input  style="background-image: url('<c:url value="/resources/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white"
+                            type="search" placeholder="${searchPlaceholder}" id="query" name="query"/>
+                </div>
+
             </form>
             <c:if test="${loggedUser != null}">
                 <div class="dropdown dropdown-p">
@@ -50,8 +53,8 @@
                     <div id="navbar-dropdown" class="dropdown-menu bg-dropdown" aria-labelledby="dropdownMenuLink" >
 
                         <div class="dropdown-item">
-                            <img  class="svg-btn profile-img" src="<c:url value="/resources/profile-svgrepo-com.svg"/> " alt="...">
                             <a class="text-decoration-none text-white" href="<c:url value="/profile/${loggedUser.id}"/>">
+                                <img  class="profile-img" src="<c:url value="/resources/profile-svgrepo-com.svg"/> " alt="...">
                                 <spring:message code="navbar.myProfile"/>
                             </a>
                         </div>
@@ -59,8 +62,8 @@
 
                         <c:if test="${isAdmin}">
                             <div class="dropdown-item">
-                                <img class="svg-btn moderation-img" src="<c:url value="/resources/panel-svgrepo-com.svg"/> " alt="...">
                                 <a class="text-decoration-none text-white" href="<c:url value="/admin/reported_news"/>">
+                                    <img class="moderation-img" src="<c:url value="/resources/panel-svgrepo-com.svg"/> " alt="...">
                                     <spring:message code="navbar.adminPanel"/>
                                 </a>
                             </div>
@@ -68,8 +71,8 @@
                         </c:if>
 
                         <div class="dropdown-item ">
-                            <img class="svg-btn moderation-img" src="<c:url value="/resources/log-out-svgrepo-com.svg"/> " alt="...">
                             <a class="text-decoration-none text-white" href="<c:url value="/logout"/>">
+                                <img class="moderation-img" src="<c:url value="/resources/log-out-svgrepo-com.svg"/> " alt="...">
                                 <spring:message code="navbar.logOut"/>
                             </a>
                         </div>

@@ -239,11 +239,26 @@
 }
 
 .search-form {
-    background-repeat: no-repeat;
-    background-position: left center;
-    background-size: 10%;
-    height: 30px;
-    padding-left: 35px;
+    /*background-position: left center;*/
+    background-size: 20px !important;
+    padding-left: 2.5rem;
+    background: rgba(58, 60, 74, 0.5) no-repeat 5% 50%;
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
+.search-form:focus{
+    background-color: rgba(58, 60, 74, 0.5);
+    border: none;
+}
+
+.btn-outline-focus-none:focus{
+    outline: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
 }
 
 .border-red {
@@ -699,3 +714,37 @@ body{
 .size-img-modal-login{
     height: 24px;
 }
+
+#custom-form-group input{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
+#custom-form-group .codeMirror{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
+#custom-form-group .editor-toolbar{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+    margin-bottom: 5px;
+}
+
+.custom-file-input-label{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
+#fileInput{
+    cursor: pointer;
+}
+
+.custom-file-input:focus{
+    border: none;
+}
+
