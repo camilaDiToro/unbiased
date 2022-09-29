@@ -17,16 +17,13 @@
         </a>
     </h1>
     <h1 class="h3 mb-3 font-weight-normal text-light"> </h1>
-
         <div >
             <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
             <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
-
         </div>
         <div class="mt-1">
             <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
             <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
-
         </div>
     <c:if test="${param.error}">
         <div class="text-danger text-nowrap form-text d-inline-block">

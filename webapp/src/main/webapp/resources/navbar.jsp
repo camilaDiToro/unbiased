@@ -51,7 +51,7 @@
 
                         <div class="dropdown-item">
                             <img  class="svg-btn profile-img" src="<c:url value="/resources/profile-svgrepo-com.svg"/> " alt="...">
-                            <a class="text-decoration-none" href="<c:url value="/profile/${loggedUser.id}"/>">
+                            <a class="text-decoration-none text-white" href="<c:url value="/profile/${loggedUser.id}"/>">
                                 <spring:message code="navbar.myProfile"/>
                             </a>
                         </div>
@@ -60,16 +60,16 @@
                         <c:if test="${isAdmin}">
                             <div class="dropdown-item">
                                 <img class="svg-btn moderation-img" src="<c:url value="/resources/panel-svgrepo-com.svg"/> " alt="...">
-                                <a class="text-decoration-none" href="<c:url value="/admin/reported_news"/>">
+                                <a class="text-decoration-none text-white" href="<c:url value="/admin/reported_news"/>">
                                     <spring:message code="navbar.adminPanel"/>
                                 </a>
                             </div>
 
                         </c:if>
 
-                        <div class="dropdown-item">
+                        <div class="dropdown-item ">
                             <img class="svg-btn moderation-img" src="<c:url value="/resources/log-out-svgrepo-com.svg"/> " alt="...">
-                            <a class="text-decoration-none" href="<c:url value="/logout"/>">
+                            <a class="text-decoration-none text-white" href="<c:url value="/logout"/>">
                                 <spring:message code="navbar.logOut"/>
                             </a>
                         </div>

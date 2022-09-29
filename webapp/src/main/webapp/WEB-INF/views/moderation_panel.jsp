@@ -26,8 +26,14 @@
         <li class="nav-item">
             <div class="d-flex flex-row">
                 <img class="moderation-img" src="<c:url value="/resources/warning-svgrepo-com.svg"/>" alt="...">
-                <a class="nav-link selected pl-0" href="#">
+                <a class="nav-link selected pl-0" href="<c:url value="/admin/reported_articles"/>">
                     <spring:message code="moderation.reportedArticles"/>
+                </a>
+            </div>
+            <div class="d-flex flex-row">
+                <img class="moderation-img" src="<c:url value="/resources/warning-svgrepo-com.svg"/>" alt="...">
+                <a class="nav-link selected pl-0" href="#">
+                    Add admin
                 </a>
             </div>
         </li>
