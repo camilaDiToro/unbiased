@@ -269,7 +269,7 @@
 
     </c:if>
 </div>
-                                <div class="mx-2 text-ellipsis-1 link-text"><c:out value="${creator.username != null ? creator.username : creator.email}"/></div>
+                                <div class="mx-2 text-ellipsis-1"><c:out value="${creator}"/></div>
                             </div>
                     </a>
                 </c:forEach>

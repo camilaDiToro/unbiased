@@ -254,7 +254,7 @@
 
 .search-form:focus{
     background-color: rgba(58, 60, 74, 0.5);
-    border: none;
+    border-color: rgba(58, 60, 74, 0.5);
 }
 
 .btn-outline-focus-none:focus{
@@ -602,7 +602,7 @@ body{
 }
 
 .link .link-text:hover {
-    color: white !important;
+    color: #8ea7e8 !important;
     text-decoration: none;
 }
 
