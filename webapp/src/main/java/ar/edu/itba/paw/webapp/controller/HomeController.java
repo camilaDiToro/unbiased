@@ -41,10 +41,10 @@ public class HomeController {
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        return new ModelAndView("redirect:/TOP");
+        return new ModelAndView("redirect:/" + NewsOrder.values()[0]);
     }
 
-    @RequestMapping("/{orderBy:TOP|NEW}")
+    @RequestMapping("/{orderBy}")
     public ModelAndView helloWorld(
             @PathVariable("orderBy") final String orderBy,
             @RequestParam(name = "page", defaultValue = "1") int page,

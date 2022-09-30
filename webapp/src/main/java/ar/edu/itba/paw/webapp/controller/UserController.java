@@ -99,7 +99,7 @@ public class UserController {
 
 
 
-    @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("userId") long userId,
                                 @PathVariable("newsOrder") String newsOrder,
                                 @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,

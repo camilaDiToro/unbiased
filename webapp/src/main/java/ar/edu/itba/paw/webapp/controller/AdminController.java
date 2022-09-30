@@ -55,7 +55,7 @@ public class AdminController {
                                      @PathVariable("newsOrder") String newsOrder) {
 
 
-        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, ReportOrder.valueOf(newsOrder));
+        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, newsOrder);
         return mavBuilderSupplier.supply("moderation_panel", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", ReportOrder.values())

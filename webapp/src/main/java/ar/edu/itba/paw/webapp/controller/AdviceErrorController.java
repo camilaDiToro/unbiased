@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.exeptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,6 +17,12 @@ public class AdviceErrorController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ModelAndView restaurantNotFound() {
         return new ModelAndView("forward:/400/invalid_category");
+    }
+
+    @ExceptionHandler(InvalidOrderException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ModelAndView orderNotFound() {
+        return new ModelAndView("forward:/400/invalid_order");
     }
 
     @ExceptionHandler(HTTPException.class)

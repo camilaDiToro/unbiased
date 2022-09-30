@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.exeptions.*;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
@@ -64,8 +61,14 @@ public class NewsServiceImpl implements NewsService {
         page = page <= 0 ? 1 : page;
 
         Long loggedUser = getLoggedUserId();
+        NewsOrder newsOrderObject;
 
-        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
+        try {
+            newsOrderObject = NewsOrder.valueOf(newsOrder);
+        }
+        catch (Exception e) {
+            throw new InvalidOrderException();
+        }
         List<FullNews> ln;
         if (category.equals("ALL")) {
             totalPages = newsDao.getTotalPagesAllNews(query);
@@ -93,7 +96,14 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
         page = page <= 0 ? 1 : page;
-        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
+        NewsOrder newsOrderObject;
+
+        try {
+            newsOrderObject = NewsOrder.valueOf(newsOrder);
+        }
+        catch (Exception e) {
+            throw new InvalidOrderException();
+        }
         int totalPages = 0;
 
         Optional<User> maybeUser = securityService.getCurrentUser();

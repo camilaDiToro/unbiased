@@ -5,6 +5,8 @@ import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.FullNews;
@@ -42,8 +44,16 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<ReportedNews> getReportedNews(int page, ReportOrder reportOrder) {
-        return adminDao.getReportedNews(page, reportOrder);
+    public Page<ReportedNews> getReportedNews(int page, String reportOrder) {
+       ReportOrder reportOrderObject;
+
+        try {
+            reportOrderObject = ReportOrder.valueOf(reportOrder);
+        }
+        catch (Exception e) {
+            throw new InvalidOrderException();
+        }
+        return adminDao.getReportedNews(page, reportOrderObject);
     }
 
     @Override
