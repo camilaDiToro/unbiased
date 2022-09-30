@@ -50,16 +50,16 @@ public class AdminController {
                 .build();
     }
 
-    @RequestMapping(value = "/admin/reported_news/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/reported_news/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("newsOrder") String newsOrder) {
 
 
-        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, NewsOrder.NEW);
+        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, ReportOrder.valueOf(newsOrder));
         return mavBuilderSupplier.supply("moderation_panel", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
-                .withObject("orders", NewsOrder.values())
-                .withObject("orderBy", NewsOrder.valueOf(newsOrder)).build();
+                .withObject("orders", ReportOrder.values())
+                .withObject("orderBy", ReportOrder.valueOf(newsOrder)).build();
     }
 
     @RequestMapping(value = "/admin/add_admin_page", method = RequestMethod.GET)
@@ -71,7 +71,7 @@ public class AdminController {
 
     @RequestMapping("/admin/reported_news")
     public ModelAndView reportedNewsRedirect() {
-        return new ModelAndView("redirect:/admin/reported_news/TOP");
+        return new ModelAndView("redirect:/admin/reported_news/" + ReportOrder.values()[0].name());
     }
 
 
