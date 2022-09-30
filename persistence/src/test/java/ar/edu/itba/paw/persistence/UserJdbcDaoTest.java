@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
@@ -17,7 +16,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -124,10 +122,11 @@ public class UserJdbcDaoTest {
         VerificationToken vt = verificationTokenDao.createEmailToken(us.getId(), "token", LocalDateTime.now().plusDays(1));
         assertNotNull(vt);
         userDao.verifyEmail(vt.getUserId());
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
 
-        assertEquals(UserStatus.REGISTERED, us.getStatus());
-        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
-        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, TOKEN_TABLE));
+        optionalUser.ifPresent(opt-> assertEquals(UserStatus.REGISTERED, optionalUser.get().getStatus()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, TOKEN_TABLE));
     }
 
     @Test
@@ -136,8 +135,9 @@ public class UserJdbcDaoTest {
 
         User us = userDao.create(usBuilder);
         userDao.updateUsername(us, USERNAME);
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
 
-        assertEquals(USERNAME, us.getUsername());
+        optionalUser.ifPresent(opt-> assertEquals(USERNAME, optionalUser.get().getUsername()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
@@ -168,9 +168,10 @@ public class UserJdbcDaoTest {
 
         User us = userDao.create(usBuilder);
         userDao.addFollow(us.getId(), 1);
-        boolean userFollow = userDao.isFollowing(us.getId(), 1);
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
+        boolean userFollow = userDao.isFollowing(optionalUser.get().getId(), 1);
 
-        assertTrue(userFollow);
+        optionalUser.ifPresent(opt-> assertTrue(userFollow));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, FOLLOWS_TABLE));
 

@@ -329,11 +329,9 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        FullNews fullNews = newsDao.getById(news.getNewsId(), user.getId()).get();
-        newsDao.setRating(news.getNewsId(), user.getId(), Rating.DOWNVOTE);
-
-        //newsDao.setRating(fullNews.getNews().getNewsId(), fullNews.getNews().getCreatorId(), Rating.DOWNVOTE);
-        List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, user, NewsOrder.NEW, null);
+        newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.DOWNVOTE);
+        Optional<FullNews> fullNews = newsDao.getById(news.getNewsId(), 1L);
+        List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, user, NewsOrder.NEW, 1L);
 
         assertEquals(1, rating.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
@@ -390,7 +388,8 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        List<FullNews> recommendation = newsDao.getRecommendation(PAGE_SIZE, user, NewsOrder.NEW);
+        Optional<User> optionalUser = userDao.getUserById(user.getId());
+        List<FullNews> recommendation = newsDao.getRecommendation(PAGE_SIZE, optionalUser.get(), NewsOrder.NEW);
 
         assertEquals(PAGE_SIZE, recommendation.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
