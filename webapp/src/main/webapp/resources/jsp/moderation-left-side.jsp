@@ -5,7 +5,8 @@
   Time: 13:11
   To change this template use File | Settings | File Templates.
 --%>
-<div class=" w-25 d-flex flex-column border-info border-right mt-4 m-3">
+<link href="<c:url value="/resources/css/custom.css"/>" rel="stylesheet">
+<div class=" w-25 d-flex flex-column border-info border-right mt-4 m-3 ">
 
   <h3 class="text-secondary"><spring:message code="moderation.panel"/></h3>
   <ul class="nav flex-column vertical-menu ">

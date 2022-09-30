@@ -766,4 +766,16 @@ body{
     height: 24px;
 }
 
+.custom-comment-area{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
+.custom-comment-area:focus{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
 

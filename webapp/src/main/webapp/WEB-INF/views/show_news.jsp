@@ -30,7 +30,7 @@
 
 
 <a href="../TOP" class="back-button-show-news">
-    <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..."/>
+    <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..." data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> "/>
 </a>
 
 
@@ -207,12 +207,12 @@
 
             <div class="d-flex flex-column w-100 mb-4">
 
-                    <div class="bg-white p-2 px-4">
+                    <div class="bg-transparent">
                         <c:url value="/news/${newsId}/comment" var="postUrl"/>
                         <form:form modelAttribute="commentNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post">
                         <div class="d-flex flex-column mt-4 mb-4">
                             <div class="form-group w-100">
-                                <form:textarea path="comment" cssClass="form-control w-100" rows="5" id="comment"></form:textarea>
+                                <form:textarea path="comment" cssClass="form-control w-100 custom-comment-area text-white" rows="5" id="comment"></form:textarea>
                             </div>
                             <div class="w-100">
                                 <form:errors cssClass="text-danger" path="comment" element="p"/>
@@ -231,7 +231,7 @@
                 <c:forEach var="comment" items="${commentsPage.content}">
 
                 <c:set var="user" value="${comment.user}"/>
-                    <div class="mb-4 w-100 p-4 bg-white">
+                    <div class="mb-4 w-100 p-4 bg-transparent border-bottom" >
 
                         <div >
                             <div class="d-flex flex-row gap-1 align-items-center">
@@ -244,7 +244,7 @@
                                             <img class="object-fit-cover rounded-circle" src="<c:url value="/resources/images/profile-image.png"/>" alt="Image Description">
                                         </c:if>
                                 </div>
-                                <a href="<c:url value="/profile/${user.id}"/>"><h5 class="mb-0"><c:out value="${user}"/></h5></a>
+                                <a class="link" href="<c:url value="/profile/${user.id}"/>"><h5 class="mb-0 link-text"><c:out value="${user}"/></h5></a>
                             </div>
                             <span class="font-weight-light">${comment.getFormattedDate(locale)}</span>
                         </div>
