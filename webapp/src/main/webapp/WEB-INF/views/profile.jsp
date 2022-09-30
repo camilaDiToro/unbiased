@@ -198,8 +198,7 @@
         <div class="d-flex w-30 justify-content-center">
         <div class="card right-card" id="right-card">
             <c:set var="profilePositivity" value="${profilePositivityStats.getPositivity()}"/>
-            <div class="quality-indicator <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${profilePositivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${profilePositivityStats.getInteractions()}"/>" >
-            </div>
+            <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
             <img src="<c:url value="/resources/images/front-page-profile.png"/>" class="card-img-top" alt="...">
             <div class="card-body">
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
