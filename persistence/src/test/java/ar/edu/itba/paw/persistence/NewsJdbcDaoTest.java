@@ -1,16 +1,14 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.news.Category;
-import ar.edu.itba.paw.model.news.FullNews;
-import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -34,11 +32,15 @@ public class NewsJdbcDaoTest {
     private DataSource ds;
     private CategoryDao categoryDao;
     protected JdbcTemplate jdbcTemplate;
+    private SimpleJdbcInsert jdbcInsert;
+
 
     //TABLES
     protected static final String NEWS_TABLE = "news";
     protected static final String CATEGORY_TABLE = "news_category";
     protected static final String SAVED_TABLE = "saved_news";
+    protected static final String COMMENT_TABLE = "comments";
+
     //USERS DATA
     protected static final String EMAIL = "user@gmail.com";
 
@@ -46,6 +48,7 @@ public class NewsJdbcDaoTest {
     protected static final String TITTLE = "titulo";
     protected static final String SUBTITTLE = "subtitulo";
     protected static final String BODY = "cuerpo";
+    protected static final String COMMENT = "comment";
     protected static final int PAGE_SIZE = 1;
 
     private User getMockUser() {
@@ -59,6 +62,8 @@ public class NewsJdbcDaoTest {
         newsDao = new NewsJdbcDao(ds, categoryDao);
         userDao = new UserJdbcDao(ds);
         categoryDao = new CategoryJdbcDao(ds);
+        jdbcInsert = new SimpleJdbcInsert(ds).withTableName(NEWS_TABLE).usingGeneratedKeyColumns("newsId");
+
     }
 
     @Test
@@ -73,6 +78,7 @@ public class NewsJdbcDaoTest {
         optionalUser.ifPresent(opt -> assertNotNull(news));
         assertEquals(TITTLE, news.getTitle());
         assertEquals(BODY, news.getBody());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -86,6 +92,7 @@ public class NewsJdbcDaoTest {
         Optional<FullNews> optionalNews = newsDao.getById(news.getNewsId(), null);
 
         optionalNews.ifPresent(opt -> assertEquals(news.getNewsId(), optionalNews.get().getNews().getNewsId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -101,6 +108,7 @@ public class NewsJdbcDaoTest {
         Optional<FullNews> optionalNews = newsDao.getById(news1.getNewsId(), null);
 
         optionalNews.ifPresent(opt -> assertEquals(news.getNewsId(), optionalNews.get().getNews().getNewsId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -108,6 +116,7 @@ public class NewsJdbcDaoTest {
         Optional<FullNews> optionalFullNews = newsDao.getById(80, null);
 
         assertFalse(optionalFullNews.isPresent());
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -120,6 +129,7 @@ public class NewsJdbcDaoTest {
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
 
         optionalFullNews.ifPresent(opt -> assertEquals(optionalFullNews.get().getNews().getNewsId(), news.getNewsId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -133,6 +143,20 @@ public class NewsJdbcDaoTest {
         List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, user, NewsOrder.NEW, null);
 
         assertEquals(0, newsList.size());
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+    }
+
+    @Test
+    public void testGetSimpleNewsById() {
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+        Optional <News> optionalFullNews = newsDao.getSimpleNewsById(news.getNewsId());
+
+        optionalFullNews.ifPresent(opt -> assertEquals(news.getNewsId(), optionalFullNews.get().getNewsId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -147,6 +171,7 @@ public class NewsJdbcDaoTest {
 
         if(addCategory)
             assertEquals(1, newsList.size());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -162,6 +187,7 @@ public class NewsJdbcDaoTest {
             List<Category> catList = newsDao.getNewsCategory(news);
             assertEquals(1, catList.size());
         }
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -178,6 +204,7 @@ public class NewsJdbcDaoTest {
             int pagesCategory = newsDao.getTotalPagesCategory(Category.SPORTS);
             assertEquals(PAGE_SIZE, pagesCategory);
         }
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -189,6 +216,7 @@ public class NewsJdbcDaoTest {
         News news = newsDao.create(nwBuilder);
 
         assertEquals(PAGE_SIZE, newsDao.getTotalPagesAllNews());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -201,7 +229,7 @@ public class NewsJdbcDaoTest {
         List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, user, NewsOrder.NEW, null);
 
         assertEquals(1, newsList.size());
-
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -214,6 +242,7 @@ public class NewsJdbcDaoTest {
         int newsList = newsDao.getTotalPagesNewsFromUser(PAGE_SIZE, user);
 
         assertEquals(PAGE_SIZE, newsList);
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -228,6 +257,7 @@ public class NewsJdbcDaoTest {
         Optional<FullNews> optionalFullNews = newsDao.getById(user.getId(), 1L);
 
         optionalFullNews.ifPresent(opt -> assertTrue(optionalFullNews.get().getLoggedUserParameters().isSaved()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -242,7 +272,7 @@ public class NewsJdbcDaoTest {
         newsDao.removeSaved(news, user);
 
         assertTrue(newsDao.getSavedNews(PAGE_SIZE, user.getId(), NewsOrder.NEW, null).isEmpty());
-
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -257,6 +287,7 @@ public class NewsJdbcDaoTest {
         List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, user.getId(), NewsOrder.NEW, 1L); //TODO
 
         assertEquals(1, savedList.size());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -271,6 +302,7 @@ public class NewsJdbcDaoTest {
         int savedPages = newsDao.getTotalPagesNewsFromUserSaved(PAGE_SIZE, user);
 
         assertEquals(PAGE_SIZE, savedPages);
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
 
@@ -298,11 +330,13 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         FullNews fullNews = newsDao.getById(news.getNewsId(), user.getId()).get();
+        newsDao.setRating(news.getNewsId(), user.getId(), Rating.DOWNVOTE);
 
         //newsDao.setRating(fullNews.getNews().getNewsId(), fullNews.getNews().getCreatorId(), Rating.DOWNVOTE);
         List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, user, NewsOrder.NEW, null);
 
         assertEquals(1, rating.size());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -316,6 +350,7 @@ public class NewsJdbcDaoTest {
         int rating = newsDao.getTotalPagesNewsFromUserUpvoted(PAGE_SIZE, user);
 
         assertEquals(PAGE_SIZE, rating);
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -329,5 +364,35 @@ public class NewsJdbcDaoTest {
         int rating = newsDao.getTotalPagesNewsFromUserDownvoted(PAGE_SIZE, user);
 
         assertEquals(PAGE_SIZE, rating);
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+    }
+
+    @Test
+    public void testGetComments(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, COMMENT_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+        newsDao.addComment(user, news, COMMENT);
+        Page<Comment> commentPage = newsDao.getComments(news.getNewsId(), PAGE_SIZE);
+
+        assertEquals(commentPage.getContent().get(0).getComment(), COMMENT);
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
+    }
+
+    @Test
+    public void testGetRecommendation(){
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
+
+        User user = getMockUser();
+        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
+        News news = newsDao.create(nwBuilder);
+        List<FullNews> recommendation = newsDao.getRecommendation(PAGE_SIZE, user, NewsOrder.NEW);
+
+        assertEquals(PAGE_SIZE, recommendation.size());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 }
