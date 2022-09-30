@@ -297,9 +297,9 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        FullNews fullNews = newsDao.getById(news.getNewsId(), user.getId()).get();
+        FullNews fullNews = newsDao.getById(news.getNewsId(), null).get();
 
-        //newsDao.setRating(fullNews.getNews().getNewsId(), fullNews.getNews().getCreatorId(), Rating.DOWNVOTE);
+        newsDao.setRating(fullNews.getNews().getNewsId(), fullNews.getNews().getCreatorId(), Rating.DOWNVOTE);
         List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, user, NewsOrder.NEW, null);
 
         assertEquals(1, rating.size());

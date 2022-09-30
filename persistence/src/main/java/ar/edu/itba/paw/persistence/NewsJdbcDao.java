@@ -179,7 +179,7 @@ public class NewsJdbcDao implements NewsDao {
 
         } else {
             news = jdbcTemplate.query(
-                    "SELECT *, null as logged_user FROM full_news  WHERE news_id = ?",
+                    "SELECT full_news.*, null as logged_user FROM full_news  WHERE news_id = ?",
                     new Object[]{id}, FULLNEWS_ROW_MAPPER).stream().findFirst();
         }
 
@@ -280,7 +280,8 @@ public class NewsJdbcDao implements NewsDao {
                     params, FULLNEWS_ROW_MAPPER);
         }
 
-        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM upvotes NATURAL RIGHT JOIN full_news " +
+        return namedJdbcTemplate.query("SELECT upvotes_news.*, null as logged_user FROM " +
+                        "(select * from upvotes NATURAL RIGHT JOIN full_news) as upvotes_news " +
                         "    WHERE user_id = :userId AND upvote = :upvote " +
                         "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                 params, FULLNEWS_ROW_MAPPER);
