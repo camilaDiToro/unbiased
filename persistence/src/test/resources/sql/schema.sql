@@ -95,7 +95,6 @@ DROP VIEW IF EXISTS news_stats;
 
 DROP VIEW IF EXISTS user_positivity;
 
-
 CREATE VIEW news_stats AS
 SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, news_id FROM upvotes GROUP BY news_id;
 
