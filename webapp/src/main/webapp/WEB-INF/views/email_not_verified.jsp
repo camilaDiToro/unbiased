@@ -4,8 +4,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <c:set var="signInOrCreate" scope="request" value="${true}"/>
-<%@include file="../../resources/head.jsp" %>
-<link href="<c:url value="/resources/login.css"/>" rel="stylesheet">
+<%@include file="../../resources/jsp/head.jsp" %>
+<link href="<c:url value="/resources/css/login.css"/>" rel="stylesheet">
 <body class="text-center">
 
 <c:url value="/email_not_verified/${status}" var="postUrl"/>

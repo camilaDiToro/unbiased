@@ -3,8 +3,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<%@include file="../../resources/head.jsp" %>
-<script src="<c:url value="/resources/upvote-script.js"/>"></script>
+<%@include file="../../resources/jsp/head.jsp" %>
+<script src="<c:url value="/resources/js/upvote-script.js"/>"></script>
 <c:if test="${hasErrors}">
     <script>
         $(document).ready(function(){
@@ -12,10 +12,10 @@
         });
     </script>
 </c:if>
-<link href="<c:url value="/resources/custom.css"/>" rel="stylesheet">
+<link href="<c:url value="/resources/css/custom.css"/>" rel="stylesheet">
 <body>
 
-<%@include file="../../resources/navbar.jsp" %>
+<%@include file="../../resources/jsp/navbar.jsp" %>
 
 
 
@@ -30,7 +30,7 @@
 
 
 <a href="../TOP" class="back-button-show-news">
-    <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/back-svgrepo-com.svg"/>" alt="..."/>
+    <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..."/>
 </a>
 
 
@@ -39,18 +39,17 @@
         <div class="d-flex align-items-center  ">
             <div class="d-flex flex-column align-items-center" news-id="<c:out value="${news.newsId}"/>">
                 <c:if test="${loggedUser != null}">
-                    <img id="upvote" url="<c:url value = "/change-upvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
-
+                    <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                     <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                    <img id="downvote" url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                    <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                 </c:if>
                 <c:if test="${loggedUser == null}">
                     <a href="<c:url value = "/create"/>">
-                        <img   class="svg-btn" src="<c:url value="/resources/upvote.svg"/>"/>
+                        <img   class="svg-btn" src="<c:url value="/resources/images/upvote.svg"/>"/>
                     </a>
                     <div  ><c:out value="${positivityStats.getNetUpvotes()}"/></div>
                     <a href="<c:url value = "/create"/>">
-                        <img    class="svg-btn" src="<c:url value="/resources/downvote.svg"/>"/>
+                        <img    class="svg-btn" src="<c:url value="/resources/images/downvote.svg"/>"/>
                     </a>
                 </c:if>
             </div>
@@ -79,16 +78,16 @@
                 <c:if test="${loggedUser != null}">
                     <div class="d-flex flex-row align-items-center">
                         <div class="ml-2 news-bookmark d-flex justify-content-center align-items-center" >
-                            <img id="bookmark-news" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
+                            <img id="bookmark-news" onclick="handleBookmarkClick(this)" class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/images/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>">
                         </div>
 
                         <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
-                            <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportModal"'} class="w-100 h-100 svg-btn svg-bookmark" src="<c:url value="/resources/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
+                            <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportModal"'} class="w-100 h-100 ${hasReported ? '' : 'svg-btn'} svg-bookmark" src="<c:url value="/resources/images/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
                         </div>
 
                         <c:if test="${loggedUser != null && news.creatorId == loggedUser.id}">
                             <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand">
-                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark"/>
+                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark"/>
                             </div>
 
                             <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
@@ -174,7 +173,7 @@
                         </c:if>
                         <c:if test="${!user.hasImage()}">
                             <img class="rounded-circle object-fit-cover mr-1"
-                                 src="<c:url value="/resources/profile-image.png"/>" alt="">
+                                 src="<c:url value="/resources/images/profile-image.png"/>" alt="">
 
                         </c:if>
                     </div>
@@ -243,7 +242,7 @@
 
                                     </c:if>
                                         <c:if test="${!user.hasImage()}">
-                                            <img class="object-fit-cover rounded-circle" src="<c:url value="/resources/profile-image.png"/>" alt="Image Description">
+                                            <img class="object-fit-cover rounded-circle" src="<c:url value="/resources/images/profile-image.png"/>" alt="Image Description">
                                         </c:if>
                                 </div>
                                 <a href="<c:url value="/profile/${user.id}"/>"><h5 class="mb-0"><c:out value="${user}"/></h5></a>

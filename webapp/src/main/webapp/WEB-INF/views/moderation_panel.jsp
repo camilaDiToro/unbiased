@@ -7,19 +7,19 @@
 
 <html>
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
-<%@ include file="../../resources/head.jsp" %>
-<script src="<c:url value="/resources/upvote-script.js"/>"></script>
+<%@ include file="../../resources/jsp/head.jsp" %>
+<script src="<c:url value="/resources/js/upvote-script.js"/>"></script>
 <body>
 <c:set var="news" value="${newsPage.content}"/>
 <div class="d-flex h-100 flex-column">
 
 
-    <%@ include file="../../resources/navbar.jsp" %>
+    <%@ include file="../../resources/jsp/navbar.jsp" %>
     <div class="d-flex flex-column h-100">
         <div class="flex-grow-1 d-flex flex-row">
 
             <%--LEFT SIDE--%>
-                <%@ include file="../../resources/moderation-left-side.jsp" %>
+                <%@ include file="../../resources/jsp/moderation-left-side.jsp" %>
 
             <%--RIGHT SIDE--%>
             <div class="d-flex flex-column w-75">
@@ -104,7 +104,7 @@
                                                                 <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.imageId}/image"/>" alt="">
                                                             </c:if>
                                                             <c:if test="${!creator.hasImage()}">
-                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
                                                             </c:if>
                                                         </div>
                                                         <a href="<c:url value="/profile/${article.creatorId}"/>" class="link">
@@ -114,7 +114,7 @@
                                                     <div class="d-flex align-items-center mr-2" role="group">
 
                                                              <button data-toggle="modal" data-target="#binModal${newsId}" class="btn bin-modal">
-                                                                <img src="<c:url value="/resources/bin-svgrepo-com.svg" />" alt="..." class="bin-image"/>
+                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="bin-image"/>
                                                             </button>
                                                             <a   class="font-weight-bold hover-hand link" href="<c:url value="/admin/reported_news_detail/${newsId}"/>">
                                                                 <div class="link-text">

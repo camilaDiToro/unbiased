@@ -4,7 +4,7 @@
 <nav class="d-flex navbar navbar-dark navbar-expand-sm bg-primary text-white">
     <div class="d-flex container-fluid" >
         <a class="navbar-brand  " href="<c:url value="/TOP"/>">
-            <img src="<c:url value="/resources/unbiased_navbar.png"/>" height="35" alt="" class="d-inline-block align-middle mr-2">
+            <img src="<c:url value="/resources/images/unbiased_navbar.png"/>" height="35" alt="" class="d-inline-block align-middle mr-2">
             <span class="text-info">unbiased</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,8 +24,8 @@
             <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP"/>">
                 <div>
                     <spring:message code="navbar.search"  var="searchPlaceholder" />
-                    <input  style="background-image: url('<c:url value="/resources/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white"
-                            type="search" placeholder="${searchPlaceholder}" id="query" name="query"/>
+                    <input style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white"
+                           type="search" placeholder="${searchPlaceholder}" id="query" name="query"/>
                 </div>
 
             </form>
@@ -41,7 +41,7 @@
                                                             </c:if>
 
                                                             <c:if test="${!loggedUser.hasImage()}">
-                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
 
                                                             </c:if>
                                                         </div>
@@ -54,7 +54,7 @@
 
                         <div class="dropdown-item">
                             <a class="text-decoration-none text-white" href="<c:url value="/profile/${loggedUser.id}"/>">
-                                <img  class="profile-img" src="<c:url value="/resources/profile-svgrepo-com.svg"/> " alt="...">
+                                <img class="profile-img" src="<c:url value="/resources/images/profile-svgrepo-com.svg"/> " alt="...">
                                 <spring:message code="navbar.myProfile"/>
                             </a>
                         </div>
@@ -63,7 +63,7 @@
                         <c:if test="${isAdmin}">
                             <div class="dropdown-item">
                                 <a class="text-decoration-none text-white" href="<c:url value="/admin/reported_news"/>">
-                                    <img class="moderation-img" src="<c:url value="/resources/panel-svgrepo-com.svg"/> " alt="...">
+                                    <img class="moderation-img" src="<c:url value="/resources/images/panel-svgrepo-com.svg"/> " alt="...">
                                     <spring:message code="navbar.adminPanel"/>
                                 </a>
                             </div>
@@ -72,7 +72,7 @@
 
                         <div class="dropdown-item ">
                             <a class="text-decoration-none text-white" href="<c:url value="/logout"/>">
-                                <img class="moderation-img" src="<c:url value="/resources/log-out-svgrepo-com.svg"/> " alt="...">
+                                <img class="moderation-img" src="<c:url value="/resources/images/log-out-svgrepo-com.svg"/> " alt="...">
                                 <spring:message code="navbar.logOut"/>
                             </a>
                         </div>

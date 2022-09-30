@@ -4,7 +4,7 @@
 <html>
 <c:set var="pageTitle" scope="request" value="Login"/>
 <c:set var="signInOrCreate" scope="request" value="${true}"/>
-<%@include file="../../resources/head.jsp" %>
+<%@include file="../../resources/jsp/head.jsp" %>
 <body class="text-center">
 
 

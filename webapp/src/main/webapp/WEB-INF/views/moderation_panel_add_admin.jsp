@@ -7,24 +7,24 @@
 
 <html>
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
-<%@ include file="../../resources/head.jsp" %>
-<script src="<c:url value="/resources/upvote-script.js"/>"></script>
+<%@ include file="../../resources/jsp/head.jsp" %>
+<script src="<c:url value="/resources/js/upvote-script.js"/>"></script>
 <body>
 <c:set var="reports" value="${reportedNewsPage.content}"/>
 <div class="d-flex h-100 flex-column">
-    <%@ include file="../../resources/navbar.jsp" %>
+    <%@ include file="../../resources/jsp/navbar.jsp" %>
     <div class="d-flex flex-column h-100">
         <div class="flex-grow-1 d-flex flex-row">
 
             <%--LEFT SIDE--%>
-                <%@ include file="../../resources/moderation-left-side.jsp" %>
+                <%@ include file="../../resources/jsp/moderation-left-side.jsp" %>
             <%--RIGHT SIDE--%>
             <div class="d-flex w-75 flex-column align-items-center">
 
                 <div class="w-100 my-2">
                     <a  href="<c:url value="/admin/reported_news"/>">
                         <%--<input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." class="w-50px">--%>
-                        <img class="svg-btn hover-hand back-btn mt-3" src="<c:url value="/resources/back-svgrepo-com.svg"/>" alt="..." data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> " />
+                        <img class="svg-btn hover-hand back-btn mt-3" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..." data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> " />
                     </a>
                 </div>
                 <c:url value="/admin/add_admin" var="postUrl"/>

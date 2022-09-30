@@ -4,8 +4,8 @@
 <html>
 <c:set var="pageTitle" scope="request" value="Login"/>
 <c:set var="signInOrCreate" scope="request" value="${true}"/>
-<%@include file="../../resources/head.jsp" %>
-<link href="<c:url value="/resources/login.css"/>" rel="stylesheet">
+<%@include file="../../resources/jsp/head.jsp" %>
+<link href="<c:url value="/resources/css/login.css"/>" rel="stylesheet">
 <body class="text-center">
 <c:url value="/login" var="loginUrl" />
 
@@ -18,12 +18,12 @@
     </h1>
     <h1 class="h3 mb-3 font-weight-normal text-light"> </h1>
         <div class="d-flex">
-            <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/profile-svgrepo-com.svg"/>" alt="..."/>
+            <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/profile-svgrepo-com.svg"/>" alt="..."/>
             <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
             <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
         </div>
         <div class="mt-1 d-flex">
-            <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/lock-svgrepo-com.svg"/>" alt="..."/>
+            <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/lock-svgrepo-com.svg"/>" alt="..."/>
             <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
             <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
         </div>

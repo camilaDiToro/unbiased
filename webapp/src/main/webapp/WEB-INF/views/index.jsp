@@ -5,8 +5,8 @@
 
 <html>
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
-<%@ include file="../../resources/head.jsp" %>
-<script src="<c:url value="/resources/upvote-script.js"/>"></script>
+<%@ include file="../../resources/jsp/head.jsp" %>
+<script src="<c:url value="/resources/js/upvote-script.js"/>"></script>
 <c:if test="${param.unable || param.error}">
     <script>
         $(document).ready(function(){
@@ -19,7 +19,7 @@
 
 <div class="d-flex h-100 flex-column">
 <%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
-    <%@ include file="../../resources/navbar.jsp" %>
+    <%@ include file="../../resources/jsp/navbar.jsp" %>
     <div class="container-xxl container-fluid flex-grow-1">
         <c:set var = "activeClasses" scope = "session" value = "bg-info active"/>
         <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
@@ -123,17 +123,17 @@
                                                     <c:set var="rating" value="${rating}"/>
 
                                                      <c:if test="${loggedUser != null}">
-                                                         <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                         <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                          <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                         <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                         <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                      </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <a data-toggle="modal" data-target="#cardModal">
-                                                            <img   class="svg-btn hover-hand" src="<c:url value="/resources/upvote.svg"/>"/>
+                                                            <img   class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote.svg"/>"/>
                                                         </a>
                                                         <div  ><c:out value="${positivityStats.netUpvotes}"/></div>
                                                         <a data-toggle="modal" data-target="#cardModal">
-                                                            <img    class="svg-btn hover-hand" src="<c:url value="/resources/downvote.svg"/>"/>
+                                                            <img    class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote.svg"/>"/>
                                                         </a>
 
                                                     </c:if>
@@ -146,7 +146,7 @@
 
                                                     <div>
                                                         <p class="text-sm-left text-secondary mb-0 text-white d-flex align-content-center gap-1 op-09">
-                                                            <img src="<c:url value="/resources/clock-svgrepo-com.svg"/>" alt="..." class="read-clock"/>
+                                                            <img src="<c:url value="/resources/images/clock-svgrepo-com.svg"/>" alt="..." class="read-clock"/>
                                                             <spring:message code="home.read" arguments="${fullNews.readTime}"/>
                                                         </p>
                                                     </div>
@@ -161,7 +161,7 @@
                                                             <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${fullNews.user.imageId}/image"/>" alt="">
                                                         </c:if>
                                                         <c:if test="${!fullNews.user.hasImage()}">
-                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
                                                         </c:if>
                                                     </div>
                                                     <a class="link" href="<c:url value="/profile/${article.creatorId}"/>">
@@ -173,7 +173,7 @@
 
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                            <img   onclick="handleBookmarkClick(this)" class="svg-btn svg-bookmark bookmark" src="<c:url value="/resources/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                            <img   onclick="handleBookmarkClick(this)" class="svg-btn svg-bookmark bookmark" src="<c:url value="/resources/images/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
                                                         </div>
                                                     </c:if>
                                                 </div>
@@ -228,7 +228,7 @@
                                                         <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
                                                     </c:if>
                                                     <c:if test="${!user.hasImage()}">
-                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
                                                     </c:if>
                                                 </div>
                                                     <div class="link-text card-name-text text-ellipsis-1">${user}</div>
@@ -253,7 +253,7 @@
             </div>
             <div class="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start" id="none_shadow">
 
-                <h5 style="background-image: url('<c:url value="/resources/crown-svgrepo-com.svg"/>')" class="card-title top-creators"><spring:message code="home.topCreators"/></h5>
+                <h5 style="background-image: url('<c:url value="/resources/images/crown-svgrepo-com.svg"/>')" class="card-title top-creators"><spring:message code="home.topCreators"/></h5>
 
 
                 <c:forEach var="creator" items="${topCreators}">
@@ -265,7 +265,7 @@
 
 </c:if>
     <c:if test="${!creator.hasImage()}">
-        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/profile-image.png"/>" alt="">
+        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
 
     </c:if>
 </div>
@@ -329,13 +329,13 @@
                     </c:url>
                 <form id="form-login-index" class="form-signin-index" action="${loginUrl}" method="post">
                     <div class="d-flex">
-                        <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/profile-svgrepo-com.svg"/>" alt="..."/>
+                        <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/profile-svgrepo-com.svg"/>" alt="..."/>
                         <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
                         <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
 
                     </div>
                     <div class= "d-flex mt-1 " >
-                        <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/lock-svgrepo-com.svg"/> " alt="..."/>
+                        <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/lock-svgrepo-com.svg"/> " alt="..."/>
                         <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
                         <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
                     </div>

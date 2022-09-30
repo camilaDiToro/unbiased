@@ -11,13 +11,13 @@
   <ul class="nav flex-column vertical-menu ">
     <li class="nav-item">
       <div class="d-flex flex-row">
-        <img class="moderation-img" src="<c:url value="/resources/warning-svgrepo-com.svg"/>" alt="...">
+        <img class="moderation-img" src="<c:url value="/resources/images/warning-svgrepo-com.svg"/>" alt="...">
         <a class="nav-link selected pl-0" href="<c:url value="/admin/reported_news"/>"><spring:message code="moderation.reportedArticles"/></a>
       </div>
     </li>
     <li>
       <div class="d-flex flex-row">
-        <img class="moderation-img" src="<c:url value="/resources/warning-svgrepo-com.svg"/>" alt="...">
+        <img class="moderation-img" src="<c:url value="/resources/images/warning-svgrepo-com.svg"/>" alt="...">
         <a class="nav-link selected pl-0" href="<c:url value="/admin/add_admin_page"/>">
           Add admin
         </a>

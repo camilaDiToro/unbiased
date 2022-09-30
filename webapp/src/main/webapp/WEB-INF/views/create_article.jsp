@@ -15,16 +15,16 @@
     <c:set var="labelText"><spring:message code="createArticle.label"/></c:set>
     .custom-file-input~.custom-file-label::after{content:'${labelText}'!important}
 </style>
-<%@include file="../../resources/head.jsp" %>
+<%@include file="../../resources/jsp/head.jsp" %>
 <link rel="stylesheet" href="https://cdn.rawgit.com/xcatliu/simplemde-theme-dark/master/dist/simplemde-theme-dark.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
 <body>
-<%@include file="../../resources/navbar.jsp" %>
+<%@include file="../../resources/jsp/navbar.jsp" %>
 <div class="back-button" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> ">
     <%--<input class="back-button-img" type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..."  data-toggle="modal" data-target="#exampleModal">--%>
     <a data-toggle="modal" data-target="#exampleModal">
-        <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/back-svgrepo-com.svg"/>" alt="..."/>
+        <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..."/>
     </a>
 
 </div>
