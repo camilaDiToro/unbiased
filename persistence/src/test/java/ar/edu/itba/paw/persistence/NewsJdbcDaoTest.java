@@ -330,8 +330,9 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.DOWNVOTE);
+        Optional<User> optionalUser = userDao.getUserById(user.getId());
         Optional<FullNews> fullNews = newsDao.getById(news.getNewsId(), 1L);
-        List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, user, NewsOrder.NEW, 1L);
+        List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, optionalUser.get(), NewsOrder.NEW, 1L);
 
         assertEquals(1, rating.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
