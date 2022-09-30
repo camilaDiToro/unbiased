@@ -778,4 +778,13 @@ body{
     border-color: rgba(58, 60, 74, 0.5);
 }
 
+.bg-hover:hover{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+}
+
+.bg-hover .img:hover{
+    fill: #8ea7e8;
+}
+
 
