@@ -28,19 +28,22 @@ public class PositivityStats {
     }
     public enum Positivity {
 
-        POSITIVE("positive", 0.8, "home.newsCard.positive"),
-        CONTROVERSIAL("controversial", 0.6, "home.newsCard.controversial"),
-        NEGATIVE("negative", 0.4, "home.newsCard.negative");
+        POSITIVE("positive", 0.8, "home.newsCard.positive", "happy-positivity.svg"),
+        CONTROVERSIAL("controversial", 0.6, "home.newsCard.controversial", "controversial-positivity.svg"),
+        NEGATIVE("negative", 0.4, "home.newsCard.negative", "angry-positivity.svg");
 
-        Positivity(String className, double value, String interCode) {
+        Positivity(String className, double value, String interCode, String imageName) {
             this.className = className;
             this.value = value;
             this.interCode = interCode;
+            this.imageName = imageName;
         }
 
         private final String className;
         private final double value;
         private final String interCode;
+
+        private final String imageName;
 
         public String toString() {
             return className;
@@ -57,6 +60,10 @@ public class PositivityStats {
                     return pos;
             }
             throw new IllegalStateException();
+        }
+
+        public String getImageName(){
+            return imageName;
         }
 
     }
