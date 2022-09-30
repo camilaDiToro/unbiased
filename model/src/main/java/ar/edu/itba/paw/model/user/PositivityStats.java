@@ -28,7 +28,7 @@ public class PositivityStats {
     }
     public enum Positivity {
 
-        POSITIVE("positive", 0.8, "home.newsCard.positive", "happy-positivity.svg"),
+        POSITIVE("positive", 0.8, "home.newsCard.positive", "looking-positivity.svg"),
         CONTROVERSIAL("controversial", 0.6, "home.newsCard.controversial", "controversial-positivity.svg"),
         NEGATIVE("negative", 0.4, "home.newsCard.negative", "angry-positivity.svg");
 
