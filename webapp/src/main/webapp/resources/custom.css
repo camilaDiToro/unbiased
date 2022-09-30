@@ -66,9 +66,14 @@
     height: 40px; /*any size*/
 }
 .object-fit-cover {
+    border-radius: 0 0.5rem 0.5rem 0;
     width: 100%;
     height: 100%;
     object-fit: cover; /*magic*/
+}
+
+.custom-rounded-corners{
+    border-radius: 0 0.5rem 0.5rem 0;
 }
 
 .gap-1 {
@@ -239,11 +244,26 @@
 }
 
 .search-form {
-    background-repeat: no-repeat;
-    background-position: left center;
-    background-size: 10%;
-    height: 30px;
-    padding-left: 35px;
+    /*background-position: left center;*/
+    background-size: 20px !important;
+    padding-left: 2.5rem;
+    background: rgba(58, 60, 74, 0.5) no-repeat 5% 50%;
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
+.search-form:focus{
+    background-color: rgba(58, 60, 74, 0.5);
+    border: none;
+}
+
+.btn-outline-focus-none:focus{
+    outline: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
 }
 
 .border-red {
@@ -254,7 +274,9 @@
     position: absolute ; margin-left: 50px; margin-top: 50px
 }
 
-.back-button-img {max-width: 7%; max-height: 7%}
+.back-button-img {
+    max-width: 7%; max-height: 7%
+}
 
 
 
@@ -452,7 +474,7 @@
 
 .card{
     /*box-shadow: 0 2px 2px rgba(0,0,0,.25);*/
-    border-radius: 6px;
+    border-radius: 0.5rem;
     background: linear-gradient(rgb(58, 60, 74), rgb(36, 38, 50));
 }
 
@@ -580,7 +602,7 @@ body{
 }
 
 .link .link-text:hover {
-    color: #8ea7e8 !important;
+    color: white !important;
     text-decoration: none;
 }
 
@@ -603,3 +625,138 @@ body{
 #span_category:hover{
     color: white;
 }
+
+.modal-header{
+    background: #181414;
+}
+
+.modal-content{
+    background: #181414;
+}
+
+.modal-footer{
+    background: #181414;
+}
+
+#username-input{
+    background: #2c2c2c80;
+    border-radius: 0.5rem;
+    border-color: #2c2c2c80;
+}
+
+#basic-addon1{
+    background: #181414;
+    border-radius: 0.5rem;
+    border-color: transparent;
+}
+
+#file-input-label{
+    background: #2c2c2c80;
+    border-radius: 0.5rem;
+    border-color: #2c2c2c80;
+}
+
+#file-input{
+    cursor: pointer;
+}
+
+.custom-file-label::after {
+    background: transparent;
+}
+
+.form-signin-index {
+    width: 100%;
+    max-width: 375px;
+    padding: 15px;
+    margin: auto;
+}
+.form-signin-index .checkbox {
+    font-weight: 400;
+}
+.form-signin-index .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+.form-signin-index .form-control:focus {
+    z-index: 2;
+}
+.form-signin-index input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.form-signin-index input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#form-login-index .form-control{
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid #F2F2F2;
+    background: none;
+    color: #C2C2CC;
+}
+
+#form-login-index .form-control::placeholder{
+    color: #C2C2CC;
+}
+
+#form-login-index .form-control:focus{
+    background: none;
+    box-shadow: none;
+    border-bottom: 1px solid #F2F2F2;
+    color: #C2C2CC;
+}
+
+#form-login-index input:-webkit-autofill,
+#form-login-index input:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
+
+.size-img-modal-login{
+    height: 24px;
+}
+
+#custom-form-group input{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
+#custom-form-group .codeMirror{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
+#custom-form-group .editor-toolbar{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+    margin-bottom: 5px;
+}
+
+.custom-file-input-label{
+    background: rgba(58, 60, 74, 0.5);
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
+#fileInput{
+    cursor: pointer;
+}
+
+.custom-file-input:focus{
+    border: none;
+}
+
+.back-btn{
+    height: 24px;
+}
+
+

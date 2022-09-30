@@ -16,19 +16,23 @@
     .custom-file-input~.custom-file-label::after{content:'${labelText}'!important}
 </style>
 <%@include file="../../resources/head.jsp" %>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<link rel="stylesheet" href="https://cdn.rawgit.com/xcatliu/simplemde-theme-dark/master/dist/simplemde-theme-dark.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
 <body>
 <%@include file="../../resources/navbar.jsp" %>
-<div class="back-button" >
-    <input class="back-button-img" type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..."  data-toggle="modal" data-target="#exampleModal">
+<div class="back-button" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> ">
+    <%--<input class="back-button-img" type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..."  data-toggle="modal" data-target="#exampleModal">--%>
+    <a data-toggle="modal" data-target="#exampleModal">
+        <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/back-svgrepo-com.svg"/>" alt="..."/>
+    </a>
+
 </div>
 <div class="d-flex flex-col align-items-center justify-content-center p-5">
 
 
     <c:url value="/create_article" var="postUrl"/>
-    <form:form modelAttribute="createNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
+    <form:form id="custom-form-group" modelAttribute="createNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
 
         <div>
             <form:label path="title"><spring:message code="createArticle.title"/></form:label>
@@ -68,7 +72,7 @@
     <div class="input-group mb-3">
             <div class="custom-file">
                 <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input ${validate && errors != null && errors.getFieldErrorCount('image') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
-                <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01"><spring:message code="createArticle.selectFile"/></form:label>
+                <form:label path="image" cssClass="custom-file-label custom-file-input-label" for="inputGroupFile01"><spring:message code="createArticle.selectFile"/></form:label>
 
             </div>
 
@@ -87,7 +91,7 @@
         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <spring:message code="createArticle.category.choose"/>
         </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <div class="dropdown-menu bg-dropdown" aria-labelledby="dropdownMenuButton">
             <c:forEach var="category" items="${categories}">
                 <div class="form-check  w-100">
                     <form:checkbox path="categories" value="${category.interCode}" id="${category.interCode}"/>
@@ -100,7 +104,7 @@
     </div>
 
     <div class="w-100 d-flex justify-content-end">
-        <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
+        <button class="btn btn-info" type="submit"><spring:message code="createArticle.save"/></button>
     </div>
     </div>
 
@@ -131,7 +135,6 @@
                     <spring:message code="createArticle.modal.msg"/>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="createArticle.modal.cancel"/></button>
                     <a href="./TOP">
                         <button type="button" class="btn btn-primary"><spring:message code="createArticle.modal.accept"/></button>
                     </a>

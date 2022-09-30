@@ -95,7 +95,6 @@
                                                 <spring:message code="profile.modal.msg"/>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
                                                 <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
                                                     <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
                                                 </form>
@@ -232,7 +231,7 @@
 
         <c:if test="${isMyProfile}">
             <div class="pencil-edit">
-                <button class="border-0 bg-transparent outline-none" data-toggle="modal" data-target="#profileModal">
+                <button class="border-0 bg-transparent outline-none btn-outline-focus-none" data-toggle="modal" data-target="#profileModal">
                 <span class="badge badge-pill badge-info" id="pencil_button">
                    <img src="<c:url value="/resources/pencil-edit.png"/>" alt="...">
                     <spring:message code="profile.edit"/>
@@ -262,7 +261,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">@</span>
                                         </div>
-                                        <form:input type="text" path="username" cssClass="form-control" placeholder="${changeUsername}"/>
+                                        <form:input type="text" path="username" cssClass="form-control" id="username-input" placeholder="${changeUsername}"/>
                                         <div class="w-100">
                                             <form:errors cssClass="text-danger" path="username" element="p"/>
 
@@ -273,8 +272,8 @@
                                     <form:label path="image"><spring:message code="profile.modal.changeProfilePicture"/> </form:label>
                                     <div class="input-group mb-3">
                                         <div class="custom-file">
-                                            <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
-                                            <form:label path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
+                                            <form:input id="file-input" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input"/>
+                                            <form:label id="file-input-label" path="image" cssClass="custom-file-label" for="inputGroupFile01">${changeUserPicture}</form:label>
                                             <div class="w-100">
                                                 <form:errors cssClass="text-danger" path="image" element="p"/>
 
@@ -292,8 +291,7 @@
                                     </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.save"/></button>
+                                <button type="submit" class="btn btn-primary h-40"><spring:message code="profile.modal.save"/></button>
                             </div>
                         </form:form>
                     </div>

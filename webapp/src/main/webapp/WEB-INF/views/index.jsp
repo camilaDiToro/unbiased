@@ -182,10 +182,9 @@
 
                                         <c:if test="${article.hasImage()}">
 
-                                        <div class="bg-secondary position-relative w-40">
+                                        <div class="bg-secondary position-relative w-40 custom-rounded-corners">
                                                 <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
-
-                                            </div>
+                                        </div>
                                         </c:if>
 
                                     </div>
@@ -328,13 +327,15 @@
                 <c:url value="/login?home=true" var="loginUrl" >
                     <c:param name="redirectTo" value="/${orderBy}?category=${category}&query=${query}"/>
                     </c:url>
-                <form action="${loginUrl}" method="post">
-                    <div >
+                <form id="form-login-index" class="form-signin-index" action="${loginUrl}" method="post">
+                    <div class="d-flex">
+                        <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/profile-svgrepo-com.svg"/>" alt="..."/>
                         <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
                         <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
 
                     </div>
-                    <div class="mt-1" >
+                    <div class= "d-flex mt-1 " >
+                        <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/lock-svgrepo-com.svg"/> " alt="..."/>
                         <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
                         <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
                     </div>
@@ -352,7 +353,7 @@
                             <spring:message code="login.emailResended"/>
                         </div>
                     </c:if>
-                    <button class="btn btn-lg btn-info btn-block" type="submit"><spring:message code="login.signIn"/></button>
+                    <button class="btn btn-md btn-info btn-block" type="submit"><spring:message code="login.signIn"/></button>
                 </form>
 
             </div>
