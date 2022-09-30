@@ -87,12 +87,14 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.NOT_EXISTS;
         }
         VerificationToken vt = mayBeBt.get();
+        User user = userDao.getUserById(vt.getUserId()).get();
+
         if(!vt.isValidToken()){
             return VerificationToken.Status.EXPIRED;
         }
         userDao.verifyEmail(vt.getUserId());
         login(getUserById(vt.getUserId()).orElseThrow(UserNotFoundException::new));
-        verificationTokenService.deleteEmailToken(vt.getUserId());
+        verificationTokenService.deleteEmailToken(user);
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
 
@@ -104,7 +106,7 @@ public class UserServiceImpl implements UserService {
         User user = mayBeUser.get();
         if(user.getStatus().equals(UserStatus.REGISTERED))
             return VerificationToken.Status.ALREADY_VERIFIED;
-        verificationTokenService.deleteEmailToken(user.getId());
+        verificationTokenService.deleteEmailToken(user);
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
         LocaleContextHolder.setLocale(locale, true);
@@ -128,11 +130,11 @@ public class UserServiceImpl implements UserService {
         if(imageId!=null){
             if(user.getImageId()!=null)
                 imageService.deleteImage(user.getImageId());
-            userDao.updateImage(id,imageId);
+            userDao.updateImage(user,imageId);
         }
 
         if(username!= null && !username.isEmpty())
-            userDao.updateUsername(id,username);
+            userDao.updateUsername(user,username);
     }
 
     @Override

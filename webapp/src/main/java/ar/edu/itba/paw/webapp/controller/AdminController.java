@@ -2,9 +2,10 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
+import ar.edu.itba.paw.model.admin.ReportOrder;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.service.*;

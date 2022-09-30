@@ -44,8 +44,7 @@ public class VerificationTokenDaoTest {
     private User getMockUser() {
         String EMAIL = "juan@gmail.com";
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        User user = userDao.createIfNotExists(usBuilder);
-        return user;
+        return userDao.createIfNotExists(usBuilder);
     }
 
     @Test

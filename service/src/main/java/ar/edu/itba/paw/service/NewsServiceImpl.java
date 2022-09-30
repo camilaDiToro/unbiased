@@ -106,30 +106,30 @@ public class NewsServiceImpl implements NewsService {
         switch (pc) {
 
             case SAVED:
-                totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, userId);
+                totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, user);
                 ln = newsDao.getSavedNews(page, userId, newsOrderObject, loggedUserId);
 
 
                 break;
 
             case UPVOTED:
-                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
-                ln = newsDao.getNewsUpvotedByUser(page, userId, newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, user);
+                ln = newsDao.getNewsUpvotedByUser(page, user, newsOrderObject, loggedUserId);
 
 
                 break;
 
             case DOWNVOTED:
-                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, userId);
-                ln = newsDao.getNewsDownvotedByUser(page, userId, newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, user);
+                ln = newsDao.getNewsDownvotedByUser(page, user, newsOrderObject, loggedUserId);
 
                 break;
 
             case MY_POSTS:
-                totalPages = newsDao.getTotalPagesNewsFromUser(page, userId);
-                ln = newsDao.getAllNewsFromUser(page, userId, newsOrderObject, loggedUserId);
+                totalPages = newsDao.getTotalPagesNewsFromUser(page, user);
+                ln = newsDao.getAllNewsFromUser(page, user, newsOrderObject, loggedUserId);
 
-        };
+        }
 
         page = Math.min(page, totalPages);
 
@@ -174,9 +174,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public void deleteNews(News news) {
-        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
-            throw new UserNotAuthorized();
-        newsDao.deleteNews(news.getNewsId());
+        newsDao.deleteNews(news);
     }
 
     @Override

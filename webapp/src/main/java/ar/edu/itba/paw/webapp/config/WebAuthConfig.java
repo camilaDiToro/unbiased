@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 @ComponentScan("ar.edu.itba.paw.webapp.auth")
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
@@ -32,6 +33,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${security.key.remeberme}")
     private String rememberMeKey;
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -56,7 +63,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                     .antMatchers("/login", "/create").anonymous()
                     .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create").authenticated()
+                    .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
+                            "/news/{\\d+}/delete", "/news/{\\d+}/comment", "/news/{\\d+}/save").authenticated()
                     .antMatchers("/**").permitAll()
                 .and().formLogin()
                     .usernameParameter("username")
