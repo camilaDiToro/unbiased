@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +16,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,13 +29,13 @@ public class UserJdbcDaoTest {
     //TABLAS
     private static final String USER_TABLE = "users";
     protected static final String TOKEN_TABLE = "email_verification_token";
+    protected static final String FOLLOWS_TABLE = "follows";
 
     //USER DATA
     private static final String USERNAME = "username";
     private static final String EMAIL = "user@gmail.com";
 
     private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
     private UserJdbcDao userDao;
     private VerificationTokenDao verificationTokenDao;
 
@@ -44,10 +43,12 @@ public class UserJdbcDaoTest {
 
     @Autowired
     private DataSource ds;
+    private SimpleJdbcInsert jdbcInsert;
 
     @Before
     public void setUp() {
         userDao = new UserJdbcDao(ds);
+        verificationTokenDao = new VerificationTokenJdbcDao(ds);
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(ds).withTableName(USER_TABLE).usingGeneratedKeyColumns("userId");
     }
@@ -63,6 +64,7 @@ public class UserJdbcDaoTest {
         // 3. validaciones
         assertNotNull(user);
         assertEquals(EMAIL, user.getEmail());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
@@ -73,19 +75,16 @@ public class UserJdbcDaoTest {
         Optional<User> optionalUser = userDao.getUserById(us.getId());
 
         optionalUser.ifPresent(opt -> assertEquals(optionalUser.get().getId(), us.getId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
     public void testFailFindByUserId() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        try {
-            Optional<User> mayBeUser = userDao.getUserById(1L);
-            assertFalse(mayBeUser.isPresent());
-        }catch (Exception e) {
-            System.out.println("");
-        }
-
+        Optional<User> mayBeUser = userDao.getUserById(1L);
+        assertFalse(mayBeUser.isPresent());
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
@@ -101,6 +100,7 @@ public class UserJdbcDaoTest {
         Optional<User> optionalUser = userDao.getUserById(us.getId());
 
         optionalUser.ifPresent(opt -> assertEquals(EMAIL, optionalUser.get().getEmail()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
@@ -110,6 +110,7 @@ public class UserJdbcDaoTest {
         Optional<User> usr = userDao.findByEmail(EMAIL);
 
         assertFalse(usr.isPresent());
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
@@ -121,10 +122,11 @@ public class UserJdbcDaoTest {
         VerificationToken vt = verificationTokenDao.createEmailToken(us.getId(), "token", LocalDateTime.now().plusDays(1));
         assertNotNull(vt);
         userDao.verifyEmail(vt.getUserId());
-        Optional<User> mayBeUser = userDao.getUserById(us.getId());
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
 
-        assertTrue(mayBeUser.isPresent());
-        //assertEquals(UserStatus.REGISTERED, us.getStatus());
+        optionalUser.ifPresent(opt-> assertEquals(UserStatus.REGISTERED, optionalUser.get().getStatus()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, TOKEN_TABLE));
     }
 
     @Test
@@ -132,11 +134,11 @@ public class UserJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         User us = userDao.create(usBuilder);
-        Optional<User> mayBeUser = userDao.getUserById(us.getId());
-        userDao.updateUsername(mayBeUser.get(), USERNAME);
+        userDao.updateUsername(us, USERNAME);
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
 
-        assertTrue(mayBeUser.isPresent());
-        assertEquals(USERNAME, mayBeUser.get().getUsername());
+        optionalUser.ifPresent(opt-> assertEquals(USERNAME, optionalUser.get().getUsername()));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
@@ -160,12 +162,18 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void testGetTopCreators(){
+    public void testIsFollowing(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, FOLLOWS_TABLE);
 
         User us = userDao.create(usBuilder);
-        List<User> users = userDao.getTopCreators(1);
+        userDao.addFollow(us.getId(), 1);
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
+        boolean userFollow = userDao.isFollowing(optionalUser.get().getId(), 1);
 
-        assertEquals(0, users.size());
+        optionalUser.ifPresent(opt-> assertTrue(userFollow));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, FOLLOWS_TABLE));
+
     }
 }
