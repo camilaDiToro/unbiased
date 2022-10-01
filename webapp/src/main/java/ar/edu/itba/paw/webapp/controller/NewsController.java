@@ -55,7 +55,7 @@ public class NewsController {
     }
 
 
-    @PreAuthorize("@ownerCheck.checkIfCurrentUserIsOwner(#newsId)")
+    @PreAuthorize("@ownerCheck.checkNewsOwnership(#newsId)")
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
         News news = newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new);
@@ -120,6 +120,7 @@ public class NewsController {
                 .withObject("categories", Category.values())
                 .withObject("validate", false).build();
     }
+
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
     @ResponseBody

@@ -4,7 +4,6 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.news.FullNews;
-import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.ProfileCategory;
@@ -12,7 +11,7 @@ import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
-import ar.edu.itba.paw.webapp.form.CreateAdminForm;
+import ar.edu.itba.paw.webapp.auth.OwnerCheck;
 import ar.edu.itba.paw.webapp.form.ResendVerificationEmail;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
@@ -20,6 +19,7 @@ import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -38,18 +37,19 @@ public class UserController {
     private final NewsService newsService;
     private final ImageService imageService;
     private final SecurityService securityService;
-
     private final AdminService adminService;
+    private final OwnerCheck ownerCheck;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
     @Autowired
-    public UserController(UserService userService, AdminService adminService, ImageService imageService, SecurityService securityService, NewsService newsService) {
+    public UserController(UserService userService, AdminService adminService, ImageService imageService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
         this.userService = userService;
         this.imageService = imageService;
         this.securityService = securityService;
         this.adminService = adminService;
         this.newsService = newsService;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
+        this.ownerCheck = ownerCheck;
     }
 
     @RequestMapping("/login")
@@ -98,7 +98,7 @@ public class UserController {
 
 
 
-
+    @PreAuthorize("@ownerCheck.checkSavedNewsAccess(#category, #userId)")
     @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("userId") long userId,
                                 @PathVariable("newsOrder") String newsOrder,

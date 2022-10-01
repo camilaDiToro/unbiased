@@ -2,10 +2,15 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class OwnerCheck {
@@ -19,8 +24,14 @@ public class OwnerCheck {
         this.newsService = newsService;
     }
 
-    public boolean checkIfCurrentUserIsOwner(long newsId) {
-        System.out.println("%Holaaaaaaa" + newsId);
+    public boolean checkNewsOwnership(long newsId) {
         return newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new).getCreatorId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+    }
+
+    public boolean checkSavedNewsAccess(String category, long userId){
+        if(!category.equals(ProfileCategory.SAVED.getDescription()))
+            return true;
+        Optional<User> mayBeUser = securityService.getCurrentUser();
+        return mayBeUser.filter(user -> user.getId() == userId).isPresent();
     }
 }
