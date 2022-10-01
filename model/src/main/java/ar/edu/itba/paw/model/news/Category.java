@@ -36,6 +36,15 @@ public enum Category {
         return null;
     }
 
+    public static Category getByCode(String description){
+        for (Category c : Category.values()) {
+            if (c.getInterCode().equals(description) ) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     public static Category getByValue(String value){
         try{
             return Category.valueOf(value);

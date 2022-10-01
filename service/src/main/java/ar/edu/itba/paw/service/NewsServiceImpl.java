@@ -41,7 +41,10 @@ public class NewsServiceImpl implements NewsService {
         }
 
         for(String category : categories){
-            newsBuilder.addCategory(Category.getByValue(category));
+            Category c = Category.getByCode(category);
+            if(c.equals(Category.ALL) || c.equals(Category.FOR_ME))
+                throw new InvalidCategoryException();
+            newsBuilder.addCategory(c);
         }
 
         return this.newsDao.create(newsBuilder);

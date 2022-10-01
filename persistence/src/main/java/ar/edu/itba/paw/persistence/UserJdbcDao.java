@@ -126,10 +126,10 @@ public class UserJdbcDao implements UserDao {
                 .addValue("offset", (page - 1) * USERS_PAGE_SIZE)
                 .addValue("search", "%" + search.toLowerCase() + "%");
         List<User> users = namedJdbcTemplate.query("SELECT * FROM users NATURAL LEFT JOIN user_positivity " +
-                        "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params, ROW_MAPPER);
+                        "WHERE status='REGISTERED' AND (LOWER(username) LIKE :search OR LOWER(email) LIKE :search) LIMIT :pageSize OFFSET :offset ",  params, ROW_MAPPER);
 
         int rowsCount = namedJdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM users NATURAL LEFT JOIN user_positivity " +
-                        "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params,
+                        "WHERE status='REGISTERED' AND (LOWER(username) LIKE :search OR LOWER(email) LIKE :search) LIMIT :pageSize OFFSET :offset ",  params,
                 Integer.class);
         return new Page<>(users,page,JdbcUtils.getPageCount(rowsCount,USERS_PAGE_SIZE));
     }

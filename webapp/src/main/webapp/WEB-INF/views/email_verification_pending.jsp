@@ -14,7 +14,7 @@
         <h1 class="h3 mb-3 font-weight-normal text-light"><spring:message code="email.verification.pending"/></h1>
         <h5 class="mb-3 font-weight-normal text-light"><spring:message code="email.verification.checkEmail"/></h5>
 
-        <a class="btn btn-lg btn-info btn-block" type="submit" href="<c:url value="/"/>">Go Home</a>
+        <a class="btn btn-lg btn-info btn-block" type="submit" href="<c:url value="/"/>"><spring:message code="verifyEmail.goHome"/></a>
     </div>
 
 </div>
