@@ -86,7 +86,7 @@
 
                         <c:if test="${loggedUser != null && news.creatorId == loggedUser.id}">
                             <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand">
-                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark"/>
+                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                             </div>
 
                             <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">

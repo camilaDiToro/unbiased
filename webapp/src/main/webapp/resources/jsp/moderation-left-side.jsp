@@ -12,15 +12,17 @@
   <ul class="nav flex-column vertical-menu ">
     <li class="nav-item">
       <div class="d-flex flex-row pt-2 pl-2 bg-hover">
-        <img class="mb-2 moderation-img" src="<c:url value="/resources/images/warning-svgrepo-com.svg"/>" alt="...">
-        <a class="mb-2 nav-link selected pl-0" href="<c:url value="/admin/reported_news"/>"><spring:message code="moderation.reportedArticles"/></a>
+        <a class="mb-2 nav-link selected pl-0" href="<c:url value="/admin/reported_news"/>">
+          <img class="mb-2 moderation-img" src="<c:url value="/resources/images/warning-svgrepo-com.svg"/>" alt="...">
+          <spring:message code="moderation.reportedArticles"/>
+        </a>
       </div>
     </li>
     <li>
       <div class="d-flex flex-row pt-2 pl-2 bg-hover">
-        <img class="mb-2 moderation-img" src="<c:url value="/resources/images/add-user-svgrepo-com.svg"/>" alt="...">
         <a class="mb-2 nav-link selected pl-0" href="<c:url value="/admin/add_admin_page"/>">
-          Add admin
+          <img class="mb-2 moderation-img" src="<c:url value="/resources/images/add-user-svgrepo-com.svg"/>" alt="...">
+          <spring:message code="moderation.add"/>
         </a>
       </div>
     </li>

@@ -31,7 +31,7 @@
                     <ul class="my-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ">
                         <c:forEach var="order" items="${orders}">
                             <li class="nav-item">
-                                <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_news/${order}">
+                                <a class="text-capitalize nav-link rounded-pill hover-pill ml-1 mr-1 <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_news/${order}">
 
                     </c:url>"><spring:message code="${order.interCode}"/></a>
                             </li>
@@ -72,7 +72,6 @@
                                                     <spring:message code="profile.modal.msg"/>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
                                                     <form method="post" action="<c:url value="/admin/reported_news/${newsId}/delete"/>">
                                                         <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
                                                     </form>
@@ -114,7 +113,7 @@
                                                     <div class="d-flex align-items-center mr-2" role="group">
 
                                                              <button data-toggle="modal" data-target="#binModal${newsId}" class="btn bin-modal">
-                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="bin-image"/>
+                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="bin-image" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                                                             </button>
                                                             <a   class="font-weight-bold hover-hand link" href="<c:url value="/admin/reported_news_detail/${newsId}"/>">
                                                                 <div class="link-text">
