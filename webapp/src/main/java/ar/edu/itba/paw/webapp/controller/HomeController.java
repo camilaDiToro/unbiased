@@ -6,8 +6,6 @@ import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +25,7 @@ public class HomeController {
     private final AdminService as;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
-    //private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
+
 
     @Autowired
     public HomeController(final UserService us, final NewsService ns, SecurityService ss, EmailService es, AdminService as){

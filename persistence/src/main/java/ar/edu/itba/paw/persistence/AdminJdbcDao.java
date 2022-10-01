@@ -7,8 +7,9 @@ import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -34,7 +35,7 @@ public class AdminJdbcDao implements AdminDao{
 
     private static final double PAGE_SIZE = 5.0;
 
-    private static final RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("report_count");
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminJdbcDao.class);
 
     private static final RowMapper<ReportedNews> REPORT_ROW_MAPPER = (rs, rowNum) ->
             new ReportedNews(   new News.NewsBuilder(rs.getLong("creator"),rs.getString("body"),rs.getString("title"),rs.getString("subtitle"))
@@ -66,7 +67,6 @@ public class AdminJdbcDao implements AdminDao{
     public AdminJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         namedJdbcTemplate = new NamedParameterJdbcTemplate(ds);
-
         jdbcReportInsert = new SimpleJdbcInsert(ds).withTableName("report");
         jdbcAdminInsert = new SimpleJdbcInsert(ds).withTableName("user_role");
     }
@@ -79,24 +79,26 @@ public class AdminJdbcDao implements AdminDao{
         reportData.put("report_date", LocalDateTime.now());
         reportData.put("reason", reportReason.getDescription());
         jdbcReportInsert.execute(reportData);
+        LOGGER.debug("News {} with id {} reported. The reason is {}", news.getTitle(), news.getNewsId(), reportReason.getDescription());
     }
     @Override
     public boolean hasReported(News news, Long loggedUser) {
         if (loggedUser == null)
             return false;
-        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) AS report_count FROM report WHERE user_id = ? AND news_id = ?", new Object[]{loggedUser, news.getNewsId()}, ROW_COUNT_MAPPER).stream().findFirst().get();
+        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) AS row_count FROM report WHERE user_id = ? AND news_id = ?", new Object[]{loggedUser, news.getNewsId()}, JdbcUtils.ROW_COUNT_MAPPER).stream().findFirst().get();
         return rowsCount > 0;
     }
 
     @Override
     public void makeUserAdmin(User user) {
-        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as report_count FROM user_role WHERE user_id = ? AND user_role = ?", new Object[]{user.getId(), Role.ADMIN.getRole()}, ROW_COUNT_MAPPER).stream().findFirst().get();
+        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as row_count FROM user_role WHERE user_id = ? AND user_role = ?", new Object[]{user.getId(), Role.ADMIN.getRole()}, JdbcUtils.ROW_COUNT_MAPPER).stream().findFirst().get();
         if(rowsCount!=0)
             return;
         final Map<String, Object> adminData = new HashMap<>();
         adminData.put("user_role", Role.ADMIN.getRole());
         adminData.put("user_id", user.getId());
         jdbcAdminInsert.execute(adminData);
+        LOGGER.debug("User {} with id {} was made admin.", user.getEmail(), user.getId());
     }
 
     @Override
@@ -114,7 +116,6 @@ public class AdminJdbcDao implements AdminDao{
 
     @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
-
         List<ReportDetail> rd = jdbcTemplate.query(
                 "SELECT * FROM report NATURAL JOIN users WHERE news_id = ? ORDER BY report_date DESC LIMIT ? OFFSET ?",
                      new Object[]{news.getNewsId(), PAGE_SIZE, (page-1)*PAGE_SIZE}, REPORT_DETAIL_ROW_MAPPER);
@@ -124,18 +125,15 @@ public class AdminJdbcDao implements AdminDao{
 
 
     private int getTotalReportsOfANews(long newsId){
-        return getPageCount(jdbcTemplate.query("SELECT COUNT(*) as report_count FROM report WHERE news_id = ?" ,new Object[]{newsId}, ROW_COUNT_MAPPER).stream().findFirst().get());
+        return JdbcUtils.getPageCount(jdbcTemplate.query("SELECT COUNT(*) as row_count FROM report WHERE news_id = ?" ,new Object[]{newsId}, JdbcUtils.ROW_COUNT_MAPPER).stream().findFirst().get(), PAGE_SIZE);
     }
 
     private int getTotalReportedNews() {
-        return getPageCount(jdbcTemplate.query(" with grouped_reports as (SELECT news_id FROM report group by news_id) " +
-                "SELECT count(*) AS report_count from grouped_reports" , ROW_COUNT_MAPPER).stream().findFirst().get());
+        return JdbcUtils.getPageCount(jdbcTemplate.query(" with grouped_reports as (SELECT news_id FROM report group by news_id) " +
+                "SELECT count(*) AS row_count from grouped_reports" , JdbcUtils.ROW_COUNT_MAPPER).stream().findFirst().get(), PAGE_SIZE);
     }
 
-    private int getPageCount(int rowsCount){
-        int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
-        return total==0?1:total;
-    }
+
 }
 
 
