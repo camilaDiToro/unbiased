@@ -254,7 +254,7 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         newsDao.saveNews(news, user);
-        Optional<FullNews> optionalFullNews = newsDao.getById(user.getId(), 1L);
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
 
         optionalFullNews.ifPresent(opt -> assertTrue(optionalFullNews.get().getLoggedUserParameters().isSaved()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
@@ -283,11 +283,14 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        newsDao.saveNews(news, user);
-        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, user.getId(), NewsOrder.NEW, 1L); //TODO
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
+
+        newsDao.saveNews(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
+        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, optionalFullNews.get().getUser().getId(), NewsOrder.NEW, null); //TODO
 
         assertEquals(1, savedList.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, SAVED_TABLE));
     }
 
     @Test
@@ -303,11 +306,9 @@ public class NewsJdbcDaoTest {
 
         assertEquals(PAGE_SIZE, savedPages);
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, SAVED_TABLE));
     }
 
-
-    //El error es que no encuentra la columna news_id
-    //lo hice de dos formas distintas, uno a partir del fullNews y otro solo de News, ambas tiran el mismo error
     @Test
     public void testGetNewsUpvotedByUser(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
@@ -315,12 +316,16 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        newsDao.setRating(news.getNewsId(), user.getId(), Rating.UPVOTE);
-        List<FullNews> rating = newsDao.getNewsUpvotedByUser(PAGE_SIZE, user, NewsOrder.NEW, 1L);
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
 
-        assertEquals(1, rating.size());
-        //assertEquals(Rating.UPVOTE, fullNews.get().getLoggedUserParameters().getPersonalRating().toString());
+        newsDao.setRating(optionalFullNews.get().getNews().getNewsId(), optionalFullNews.get().getNews().getCreatorId(), Rating.UPVOTE);
+        List<FullNews> rating = newsDao.getNewsUpvotedByUser(PAGE_SIZE, user, NewsOrder.NEW, null);
+
+        optionalFullNews.ifPresent(opt->assertEquals(1, rating.size()));
+        //assertEquals(Rating.UPVOTE, optionalFullNews.get().getLoggedUserParameters().getPersonalRating());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
+
 
     @Test
     public void testGetNewsDownvotedByUser(){
@@ -329,12 +334,12 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        newsDao.setRating(news.getNewsId(), news.getCreatorId(), Rating.DOWNVOTE);
-        Optional<User> optionalUser = userDao.getUserById(user.getId());
-        Optional<FullNews> fullNews = newsDao.getById(news.getNewsId(), 1L);
-        List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, optionalUser.get(), NewsOrder.NEW, 1L);
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
 
-        assertEquals(1, rating.size());
+        newsDao.setRating(optionalFullNews.get().getNews().getNewsId(), optionalFullNews.get().getNews().getCreatorId(), Rating.DOWNVOTE);
+        List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, user, NewsOrder.NEW, null);
+
+        optionalFullNews.ifPresent(opt->assertEquals(1, rating.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
@@ -366,6 +371,7 @@ public class NewsJdbcDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
+
     @Test
     public void testGetComments(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
@@ -389,8 +395,9 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        Optional<User> optionalUser = userDao.getUserById(user.getId());
-        List<FullNews> recommendation = newsDao.getRecommendation(PAGE_SIZE, optionalUser.get(), NewsOrder.NEW);
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
+
+        List<FullNews> recommendation = newsDao.getRecommendation(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW);
 
         assertEquals(PAGE_SIZE, recommendation.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
