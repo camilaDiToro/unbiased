@@ -50,8 +50,6 @@
       <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-tx</artifactId>
-          <version>4.2.5.RELEASE</version>
-          <scope>test</scope>
       </dependency>
   </dependencies>
 </project>

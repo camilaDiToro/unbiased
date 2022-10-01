@@ -25,14 +25,9 @@
         <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
         <c:if test="${query == ''}">
             <ul class="my-2 nav nav-tabs justify-content-center text-light p-2">
-                <li class="nav-item">
-                    <a class="text-capitalize text-white nav-link tabs <c:out value = "${category.toString() == 'ALL' ? 'active' : ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
-                    <c:param name = "query" value = "${param.query}"/>
-                    </c:url>"><spring:message code="categories.all"/></a>
-                </li>
                 <c:forEach var="cat" items="${categories}">
                     <li class="nav-item">
-                        <a class="text-capitalize text-white nav-link tabs <c:out value = "${category.toString() != 'ALL' && category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
+                        <a class="text-capitalize text-white nav-link tabs <c:out value = "${category == cat ? 'active': ''}"/>" aria-current="page" href="<c:url value = "/${orderBy}">
                     <c:param name = "category" value = "${cat}"/>
 
                     </c:url>"><spring:message code="${cat.interCode}"/></a>

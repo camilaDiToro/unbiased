@@ -69,13 +69,13 @@ public class NewsServiceImpl implements NewsService {
         catch (Exception e) {
             throw new InvalidOrderException();
         }
+        Category catObject = Category.getByValue(category);
         List<FullNews> ln;
-        if (category.equals("ALL")) {
+        if (catObject.equals(Category.ALL)) {
             totalPages = newsDao.getTotalPagesAllNews(query);
             page = Math.min(page, totalPages);
             ln = newsDao.getNews(page, query, newsOrderObject, loggedUser);
         } else {
-            Category catObject = Category.getByValue(category);
 
             if (catObject.equals(Category.FOR_ME)) {
                 totalPages = newsDao.getTodayNewsPageCount();
