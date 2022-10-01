@@ -48,7 +48,7 @@
                 <ul class="my-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ">
                     <c:forEach var="order" items="${orders}">
                         <li class="nav-item">
-                            <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${order}">
+                            <a class="text-capitalize nav-link rounded-pill hover-pill ml-1 <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/profile/${profileUser.id}/${order}">
                     <c:param name = "category" value = "${category}"/>
                     </c:url>"><spring:message code="${order.interCode}"/></a>
                         </li>
@@ -106,9 +106,7 @@
                                 <div class="col mb-4">
                                     <div class="card h-100 d-flex flex-row">
                                         <c:set var="positivity" value="${positivityStats.positivity}"/>
-                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" >
-
-                                        </div>
+                                        <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
                                         <div class="d-flex flex-column justify-content-between ${article.hasImage() ? 'w-60' : 'w-100'}">
                                             <div class="d-flex w-100">
                                                 <div class="upvote-div-profile d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">
@@ -159,7 +157,7 @@
 
                                                     <c:if test="${isMyProfile && loggedUser == fullNews.user}">
                                                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn bin-modal" id="bin_button">
-                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="w-25px"/>
+                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="w-25px" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                                                             </button>
 
 
@@ -198,8 +196,7 @@
         <div class="d-flex w-30 justify-content-center">
         <div class="card right-card" id="right-card">
             <c:set var="profilePositivity" value="${profilePositivityStats.getPositivity()}"/>
-            <div class="quality-indicator <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${profilePositivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${profilePositivityStats.getInteractions()}"/>" >
-            </div>
+            <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
             <img src="<c:url value="/resources/images/front-page-profile.png"/>" class="card-img-top" alt="...">
             <div class="card-body">
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
@@ -210,7 +207,11 @@
                             <a class="btn btn-info font-weight-bold text-white rounded-pill" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
                         </c:if>
                         <c:if test="${isFollowing}">
-                            <a class=" btn btn-danger font-weight-bold text-white rounded-pill" href="<c:url value="/profile/${userId}/unfollow"/>">Unfollow</a>
+                            <a class="btn d-flex btn-danger font-weight-bold text-white rounded-pill medium-pill align-items-center justify-content-center" href="<c:url value="/profile/${userId}/unfollow"/>">
+                                <div id="custom-follow-btn">
+                                    <spring:message code="profile.unfollow"/>
+                                </div>
+                            </a>
                         </c:if>
                     </c:if>
                 </div>

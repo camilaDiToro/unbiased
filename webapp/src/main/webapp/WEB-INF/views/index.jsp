@@ -42,7 +42,7 @@
                 <ul class="${empty query ? 'my-4' :''} mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ${type == 'creator' ? 'invisible' : 'visible'}">
                     <c:forEach var="order" items="${orders}">
                         <li class="nav-item">
-                            <a class="text-capitalize nav-link fromLeft rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
+                            <a class="text-capitalize nav-link fromLeft rounded-pill hover-pill ml-1 <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/${order}">
                     <c:param name = "category" value = "${param.category}"/>
                     <c:if test="${!empty query}"><c:param name = "query" value = "${param.query}"/></c:if>
                     </c:url>"><spring:message code="${order.interCode}"/></a>
@@ -110,8 +110,8 @@
                                         <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
 
                                         <c:set var="positivity" value="${positivityStats.positivity}"/>
-                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" >
-                                        </div>
+
+                                        <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
                                         <div class="d-flex flex-column justify-content-between ${article.hasImage() ? 'w-60' : 'w-100'}">
                                             <div class="d-flex w-100">
                                                 <div class="upvote-div-home d-flex flex-column align-items-center m-3" news-id="<c:out value="${article.newsId}"/>">

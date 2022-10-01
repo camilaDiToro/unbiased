@@ -28,20 +28,20 @@
                     </a>
                 </div>
                 <c:url value="/admin/add_admin" var="postUrl"/>
-                <div id="add-admin" class="card m-2 w-50 max-w-750px ">
+                <div id="custom-form-group" class="m-2 w-50 max-w-750px ">
                     <form:form modelAttribute="createAdminForm" action="${postUrl}" method="GET" cssClass="d-flex flex-column align-items-center">
 
                         <div class="form-group m-2 w-100 p-3">
-                            <form:label cssClass="w-100 font-weight-bold" path="email">Make user admin</form:label>
-                            <form:input placeholder="Email:" path="email" cssClass="form-control w-100"/>
+                            <form:label cssClass="w-100 font-weight-bold" path="email"><spring:message code="moderation.makeUserAdmin"/> </form:label>
+                            <form:input placeholder="Email:" path="email" cssClass="form-control text-white w-100"/>
                             <form:errors cssClass="text-danger mt-4" path="email" element="small"/>
                             <c:if test="${addedAdmin}">
                                 <small class="text-success mt-4">
-                                    Admin added successfully!
+                                    <spring:message code="moderation.admin.succesfull"/>
                                 </small>
                             </c:if>
                         </div>
-                        <button class="btn btn-info" type="submit">Submit</button>
+                        <button class="btn btn-info" type="submit"><spring:message code="moderation.add"/> </button>
                     </form:form>
                 </div>
                 <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
