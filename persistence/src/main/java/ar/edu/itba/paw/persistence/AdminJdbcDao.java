@@ -85,13 +85,13 @@ public class AdminJdbcDao implements AdminDao{
     public boolean hasReported(News news, Long loggedUser) {
         if (loggedUser == null)
             return false;
-        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) AS row_count FROM report WHERE user_id = ? AND news_id = ?", new Object[]{loggedUser, news.getNewsId()}, JdbcUtils.ROW_COUNT_MAPPER).stream().findFirst().get();
+        int rowsCount = jdbcTemplate.queryForObject("SELECT COUNT(*) AS row_count FROM report WHERE user_id = ? AND news_id = ?", new Object[]{loggedUser, news.getNewsId()}, Integer.class);
         return rowsCount > 0;
     }
 
     @Override
     public void makeUserAdmin(User user) {
-        int rowsCount = jdbcTemplate.query("SELECT COUNT(*) as row_count FROM user_role WHERE user_id = ? AND user_role = ?", new Object[]{user.getId(), Role.ADMIN.getRole()}, JdbcUtils.ROW_COUNT_MAPPER).stream().findFirst().get();
+        int rowsCount = jdbcTemplate.queryForObject("SELECT COUNT(*) as row_count FROM user_role WHERE user_id = ? AND user_role = ?", new Object[]{user.getId(), Role.ADMIN.getRole()},Integer.class);
         if(rowsCount!=0)
             return;
         final Map<String, Object> adminData = new HashMap<>();
@@ -125,12 +125,12 @@ public class AdminJdbcDao implements AdminDao{
 
 
     private int getTotalReportsOfANews(long newsId){
-        return JdbcUtils.getPageCount(jdbcTemplate.query("SELECT COUNT(*) as row_count FROM report WHERE news_id = ?" ,new Object[]{newsId}, JdbcUtils.ROW_COUNT_MAPPER).stream().findFirst().get(), PAGE_SIZE);
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT COUNT(*) as row_count FROM report WHERE news_id = ?" ,new Object[]{newsId}, Integer.class), PAGE_SIZE);
     }
 
     private int getTotalReportedNews() {
-        return JdbcUtils.getPageCount(jdbcTemplate.query(" with grouped_reports as (SELECT news_id FROM report group by news_id) " +
-                "SELECT count(*) AS row_count from grouped_reports" , JdbcUtils.ROW_COUNT_MAPPER).stream().findFirst().get(), PAGE_SIZE);
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject(" with grouped_reports as (SELECT news_id FROM report group by news_id) " +
+                "SELECT count(*) AS row_count from grouped_reports" , Integer.class), PAGE_SIZE);
     }
 
 

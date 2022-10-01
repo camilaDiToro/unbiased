@@ -5,8 +5,6 @@ import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 public enum Category {
     FOR_ME("categories.forMe"),
     ALL("categories.all"),
-
-
     TOURISM("categories.tourism"),
     SHOW("categories.entertainment"),
     POLITICS("categories.politics"),
@@ -32,15 +30,6 @@ public enum Category {
     public static Category getById(long id) {
         for (Category c : Category.values()) {
             if (c.ordinal() == id) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    public static Category getByInterCode(String description){
-        for (Category c : Category.values()) {
-            if (c.getInterCode().equals(description) ) {
                 return c;
             }
         }

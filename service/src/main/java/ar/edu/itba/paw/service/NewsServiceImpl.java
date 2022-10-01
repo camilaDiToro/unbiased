@@ -39,10 +39,7 @@ public class NewsServiceImpl implements NewsService {
         }
 
         for(String category : categories){
-            Category c = Category.getByInterCode(category);
-            if(c==null)
-                throw new InvalidCategoryException();
-            newsBuilder.addCategory(c);
+            newsBuilder.addCategory(Category.getByValue(category));
         }
 
         return this.newsDao.create(newsBuilder);

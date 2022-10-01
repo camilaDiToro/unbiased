@@ -9,7 +9,6 @@ import java.util.Optional;
 public interface UserDao {
     Optional<User> getUserById(long id);
     User create(User.UserBuilder userBuilder);
-    User createIfNotExists(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
     void verifyEmail(long id);
@@ -18,8 +17,6 @@ public interface UserDao {
     void updateImage(User user, Long imageId);
     void addFollow(long userId, long follows);
     void unfollow(long userId, long follows);
-
-   boolean isFollowing(long userId, long followId);
-
+    boolean isFollowing(long userId, long followId);
     Page<User> searchUsers(int page, String search);
 }

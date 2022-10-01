@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -34,7 +36,7 @@ public class UserJdbcDao implements UserDao {
             .status(rs.getString("status"))
             .positivity(new PositivityStats(rs.getInt("upvotes"),rs.getInt("downvotes"))).build();
 
-    private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("userCount");
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserJdbcDao.class);
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {
@@ -62,16 +64,9 @@ public class UserJdbcDao implements UserDao {
         userData.put("username",userBuilder.getUsername());
 
         final long userId = jdbcInsert.executeAndReturnKey(userData).longValue();
-        return userBuilder.userId(userId).build();
-    }
-
-    @Override
-    public User createIfNotExists(User.UserBuilder userBuilder) {
-        Optional<User> user = findByEmail(userBuilder.getEmail());
-        if(user.isPresent()){
-            return user.get();
-        }
-        return create(userBuilder);
+        User user = userBuilder.userId(userId).build();
+        LOGGER.info("User created: {}", user);
+        return user;
     }
 
     @Override
@@ -89,11 +84,13 @@ public class UserJdbcDao implements UserDao {
     @Override
     public void verifyEmail(long id) {
         jdbcTemplate.update("UPDATE users SET status = 'REGISTERED' WHERE user_id = ?", id);
+        LOGGER.info("User with id {} verified his email",id);
     }
 
     @Override
     public void updateUsername(User user, String username) {
         jdbcTemplate.update("UPDATE users SET username = ? WHERE user_id = ?", username, user.getId());
+        LOGGER.debug("User with id {} verified changed his username to {}", user.getId(), username);
     }
 
     @Override
@@ -106,12 +103,13 @@ public class UserJdbcDao implements UserDao {
         final Map<String, Object> followData = new HashMap<>();
         followData.put("user_id", userId);
         followData.put("follows", follows);
-
         followJdbcInsert.execute(followData);
+        LOGGER.debug("User with id {} now follows {}", userId, follows);
     }
     @Override
     public void unfollow(long userId, long follows) {
         jdbcTemplate.update("DELETE FROM follows WHERE user_id = ? AND follows = ?", new Object[]{userId, follows});
+        LOGGER.debug("User with id {} unfollowed {}", userId, follows);
     }
 
     @Override
@@ -130,13 +128,10 @@ public class UserJdbcDao implements UserDao {
         List<User> users = namedJdbcTemplate.query("SELECT * FROM users NATURAL LEFT JOIN user_positivity " +
                         "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params, ROW_MAPPER);
 
-        int rowsCount = namedJdbcTemplate.query("SELECT count(*) AS userCount FROM users NATURAL LEFT JOIN user_positivity " +
+        int rowsCount = namedJdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM users NATURAL LEFT JOIN user_positivity " +
                         "WHERE LOWER(username) LIKE :search OR LOWER(email) LIKE :search LIMIT :pageSize OFFSET :offset ",  params,
-                ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount / USERS_PAGE_SIZE);
-        total =  total == 0 ? 1 : total;
-
-        return new Page<>(users,page,total);
+                Integer.class);
+        return new Page<>(users,page,JdbcUtils.getPageCount(rowsCount,USERS_PAGE_SIZE));
     }
 
     public List<User> getAll(int page){

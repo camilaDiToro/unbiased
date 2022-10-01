@@ -5,6 +5,8 @@ import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -95,23 +97,21 @@ public class NewsJdbcDao implements NewsDao {
     private static final RowMapper<Category> CATEGORIES_ROW_MAPPER = (rs, rowNum) ->
             Category.getById(rs.getLong("category_id"));
 
-    private final static RowMapper<Integer> ROW_COUNT_MAPPER = (rs, rowNum) -> rs.getInt("newsCount");
 
     private final static RowMapper<PositivityStats> NEWS_STATS_ROW_MAPPER = (rs, rowNum) -> new PositivityStats(rs.getInt("upvotes"), rs.getInt("downvotes"));
     private final static RowMapper<Boolean> RATING_MAPPER = (rs, rowNum) -> rs.getBoolean("upvote");
     private final static RowMapper<Integer> UPVOTES_MAPPER = (rs, rowNum) -> rs.getInt("upvotes");
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NewsJdbcDao.class);
 
     @Autowired
     public NewsJdbcDao(final DataSource dataSource, final CategoryDao categoryDao) {
         jdbcTemplate = new JdbcTemplate(dataSource);
         namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("news").usingGeneratedKeyColumns("news_id");
         jdbcUpvoteInsert = new SimpleJdbcInsert(dataSource).withTableName("upvotes");
         jdbcSavedNewsInsert = new SimpleJdbcInsert(dataSource).withTableName("saved_news");
         jdbcCommentsInsert = new SimpleJdbcInsert(dataSource).withTableName("comments");
-
         this.categoryDao = categoryDao;
     }
 
@@ -133,14 +133,14 @@ public class NewsJdbcDao implements NewsDao {
             categoryDao.addCategoryToNews(newsId, c);
         }
 
-        return newsBuilder.newsId(newsId).build();
+        News news = newsBuilder.newsId(newsId).build();
+        LOGGER.info("News created: {}", news);
+        return news;
     }
 
     @Override
     public int getTotalPagesAllNews() {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news", ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount / PAGE_SIZE);
-        return total == 0 ? 1 : total;
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news", Integer.class), PAGE_SIZE);
     }
 
     @Override
@@ -163,10 +163,8 @@ public class NewsJdbcDao implements NewsDao {
 
     @Override
     public int getTotalPagesAllNews(String query) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE LOWER(title) LIKE ?",
-                new Object[]{"%" + query.toLowerCase() + "%"}, ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount / PAGE_SIZE);
-        return total == 0 ? 1 : total;
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news WHERE LOWER(title) LIKE ?",
+                new Object[]{"%" + query.toLowerCase() + "%"}, Integer.class), PAGE_SIZE);
     }
 
     @Override
@@ -245,7 +243,6 @@ public class NewsJdbcDao implements NewsDao {
                 .addValue("pageSize", PROFILE_PAGE_SIZE)
                 .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE);
 
-
         if (loggedUser != null) {
             params.addValue("loggedId", (long) loggedUser);
             return namedJdbcTemplate.query(
@@ -299,17 +296,13 @@ public class NewsJdbcDao implements NewsDao {
 
     @Override
     public int getTotalPagesNewsFromUser(int page, User user) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE creator = ?",
-                new Object[]{user.getId()}, ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount / PROFILE_PAGE_SIZE);
-        return total == 0 ? 1 : total;
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news WHERE creator = ?",
+                new Object[]{user.getId()}, Integer.class),PROFILE_PAGE_SIZE);
     }
 
     private int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN upvotes WHERE user_id = ? AND upvote = ?",
-                new Object[]{userId, upvoted}, ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount / PROFILE_PAGE_SIZE);
-        return total == 0 ? 1 : total;
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news NATURAL JOIN upvotes WHERE user_id = ? AND upvote = ?",
+                new Object[]{userId, upvoted}, Integer.class),PROFILE_PAGE_SIZE);
     }
 
     @Override
@@ -324,10 +317,8 @@ public class NewsJdbcDao implements NewsDao {
 
     @Override
     public int getTotalPagesNewsFromUserSaved(int page, User user) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN saved_news WHERE user_id = ?",
-                new Object[]{user.getId()}, ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount / PROFILE_PAGE_SIZE);
-        return total == 0 ? 1 : total;
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS newsCount FROM news NATURAL JOIN saved_news WHERE user_id = ?",
+                new Object[]{user.getId()}, Integer.class),PROFILE_PAGE_SIZE);
     }
 
     @Override
@@ -337,12 +328,9 @@ public class NewsJdbcDao implements NewsDao {
 
     @Override
     public int getTotalPagesCategory(Category category) {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?",
-                new Object[]{category.getId()}, ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount / PAGE_SIZE);
-        return total == 0 ? 1 : total;
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS newsCount FROM news NATURAL JOIN news_category WHERE category_id = ?",
+                new Object[]{category.getId()}, Integer.class),PAGE_SIZE);
     }
-
 
     @Override
     public void setRating(Long newsId, Long userId, Rating rating) {
@@ -370,12 +358,9 @@ public class NewsJdbcDao implements NewsDao {
         jdbcSavedNewsInsert.execute(savedNewsData);
     }
 
-
     private int getTotalPagesComments(long newsId) {
-        int rowsCount = jdbcTemplate.queryForObject("SELECT count(*) FROM comments NATURAL JOIN users WHERE news_id = ?",
-                new Object[]{newsId}, Integer.class);
-        int total = (int) Math.ceil(rowsCount / COMMENT_PAGE_SIZE);
-        return total == 0 ? 1 : total;
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) FROM comments NATURAL JOIN users WHERE news_id = ?",
+                new Object[]{newsId}, Integer.class), COMMENT_PAGE_SIZE);
     }
 
     @Override
@@ -384,11 +369,8 @@ public class NewsJdbcDao implements NewsDao {
         commentData.put("news_id", news.getNewsId());
         commentData.put("user_id", user.getId());
         commentData.put("comment", comment);
-
         commentData.put("commented_date", Timestamp.valueOf(LocalDateTime.now()));
-
         jdbcCommentsInsert.execute(commentData);
-
     }
 
     @Override
@@ -442,10 +424,8 @@ public class NewsJdbcDao implements NewsDao {
 
     @Override
     public int getTodayNewsPageCount() {
-        int rowsCount = jdbcTemplate.query("SELECT count(*) AS newsCount FROM news WHERE creation_date >= ?" ,
-                new Object[]{Timestamp.valueOf(LocalDateTime.now().minusDays(1))},ROW_COUNT_MAPPER).stream().findFirst().get();
-        int total = (int) Math.ceil(rowsCount/RECOMMENDATION_PAGE_SIZE);
-        return total==0?1:total;
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS newsCount FROM news WHERE creation_date >= ?" ,
+                new Object[]{Timestamp.valueOf(LocalDateTime.now().minusDays(1))},Integer.class), RECOMMENDATION_PAGE_SIZE);
     }
 
 }
