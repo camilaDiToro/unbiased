@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import static org.junit.Assert.*;
-
 import java.util.Optional;
 
 @Rollback
