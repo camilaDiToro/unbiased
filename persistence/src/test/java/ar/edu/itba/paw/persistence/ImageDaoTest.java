@@ -1,13 +1,11 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Image;
-import ar.edu.itba.paw.model.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,11 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 import static org.junit.Assert.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Rollback
@@ -32,7 +25,6 @@ import java.util.Optional;
 public class ImageDaoTest {
 
     private ImageJdbcDao imageDao;
-    private UserJdbcDao userDao;
     @Autowired
     private DataSource ds;
 
@@ -48,17 +40,12 @@ public class ImageDaoTest {
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(ds);
         imageDao = new ImageJdbcDao(ds);
-        userDao = new UserJdbcDao(ds);
         simpleJdbcInsert = new SimpleJdbcInsert(ds).withTableName(IMAGE_TABLE);
     }
 
-    private User getMockUser() {
-        User.UserBuilder usBuilder = new User.UserBuilder("user@gmail.com");
-        return userDao.create(usBuilder);
-    }
 
     @Test
-    public void testGetImageById() throws IOException {
+    public void testGetImageById(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, IMAGE_TABLE);
 
         Image image = new Image(IMAGE_ID,IMAGE_DATA, IMAGE_TYPE);
