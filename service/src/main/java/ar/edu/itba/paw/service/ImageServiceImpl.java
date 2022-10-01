@@ -5,6 +5,7 @@ import ar.edu.itba.paw.persistence.ImageDao;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ public class ImageServiceImpl implements ImageService{
     }
 
     @Override
+    @Transactional
     public Long uploadImage(byte[] bytes, String dataType) {
         if (bytes.length == 0)
             return null;
@@ -31,6 +33,7 @@ public class ImageServiceImpl implements ImageService{
     }
 
     @Override
+    @Transactional
     public void deleteImage(long id) {
         imageDao.deleteImage(id);
     }

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,10 +16,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 @ComponentScan("ar.edu.itba.paw.webapp.auth")
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
@@ -33,6 +35,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     private String rememberMeKey;
 
     @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
@@ -44,18 +52,24 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
+
+        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setDefaultTargetUrl("/");
+        successHandler.setAlwaysUseDefaultTargetUrl(false);
+        successHandler.setTargetUrlParameter("redirectTo");
+
         http.sessionManagement()
                 .invalidSessionUrl("/")
-                //.invalidSessionUrl("/login")
                 .and().authorizeRequests()
                     .antMatchers("/login", "/create").anonymous()
                     .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create").authenticated()
+                    .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
+                            "/news/{\\d+}/delete", "/news/{\\d+}/comment", "/news/{\\d+}/save").authenticated()
                     .antMatchers("/**").permitAll()
                 .and().formLogin()
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/", false)
+                    .successHandler(successHandler)
                     .loginPage("/login")
                     .failureHandler(loginFailureHandler)
                 .and().rememberMe()

@@ -19,6 +19,6 @@ public class ReportNewsForm {
     @NotBlank
     @Length(max=400)
     @NotExistingReportReason
-    private String reason;
+    private String reason = "INAP";
     
 }

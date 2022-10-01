@@ -9,7 +9,6 @@ public class FullNews {
     private int readTime;
     private User creator;
     private PositivityStats positivityStats;
-
     private LoggedUserParameters loggedUserParameters;
 
 

@@ -4,6 +4,8 @@ import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 
 public enum Category {
     FOR_ME("categories.forMe"),
+    ALL("categories.all"),
+
 
     TOURISM("categories.tourism"),
     SHOW("categories.entertainment"),

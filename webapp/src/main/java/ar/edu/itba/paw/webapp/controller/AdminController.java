@@ -2,19 +2,24 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
+import ar.edu.itba.paw.model.admin.ReportOrder;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.service.*;
+import ar.edu.itba.paw.webapp.form.CreateAdminForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.validation.Valid;
 
 @Controller
 public class AdminController {
@@ -34,20 +39,39 @@ public class AdminController {
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
-    @RequestMapping(value = "/admin/reported_news/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/add_admin", method = RequestMethod.GET)
+    public ModelAndView addAdmin(@Valid @ModelAttribute("createAdminForm") CreateAdminForm form, final BindingResult errors) {
+        if (errors.hasErrors())
+            return addAdminPanel(form);
+
+        adminService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
+        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
+                .withObject("addedAdmin", true)
+                .build();
+    }
+
+    @RequestMapping(value = "/admin/reported_news/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("newsOrder") String newsOrder) {
 
-        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, NewsOrder.NEW);
-        return mavBuilderSupplier.supply("moderation-panel", "Moderation Panel", TextType.LITERAL)
+
+        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, newsOrder);
+        return mavBuilderSupplier.supply("moderation_panel", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
-                .withObject("orders", NewsOrder.values())
-                .withObject("orderBy", NewsOrder.valueOf(newsOrder)).build();
+                .withObject("orders", ReportOrder.values())
+                .withObject("orderBy", ReportOrder.valueOf(newsOrder)).build();
+    }
+
+    @RequestMapping(value = "/admin/add_admin_page", method = RequestMethod.GET)
+    public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form) {
+
+        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
+                .build();
     }
 
     @RequestMapping("/admin/reported_news")
     public ModelAndView reportedNewsRedirect() {
-        return new ModelAndView("redirect:/admin/reported_news/TOP");
+        return new ModelAndView("redirect:/admin/reported_news/" + ReportOrder.values()[0].name());
     }
 
 
@@ -55,7 +79,7 @@ public class AdminController {
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
         Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new));
-        return mavBuilderSupplier.supply("moderation-panel-detail", "Moderation View", TextType.LITERAL)
+        return mavBuilderSupplier.supply("moderation_panel_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("newsId", newsId)
@@ -68,9 +92,5 @@ public class AdminController {
         return new ModelAndView("redirect:/admin/reported_news");
     }
 
-    @RequestMapping(value = "/admin/add_admin/{userId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView addAdmin(@PathVariable("userId") long userId) {
-        adminService.makeUserAdmin(userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new));
-        return new ModelAndView("redirect:/admin/reported_news");
-    }
+
 }

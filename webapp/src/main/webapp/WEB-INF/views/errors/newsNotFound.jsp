@@ -5,7 +5,7 @@
 <html>
 <<<<<<< HEAD:webapp/src/main/webapp/WEB-INF/views/errors/newsNotFound.jsp
 <c:set var="pageTitle" scope="request" value="User not found"/>
-<%@ include file="../../../resources/head.jsp" %>
+<%@ include file="../../../resources/jsp/head.jsp" %>
 =======
 <c:set var="pageTitle" scope="request" value="News not found"/>
 <%@ include file="../../resources/head.jsp" %>

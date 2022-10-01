@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportReason;
@@ -99,13 +100,14 @@ public class AdminJdbcDao implements AdminDao{
     }
 
     @Override
-    public Page<ReportedNews> getReportedNews(int page, NewsOrder ns) {
+    public Page<ReportedNews> getReportedNews(int page, ReportOrder reportOrder) {
 
         List<ReportedNews> rn = jdbcTemplate.query(
-                "SELECT news_id, body, title, subtitle, creator, creation_date, accesses, news.image_id, email, username, pass,status, users.image_id as user_image_id, COUNT(report.user_id) AS report_count " +
+                "SELECT news_id, body, title, subtitle, creator, creation_date, accesses, news.image_id, email, username, " +
+                "pass ,status , users.image_id as user_image_id, COUNT(report.user_id) AS report_count " +
                 "FROM (report NATURAL JOIN news) JOIN users ON users.user_id=news.creator " +
                 "GROUP BY news_id, body, title, subtitle, creator, creation_date, accesses, news.image_id, email, username, pass, status, users.image_id " +
-                "ORDER BY report_count DESC LIMIT ? OFFSET ?", new Object[]{PAGE_SIZE, (page-1)*PAGE_SIZE}, REPORT_ROW_MAPPER);
+                "ORDER BY "+ reportOrder.getQuery() +" LIMIT ? OFFSET ?", new Object[]{PAGE_SIZE, (page-1)*PAGE_SIZE}, REPORT_ROW_MAPPER);
 
         return new Page<>(rn,page,getTotalReportedNews());
     }

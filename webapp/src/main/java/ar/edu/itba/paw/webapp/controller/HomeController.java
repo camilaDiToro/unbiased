@@ -6,12 +6,16 @@ import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Arrays;
 
 @Controller
 public class HomeController {
@@ -22,6 +26,8 @@ public class HomeController {
     private final EmailService es;
     private final AdminService as;
     private final MAVBuilderSupplier mavBuilderSupplier;
+
+    //private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
     @Autowired
     public HomeController(final UserService us, final NewsService ns, SecurityService ss, EmailService es, AdminService as){
@@ -35,10 +41,10 @@ public class HomeController {
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        return new ModelAndView("redirect:/TOP");
+        return new ModelAndView("redirect:/" + NewsOrder.values()[0]);
     }
 
-    @RequestMapping("/{orderBy:TOP|NEW}")
+    @RequestMapping("/{orderBy}")
     public ModelAndView helloWorld(
             @PathVariable("orderBy") final String orderBy,
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -54,7 +60,7 @@ public class HomeController {
                 .withObject("orderBy", orderBy)
                 .withObject("query", query)
                 .withObject("type", type)
-                .withObject("categories", Category.values())
+                .withObject("categories", ns.getHomeCategories())
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
         if (type.equals("creator")) {

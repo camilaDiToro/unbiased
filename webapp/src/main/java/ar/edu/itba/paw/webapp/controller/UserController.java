@@ -10,11 +10,9 @@ import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
-import ar.edu.itba.paw.service.ImageService;
-import ar.edu.itba.paw.service.NewsService;
-import ar.edu.itba.paw.service.SecurityService;
-import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.form.CreateAdminForm;
 import ar.edu.itba.paw.webapp.form.ResendVerificationEmail;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
@@ -40,13 +38,16 @@ public class UserController {
     private final NewsService newsService;
     private final ImageService imageService;
     private final SecurityService securityService;
+
+    private final AdminService adminService;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
     @Autowired
-    public UserController(UserService userService, ImageService imageService, SecurityService securityService, NewsService newsService) {
+    public UserController(UserService userService, AdminService adminService, ImageService imageService, SecurityService securityService, NewsService newsService) {
         this.userService = userService;
         this.imageService = imageService;
         this.securityService = securityService;
+        this.adminService = adminService;
         this.newsService = newsService;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
@@ -96,10 +97,12 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder:TOP|NEW}", method = RequestMethod.GET)
+
+
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("userId") long userId,
                                 @PathVariable("newsOrder") String newsOrder,
-                                @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
+                                @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
                                 @RequestParam(name = "page", defaultValue = "1") int page,
                                 @RequestParam(name = "category", defaultValue = "MY_POSTS") String category,
                                 @RequestParam(name = "hasErrors", defaultValue = "false") boolean hasErrors) {
@@ -112,7 +115,7 @@ public class UserController {
         MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", newsOrder)
-                .withObject("categories", Arrays.stream(ProfileCategory.values()).filter(c -> isMyProfile || !c.equals(ProfileCategory.SAVED)).toArray())
+                .withObject("categories", newsService.getProfileCategories(profileUser))
                 .withObject("newsPage", fullNews)
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
@@ -147,7 +150,7 @@ public class UserController {
         VerificationToken.Status status = userService.verifyUserEmail(token);
         ModelAndView mav;
         if(status.equals(VerificationToken.Status.SUCCESFFULLY_VERIFIED)){
-            mav = mavBuilderSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.LITERAL)
+            mav = mavBuilderSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                     .build();
         }else{
             mav = new ModelAndView("redirect:/email_not_verified/"+status.getStatus().toLowerCase(Locale.ROOT));

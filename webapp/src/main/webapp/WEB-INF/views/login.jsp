@@ -4,29 +4,28 @@
 <html>
 <c:set var="pageTitle" scope="request" value="Login"/>
 <c:set var="signInOrCreate" scope="request" value="${true}"/>
-<%@include file="../../resources/head.jsp" %>
-<link href="<c:url value="/resources/login.css"/>" rel="stylesheet">
+<%@include file="../../resources/jsp/head.jsp" %>
+<link href="<c:url value="/resources/css/login.css"/>" rel="stylesheet">
 <body class="text-center">
 <c:url value="/login" var="loginUrl" />
 
 <form class="form-signin" action="${loginUrl}" method="post">
 
     <h1 id="title-log" class="logo mb-4">
-        <a style="text-decoration: none" class="text-info" href="<c:url value="/TOP"/>">
+        <a  class="text-info link" href="<c:url value="/TOP"/>">
             unbiased
         </a>
     </h1>
     <h1 class="h3 mb-3 font-weight-normal text-light"> </h1>
-
-        <div >
+        <div class="d-flex">
+            <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/profile-svgrepo-com.svg"/>" alt="..."/>
             <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
             <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
-
         </div>
-        <div style="margin-top: 2%" >
+        <div class="mt-1 d-flex">
+            <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/lock-svgrepo-com.svg"/>" alt="..."/>
             <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
             <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
-
         </div>
     <c:if test="${param.error}">
         <div class="text-danger text-nowrap form-text d-inline-block">
@@ -45,18 +44,8 @@
         <label class="text-light">
             <input type="checkbox" name="rememberme"> <spring:message code="login.rememberMe"/>
         </label>
-
     </div>
-    <button class="btn btn-lg btn-info btn-block" type="submit"><spring:message code="login.signIn"/></button>
-
-    <%--<c:if test="${param.unable}">
-        <a href="<c:url value = "/resend_verification_email">
-                    <c:param name = "email" value = "${param.email}"/>
-                    </c:url>">
-            <button type="button" class="btn btn-lg btn-info btn-block">
-                <spring:message code="login.resendVerificationEmail.button"/>
-            </button></a>
-    </c:if> --%>
+    <button class="btn btn-md btn-info btn-block" type="submit"><spring:message code="login.signIn"/></button>
     <p class="mt-5 mb-3 text-muted">© 2022-2022</p>
     </form>
 

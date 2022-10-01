@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
+import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.news.News;
@@ -96,7 +97,7 @@ public class AdminJdbcDaoTest {
 
         News news = getMockNews();
         adminDao.reportNews(news, 1L, ReportReason.LIE);
-        Page<ReportedNews> reportList = adminDao.getReportedNews(PAGE_SIZE, NewsOrder.NEW);
+        Page<ReportedNews> reportList = adminDao.getReportedNews(PAGE_SIZE, ReportOrder.REP_DATE_DESC);
 
         assertEquals(PAGE_SIZE, reportList.getTotalPages());
     }

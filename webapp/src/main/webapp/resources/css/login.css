@@ -13,7 +13,7 @@
 .form-control:focus{
     background: none;
     box-shadow: none;
-    border-bottom: 1px solid #F2F2F2;
+    border-bottom: 1px solid #8ea7e8;
     color: #C2C2CC;
 }
 

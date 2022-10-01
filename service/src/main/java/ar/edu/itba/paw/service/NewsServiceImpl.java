@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.exeptions.*;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
@@ -12,10 +9,13 @@ import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.ws.http.HTTPException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -32,6 +32,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public News create(News.NewsBuilder newsBuilder, String[] categories) {
         if(!userService.getRoles(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new)).contains(Role.JOURNALIST.getRole())){
             userService.addRole(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new),Role.JOURNALIST);
@@ -62,15 +63,21 @@ public class NewsServiceImpl implements NewsService {
         page = page <= 0 ? 1 : page;
 
         Long loggedUser = getLoggedUserId();
+        NewsOrder newsOrderObject;
 
-        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
+        try {
+            newsOrderObject = NewsOrder.valueOf(newsOrder);
+        }
+        catch (Exception e) {
+            throw new InvalidOrderException();
+        }
+        Category catObject = Category.getByValue(category);
         List<FullNews> ln;
-        if (category.equals("ALL")) {
+        if (catObject.equals(Category.ALL)) {
             totalPages = newsDao.getTotalPagesAllNews(query);
             page = Math.min(page, totalPages);
             ln = newsDao.getNews(page, query, newsOrderObject, loggedUser);
         } else {
-            Category catObject = Category.getByValue(category);
 
             if (catObject.equals(Category.FOR_ME)) {
                 totalPages = newsDao.getTodayNewsPageCount();
@@ -91,7 +98,14 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
         page = page <= 0 ? 1 : page;
-        NewsOrder newsOrderObject = NewsOrder.valueOf(newsOrder);
+        NewsOrder newsOrderObject;
+
+        try {
+            newsOrderObject = NewsOrder.valueOf(newsOrder);
+        }
+        catch (Exception e) {
+            throw new InvalidOrderException();
+        }
         int totalPages = 0;
 
         Optional<User> maybeUser = securityService.getCurrentUser();
@@ -149,6 +163,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public void setRating(News news, Rating rating) {
         Long loggedUser = getLoggedUserId();
 
@@ -156,6 +171,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public boolean toggleSaveNews(FullNews news, User user) {
 
         if (news.getLoggedUserParameters().isSaved()) {
@@ -171,10 +187,29 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public void deleteNews(News news) {
-        if(news.getCreatorId() != securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId())
-            throw new UserNotAuthorized();
         newsDao.deleteNews(news);
+    }
+
+    @Override
+    public Iterable<ProfileCategory> getProfileCategories(User user) {
+        Optional<User> currentUser =  securityService.getCurrentUser();
+        boolean isMyProfile = user.equals(currentUser.orElse(null));
+        return Arrays.stream(ProfileCategory.values()).filter(c -> {
+            if (!isMyProfile && c.equals(ProfileCategory.SAVED)) {
+                return false;
+            }
+            else if (c.equals(ProfileCategory.MY_POSTS) && !userService.getRoles(user).contains(Role.JOURNALIST)) {
+                return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<Category> getHomeCategories() {
+        return Arrays.stream(Category.values()).filter(c ->  c != Category.FOR_ME || securityService.getCurrentUser().isPresent()).collect(Collectors.toList());
     }
 
     @Override
@@ -190,6 +225,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public void addComment(News news, String comment) {
         User user = getLoggedUserOrThrowException();
         newsDao.addComment(user, news, comment);

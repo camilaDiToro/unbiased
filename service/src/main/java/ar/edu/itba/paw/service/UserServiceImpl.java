@@ -16,13 +16,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
@@ -35,6 +38,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Autowired
+
     public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
@@ -62,6 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User create(User.UserBuilder userBuilder) {
         if(userBuilder.getPass() != null){
             userBuilder.pass(passwordEncoder.encode(userBuilder.getPass()));
@@ -80,6 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public VerificationToken.Status verifyUserEmail(String token) {
         Optional<VerificationToken> mayBeBt = verificationTokenService.getToken(token);
         if(!mayBeBt.isPresent()){
@@ -98,6 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public VerificationToken.Status resendEmailVerification(String email) {
         Optional<User> mayBeUser = userDao.findByEmail(email);
         if(!mayBeUser.isPresent())
@@ -114,16 +121,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void addRole(User user, Role role) {
         roleDao.addRole(user.getId(), role);
     }
 
     @Override
-    public List<String> getRoles(User user) {
-        return roleDao.getRoles(user.getId());
+    public List<Role> getRoles(User user) {
+        return roleDao.getRoles(user.getId()).stream().map(Role::getRole).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public void updateProfile(User user, String username, Long imageId) {
         long id = user.getId();
         if(imageId!=null){
@@ -142,12 +151,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void followUser(User user) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         userDao.addFollow(myUser.getId(), user.getId());
     }
 
     @Override
+    @Transactional
     public void unfollowUser(User user) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         userDao.unfollow(myUser.getId(), user.getId());

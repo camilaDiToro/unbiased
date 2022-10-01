@@ -2,84 +2,48 @@
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 
 <html>
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
-<%@ include file="../../resources/head.jsp" %>
-<script src="<c:url value="/resources/upvote-script.js"/>"></script>
+<%@ include file="../../resources/jsp/head.jsp" %>
+<script src="<c:url value="/resources/js/upvote-script.js"/>"></script>
 <body>
 <c:set var="reports" value="${reportedNewsPage.content}"/>
 <div class="d-flex h-100 flex-column">
-<%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
-    <%@ include file="../../resources/navbar.jsp" %>
+    <%@ include file="../../resources/jsp/navbar.jsp" %>
     <div class="d-flex flex-column h-100">
         <div class="flex-grow-1 d-flex flex-row">
 
             <%--LEFT SIDE--%>
-                <div class=" w-25 d-flex flex-column border-right mt-4 m-3">
-<%--                <div class="card" style="width: 18rem; height: 12rem; margin-top: 4%" id="right-card">--%>
-
-<%--                    <img src="<c:url value="/resources/front-page-profile.png"/>" class="card-img-top" alt="...">--%>
-    <h3 class="text-secondary"><spring:message code="moderation.panel"/></h3>
-    <ul class="nav flex-column vertical-menu ">
-        <li class="nav-item">
-            <a class="nav-link selected" href="#"><spring:message code="moderation.reportedArticles"/></a>
-        </li>
-<%--        <li class="nav-item">--%>
-<%--            <a class="nav-link" href="#">Reported users</a>--%>
-<%--        </li>--%>
-<%--        <li class="nav-item">--%>
-<%--            <a class="nav-link" href="#">Reported comments</a>--%>
-<%--        </li>--%>
-
-    </ul>
-
-
-    </div>
+                <%@ include file="../../resources/jsp/moderation-left-side.jsp" %>
             <%--RIGHT SIDE--%>
-            <div class="d-flex w-75 flex-column">
-<%--                <div style="display: flex; flex-direction: column; width: 85%; margin: 0 auto ">--%>
-<%--                    <c:set var = "activeClasses" scope = "session" value = "bg-secondary active"/>--%>
-<%--                    <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>--%>
-<%--                    <ul class="my-4 nav bg-primary nav-pills text-light p-2 rounded-lg d-flex ">--%>
-<%--                        <c:forEach var="order" items="${orders}">--%>
-<%--                            <li class="nav-item">--%>
-<%--                                <a class="text-capitalize nav-link rounded-pill <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_news_detail/${newsId}/${order}">--%>
+            <div class="d-flex w-75 flex-column align-items-center">
 
-<%--                    </c:url>"><spring:message code="${order.interCode}"/></a>--%>
-<%--                            </li>--%>
-<%--                        </c:forEach>--%>
-
-<%--                    </ul>--%>
-<%--                </div>--%>
                 <div class="w-100 my-2">
                     <a  href="<c:url value="/admin/reported_news"/>">
-                        <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="width: 50px;">
-
+                        <%--<input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." class="w-50px">--%>
+                        <img class="svg-btn hover-hand back-btn mt-3" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..." data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> " />
                     </a>
                 </div>
-                <table class="table flex-grow-0">
-                    <thead>
-                    <tr>
-                        <th scope="col"><spring:message code="moderation.user"/></th>
-                        <th scope="col"><spring:message code="moderation.reason"/></th>
-                        <th scope="col"><spring:message code="moderation.date"/></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:set var="reports" value="${reportedNewsPage.content}"/>
-                    <c:forEach var="report" items="${reports}">
-                        <tr>
-                            <td><c:out value="${report.reporter}"/></td>
-                            <td><spring:message code="${report.reason.interCode}"/></td>
-                            <td><c:out value="${report.getFormattedDate(locale)}"/></td>
-                        </tr>
-                    </c:forEach>
+                <c:url value="/admin/add_admin" var="postUrl"/>
+                <div id="custom-form-group" class="m-2 w-50 max-w-750px ">
+                    <form:form modelAttribute="createAdminForm" action="${postUrl}" method="GET" cssClass="d-flex flex-column align-items-center">
 
-                    </tbody>
-                </table>
-                    <button data-toggle="modal" data-target="#binModal" class="btn btn-danger delete-btn"><spring:message code="moderation.delete"/></button>
-
+                        <div class="form-group m-2 w-100 p-3">
+                            <form:label cssClass="w-100 font-weight-bold" path="email"><spring:message code="moderation.makeUserAdmin"/> </form:label>
+                            <form:input placeholder="Email:" path="email" cssClass="form-control text-white w-100"/>
+                            <form:errors cssClass="text-danger mt-4" path="email" element="small"/>
+                            <c:if test="${addedAdmin}">
+                                <small class="text-success mt-4">
+                                    <spring:message code="moderation.admin.succesfull"/>
+                                </small>
+                            </c:if>
+                        </div>
+                        <button class="btn btn-info" type="submit"><spring:message code="moderation.add"/> </button>
+                    </form:form>
+                </div>
                 <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">

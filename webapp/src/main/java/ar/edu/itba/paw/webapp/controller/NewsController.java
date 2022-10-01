@@ -4,9 +4,9 @@ import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.webapp.auth.OwnerCheck;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
@@ -18,6 +18,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -37,21 +39,23 @@ public class NewsController {
     private final ImageService imageService;
     private final SecurityService securityService;
     private final AdminService adminService;
+    private final OwnerCheck ownerCheck;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
     @Autowired
-    public NewsController(final AdminService adminService, final NewsService newsService, final UserService userService, ImageService imageService, SecurityService ss){
+    public NewsController(final AdminService adminService, final NewsService newsService, final UserService userService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
         this.newsService = newsService;
         this.userService = userService;
         this.imageService = imageService;
         this.securityService = ss;
         this.adminService = adminService;
+        this.ownerCheck = ownerCheck;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
 
-
+    @PreAuthorize("@ownerCheck.checkIfCurrentUserIsOwner(#newsId)")
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
         News news = newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new);
@@ -63,7 +67,7 @@ public class NewsController {
     public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                    final BindingResult errors) {
         if (errors.hasErrors()) {
-            return showNews(newsId, reportNewsFrom, null,true, 1);
+            return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1);
         }
         adminService.reportNews(newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new), ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
@@ -73,7 +77,7 @@ public class NewsController {
     public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsForm,
                                     final BindingResult errors) {
         if (errors.hasErrors()) {
-            return showNews(newsId, null,commentNewsForm, false, 1);
+            return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1);
         }
         newsService.addComment(newsService.getOrThrowException(newsId).getNews(), commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId);
@@ -94,6 +98,8 @@ public class NewsController {
                 .withObject("fullNews", fullNews)
                 .withObject("hasReported", adminService.hasReported(news))
                 .withObject("reportReasons", ReportReason.values())
+                .withObject("reportNewsForm", reportNewsFrom)
+                .withObject("commentNewsForm", commentNewsFrom)
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("commentsPage", newsService.getComments(news,page))
