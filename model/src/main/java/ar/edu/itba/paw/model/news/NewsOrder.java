@@ -1,5 +1,8 @@
 package ar.edu.itba.paw.model.news;
 
+import ar.edu.itba.paw.model.admin.ReportOrder;
+import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
+
 public enum NewsOrder {
 
     TOP("TOP", "accesses desc", "order.top"),
@@ -26,5 +29,13 @@ public enum NewsOrder {
 
     public String getInterCode() {
         return interCode;
+    }
+
+    public static NewsOrder getByValue(String value){
+        try{
+            return NewsOrder.valueOf(value);
+        }catch (IllegalArgumentException e){
+            throw new InvalidOrderException();
+        }
     }
 }

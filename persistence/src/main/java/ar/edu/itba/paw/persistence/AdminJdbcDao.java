@@ -27,9 +27,6 @@ import java.util.Map;
 public class AdminJdbcDao implements AdminDao{
 
     private final JdbcTemplate jdbcTemplate;
-
-    private final NamedParameterJdbcTemplate namedJdbcTemplate;
-
     private final SimpleJdbcInsert jdbcReportInsert;
     private final SimpleJdbcInsert jdbcAdminInsert;
 
@@ -66,7 +63,6 @@ public class AdminJdbcDao implements AdminDao{
     @Autowired
     public AdminJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
-        namedJdbcTemplate = new NamedParameterJdbcTemplate(ds);
         jdbcReportInsert = new SimpleJdbcInsert(ds).withTableName("report");
         jdbcAdminInsert = new SimpleJdbcInsert(ds).withTableName("user_role");
     }

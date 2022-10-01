@@ -24,24 +24,6 @@ public enum ProfileCategory {
         return ordinal();
     }
 
-    public static ProfileCategory getById(long id) {
-        for (ProfileCategory c : ProfileCategory.values()) {
-            if (c.ordinal() == id) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    public static ProfileCategory getByInterCode(String description){
-        for (ProfileCategory c : ProfileCategory.values()) {
-            if (c.getInterCode().equals(description) ) {
-                return c;
-            }
-        }
-        return null;
-    }
-
     public static ProfileCategory getByValue(String value){
         try{
             return ProfileCategory.valueOf(value);
