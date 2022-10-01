@@ -66,6 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User create(User.UserBuilder userBuilder) {
         if(userBuilder.getPass() != null){
             userBuilder.pass(passwordEncoder.encode(userBuilder.getPass()));
@@ -84,6 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public VerificationToken.Status verifyUserEmail(String token) {
         Optional<VerificationToken> mayBeBt = verificationTokenService.getToken(token);
         if(!mayBeBt.isPresent()){
@@ -102,6 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public VerificationToken.Status resendEmailVerification(String email) {
         Optional<User> mayBeUser = userDao.findByEmail(email);
         if(!mayBeUser.isPresent())
@@ -118,6 +121,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void addRole(User user, Role role) {
         roleDao.addRole(user.getId(), role);
     }
@@ -128,6 +132,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateProfile(User user, String username, Long imageId) {
         long id = user.getId();
         if(imageId!=null){
@@ -146,12 +151,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void followUser(User user) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         userDao.addFollow(myUser.getId(), user.getId());
     }
 
     @Override
+    @Transactional
     public void unfollowUser(User user) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         userDao.unfollow(myUser.getId(), user.getId());

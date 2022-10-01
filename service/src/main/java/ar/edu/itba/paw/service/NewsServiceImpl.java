@@ -9,6 +9,7 @@ import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.ws.http.HTTPException;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public News create(News.NewsBuilder newsBuilder, String[] categories) {
         if(!userService.getRoles(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new)).contains(Role.JOURNALIST.getRole())){
             userService.addRole(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new),Role.JOURNALIST);
@@ -161,6 +163,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public void setRating(News news, Rating rating) {
         Long loggedUser = getLoggedUserId();
 
@@ -168,6 +171,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public boolean toggleSaveNews(FullNews news, User user) {
 
         if (news.getLoggedUserParameters().isSaved()) {
@@ -183,6 +187,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public void deleteNews(News news) {
         newsDao.deleteNews(news);
     }
@@ -220,6 +225,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public void addComment(News news, String comment) {
         User user = getLoggedUserOrThrowException();
         newsDao.addComment(user, news, comment);

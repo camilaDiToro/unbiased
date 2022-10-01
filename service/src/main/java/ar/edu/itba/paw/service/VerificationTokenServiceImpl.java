@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.persistence.VerificationTokenDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService{
     }
 
     @Override
+    @Transactional
     public VerificationToken newToken(long userId) {
         final String token = UUID.randomUUID().toString();
         return verificationTokenDao.createEmailToken(userId, token, LocalDateTime.now().plusDays(TOKEN_DURATION));
@@ -34,6 +36,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService{
     }
 
     @Override
+    @Transactional
     public void deleteEmailToken(User user) {
         verificationTokenDao.deleteEmailToken(user);
     }
