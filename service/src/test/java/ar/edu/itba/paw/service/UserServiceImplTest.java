@@ -65,6 +65,7 @@ public class UserServiceImplTest {
 
         try{
             User u = userService.create(USER_BUILDER);
+
             assertEquals(u.getId(), mockUser.getId());
             assertEquals(u.getEmail(), mockUser.getEmail());
         }
@@ -80,7 +81,7 @@ public class UserServiceImplTest {
             userService.resendEmailVerification("invalid@mail.com");
         }
         catch (UserNotFoundException e){
-            fail("Should have thrown UserNotFoundException");
+            fail("unexpected error during operation resend email");
         }
     }
 
@@ -88,16 +89,19 @@ public class UserServiceImplTest {
     @Test
     public void testVerifyUserMail(){
         VerificationToken token = new VerificationToken(1, "token", mockUser.getId(), DATE);
-
         Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
         Mockito.when(mockVerifDao.getEmailToken(Mockito.anyString())).thenReturn((Optional.of(token)));
         Mockito.doNothing().when(mockUserDao).verifyEmail((Mockito.eq(mockUser.getId())));
 
-        User user = userService.create(USER_BUILDER);
-        VerificationToken.Status status = userService.verifyUserEmail("token");
+        try {
+            User user = userService.create(USER_BUILDER);
+            VerificationToken.Status status = userService.verifyUserEmail("token");
 
-        assertEquals(user.getStatus(), mockUser.getStatus());
-        Mockito.verify(mockUserDao).verifyEmail(Mockito.anyLong());
+            assertEquals(user.getStatus(), mockUser.getStatus());
+            Mockito.verify(mockUserDao).verifyEmail(Mockito.anyLong());
+        }catch (Exception e){
+            fail("unexpected error during operation verify mail");
+        }
     }
 
     @Test
@@ -105,11 +109,16 @@ public class UserServiceImplTest {
         Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
         Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(mockUser), Mockito.eq(USERNAME));
 
-        User user = userService.create(USER_BUILDER);
-        userService.updateProfile(user, USERNAME, null);
+        try {
+            User user = userService.create(USER_BUILDER);
+            userService.updateProfile(user, USERNAME, null);
 
-        assertEquals(user.getUsername(), mockUser.getUsername());
-        Mockito.verify(mockUserDao).updateUsername(Mockito.any(User.class),Mockito.anyString());
+            assertEquals(user.getUsername(), mockUser.getUsername());
+            Mockito.verify(mockUserDao).updateUsername(Mockito.any(User.class),Mockito.anyString());
+        }
+        catch (Exception e) {
+            fail("unexpected error during operation update userprofile");
+        }
     }
 
     /*@Test
