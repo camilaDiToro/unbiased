@@ -166,8 +166,9 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        boolean addCategory = categoryDao.addCategoryToNews(news.getNewsId(), Category.SPORTS);
-        List<FullNews> newsList = newsDao.getNewsByCategory(PAGE_SIZE, Category.SPORTS, NewsOrder.NEW, 1L);
+        Optional <News> optionalFullNews = newsDao.getSimpleNewsById(news.getNewsId());
+        boolean addCategory = categoryDao.addCategoryToNews(optionalFullNews.get().getNewsId(), Category.SPORTS);
+        List<FullNews> newsList = newsDao.getNewsByCategory(PAGE_SIZE, Category.SPORTS, NewsOrder.NEW, null);
 
         if(addCategory)
             assertEquals(1, newsList.size());
@@ -253,8 +254,8 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        newsDao.saveNews(news, user);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
+        newsDao.saveNews(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
 
         optionalFullNews.ifPresent(opt -> assertTrue(optionalFullNews.get().getLoggedUserParameters().isSaved()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
@@ -286,7 +287,7 @@ public class NewsJdbcDaoTest {
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
 
         newsDao.saveNews(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
-        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, optionalFullNews.get().getUser().getId(), NewsOrder.NEW, null); //TODO
+        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, optionalFullNews.get().getUser().getId(), NewsOrder.NEW, null);
 
         assertEquals(1, savedList.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
