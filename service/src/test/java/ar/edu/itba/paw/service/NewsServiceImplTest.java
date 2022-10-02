@@ -1,8 +1,12 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
+import ar.edu.itba.paw.persistence.UserDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import javax.jws.soap.SOAPBinding;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewsServiceImplTest {
@@ -21,6 +27,8 @@ public class NewsServiceImplTest {
 
     @Mock
     private User mockUser;
+    @Mock
+    private UserDao mockUserDao;
     @Mock
     private NewsDao mockNewsDao;
     @Mock
@@ -50,4 +58,23 @@ public class NewsServiceImplTest {
         //Mockito.verify(mockNewsDao).create(newsBuilder);
     }
 
+    @Test
+    public void testGetNewsForUserProfile(){
+        User.UserBuilder USER_BUILDER = new User.UserBuilder(EMAIL);
+        User us = mockUserDao.create(USER_BUILDER);
+        Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
+
+        News.NewsBuilder NEWS_BUILDER = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
+        News mnews = new News(NEWS_BUILDER);
+
+        String[] categories = new String[0];
+        Mockito.when(mockNewsDao.create(Mockito.eq(NEWS_BUILDER))).thenReturn(mnews);
+
+        News news = newsService.create(NEWS_BUILDER, categories);
+        User user = mockUserDao.getUserById(news.getCreatorId()).get();
+        Page<FullNews> fullNewsPage = newsService.getNewsForUserProfile(1, "NEW", user, "myPosts");
+
+        Assert.assertEquals(1, fullNewsPage.getTotalPages());
+        //Mockito.verify(mockNewsDao).create(newsBuilder);
+    }
 }

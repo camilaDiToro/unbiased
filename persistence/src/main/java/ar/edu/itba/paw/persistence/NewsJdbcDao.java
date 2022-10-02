@@ -165,12 +165,12 @@ public class NewsJdbcDao implements NewsDao {
                 .addValue("query", "%" + query.toLowerCase() + "%");
         if (loggedUser != null) {
             return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
-                            "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM full_news NATURAL LEFT JOIN logged_params " +
+                            "SELECT news_id, full_news.*, upvote, saved_date, :loggedId AS logged_user FROM full_news NATURAL LEFT JOIN logged_params " +
                             "WHERE LOWER(title) LIKE :query ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                     params, FULLNEWS_ROW_MAPPER);
 
         }
-        return namedJdbcTemplate.query("SELECT *,null as logged_user FROM full_news WHERE LOWER(title) LIKE :query ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+        return namedJdbcTemplate.query("SELECT full_news.*,null as logged_user FROM full_news WHERE LOWER(title) LIKE :query ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                 params, FULLNEWS_ROW_MAPPER);
     }
 
@@ -185,7 +185,7 @@ public class NewsJdbcDao implements NewsDao {
         Optional<FullNews> news;
         if (loggedUser != null) {
             news = jdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = ?) " +
-                            "SELECT full_news.*, upvote, saved_date, ? AS logged_user FROM full_news NATURAL LEFT JOIN logged_params WHERE news_id = ?",
+                            "SELECT news_id, full_news.*, upvote, saved_date, ? AS logged_user FROM full_news NATURAL LEFT JOIN logged_params WHERE news_id = ?",
                     new Object[]{loggedUser, loggedUser, id}, FULLNEWS_ROW_MAPPER).stream().findFirst();
 
         } else {
@@ -214,11 +214,11 @@ public class NewsJdbcDao implements NewsDao {
                 .addValue("category", category.getId());
         if (loggedUser != null) {
             return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
-                            "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM full_news NATURAL JOIN news_category NATURAL LEFT JOIN logged_params WHERE category_id = :category" +
+                            "SELECT news_id, full_news.*, upvote, saved_date, :loggedId AS logged_user FROM full_news NATURAL JOIN news_category NATURAL LEFT JOIN logged_params WHERE category_id = :category" +
                             " ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                     params, FULLNEWS_ROW_MAPPER);
         }
-        return namedJdbcTemplate.query("SELECT *, null as logged_user FROM full_news NATURAL JOIN news_category WHERE category_id = :category ORDER BY " + ns.getQuery() +
+        return namedJdbcTemplate.query("SELECT news_id, full_news.*, null as logged_user FROM full_news NATURAL JOIN news_category WHERE category_id = :category ORDER BY " + ns.getQuery() +
                         " LIMIT :pageSize OFFSET :offset ",
                 params, FULLNEWS_ROW_MAPPER);
     }
@@ -231,6 +231,7 @@ public class NewsJdbcDao implements NewsDao {
     }
 
     @Override
+
     public void deleteNews(News news) {
         jdbcTemplate.update("DELETE FROM news WHERE news_id = ?", news.getNewsId());
     }
@@ -318,16 +319,16 @@ public class NewsJdbcDao implements NewsDao {
                 .addValue("date", Timestamp.valueOf(LocalDateTime.now().minusDays(1)));
 
         List<FullNews> fullNews = namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :userId) " +
-                        "SELECT full_news.*, upvote, saved_date, :userId AS logged_user, 1 as priority FROM full_news JOIN follows " +
+                        "SELECT news_id, full_news.*, upvote, saved_date, :userId AS logged_user, 1 as priority FROM full_news JOIN follows " +
                         "ON (:userId = follows.user_id AND follows.follows=full_news.creator ) " +
                         "NATURAL LEFT JOIN logged_params WHERE full_news.creation_date >= :date " +
                         "UNION " +
-                        "(SELECT full_news.*, upvote, saved_date, :userId AS logged_user, 2 as priority FROM full_news " +
+                        "(SELECT news_id, full_news.*, upvote, saved_date, :userId AS logged_user, 2 as priority FROM full_news " +
                         "NATURAL LEFT JOIN logged_params WHERE full_news.creation_date >= :date " +
                         "AND creator IN (SELECT creator FROM news NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)"  +
                         "AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)) " +
                         "UNION " +
-                        "(SELECT full_news.*, upvote, saved_date, :userId AS logged_user, 3 as priority FROM full_news " +
+                        "(SELECT news_id, full_news.*, upvote, saved_date, :userId AS logged_user, 3 as priority FROM full_news " +
                         "NATURAL LEFT JOIN logged_params WHERE full_news.creation_date >= :date " +
                         "AND creator NOT IN (SELECT creator FROM news NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId) " +
                         "AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId))" +
