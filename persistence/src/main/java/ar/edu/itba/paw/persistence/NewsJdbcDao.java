@@ -271,8 +271,9 @@ public class NewsJdbcDao implements NewsDao {
 
         if (loggedUser != null) {
             return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
-                            "SELECT news_id, full_news.*, upvote, saved_date, :loggedId AS logged_user FROM upvotes NATURAL JOIN full_news NATURAL LEFT JOIN logged_params " +
-                            " WHERE user_id = :userId AND upvote = :upvote " +
+                            "SELECT upvotes.news_id, full_news.*, logged_params.upvote, saved_date, :loggedId AS logged_user FROM upvotes NATURAL JOIN full_news " +
+                            "LEFT JOIN logged_params ON logged_params.news_id = full_news.news_id" +
+                            " WHERE upvotes.user_id = :userId AND upvotes.upvote = :upvote " +
                             "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                     params, FULLNEWS_ROW_MAPPER);
         }
