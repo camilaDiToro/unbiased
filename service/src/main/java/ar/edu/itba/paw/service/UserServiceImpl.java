@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.user.Role;
+import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
+import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.user.UserStatus;
-import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
@@ -187,4 +185,22 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Override
+    public ProfileCategory getProfileCategory(String category, User profile) {
+        ProfileCategory cat;
+        try {
+            cat = ProfileCategory.valueOf(category);
+        } catch(IllegalArgumentException e) {
+            throw new InvalidFilterException();
+        }
+        if (!getRoles(profile).contains(Role.JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS))
+            throw new InvalidFilterException();
+
+        if (cat.equals(ProfileCategory.SAVED) &&
+                !(securityService.getCurrentUser().isPresent() &&
+                securityService.getCurrentUser().get().equals(profile)))
+            throw new InvalidFilterException();
+
+        return cat;
+    }
 }

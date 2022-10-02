@@ -14,7 +14,7 @@
     <h1 class="logo mb-4 text-info">unbiased</h1>
     <h1 class="h2 mb-2 font-weight-normal text-light"><spring:message code="${errorMsg}"/></h1>
 
-    <div>
+    <div class="mb-3">
         <form:label path="email" cssClass="sr-only"><spring:message code="register.mail.address" var="mailAddressMsg"/></form:label>
         <form:input type="text" path="email"  cssClass="form-control" placeholder="Email address" required="${mailAddressMsg}" autofocus=""/>
         <form:errors path="email" element="p" cssClass="text-danger"/>

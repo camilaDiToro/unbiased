@@ -25,7 +25,7 @@
                 <div>
                     <spring:message code="navbar.search"  var="searchPlaceholder" />
                     <input style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white"
-                           type="search" placeholder="${searchPlaceholder}" id="query" name="query"/>
+                           type="search" placeholder="${searchPlaceholder}" id="query" name="query" value="${param.query}"/>
                 </div>
 
             </form>

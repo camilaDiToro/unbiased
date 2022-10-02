@@ -93,6 +93,8 @@ DROP VIEW IF EXISTS news_stats;
 
 DROP VIEW IF EXISTS user_positivity;
 
+DROP VIEW IF EXISTS is_journalist;
+
 
 CREATE OR REPLACE VIEW news_stats AS
             SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, news_id FROM upvotes GROUP BY news_id;
@@ -110,6 +112,10 @@ SELECT upvote, saved_date, logged_news_parameters.logged_user, full_news.news_id
 
 CREATE OR REPLACE VIEW user_positivity AS
 SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, creator AS user_id FROM upvotes NATURAL JOIN news GROUP BY creator;
+
+CREATE OR REPLACE VIEW is_journalist AS
+SELECT user_id, true as is_journalist FROM user_role where user_role = 'ROLE_JOURNALIST';
+
 
 CREATE TABLE IF NOT EXISTS follows(
                                       user_id           INTEGER     NOT NULL,

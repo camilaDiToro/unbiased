@@ -25,6 +25,13 @@ public class ErrorController {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @RequestMapping(value = "/400/invalid_filter")
+    public ModelAndView error400InvalidFilter() {
+        ModelAndView mav = new ModelAndView("errors/invalid_filter");
+        return mav;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @RequestMapping(value = "/400/invalid_order")
     public ModelAndView error400InvalidOrder() {
         ModelAndView mav = new ModelAndView("errors/invalid_order");

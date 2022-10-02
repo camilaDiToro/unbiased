@@ -34,7 +34,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public News create(News.NewsBuilder newsBuilder, String[] categories) {
-        if(!userService.getRoles(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new)).contains(Role.JOURNALIST.getRole())){
+        if(!userService.getRoles(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new)).contains(Role.JOURNALIST)){
             userService.addRole(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new),Role.JOURNALIST);
         }
 

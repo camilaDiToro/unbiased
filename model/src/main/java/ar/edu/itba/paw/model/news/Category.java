@@ -2,9 +2,12 @@ package ar.edu.itba.paw.model.news;
 
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public enum Category {
-    FOR_ME("categories.forMe"),
-    ALL("categories.all"),
+    FOR_ME("categories.forMe", false),
+    ALL("categories.all", false),
 
 
     TOURISM("categories.tourism"),
@@ -15,9 +18,15 @@ public enum Category {
     TECHNOLOGY("categories.technology");
 
     private final String interCode;
+    private final boolean trueCategory;
+
+    Category(String interCode, boolean trueCategory) {
+        this.interCode = interCode;
+        this.trueCategory = trueCategory;
+    }
 
     Category(String interCode) {
-        this.interCode = interCode;
+        this(interCode, true);
     }
 
     public String getInterCode() {
@@ -55,4 +64,11 @@ public enum Category {
         }
     }
 
+    public boolean isTrueCategory() {
+        return trueCategory;
+    }
+
+    public static Iterable<Category> getTrueCategories() {
+        return Arrays.stream(values()).filter(c -> c.isTrueCategory()).collect(Collectors.toList());
+    }
 }

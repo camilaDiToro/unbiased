@@ -8,6 +8,7 @@ import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.service.*;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -104,18 +106,29 @@ public class UserController {
                                 @PathVariable("newsOrder") String newsOrder,
                                 @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
                                 @RequestParam(name = "page", defaultValue = "1") int page,
-                                @RequestParam(name = "category", defaultValue = "MY_POSTS") String category,
+                                @RequestParam(name = "category", defaultValue = "") String category,
                                 @RequestParam(name = "hasErrors", defaultValue = "false") boolean hasErrors) {
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
-        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, category);
+
+        Iterable<ProfileCategory> profileCategoryList = newsService.getProfileCategories(profileUser);
+        ProfileCategory catObject;
+        if (category.equals(""))
+            catObject = profileCategoryList.iterator().next();
+        else {
+            catObject = userService.getProfileCategory(category, profileUser);
+        }
+
+        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
+
+
 
 
         MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", newsOrder)
-                .withObject("categories", newsService.getProfileCategories(profileUser))
+                .withObject("categories", profileCategoryList)
                 .withObject("newsPage", fullNews)
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
@@ -126,12 +139,10 @@ public class UserController {
                    mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
         }
 
-        try {
-            mavBuilder.withObject("category", ProfileCategory.valueOf(category));
-        } catch(IllegalArgumentException e) {
-            throw new InvalidCategoryException();
-        }
+        mavBuilder.withObject("category", catObject);
+
         return mavBuilder.build();
+
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
