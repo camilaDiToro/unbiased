@@ -231,7 +231,6 @@ public class NewsJdbcDao implements NewsDao {
     }
 
     @Override
-
     public void deleteNews(News news) {
         jdbcTemplate.update("DELETE FROM news WHERE news_id = ?", news.getNewsId());
     }

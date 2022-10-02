@@ -126,7 +126,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <c:url value="/news/${newsId}/report" var="postUrl"/>
-                                    <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
+                                    <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-100">
 
                                     <div class="input-group">
 

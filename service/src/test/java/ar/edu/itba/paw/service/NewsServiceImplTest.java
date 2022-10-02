@@ -45,7 +45,6 @@ public class NewsServiceImplTest {
 
     @Test
     public void testCreate(){
-
         News.NewsBuilder newsBuilder = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
         News mnews = new News(newsBuilder);
         String[] categories = new String[0];
