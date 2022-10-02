@@ -90,9 +90,42 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
+
         NewsOrder newsOrderObject = NewsOrder.getByValue(newsOrder);
+        int totalPages = 0;
         Long loggedUserId = securityService.getCurrentUser().map(User::getId).orElse(null);
+        long userId = user.getId();
+
+        Page<FullNews> ln = null;
         ProfileCategory pc = ProfileCategory.getByValue(profileCategory);
+        /*switch (pc) {
+
+            case SAVED:
+                //totalPages = newsDao.getTotalPagesNewsFromUserSaved(page, user);
+                ln = newsDao.getSavedNews(page, user, newsOrderObject, loggedUserId);
+
+
+                break;
+
+            case UPVOTED:
+                //totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, user);
+                ln = newsDao.getNewsUpvotedByUser(page, user, newsOrderObject, loggedUserId);
+
+
+                break;
+
+            case DOWNVOTED:
+               // totalPages = newsDao.getTotalPagesNewsFromUserUpvoted(page, user);
+                ln = newsDao.getNewsDownvotedByUser(page, user, newsOrderObject, loggedUserId);
+
+                break;
+
+            case MY_POSTS:
+                //totalPages = newsDao.getTotalPagesNewsFromUser(page, user);
+                ln = newsDao.getAllNewsFromUser(page, user, newsOrderObject, loggedUserId);
+
+        }*/
+
         return newsDao.getNewsFromProfile(page, user, newsOrderObject, loggedUserId, pc);
     }
 

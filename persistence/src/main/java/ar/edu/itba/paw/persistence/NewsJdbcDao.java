@@ -345,7 +345,7 @@ public class NewsJdbcDao implements NewsDao {
 
 
 
-    private Page<FullNews> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
+    Page<FullNews> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
 
         page = Math.max(page, 1);
         int totalPages = getTotalPagesNewsFromUser(page, user);
@@ -371,7 +371,7 @@ public class NewsJdbcDao implements NewsDao {
         return new Page<>(ln,page,totalPages);
     }
 
-    private Page<FullNews> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser) {
+     Page<FullNews> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser) {
 
         page = Math.max(page, 1);
         int totalPages = getTotalPagesNewsFromUserSaved(page, user);
@@ -434,25 +434,25 @@ public class NewsJdbcDao implements NewsDao {
         return new Page<>(ln, page, totalPages);
     }
 
-    private Page<FullNews> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
+    Page<FullNews> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
         return getNewsWithRatingFromUser(page, user, ns, loggedUser, true);
     }
 
-    private Page<FullNews> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
+    Page<FullNews> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
         return getNewsWithRatingFromUser(page, user, ns, loggedUser, false);
     }
 
-    private int getTotalPagesNewsFromUser(int page, User user) {
+    int getTotalPagesNewsFromUser(int page, User user) {
         return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news WHERE creator = ?",
                 new Object[]{user.getId()}, Integer.class),PROFILE_PAGE_SIZE);
     }
 
-    private int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
+    int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
         return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news NATURAL JOIN upvotes WHERE user_id = ? AND upvote = ?",
                 new Object[]{userId, upvoted}, Integer.class),PROFILE_PAGE_SIZE);
     }
 
-    private int getTotalPagesNewsFromUserSaved(int page, User user) {
+    int getTotalPagesNewsFromUserSaved(int page, User user) {
         return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS newsCount FROM news NATURAL JOIN saved_news WHERE user_id = ?",
                 new Object[]{user.getId()}, Integer.class),PROFILE_PAGE_SIZE);
     }
