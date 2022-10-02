@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
+import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.Role;
@@ -87,9 +88,10 @@ public class AdminJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, REPORT_TABLE);
 
         News news = getMockNews();
-        adminDao.reportNews(news, 1L, ReportReason.LIE);
+        Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
+        adminDao.reportNews(optionalNews.get(), 1L, ReportReason.LIE);
 
-        assertTrue(adminDao.hasReported(news, 1L));
+        optionalNews.ifPresent(opt -> assertTrue(adminDao.hasReported(optionalNews.get(), 1L)));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
     }
 
@@ -98,10 +100,11 @@ public class AdminJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, REPORT_TABLE);
 
         News news = getMockNews();
-        adminDao.reportNews(news, 1L, ReportReason.LIE);
+        Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
+        adminDao.reportNews(optionalNews.get(), 1L, ReportReason.LIE);
         Page<ReportedNews> reportList = adminDao.getReportedNews(PAGE_SIZE, ReportOrder.REP_DATE_DESC);
 
-        assertEquals(PAGE_SIZE, reportList.getTotalPages());
+        optionalNews.ifPresent(opt -> assertEquals(PAGE_SIZE, reportList.getTotalPages()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
     }
 
@@ -110,10 +113,11 @@ public class AdminJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, REPORT_TABLE);
 
         News news = getMockNews();
-        adminDao.reportNews(news, 1L, ReportReason.LIE);
-        Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(PAGE_SIZE, news);
+        Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
+        adminDao.reportNews(optionalNews.get(), 1L, ReportReason.LIE);
+        Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(PAGE_SIZE, optionalNews.get());
 
-        assertEquals(ReportReason.LIE, reportList.getContent().get(0).getReason());
+        optionalNews.ifPresent(opt -> assertEquals(ReportReason.LIE, reportList.getContent().get(0).getReason()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
     }
 }

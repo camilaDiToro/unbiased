@@ -131,14 +131,10 @@ public class UserServiceImplTest {
 
     @Test
     public void testAddRole(){
-        List<String> listRole = new ArrayList<>();
         Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
-        //Mockito.doNothing().when(mockRoleDao).addRole(Mockito.eq(mockUser.getId()), Role.JOURNALIST);
-        //Mockito.when(mockRoleDao.getRoles(Mockito.eq(mockUser.getId()))).thenReturn(listRole);
 
         try{
             User user = userService.create(USER_BUILDER);
-            //User optionalUser = userService.getUserById(user.getId()).get();
             userService.addRole(user, Role.JOURNALIST);
             List<Role> roleList = userService.getRoles(user);
 
