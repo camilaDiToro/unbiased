@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.constraints;
 
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 

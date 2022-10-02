@@ -12,7 +12,8 @@
   <link href="<c:url value="/resources/css/bootstrap.min.css"/>" rel="stylesheet">
   <c:if test="${signInOrCreate}">
     <link href="<c:url value="/resources/css/signin.css"/>" rel="stylesheet">
-
+    <script src="<c:url value="/resources/js/show_pwd.js"/>"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </c:if>
   <link href="<c:url value="/resources/css/custom.css"/>" rel="stylesheet">
 
