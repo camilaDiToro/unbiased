@@ -9,6 +9,9 @@
 <body class="text-center">
 <c:url value="/login" var="loginUrl" />
 
+<script>
+
+</script>
 <form class="form-signin" action="${loginUrl}" method="post">
 
     <h1 id="title-log" class="logo mb-4">
@@ -22,10 +25,11 @@
             <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
             <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
         </div>
-        <div class="mt-1 d-flex">
+        <div class="mt-1 d-flex justify-content-center align-items-center position-relative">
             <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/lock-svgrepo-com.svg"/>" alt="..."/>
             <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
-            <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
+            <input name="password" type="password" id="password" class="form-control h-fit mb-1" placeholder="${passwordMsg}">
+            <i class="fa fa-eye hover-hand position-absolute pwd-icon"  onclick="myFunction(this)"></i>
         </div>
     <c:if test="${param.error}">
         <div class="text-danger text-nowrap form-text d-inline-block">
