@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +77,7 @@ public class AdminJdbcDao implements AdminDao{
         final Map<String, Object> reportData = new HashMap<>();
         reportData.put("news_id", news.getNewsId());
         reportData.put("user_id", loggedUser);
-        reportData.put("report_date", LocalDateTime.now());
+        reportData.put("report_date", Timestamp.valueOf(LocalDateTime.now()));
         reportData.put("reason", reportReason.getDescription());
         jdbcReportInsert.execute(reportData);
     }

@@ -7,7 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,6 +18,9 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -254,8 +259,28 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
-        newsDao.saveNews(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
+//        ResultSet resultSet = jdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = 1) " +
+//                "SELECT t.*, null AS logged_user FROM (SELECT * from full_news NATURAL LEFT JOIN logged_params) AS t", new ResultSetExtractor<ResultSet>() {
+//            @Override
+//            public ResultSet extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+//                ResultSetMetaData rsmd = resultSet.getMetaData();
+//                int columnsNumber = rsmd.getColumnCount();
+//                while (resultSet.next()) {
+//                    for (int i = 1; i <= columnsNumber; i++) {
+//                        if (i > 1) System.out.print(",  ");
+//                        String columnValue = resultSet.getString(i);
+//                        System.out.print(rsmd.getColumnName(i) + " ");
+//                    }
+//                    System.out.println("");
+//                }
+//                return resultSet;
+//            }
+//        });
+
+        newsDao.saveNews(news, user);
+
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), user.getId());
+
 
         optionalFullNews.ifPresent(opt -> assertTrue(optionalFullNews.get().getLoggedUserParameters().isSaved()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
