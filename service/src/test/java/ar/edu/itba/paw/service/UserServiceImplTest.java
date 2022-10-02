@@ -1,12 +1,12 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.VerificationTokenDao;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +16,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
-
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @Transactional
@@ -27,8 +29,7 @@ public class UserServiceImplTest {
     private static final String EMAIL = "user@mail.com";
     private static final String PASS = "userpass";
     private static final LocalDateTime DATE = LocalDateTime.now().plusDays(1);
-    //static User.UserBuilder usBuilderTest = new User.UserBuilder(EMAIL);
-    //private static final User testUser = new User(usBuilderTest);
+    private static User.UserBuilder USER_BUILDER = new User.UserBuilder(EMAIL);
     @Mock
     private UserDao mockUserDao;
     @Mock
@@ -49,80 +50,114 @@ public class UserServiceImplTest {
     private SecurityService mockSecurityService;
 
     @InjectMocks
-    private UserServiceImpl userService = Mockito.mock(UserServiceImpl.class);
+    private UserServiceImpl userService;
             //new UserServiceImpl(mockUserDao, mockPasswordEncoder, mockEmailService, mockVerifService, mockRoleDao, mockImageService, mockSecurityService);
 
+    private VerificationTokenService verificationTokenService;
     @Before
     public void setTest() {
         mockUser = new User.UserBuilder(EMAIL).build();
     }
 
     @Test
-    public void testCreate() throws Exception {
-        User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
-        Mockito.when(mockPasswordEncoder.encode(PASS)).thenReturn(PASS);
+    public void testCreate(){
+        Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
 
-        User user = userService.create(usBuilder);
+        try{
+            User u = userService.create(USER_BUILDER);
 
-        Assert.assertNotNull(user);
-        Assert.assertEquals(mockUser.getUsername(), user.getUsername());
-        Assert.assertEquals(mockUser.getEmail(), user.getEmail());
-        Assert.assertEquals(mockUser.getPass(), user.getPass());
-        Mockito.verify(mockUserDao).create(usBuilder);
+            assertEquals(u.getId(), mockUser.getId());
+            assertEquals(u.getEmail(), mockUser.getEmail());
+        }
+        catch ( UserNotFoundException e){
+            fail("unexpected error during operation create user");
+        }
     }
 
     @Test
-    public void testFindByEmail(){
-        User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
-        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(mockUser));
-
-        User user = userService.create(usBuilder);
-
-        Assert.assertNotNull(user);
-        Assert.assertEquals(user.getEmail(), mockUser.getEmail());
+    public void testResendUserVerificationInvalidEmail() {
+        Mockito.when(mockUserDao.findByEmail(Mockito.eq("invalid@mail.com"))).thenThrow(new UserNotFoundException());
+        try{
+            userService.resendEmailVerification("invalid@mail.com");
+        }
+        catch (UserNotFoundException e){
+            fail("unexpected error during operation resend email");
+        }
     }
 
-    @Test
-    public void testFindByUsername() {
-        User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
-        Mockito.when(mockUserDao.findByUsername(Mockito.eq(USERNAME))).thenReturn(Optional.of(mockUser));
-        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(mockUser), Mockito.eq(USERNAME));
-
-        User user = userService.create(usBuilder);
-
-        Assert.assertNotNull(user);
-        Assert.assertEquals(user.getUsername(), mockUser.getUsername());
-    }
 
     @Test
     public void testVerifyUserMail(){
-        User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
         VerificationToken token = new VerificationToken(1, "token", mockUser.getId(), DATE);
-
-        Mockito.lenient().when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
-        Mockito.when(mockVerifDao.getEmailToken(Mockito.anyString())).thenReturn((Optional.of(token)));
+        Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
+        //Mockito.when(mockVerifDao.getEmailToken(Mockito.anyString())).thenReturn((Optional.of(token)));
         Mockito.doNothing().when(mockUserDao).verifyEmail((Mockito.eq(mockUser.getId())));
 
-        userService.verifyUserEmail("token");
+        try {
+            User user = userService.create(USER_BUILDER);
+            Optional<VerificationToken> mayBeBt = verificationTokenService.getToken("token");
+            VerificationToken vt = mayBeBt.get();
+            User us = mockUserDao.getUserById(vt.getUserId()).get();
+            mockUserDao.verifyEmail(us.getId());
+            VerificationToken.Status status = userService.verifyUserEmail(mayBeBt.get().getToken());
 
-        Assert.assertEquals(mockUser.getStatus(), UserStatus.UNREGISTERED);
-        //Mockito.verify(mockUserDao).verifyEmail(testUser.getId());
+
+            assertEquals(VerificationToken.Status.SUCCESFFULLY_VERIFIED, status);
+            Mockito.verify(mockUserDao).verifyEmail(Mockito.anyLong());
+        }catch (Exception e){
+            fail("unexpected error during operation verify mail");
+        }
     }
 
     @Test
     public void testUpdateProfile() {
-        User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        Mockito.when(mockUserDao.create(Mockito.eq(usBuilder))).thenReturn(mockUser);
+        Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
         Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(mockUser), Mockito.eq(USERNAME));
 
-        userService.updateProfile(mockUser, USERNAME, null);
+        try {
+            User user = userService.create(USER_BUILDER);
+            userService.updateProfile(user, USERNAME, null);
 
-        Assert.assertEquals(mockUser.getUsername(), USERNAME);
-        //Mockito.verify(mockUserDao).updateUsername(Mockito.eq(testUser.getId()),Mockito.anyString());
+            assertEquals(user.getUsername(), mockUser.getUsername());
+            Mockito.verify(mockUserDao).updateUsername(Mockito.any(User.class),Mockito.anyString());
+        }
+        catch (Exception e) {
+            fail("unexpected error during operation update userprofile");
+        }
     }
+
+    @Test
+    public void testAddRole(){
+        List<String> listRole = new ArrayList<>();
+        Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
+        //Mockito.doNothing().when(mockRoleDao).addRole(Mockito.eq(mockUser.getId()), Role.JOURNALIST);
+        //Mockito.when(mockRoleDao.getRoles(Mockito.eq(mockUser.getId()))).thenReturn(listRole);
+
+        try{
+            User user = userService.create(USER_BUILDER);
+            //User optionalUser = userService.getUserById(user.getId()).get();
+            userService.addRole(user, Role.JOURNALIST);
+            List<Role> roleList = userService.getRoles(user);
+
+            assertEquals(roleList.size(), 1);
+        }
+        catch ( UserNotFoundException e){
+            fail("unexpected error during operation create user");
+        }
+    }
+    /*
+    @Test
+    public void testVerifyAccount(){
+        VerificationToken token = new VerificationToken("token", mockUser, LocalDate.now().plusDays(2));
+        when(mockVerifDao.getTokenByStringValue(Mockito.anyString())).thenReturn((Optional.of(token)));
+        Mockito.doNothing().when(mockVerifDao).removeTokenByUserId(Mockito.any(User.class));
+
+        userService.verifyAccount("token");
+        verify(mockRoleService).addRole(mockUser, Role.VERIFIED);
+        verify(mockRoleService).removeRole(mockUser, Role.UNVERIFIED);
+    }
+     */
+
 
     /*@Test
     public void testCreateUser(){

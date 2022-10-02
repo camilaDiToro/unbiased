@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.persistence.VerificationTokenDao;
+import jdk.nashorn.internal.parser.Token;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -39,13 +41,17 @@ public class VerificationTokenServiceImplTest {
 
     @Test
     public void testCreateToken() {
-        Mockito.when(mockverificationDao.createEmailToken(Mockito.eq(mockUser.getId()), Mockito.eq(TOKEN), Mockito.eq(DATE)))
+        Mockito.when(mockverificationDao.createEmailToken(Mockito.anyLong(), Mockito.anyString(), Mockito.any()))
                 .thenReturn(mockVT);
 
-        VerificationToken token = tokenService.newToken(mockUser.getId());
+        try {
+            VerificationToken token = tokenService.newToken(mockVT.getUserId());
+            Assert.assertEquals(TOKEN, token.getToken());
+        }
+        catch (Exception e){
+            Assert.fail("unexpected error during operation create token");
 
-        Assert.assertNotNull(token);
-        Assert.assertEquals(TOKEN, token.getToken());
+        }
     }
 
     @Test
@@ -54,20 +60,26 @@ public class VerificationTokenServiceImplTest {
                 .thenReturn(mockVT);
         Mockito.when(mockverificationDao.getEmailToken(Mockito.eq(TOKEN))).thenReturn(Optional.of(mockVT));
 
-        Optional<VerificationToken> token = tokenService.getToken(TOKEN);
-
-        Assert.assertEquals(token.get().getToken(), mockVT.getToken());
+        try {
+            Optional<VerificationToken> token = tokenService.getToken(TOKEN);
+            Assert.assertEquals(token.get().getToken(), mockVT.getToken());
+        }
+        catch (Exception e){
+            Assert.fail("unexpected error during operation get token");
+        }
     }
-/*
-    @Test
-    public void testIsInvalidToken() {
-        expiryDate = LocalDateTime.now().plusDays(-EXPIRATION);
-        Token token = new Token(user, TOKEN_TYPE, TOKEN, expiryDate);
 
-        boolean isValid = tokenService.isValidToken(token, TOKEN_TYPE);
+    /*@Test
+    public void testIsInvalidToken() {
+        LocalDateTime expiryDate = LocalDateTime.now().plusDays(-1);
+        VerificationToken token = new VerificationToken(1, TOKEN,mockUser.getId(), expiryDate);
+
+        Optional<VerificationToken> optionalVerificationToken = tokenService.getToken(token.getToken());
+        Assert.assertTrue(optionalVerificationToken.isPresent());
+        boolean isValid = optionalVerificationToken.get().isValidToken();
 
         Assert.assertFalse(isValid);
-    }
+    }*/
 
- */
+
 }

@@ -79,6 +79,7 @@ public class AdminJdbcDaoTest {
         List<String> roleList = roleDao.getRoles(user.getId());
 
         assertEquals(Role.ADMIN.getRole(), roleList.get(0));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, ROLE_TABLE));
     }
 
     @Test
@@ -89,6 +90,7 @@ public class AdminJdbcDaoTest {
         adminDao.reportNews(news, 1L, ReportReason.LIE);
 
         assertTrue(adminDao.hasReported(news, 1L));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
     }
 
     @Test
@@ -100,6 +102,7 @@ public class AdminJdbcDaoTest {
         Page<ReportedNews> reportList = adminDao.getReportedNews(PAGE_SIZE, ReportOrder.REP_DATE_DESC);
 
         assertEquals(PAGE_SIZE, reportList.getTotalPages());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
     }
 
     @Test
@@ -111,5 +114,6 @@ public class AdminJdbcDaoTest {
         Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(PAGE_SIZE, news);
 
         assertEquals(ReportReason.LIE, reportList.getContent().get(0).getReason());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
     }
 }

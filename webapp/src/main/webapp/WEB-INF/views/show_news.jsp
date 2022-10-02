@@ -202,7 +202,7 @@
         </div>
 
         <div class="d-flex flex-column w-75 align-items-center justify-content-center align-self-center" id="comments">
-            <h2 class="align-self-start my-2 text-white">Comments</h2>
+            <h2 class="align-self-start my-2 text-white"><spring:message code="showNews.comments"/></h2>
             <c:if test="${loggedUser != null}">
 
             <div class="d-flex flex-column w-100 mb-4">
@@ -218,7 +218,7 @@
                                 <form:errors cssClass="text-danger" path="comment" element="p"/>
 
                             </div>
-                            <button class="btn btn-primary flex-grow-0 align-self-end" type="submit">Comment</button>
+                            <button class="btn btn-primary flex-grow-0 align-self-end" type="submit"><spring:message code="showNews.comment.submit"/></button>
                             </form:form>
 
                         </div>
