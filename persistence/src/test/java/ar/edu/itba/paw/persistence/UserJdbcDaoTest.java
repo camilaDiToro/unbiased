@@ -55,15 +55,12 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreateUser() {
-        // 1. precondiciones
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        // 2. ejercitacion
         User user = userDao.create(usBuilder);
+        Optional<User> optionalUser = userDao.getUserById(user.getId());
 
-        // 3. validaciones
-        assertNotNull(user);
-        assertEquals(EMAIL, user.getEmail());
+        optionalUser.ifPresent(opt -> assertEquals(EMAIL, optionalUser.get().getEmail()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
@@ -91,12 +88,7 @@ public class UserJdbcDaoTest {
     public void testFindByEmail() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        //ejercitacion
-//        final Map<String, Object> userData = new HashMap<>();
-//        userData.put("username", EMAIL);
-//        Number key = jdbcInsert.executeAndReturnKey(userData);
         User us = userDao.create(usBuilder);
-
         Optional<User> optionalUser = userDao.getUserById(us.getId());
 
         optionalUser.ifPresent(opt -> assertEquals(EMAIL, optionalUser.get().getEmail()));
@@ -120,7 +112,6 @@ public class UserJdbcDaoTest {
 
         User us = userDao.create(usBuilder);
         VerificationToken vt = verificationTokenDao.createEmailToken(us.getId(), "token", LocalDateTime.now().plusDays(1));
-        assertNotNull(vt);
         userDao.verifyEmail(vt.getUserId());
         Optional<User> optionalUser = userDao.getUserById(us.getId());
 
@@ -145,7 +136,7 @@ public class UserJdbcDaoTest {
     public void testFailFindByUsername() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        final Optional<User> user = userDao.findByUsername("username");
+        final Optional<User> user = userDao.findByUsername(USERNAME);
 
         assertFalse(user.isPresent());
     }
@@ -155,9 +146,10 @@ public class UserJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
         User us = userDao.create(usBuilder);
+        Optional<User> optionalUser = userDao.getUserById(us.getId());
         List<User> users = userDao.getAll(1);
 
-        assertEquals(1, users.size());
+        optionalUser.ifPresent( opt -> assertEquals(1, users.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
