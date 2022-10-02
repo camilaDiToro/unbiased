@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.user.Role;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,6 +21,7 @@ public class RoleJdbcDao implements RoleDao{
     private final SimpleJdbcInsert jdbcInsert;
 
     private static final RowMapper<String> ROLE_ROW_MAPPER = (rs, rowNum) -> rs.getString("user_role");
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoleJdbcDao.class);
 
     @Autowired
     public RoleJdbcDao(final DataSource ds) {
@@ -31,8 +34,8 @@ public class RoleJdbcDao implements RoleDao{
         final Map<String, Object> roleData = new HashMap<>();
         roleData.put("user_role", role.getRole());
         roleData.put("user_id", userId);
-
         jdbcInsert.execute(roleData);
+        LOGGER.debug("The role {} was added to de user with id {}", role.getRole(), userId);
     }
 
     @Override

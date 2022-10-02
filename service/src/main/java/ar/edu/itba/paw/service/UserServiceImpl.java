@@ -7,6 +7,8 @@ import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,9 +36,9 @@ public class UserServiceImpl implements UserService {
     private final ImageService imageService;
     private final SecurityService securityService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-
     public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
@@ -85,14 +87,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public VerificationToken.Status verifyUserEmail(String token) {
-        Optional<VerificationToken> mayBeBt = verificationTokenService.getToken(token);
-        if(!mayBeBt.isPresent()){
+        Optional<VerificationToken> mayBeVt = verificationTokenService.getToken(token);
+        if(!mayBeVt.isPresent()){
+            LOGGER.info("Trying to validate token {}, but it does not exist", token);
             return VerificationToken.Status.NOT_EXISTS;
         }
-        VerificationToken vt = mayBeBt.get();
+        VerificationToken vt = mayBeVt.get();
         User user = userDao.getUserById(vt.getUserId()).get();
 
         if(!vt.isValidToken()){
+            LOGGER.info("Trying to validate token {}, but it has expired", token);
             return VerificationToken.Status.EXPIRED;
         }
         userDao.verifyEmail(vt.getUserId());
@@ -104,12 +108,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public VerificationToken.Status resendEmailVerification(String email) {
+
         Optional<User> mayBeUser = userDao.findByEmail(email);
-        if(!mayBeUser.isPresent())
+        if(!mayBeUser.isPresent()){
+            LOGGER.info("Trying to resend verification email to {}, but this email does not exist", email);
             return VerificationToken.Status.NOT_EXISTS;
+        }
+
         User user = mayBeUser.get();
-        if(user.getStatus().equals(UserStatus.REGISTERED))
+        if(user.getStatus().equals(UserStatus.REGISTERED)){
+            LOGGER.info("Trying to resend verification email to {}, but this email is already registered", email);
             return VerificationToken.Status.ALREADY_VERIFIED;
+        }
+
         verificationTokenService.deleteEmailToken(user);
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
@@ -132,7 +143,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateProfile(User user, String username, Long imageId) {
-        long id = user.getId();
         if(imageId!=null){
             if(user.getImageId()!=null)
                 imageService.deleteImage(user.getImageId());
@@ -172,6 +182,7 @@ public class UserServiceImpl implements UserService {
     private void login(User user) {
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
+        LOGGER.debug("User {} has loged in automatuically", user);
     }
 
     @Override
@@ -183,7 +194,6 @@ public class UserServiceImpl implements UserService {
     public Page<User> searchUsers(int page, String search) {
         return userDao.searchUsers(page, search);
     }
-
 
     @Override
     public ProfileCategory getProfileCategory(String category, User profile) {

@@ -22,21 +22,18 @@ public class AdminServiceImpl implements AdminService{
 
     private final AdminDao adminDao;
     private final NewsService newsService;
-    private final UserService userService;
     private final SecurityService securityService;
 
 
     @Autowired
-    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, UserService userService, SecurityService securityService) {
+    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, SecurityService securityService) {
         this.adminDao = adminDao;
         this.newsService = newsService;
-        this.userService = userService;
         this.securityService = securityService;
     }
     private Long getLoggedUserId() {
         return securityService.getCurrentUser().map(User::getId).orElse(null);
     }
-
 
     @Override
     public void reportNews(News news, ReportReason reportReason) {
@@ -45,15 +42,8 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Page<ReportedNews> getReportedNews(int page, String reportOrder) {
-       ReportOrder reportOrderObject;
-
-        try {
-            reportOrderObject = ReportOrder.valueOf(reportOrder);
-        }
-        catch (Exception e) {
-            throw new InvalidOrderException();
-        }
-        return adminDao.getReportedNews(page, reportOrderObject);
+       ReportOrder reportOrderObject = ReportOrder.getByValue(reportOrder);
+       return adminDao.getReportedNews(page, reportOrderObject);
     }
 
     @Override

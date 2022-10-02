@@ -35,7 +35,6 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private SpringTemplateEngine thymeleafTemplateEngine;
 
-
     private final MessageSource messageSource;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
@@ -45,30 +44,13 @@ public class EmailServiceImpl implements EmailService {
         this.messageSource = messageSource;
     }
 
-    public void sendSimpleMessage(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        emailSender.send(message);
-    }
-
     private String getUrl(String subdir){
         try {
             return new URL(environment.getRequiredProperty("mail.url.schema"), environment.getRequiredProperty("mail.url.domain"), environment.getRequiredProperty("mail.url.baseDir") + subdir).toString();
         } catch (MalformedURLException e) {
-            LOGGER.warn("Malformed url exeption in email verification");
+            LOGGER.warn("Malformed url exeption in email verification {}", e);
         }
         return null;
-    }
-
-    @Async
-    //@Override
-    public void sendVerificationEmailPlain(User user, VerificationToken token, Locale locale) {
-        final String to = user.getEmail();
-        final String text = messageSource.getMessage("email.verification.text",null,locale) +" "+ getUrl("verify_email?token="+token.getToken());
-        final String subject = messageSource.getMessage("email.verification.subject",null,locale);
-        sendSimpleMessage(to, subject, text);
     }
 
     @Async
@@ -81,8 +63,9 @@ public class EmailServiceImpl implements EmailService {
         data.put("verificationUrl",url);
         try {
             sendMessageUsingThymeleafTemplate(to,subject,"verify-email.html",data,locale);
+            LOGGER.info("Verification email sent to {}", user.getEmail());
         } catch (MessagingException e) {
-            LOGGER.warn("The verification email for " + to + "could not be sent");
+            LOGGER.warn("Verification email could not be sent to {}",user.getEmail());
         }
     }
 
@@ -96,7 +79,7 @@ public class EmailServiceImpl implements EmailService {
         emailSender.send(message);
     }
 
-    public void sendMessageUsingThymeleafTemplate(String to, String subject, String template, Map<String, Object> templateModel, Locale locale) throws MessagingException {
+    private void sendMessageUsingThymeleafTemplate(String to, String subject, String template, Map<String, Object> templateModel, Locale locale) throws MessagingException {
         Context thymeleafContext = new Context(locale);
         thymeleafContext.setVariables(templateModel);
         String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);

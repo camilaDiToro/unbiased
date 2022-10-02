@@ -40,7 +40,7 @@ public class VerificationTokenJdbcDao implements VerificationTokenDao{
         tokenData.put("expiration_date", Timestamp.valueOf(expiryDate));
 
         final long tokenId = simpleJdbcInsert.executeAndReturnKey(tokenData).longValue();
-        return  new VerificationToken(tokenId, token, userId, expiryDate);
+        return new VerificationToken(tokenId, token, userId, expiryDate);
     }
 
     @Override

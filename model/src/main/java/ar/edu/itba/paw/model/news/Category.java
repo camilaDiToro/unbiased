@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 public enum Category {
     FOR_ME("categories.forMe", false),
     ALL("categories.all", false),
-
-
     TOURISM("categories.tourism"),
     SHOW("categories.entertainment"),
     POLITICS("categories.politics"),
@@ -47,7 +45,7 @@ public enum Category {
         return null;
     }
 
-    public static Category getByInterCode(String description){
+    public static Category getByCode(String description){
         for (Category c : Category.values()) {
             if (c.getInterCode().equals(description) ) {
                 return c;

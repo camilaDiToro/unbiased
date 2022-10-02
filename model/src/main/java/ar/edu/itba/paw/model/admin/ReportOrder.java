@@ -1,5 +1,9 @@
 package ar.edu.itba.paw.model.admin;
 
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
+import ar.edu.itba.paw.model.news.Category;
+
 public enum ReportOrder {
 
     REP_COUNT_DESC("REP_COUNT_DESC", "report_count desc", "reportOrder.reportCountDesc"),
@@ -27,5 +31,13 @@ public enum ReportOrder {
 
     public String getInterCode() {
         return interCode;
+    }
+
+    public static ReportOrder getByValue(String value){
+        try{
+            return ReportOrder.valueOf(value);
+        }catch (IllegalArgumentException e){
+            throw new InvalidOrderException();
+        }
     }
 }

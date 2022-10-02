@@ -13,6 +13,19 @@ public class News {
     private final LocalDateTime creationDate;
 
 
+    @Override
+    public String toString() {
+        return "News{" +
+                "newsId=" + newsId +
+                ", creatorId=" + creatorId +
+                ", imageId=" + imageId +
+                ", body='" + body + '\'' +
+                ", title='" + title + '\'' +
+                ", subtitle='" + subtitle + '\'' +
+                ", creationDate=" + creationDate +
+                '}';
+    }
+
     public News(NewsBuilder builder) {
         this.newsId = builder.newsId;
         this.creatorId = builder.creatorId;

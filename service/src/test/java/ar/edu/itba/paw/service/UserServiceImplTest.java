@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ public class UserServiceImplTest {
     private ImageService mockImageService;
     @Mock
     private SecurityService mockSecurityService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImplTest.class);
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -70,7 +73,7 @@ public class UserServiceImplTest {
             assertEquals(u.getEmail(), mockUser.getEmail());
         }
         catch ( UserNotFoundException e){
-            fail("unexpected error during operation create user");
+             LOGGER.warn("Unexpected error during operation create user test threw exception");
         }
     }
 
@@ -81,7 +84,7 @@ public class UserServiceImplTest {
             userService.resendEmailVerification("invalid@mail.com");
         }
         catch (UserNotFoundException e){
-            fail("unexpected error during operation resend email");
+            LOGGER.warn("Unexpected error during operation resend email test threw exception");
         }
     }
 
@@ -105,7 +108,7 @@ public class UserServiceImplTest {
             assertEquals(VerificationToken.Status.SUCCESFFULLY_VERIFIED, status);
             Mockito.verify(mockUserDao).verifyEmail(Mockito.anyLong());
         }catch (Exception e){
-            fail("unexpected error during operation verify mail");
+            LOGGER.warn("Unexpected error during operation verify mail test threw exception");
         }
     }
 
@@ -122,7 +125,7 @@ public class UserServiceImplTest {
             Mockito.verify(mockUserDao).updateUsername(Mockito.any(User.class),Mockito.anyString());
         }
         catch (Exception e) {
-            fail("unexpected error during operation update userprofile");
+            LOGGER.warn("Unexpected error during operation update profile test threw exception");
         }
     }
 
@@ -142,7 +145,7 @@ public class UserServiceImplTest {
             assertEquals(roleList.size(), 1);
         }
         catch ( UserNotFoundException e){
-            fail("unexpected error during operation create user");
+            LOGGER.warn("Unexpected error during operation add role test threw exception");
         }
     }
     /*
@@ -158,17 +161,5 @@ public class UserServiceImplTest {
     }
      */
 
-
-    /*@Test
-    public void testCreateUser(){
-        User user = new User(1, USERNAME, null);
-        Mockito.when(userDao.create(Mockito.anyString())).thenReturn(user);
-
-        try{
-            User u = userService.create(USERNAME);
-        }catch (Exception e){
-            Assert.fail("unexpected error during operation create user");
-        }
-    */
 }
 

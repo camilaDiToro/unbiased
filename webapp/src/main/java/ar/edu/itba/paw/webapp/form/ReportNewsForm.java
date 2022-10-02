@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class ReportNewsForm {
+
     public String getReason() {
         return reason;
     }
