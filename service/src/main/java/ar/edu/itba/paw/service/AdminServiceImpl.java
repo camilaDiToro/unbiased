@@ -75,4 +75,5 @@ public class AdminServiceImpl implements AdminService{
     public void makeUserAdmin(User user) {
         adminDao.makeUserAdmin(user);
     }
+
 }

@@ -136,6 +136,7 @@ public class AdminJdbcDao implements AdminDao{
         int total = (int) Math.ceil(rowsCount/PAGE_SIZE);
         return total==0?1:total;
     }
+
 }
 
 
