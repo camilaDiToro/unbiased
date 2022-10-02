@@ -27,14 +27,19 @@ public class UserJdbcDao implements UserDao {
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
 
-    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User
-            .UserBuilder(rs.getString("email"))
-            .username(rs.getString("username"))
-            .userId(rs.getLong("user_id"))
-            .pass(rs.getString("pass"))
-            .imageId(rs.getLong("image_id") == 0 ? null : rs.getLong("image_id"))
-            .status(rs.getString("status"))
-            .positivity(new PositivityStats(rs.getInt("upvotes"),rs.getInt("downvotes"))).build();
+    private static final RowMapper<User> ROW_MAPPER = (rs, rowNum) -> {
+        User.UserBuilder userBuilder = new User
+                .UserBuilder(rs.getString("email"))
+                .username(rs.getString("username"))
+                .userId(rs.getLong("user_id"))
+                .pass(rs.getString("pass"))
+                .imageId(rs.getLong("image_id") == 0 ? null : rs.getLong("image_id"))
+                .status(rs.getString("status"));
+        if (rs.getBoolean("is_journalist")) {
+            userBuilder.positivity(new PositivityStats(rs.getInt("upvotes"),rs.getInt("downvotes")));
+        }
+        return userBuilder.build();
+    };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserJdbcDao.class);
 
@@ -48,7 +53,7 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Optional<User> getUserById(long id) {
-        List<User> query= jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity WHERE user_id = ?",
+        List<User> query= jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity NATURAL LEFT JOIN is_journalist WHERE user_id = ?",
                 new Object[] { id }, ROW_MAPPER);
         return query.stream().findFirst();
     }
@@ -71,13 +76,13 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity WHERE email = ?",
+        return jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity NATURAL LEFT JOIN is_journalist WHERE email = ?",
                 new Object[] { email }, ROW_MAPPER).stream().findFirst();
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity WHERE username = ?",
+        return jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity NATURAL LEFT JOIN is_journalist WHERE username = ?",
                 new Object[] { username }, ROW_MAPPER).stream().findFirst();
     }
 
@@ -125,7 +130,8 @@ public class UserJdbcDao implements UserDao {
                 .addValue("pageSize", USERS_PAGE_SIZE)
                 .addValue("offset", (page - 1) * USERS_PAGE_SIZE)
                 .addValue("search", "%" + search.toLowerCase() + "%");
-        List<User> users = namedJdbcTemplate.query("SELECT * FROM users NATURAL LEFT JOIN user_positivity " +
+
+        List<User> users = namedJdbcTemplate.query("SELECT * FROM users NATURAL LEFT JOIN user_positivity NATURAL LEFT JOIN is_journalist " +
                         "WHERE status='REGISTERED' AND (LOWER(username) LIKE :search OR LOWER(email) LIKE :search) LIMIT :pageSize OFFSET :offset ",  params, ROW_MAPPER);
 
         int rowsCount = namedJdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM users NATURAL LEFT JOIN user_positivity " +
@@ -141,7 +147,7 @@ public class UserJdbcDao implements UserDao {
     @Override
     public List<User> getTopCreators(int qty) {
         return jdbcTemplate.query("WITH interactions AS (SELECT creator AS user_id, count(*) AS interaction_count FROM upvotes JOIN news ON upvotes.news_id = news.news_id " +
-                "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator LIMIT ?) SELECT * FROM interactions NATURAL JOIN users NATURAL JOIN user_positivity ORDER BY interaction_count DESC", new Object[]{qty},ROW_MAPPER);
+                "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator LIMIT ?) SELECT * FROM interactions NATURAL JOIN users NATURAL JOIN user_positivity NATURAL LEFT JOIN is_journalist ORDER BY interaction_count DESC", new Object[]{qty},ROW_MAPPER);
 
     }
 

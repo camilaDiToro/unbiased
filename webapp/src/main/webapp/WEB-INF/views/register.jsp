@@ -25,14 +25,14 @@
         <form:input type="text" path="email"  cssClass="form-control" placeholder="Email address" required="${mailAddressMsg}" autofocus=""/>
                     <form:errors path="email" element="p" cssClass="text-danger"/>
     </div>
-    <div class="d-flex">
-        <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/lock-svgrepo-com.svg"/>" alt="..."/>
+    <div class="d-flex justify-content-center align-items-center position-relative mb-3">
+        <img class="size-img-modal-login align-self-center " src="<c:url value="/resources/images/lock-svgrepo-com.svg"/>" alt="..."/>
         <form:label path="password" cssClass="sr-only"><spring:message code="register.password" var="passwordMsg"/></form:label>
-        <form:input path="password" type="password"  cssClass="form-control" placeholder="${passwordMsg}"/>
+        <form:input path="password" type="password"  cssClass="form-control h-fit mb-1" placeholder="${passwordMsg}"/>
+        <i class="fa fa-eye hover-hand position-absolute pwd-icon"  onclick="myFunction(this)"></i>
         <form:errors path="password" element="p" cssClass="text-danger"/>
 
     </div>
-
 
     <button class="btn btn-md btn-info btn-block" type="submit"><spring:message code="register.signUp"/></button>
     <p class="m-2 text-light"><spring:message code="register.alreadyMemberQuestion"/> <a class="text-info" href="<c:url value="/login"/>"><spring:message code="navbar.logIn"/></a></p>

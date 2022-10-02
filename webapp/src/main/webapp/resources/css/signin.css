@@ -42,3 +42,9 @@ body{
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.pwd-icon {
+  z-index: 2;
+  right: 5px;
+  cursor: pointer;
+}

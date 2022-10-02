@@ -211,11 +211,13 @@
                                     <a class="link" href="<c:url value="/profile/${user.id}"/>">
 
                                     <div class="card h-100 d-flex flex-row" >
-                                        <c:set var="positivityStats" value="${user.positivityStats}"/>
+                                        <c:if test="${user.hasPositivityStats()}">
+                                            <c:set var="positivityStats" value="${user.positivityStats}"/>
 
-                                        <c:set var="positivity" value="${positivityStats.positivity}"/>
-                                        <div class="quality-indicator <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" >
-                                        </div>
+                                            <c:set var="positivity" value="${positivityStats.positivity}"/>
+                                                <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
+
+                                            </c:if>
                                         <div class="d-flex justify-content-between p-2 w-100">
                                             <div class="d-flex align-items-center w-auto gap-1">
                                                 <div class="img-container-article">
@@ -250,7 +252,9 @@
 
                 <h5 style="background-image: url('<c:url value="/resources/images/crown-svgrepo-com.svg"/>')" class="card-title top-creators"><spring:message code="home.topCreators"/></h5>
 
-
+                <c:if test="${empty topCreators}">
+                    <h6 class="text-info m-1"><spring:message code="home.emptyCreators"/></h6>
+                </c:if>
                 <c:forEach var="creator" items="${topCreators}">
                     <a class="m-1 link" href="<c:url value="/profile/${creator.id}"/>" >
                             <div class="card text-white d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">

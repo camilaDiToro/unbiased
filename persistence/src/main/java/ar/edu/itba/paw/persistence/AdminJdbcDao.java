@@ -129,7 +129,6 @@ public class AdminJdbcDao implements AdminDao{
                 "SELECT count(*) AS row_count from grouped_reports" , Integer.class), PAGE_SIZE);
     }
 
-
 }
 
 

@@ -2,7 +2,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<c:set var="pageTitle" scope="request" value="Login"/>
 <c:set var="signInOrCreate" scope="request" value="${true}"/>
 <%@include file="../../resources/jsp/head.jsp" %>
 <body class="text-center">

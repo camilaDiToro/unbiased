@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
@@ -26,4 +27,6 @@ public interface UserService {
     void unfollowUser(User user);
 
     Page<User> searchUsers(int page, String search);
+
+    ProfileCategory getProfileCategory(String category, User profile);
 }
