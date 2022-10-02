@@ -64,7 +64,7 @@
                         <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
                         <p class="lead">
                             <spring:message code="${category.interCode}" var="catString"/>
-                            <spring:message code="categories.notFound" arguments="${catString}"/>
+                            <spring:message code="profile.notFound" arguments="${catString}"/>
                         </p>
                     </div>
                 </c:if>
@@ -192,19 +192,24 @@
 
         </div>
         <%--RIGHT SIDE--%>
-            <c:set var="profilePositivityStats" value="${profileUser.getPositivityStats()}"/>
         <div class="d-flex w-30 justify-content-center">
         <div class="card right-card" id="right-card">
-            <c:set var="profilePositivity" value="${profilePositivityStats.getPositivity()}"/>
-            <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
+            <c:if test="${profileUser.hasPositivityStats()}">
+                <c:set var="profilePositivityStats" value="${profileUser.getPositivityStats()}"/>
+
+                <c:set var="profilePositivity" value="${profilePositivityStats.getPositivity()}"/>
+                <img src="<c:url value="/resources/images/${profilePositivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${profilePositivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${profilePositivityStats.getInteractions()}"/>" />
+
+            </c:if>
             <img src="<c:url value="/resources/images/front-page-profile.png"/>" class="card-img-top" alt="...">
+
             <div class="card-body">
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
                 <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${profileUser.email}"/> </span>
                 <div class="d-flex justify-content-center align-items-center">
                     <c:if test="${loggedUser != null && !isMyProfile}">
                         <c:if test="${!isFollowing}">
-                            <a class="btn btn-info font-weight-bold text-white rounded-pill" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
+                            <a class="btn d-flex btn-info font-weight-bold text-white rounded-pill medium-pill align-items-center justify-content-center" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
                         </c:if>
                         <c:if test="${isFollowing}">
                             <a class="btn d-flex btn-danger font-weight-bold text-white rounded-pill medium-pill align-items-center justify-content-center" href="<c:url value="/profile/${userId}/unfollow"/>">

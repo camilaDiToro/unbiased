@@ -25,6 +25,12 @@ public class AdviceErrorController {
         return new ModelAndView("forward:/400/invalid_order");
     }
 
+    @ExceptionHandler(InvalidFilterException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ModelAndView filterNotFound() {
+        return new ModelAndView("forward:/400/invalid_filter");
+    }
+
     @ExceptionHandler(HTTPException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ModelAndView numberedError(HTTPException exception) {

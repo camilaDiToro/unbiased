@@ -56,6 +56,10 @@ public class User {
     public UserStatus getStatus() {
         return status;
     }
+
+    public boolean hasPositivityStats() {
+        return positivityStats != null;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o)

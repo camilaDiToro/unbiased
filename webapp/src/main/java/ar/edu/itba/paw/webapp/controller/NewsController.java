@@ -117,7 +117,7 @@ public class NewsController {
     @RequestMapping(value = "/create_article", method = RequestMethod.GET)
     public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
         return mavBuilderSupplier.supply("create_article", "pageTitle.createArticle", TextType.INTERCODE)
-                .withObject("categories", Category.values())
+                .withObject("categories", Category.getTrueCategories())
                 .withObject("validate", false).build();
     }
 
