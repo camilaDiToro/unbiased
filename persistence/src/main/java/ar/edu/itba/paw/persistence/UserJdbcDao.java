@@ -140,9 +140,6 @@ public class UserJdbcDao implements UserDao {
         return new Page<>(users,page,JdbcUtils.getPageCount(rowsCount,USERS_PAGE_SIZE));
     }
 
-    public List<User> getAll(int page){
-        return jdbcTemplate.query("SELECT * FROM Users NATURAL LEFT JOIN user_positivity LIMIT 10 OFFSET ?", new Object[]{(page-1)*10},ROW_MAPPER);
-    }
 
     @Override
     public List<User> getTopCreators(int qty) {
