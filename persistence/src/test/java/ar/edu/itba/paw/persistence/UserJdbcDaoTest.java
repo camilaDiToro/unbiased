@@ -6,6 +6,8 @@ import ar.edu.itba.paw.model.user.VerificationToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -40,6 +42,8 @@ public class UserJdbcDaoTest {
     private VerificationTokenDao verificationTokenDao;
 
     User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserJdbcDaoTest.class);
 
     @Autowired
     private DataSource ds;
@@ -79,9 +83,15 @@ public class UserJdbcDaoTest {
     public void testFailFindByUserId() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        Optional<User> mayBeUser = userDao.getUserById(1L);
-        assertFalse(mayBeUser.isPresent());
-        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        try {
+            Optional<User> optionalUser = userDao.getUserById(1L);
+
+            assertFalse(optionalUser.isPresent());
+            assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        }
+        catch (Exception e){
+            LOGGER.warn("Unexpected error during operation find by userId");
+        }
     }
 
     @Test
@@ -99,10 +109,15 @@ public class UserJdbcDaoTest {
     public void testFailFindByEmail() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        Optional<User> usr = userDao.findByEmail(EMAIL);
+        try{
+            Optional<User> usr = userDao.findByEmail(EMAIL);
 
-        assertFalse(usr.isPresent());
-        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+            assertFalse(usr.isPresent());
+            assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        }
+        catch (Exception e){
+            LOGGER.warn("Unexpected error during operation find by userId");
+        }
     }
 
     @Test
@@ -136,9 +151,14 @@ public class UserJdbcDaoTest {
     public void testFailFindByUsername() {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
 
-        final Optional<User> user = userDao.findByUsername(USERNAME);
+        try {
+            final Optional<User> user = userDao.findByUsername(USERNAME);
 
-        assertFalse(user.isPresent());
+            assertFalse(user.isPresent());
+        }
+        catch (Exception e){
+            LOGGER.warn("Unexpected error during operation find by username");
+        }
     }
 
     @Test
