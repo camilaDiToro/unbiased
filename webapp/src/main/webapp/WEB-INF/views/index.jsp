@@ -106,7 +106,7 @@
                                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
                                 <c:set var="timeAmount" value="${article.getAmountAgo()}"/>
 
-                                <div class="col mb-4 max-h-250px">
+                                <div class="col mb-4 max-h-300px">
                                     <div class="card h-100 d-flex flex-row h-100" >
                                         <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
 

@@ -7,11 +7,12 @@
     <style type="text/css">
         .bg {
             background-color: #1e1e2d;
+            padding: 10px;
         }
         .btn-share{
             background-color: #8ea7e8;
             border: none;
-            color: white;
+            color: black;
             padding: 12px 30px;
             text-align: center;
             font-size: 18px;
@@ -19,11 +20,13 @@
             display:flex;
             justify-content: center;
             margin: 0 auto;
+            align-items: center;
+            height: 35px;
         }
         .btn-share:hover {
-            background-color: #1e1e2d;
+            background-color: #6486df;
             color: white;
-            border: 2px solid #8ea7e8;
+            /*border: 2px solid #8ea7e8;*/
         }
         .h-color{
             color: #8ea7e8;
@@ -50,7 +53,7 @@
 
     </style>
 </head>
-<body>
+<body class="bg">
 <div class="bg">
     <div class="text-center">
         <h1 class="title">unbiased</h1>
@@ -90,7 +93,7 @@
     </div>
 
     <div class="d-flex justify-content-center align-items-center">
-        <a th:href="${verificationUrl}" class="takeme">
+        <a style=" text-decoration: none!important;" th:href="${verificationUrl}" class="takeme">
             <button th:text="#{email.verification.click}" class="btn btn-lg btn-info btn-block btn-share"></button>
         </a>
     </div>
