@@ -4,7 +4,9 @@ import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.PositivityStats;
+import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.persistence.jdbcFunctional.GetNewsProfileFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
@@ -37,6 +40,8 @@ public class NewsJdbcDao implements NewsDao {
     private static final double COMMENT_PAGE_SIZE = 5.0;
     private static final double PROFILE_PAGE_SIZE = 5.0;
     private static final double RECOMMENDATION_PAGE_SIZE = 10.0;
+
+    private final Map<ProfileCategory, GetNewsProfileFunction> profileFunctions;
 
 
     private static final RowMapper<FullNews> FULLNEWS_ROW_MAPPER = (rs, rowNum) -> {
@@ -112,8 +117,16 @@ public class NewsJdbcDao implements NewsDao {
         jdbcUpvoteInsert = new SimpleJdbcInsert(dataSource).withTableName("upvotes");
         jdbcSavedNewsInsert = new SimpleJdbcInsert(dataSource).withTableName("saved_news");
         jdbcCommentsInsert = new SimpleJdbcInsert(dataSource).withTableName("comments");
+
+        profileFunctions = new HashMap<>();
+        profileFunctions.put(ProfileCategory.DOWNVOTED, this::getNewsDownvotedByUser);
+        profileFunctions.put(ProfileCategory.UPVOTED, this::getNewsUpvotedByUser);
+        profileFunctions.put(ProfileCategory.SAVED, this::getSavedNews);
+        profileFunctions.put(ProfileCategory.MY_POSTS, this::getAllNewsFromUser);
+
         this.categoryDao = categoryDao;
     }
+
 
     @Override
     public News create(News.NewsBuilder newsBuilder) {
@@ -218,111 +231,6 @@ public class NewsJdbcDao implements NewsDao {
     }
 
     @Override
-    public List<FullNews> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
-        SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("creatorId", user.getId())
-                .addValue("pageSize", PROFILE_PAGE_SIZE)
-                .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE)
-                .addValue("loggedId", loggedUser);
-        if (loggedUser != null) {
-            return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
-                            "SELECT news_id, full_news.*, upvote, saved_date, :loggedId AS logged_user FROM full_news NATURAL LEFT JOIN logged_params" +
-                            " WHERE creator = :creatorId ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                    params, FULLNEWS_ROW_MAPPER);
-        }
-        return namedJdbcTemplate.query("SELECT full_news.*, null as logged_user FROM full_news WHERE creator = :creatorId ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                params, FULLNEWS_ROW_MAPPER);
-
-    }
-
-
-    @Override
-    public List<FullNews> getSavedNews(int page, long userId, NewsOrder ns, Long loggedUser) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("userId", userId)
-                .addValue("pageSize", PROFILE_PAGE_SIZE)
-                .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE);
-
-        if (loggedUser != null) {
-            params.addValue("loggedId", (long) loggedUser);
-            return namedJdbcTemplate.query(
-                    "WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
-                            "SELECT news_id, full_news.*, upvote, saved_date, :loggedId AS logged_user FROM saved_news NATURAL JOIN full_news NATURAL LEFT JOIN logged_params " +
-                            " WHERE user_id = :userId  " +
-                            "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                    params, FULLNEWS_ROW_MAPPER);
-        }
-
-        return namedJdbcTemplate.query("SELECT news_id, full_news.*, null as logged_user FROM saved_news NATURAL JOIN full_news " +
-                        "    WHERE user_id = :userId " +
-                        "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                params, FULLNEWS_ROW_MAPPER);
-
-    }
-
-    private List<FullNews> getNewsWithRatingFromUser(int page, long userId, NewsOrder ns, Long loggedUser, boolean upvote) {
-        SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("userId", userId)
-                .addValue("pageSize", PROFILE_PAGE_SIZE)
-                .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE)
-                .addValue("loggedId", loggedUser)
-                .addValue("upvote", upvote);
-
-
-        if (loggedUser != null) {
-            return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
-                            "SELECT upvotes.news_id, full_news.*, logged_params.upvote, saved_date, :loggedId AS logged_user FROM upvotes NATURAL JOIN full_news " +
-                            "LEFT JOIN logged_params ON logged_params.news_id = full_news.news_id" +
-                            " WHERE upvotes.user_id = :userId AND upvotes.upvote = :upvote " +
-                            "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                    params, FULLNEWS_ROW_MAPPER);
-        }
-
-        return namedJdbcTemplate.query("SELECT upvotes_news.*, null as logged_user FROM " +
-                        "(select * from upvotes NATURAL RIGHT JOIN full_news) as upvotes_news " +
-                        "    WHERE user_id = :userId AND upvote = :upvote " +
-                        "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
-                params, FULLNEWS_ROW_MAPPER);
-    }
-
-    @Override
-    public List<FullNews> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
-        return getNewsWithRatingFromUser(page, user.getId(), ns, loggedUser, true);
-    }
-
-    @Override
-    public List<FullNews> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
-        return getNewsWithRatingFromUser(page, user.getId(), ns, loggedUser, false);
-    }
-
-    @Override
-    public int getTotalPagesNewsFromUser(int page, User user) {
-        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news WHERE creator = ?",
-                new Object[]{user.getId()}, Integer.class),PROFILE_PAGE_SIZE);
-    }
-
-    private int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
-        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news NATURAL JOIN upvotes WHERE user_id = ? AND upvote = ?",
-                new Object[]{userId, upvoted}, Integer.class),PROFILE_PAGE_SIZE);
-    }
-
-    @Override
-    public int getTotalPagesNewsFromUserUpvoted(int page, User user) {
-        return getTotalPagesNewsFromUserRating(page, user.getId(), true);
-    }
-
-    @Override
-    public int getTotalPagesNewsFromUserDownvoted(int page, User user) {
-        return getTotalPagesNewsFromUserRating(page, user.getId(), false);
-    }
-
-    @Override
-    public int getTotalPagesNewsFromUserSaved(int page, User user) {
-        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS newsCount FROM news NATURAL JOIN saved_news WHERE user_id = ?",
-                new Object[]{user.getId()}, Integer.class),PROFILE_PAGE_SIZE);
-    }
-
-    @Override
     public void deleteNews(News news) {
         jdbcTemplate.update("DELETE FROM news WHERE news_id = ?", news.getNewsId());
     }
@@ -391,6 +299,11 @@ public class NewsJdbcDao implements NewsDao {
     }
 
     @Override
+    public Page<FullNews> getNewsFromProfile(int page, User user, NewsOrder ns, Long loggedUser, ProfileCategory profileCategory) {
+        return profileFunctions.get(profileCategory).getNews(page, user, ns, loggedUser);
+    }
+
+    @Override
     public void removeSaved(News news, User user) {
         jdbcTemplate.update("DELETE FROM saved_news WHERE news_id = ? AND user_id = ?",new Object[]{news.getNewsId(), user.getId()});
     }
@@ -429,4 +342,119 @@ public class NewsJdbcDao implements NewsDao {
                 new Object[]{Timestamp.valueOf(LocalDateTime.now().minusDays(1))},Integer.class), RECOMMENDATION_PAGE_SIZE);
     }
 
+
+
+
+    Page<FullNews> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
+
+        page = Math.max(page, 1);
+        int totalPages = getTotalPagesNewsFromUser(page, user);
+        page = Math.min(page, totalPages);
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("creatorId", user.getId())
+                .addValue("pageSize", PROFILE_PAGE_SIZE)
+                .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE)
+                .addValue("loggedId", loggedUser);
+        List<FullNews> ln;
+
+        if (loggedUser != null) {
+            ln = namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
+                            "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM full_news NATURAL LEFT JOIN logged_params" +
+                            " WHERE creator = :creatorId ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
+        }else{
+            ln = namedJdbcTemplate.query("SELECT *, null as logged_user FROM full_news WHERE creator = :creatorId ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
+        }
+
+        return new Page<>(ln,page,totalPages);
+    }
+
+     Page<FullNews> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser) {
+
+        page = Math.max(page, 1);
+        int totalPages = getTotalPagesNewsFromUserSaved(page, user);
+        page = Math.min(page, totalPages);
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("userId", user.getId())
+                .addValue("pageSize", PROFILE_PAGE_SIZE)
+                .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE);
+
+        List<FullNews> ln;
+
+        if (loggedUser != null) {
+            params.addValue("loggedId", (long) loggedUser);
+            ln = namedJdbcTemplate.query(
+                    "WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
+                            "SELECT full_news.*, upvote, saved_date, :loggedId AS logged_user FROM saved_news NATURAL JOIN full_news NATURAL LEFT JOIN logged_params " +
+                            " WHERE user_id = :userId  " +
+                            "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
+        }else{
+            ln = namedJdbcTemplate.query("SELECT *, null as logged_user FROM saved_news NATURAL JOIN full_news " +
+                            "    WHERE user_id = :userId " +
+                            "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
+        }
+
+        return new Page<>(ln, page, totalPages);
+
+    }
+
+    private Page<FullNews> getNewsWithRatingFromUser(int page, User user, NewsOrder ns, Long loggedUser, boolean upvote) {
+
+        page = Math.max(page, 1);
+        int totalPages = getTotalPagesNewsFromUserRating(page, user.getId(), upvote);
+        page = Math.min(page, totalPages);
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("userId", user.getId())
+                .addValue("pageSize", PROFILE_PAGE_SIZE)
+                .addValue("offset", (page - 1) * PROFILE_PAGE_SIZE)
+                .addValue("loggedId", loggedUser)
+                .addValue("upvote", upvote);
+
+        List<FullNews> ln;
+        if (loggedUser != null) {
+            ln = namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :loggedId) " +
+                            "SELECT upvotes.news_id, full_news.*, logged_params.upvote, saved_date, :loggedId AS logged_user FROM upvotes NATURAL JOIN full_news " +
+                            "LEFT JOIN logged_params ON logged_params.news_id = full_news.news_id" +
+                            " WHERE upvotes.user_id = :userId AND upvotes.upvote = :upvote " +
+                            "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
+        }else{
+            ln = namedJdbcTemplate.query("SELECT upvotes_news.*, null as logged_user FROM " +
+                            "(select * from upvotes NATURAL RIGHT JOIN full_news) as upvotes_news " +
+                            "    WHERE user_id = :userId AND upvote = :upvote " +
+                            "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+                    params, FULLNEWS_ROW_MAPPER);
+        }
+
+        return new Page<>(ln, page, totalPages);
+    }
+
+    Page<FullNews> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
+        return getNewsWithRatingFromUser(page, user, ns, loggedUser, true);
+    }
+
+    Page<FullNews> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
+        return getNewsWithRatingFromUser(page, user, ns, loggedUser, false);
+    }
+
+    int getTotalPagesNewsFromUser(int page, User user) {
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news WHERE creator = ?",
+                new Object[]{user.getId()}, Integer.class),PROFILE_PAGE_SIZE);
+    }
+
+    int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS row_count FROM news NATURAL JOIN upvotes WHERE user_id = ? AND upvote = ?",
+                new Object[]{userId, upvoted}, Integer.class),PROFILE_PAGE_SIZE);
+    }
+
+    int getTotalPagesNewsFromUserSaved(int page, User user) {
+        return JdbcUtils.getPageCount(jdbcTemplate.queryForObject("SELECT count(*) AS newsCount FROM news NATURAL JOIN saved_news WHERE user_id = ?",
+                new Object[]{user.getId()}, Integer.class),PROFILE_PAGE_SIZE);
+    }
 }
