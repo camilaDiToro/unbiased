@@ -131,7 +131,10 @@
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                     <a class="link max-h-10"  href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="  card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
-                                                    <p class="text-sm-left text-secondary mb-0">
+    <c:set var="timeAmount" value="${article.getAmountAgo()}"/>
+    <span class="font-weight-light"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
+
+    <p class="text-sm-left text-secondary mb-0">
                                                         <img src="<c:url value="/resources/images/clock-svgrepo-com.svg"/>" alt="..." class="read-clock"/>
                                                         <spring:message code="home.read" arguments="${fullNews.readTime}"/>
                                                     </p>

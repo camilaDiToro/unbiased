@@ -104,6 +104,7 @@
                                 <c:set var="loggedParameters" value="${fullNews.loggedUserParameters}"/>
                                 <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
                                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
+                                <c:set var="timeAmount" value="${article.getAmountAgo()}"/>
 
                                 <div class="col mb-4 max-h-250px">
                                     <div class="card h-100 d-flex flex-row h-100" >
@@ -138,6 +139,7 @@
 <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                     <a  class="link title-principal-card"  href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis-2 text-white"><c:out value="${article.subtitle}"/></h6>
+                                                    <span class="font-weight-light"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
 
                                                     <div>
                                                         <p class="text-sm-left text-secondary mb-0 text-white d-flex align-content-center gap-1 op-09">

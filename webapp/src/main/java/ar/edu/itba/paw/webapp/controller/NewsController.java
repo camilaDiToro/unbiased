@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
@@ -94,14 +95,14 @@ public class NewsController {
         Locale locale = LocaleContextHolder.getLocale();
 
         return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
-                .withObject("date", news.getCreationDate().format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)))
+                .withObject("date", news.getFormattedDate(locale))
                 .withObject("fullNews", fullNews)
                 .withObject("hasReported", adminService.hasReported(news))
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("reportNewsForm", reportNewsFrom)
                 .withObject("commentNewsForm", commentNewsFrom)
                 .withObject("hasErrors", hasErrors)
-                .withObject("locale", LocaleContextHolder.getLocale())
+                .withObject("locale", locale)
                 .withObject("commentsPage", newsService.getComments(news,page))
                 .withObject("categories", newsService.getNewsCategory(fullNews.getNews())).build();
 

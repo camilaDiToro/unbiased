@@ -246,7 +246,10 @@
                                 </div>
                                 <a class="link" href="<c:url value="/profile/${user.id}"/>"><h5 class="mb-0 link-text"><c:out value="${user}"/></h5></a>
                             </div>
-                            <span class="font-weight-light">${comment.getFormattedDate(locale)}</span>
+<%--                            <span class="font-weight-light">${comment.getFormattedDate(locale)}</span>--%>
+                            <c:set var="timeAmount" value="${comment.getAmountAgo()}"/>
+                            <span class="font-weight-light mt-1 mb-2"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
+
                         </div>
 
                         <p id="comment"><c:out value="${comment.comment}"/></p>

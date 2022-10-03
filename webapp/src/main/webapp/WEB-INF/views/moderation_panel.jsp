@@ -81,7 +81,7 @@
                                     </div>
 
                                     <div class="col mb-4">
-                                        <div class="card h-100 d-flex flex-row p-3" id="left-card">
+                                        <div class="card h-100 d-flex flex-row p-3 max-h-250px" id="left-card">
 
                                             <div>
                                                 <span class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="moderation.reportsNum"/> " >
@@ -94,6 +94,9 @@
                                                     <div class="card-body-home pt-0">
                                                         <a href="<c:url value="/news/${article.newsId}"/>" class="link mh-10"><h5 class="text-ellipsis link-text"><c:out value="${article.title}"/></h5></a>
                                                         <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
+                                                        <c:set var="timeAmount" value="${article.getAmountAgo()}"/>
+                                                        <span class="font-weight-light"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
+
                                                     </div>
                                                 </div>
                                                 <div class="d-flex justify-content-between w-100">

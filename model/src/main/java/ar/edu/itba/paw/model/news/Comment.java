@@ -48,4 +48,8 @@ public class Comment {
                 .format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
                         .withLocale( locale));
     }
+
+    public TimeUtils.Amount getAmountAgo() {
+        return TimeUtils.calculateTimeAgoWithPeriodAndDuration(date);
+    }
 }

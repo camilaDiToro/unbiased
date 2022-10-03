@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.model.news;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Objects;
 
 public class News {
@@ -36,6 +39,10 @@ public class News {
         this.creationDate = builder.creationDate;
     }
 
+    public TimeUtils.Amount getAmountAgo() {
+        return TimeUtils.calculateTimeAgoWithPeriodAndDuration(creationDate);
+    }
+
     public long getNewsId() {
         return newsId;
     }
@@ -63,6 +70,13 @@ public class News {
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
+
+    public String getFormattedDate(Locale locale) {
+        return creationDate.format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL ).withLocale( locale)) +
+                " - " + creationDate.format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
+
+
 
     @Override
     public boolean equals(Object obj) {

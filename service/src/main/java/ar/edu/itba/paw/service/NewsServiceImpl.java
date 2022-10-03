@@ -88,6 +88,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
 
+
     @Override
     public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
 
