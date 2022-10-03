@@ -185,7 +185,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Iterable<Category> getHomeCategories() {
-        return Arrays.stream(Category.values()).filter(c ->  c != Category.FOR_ME || securityService.getCurrentUser().isPresent()).collect(Collectors.toList());
+        return Category.categoriesInOrder().stream().filter(c ->  c != Category.FOR_ME || securityService.getCurrentUser().isPresent()).collect(Collectors.toList());
     }
 
     @Override
