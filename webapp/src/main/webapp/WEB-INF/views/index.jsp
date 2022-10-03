@@ -105,8 +105,8 @@
                                 <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
                                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
 
-                                <div class="col mb-4">
-                                    <div class="card h-100 d-flex flex-row" >
+                                <div class="col mb-4 max-h-250px">
+                                    <div class="card h-100 d-flex flex-row h-100" >
                                         <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
 
                                         <c:set var="positivity" value="${positivityStats.positivity}"/>

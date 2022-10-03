@@ -100,6 +100,10 @@
     font-size: 36px;
 }
 
+.max-h-250px {
+    max-height: 250px;
+}
+
 .article-body h2 {
     font-size: 30px;
 }
