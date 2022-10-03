@@ -12,7 +12,7 @@
         .btn-share{
             background-color: #8ea7e8;
             border: none;
-            color: black;
+            color: white;
             padding: 12px 30px;
             text-align: center;
             font-size: 18px;
@@ -25,8 +25,8 @@
         }
         .btn-share:hover {
             background-color: #6486df;
-            color: white;
-            /*border: 2px solid #8ea7e8;*/
+            color: black;
+            border: 2px solid #8ea7e8;
         }
         .h-color{
             color: #8ea7e8;
@@ -94,7 +94,7 @@
 
     <div class="d-flex justify-content-center align-items-center">
         <a style=" text-decoration: none!important;" th:href="${verificationUrl}" class="takeme">
-            <button th:text="#{email.verification.click}" class="btn btn-lg btn-info btn-block btn-share"></button>
+            <button th:text="#{email.verification.click}" class="btn btn-lg btn-info btn-share"></button>
         </a>
     </div>
 
