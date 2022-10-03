@@ -28,12 +28,13 @@
 }
 
 .article-body p {
-    word-break: break-all; !important
-    white-space: pre-wrap; !important
-    text-align: justify; !important
+    word-break: normal !important;
+    white-space: pre-wrap !important;
+    text-align: justify !important;
 }
 
 .article-body {
+    word-break: normal !important;
     width: 65%;
     white-space: pre-wrap!important;
     color: white;
