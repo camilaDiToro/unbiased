@@ -364,7 +364,7 @@ public class NewsJdbcDao implements NewsDao {
                             " WHERE creator = :creatorId ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                     params, FULLNEWS_ROW_MAPPER);
         }else{
-            ln = namedJdbcTemplate.query("SELECT *, null as logged_user FROM full_news WHERE creator = :creatorId ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
+            ln = namedJdbcTemplate.query("SELECT full_news.*, null as logged_user FROM full_news WHERE creator = :creatorId ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                     params, FULLNEWS_ROW_MAPPER);
         }
 
