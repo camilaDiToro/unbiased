@@ -79,8 +79,8 @@ public class NewsJdbcDaoTest {
         Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
 
         if(optionalNews.isPresent()){
-            assertEquals(TITTLE, optionalNews.get().getTitle());
-            assertEquals(BODY, optionalNews.get().getBody());
+            assertEquals(news.getTitle(), optionalNews.get().getTitle());
+            assertEquals(news.getBody(), optionalNews.get().getBody());
         }
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
@@ -144,9 +144,9 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
         newsDao.deleteNews(optionalFullNews.get().getNews());
-        List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, null).getContent();
+        List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, optionalFullNews.get().getNews().getCreatorId()).getContent();
 
         optionalFullNews.ifPresent( opt -> assertEquals(0, newsList.size()));
         assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
@@ -236,8 +236,8 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
-        List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, null).getContent();
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
+        List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, optionalFullNews.get().getNews().getCreatorId()).getContent();
 
         optionalFullNews.ifPresent( opt -> assertEquals(1, newsList.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
@@ -281,10 +281,10 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
         newsDao.saveNews(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
         newsDao.removeSaved(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
-        List<FullNews> savedNes = newsDao.getSavedNews(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, null).getContent();
+        List<FullNews> savedNes = newsDao.getSavedNews(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, optionalFullNews.get().getUser().getId()).getContent();
 
         optionalFullNews.ifPresent( opt -> assertTrue(savedNes.isEmpty()));
 
@@ -300,9 +300,9 @@ public class NewsJdbcDaoTest {
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
-        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
+        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
         newsDao.saveNews(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
-        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, null).getContent();
+        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, optionalFullNews.get().getNews().getCreatorId()).getContent();
 
         optionalFullNews.ifPresent( opt -> assertEquals(1, savedList.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));

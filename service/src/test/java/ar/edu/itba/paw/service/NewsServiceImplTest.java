@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
 import ar.edu.itba.paw.persistence.UserDao;
@@ -75,7 +76,7 @@ public class NewsServiceImplTest {
             String[] categories = new String[0];
             News news = newsService.create(NEWS_BUILDER, categories);
             Optional<FullNews> optionalFullNews = newsService.getById(news.getNewsId());
-            Page<FullNews> fullNewsPage = newsService.getNewsForUserProfile(1, "NEW", optionalFullNews.get().getUser(), "myPosts");
+            Page<FullNews> fullNewsPage = newsService.getNewsForUserProfile(1, NewsOrder.NEW.getDescription(), optionalFullNews.get().getUser(), ProfileCategory.MY_POSTS.getDescription());
 
             Assert.assertEquals(1, fullNewsPage.getTotalPages());
             Mockito.verify(mockNewsDao).create(Mockito.any());

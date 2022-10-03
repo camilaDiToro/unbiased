@@ -60,7 +60,6 @@ public class VerificationTokenServiceImplTest {
     public void testGetToken() {
         Mockito.when(mockverificationDao.createEmailToken(Mockito.eq(mockUser.getId()), Mockito.eq(TOKEN), Mockito.eq(DATE)))
                 .thenReturn(mockVT);
-        Mockito.when(mockverificationDao.getEmailToken(Mockito.eq(TOKEN))).thenReturn(Optional.of(mockVT));
 
         try {
             Optional<VerificationToken> token = tokenService.getToken(TOKEN);

@@ -178,13 +178,15 @@ public class UserJdbcDaoTest {
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, FOLLOWS_TABLE);
 
+        User.UserBuilder followBuilder = new User.UserBuilder("follow@mail.com");
         User us = userDao.create(usBuilder);
-        userDao.addFollow(us.getId(), 1);
+        User follow = userDao.create(followBuilder);
+        userDao.addFollow(us.getId(), follow.getId());
         Optional<User> optionalUser = userDao.getUserById(us.getId());
-        boolean userFollow = userDao.isFollowing(optionalUser.get().getId(), 1);
+        boolean userFollow = userDao.isFollowing(optionalUser.get().getId(), follow.getId());
 
         optionalUser.ifPresent(opt-> assertTrue(userFollow));
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, FOLLOWS_TABLE));
 
     }

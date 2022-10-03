@@ -136,8 +136,9 @@ public class UserServiceImplTest {
 
         try{
             User user = userService.create(USER_BUILDER);
-            userService.addRole(user, Role.JOURNALIST);
-            List<Role> roleList = userService.getRoles(user);
+            Optional<User> optionalUser = userService.getUserById(user.getId());
+            userService.addRole(optionalUser.get(), Role.ADMIN);
+            List<Role> roleList = userService.getRoles(optionalUser.get());
 
             assertEquals(roleList.size(), 1);
         }
@@ -145,18 +146,6 @@ public class UserServiceImplTest {
             LOGGER.warn("Unexpected error during operation add role test threw exception");
         }
     }
-    /*
-    @Test
-    public void testVerifyAccount(){
-        VerificationToken token = new VerificationToken("token", mockUser, LocalDate.now().plusDays(2));
-        when(mockVerifDao.getTokenByStringValue(Mockito.anyString())).thenReturn((Optional.of(token)));
-        Mockito.doNothing().when(mockVerifDao).removeTokenByUserId(Mockito.any(User.class));
-
-        userService.verifyAccount("token");
-        verify(mockRoleService).addRole(mockUser, Role.VERIFIED);
-        verify(mockRoleService).removeRole(mockUser, Role.UNVERIFIED);
-    }
-     */
 
 }
 
