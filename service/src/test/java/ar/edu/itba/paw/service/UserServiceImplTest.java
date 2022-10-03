@@ -71,6 +71,7 @@ public class UserServiceImplTest {
 
             assertEquals(u.getId(), mockUser.getId());
             assertEquals(u.getEmail(), mockUser.getEmail());
+            Mockito.verify(mockUserDao).create(Mockito.any());
         }
         catch ( UserNotFoundException e){
              LOGGER.warn("Unexpected error during operation create user test threw exception");
@@ -93,7 +94,7 @@ public class UserServiceImplTest {
     public void testVerifyUserMail(){
         VerificationToken token = new VerificationToken(1, "token", mockUser.getId(), DATE);
         Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
-        //Mockito.when(mockVerifDao.getEmailToken(Mockito.anyString())).thenReturn((Optional.of(token)));
+        Mockito.when(mockVerifDao.getEmailToken(Mockito.anyString())).thenReturn((Optional.of(token)));
         Mockito.doNothing().when(mockUserDao).verifyEmail((Mockito.eq(mockUser.getId())));
 
         try {
