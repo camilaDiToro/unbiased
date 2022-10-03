@@ -6,14 +6,15 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public enum Category {
-    FOR_ME("categories.forMe", false),
-    ALL("categories.all", false),
+
     TOURISM("categories.tourism"),
     SHOW("categories.entertainment"),
     POLITICS("categories.politics"),
     ECONOMICS("categories.economics"),
     SPORTS("categories.sports"),
-    TECHNOLOGY("categories.technology");
+    TECHNOLOGY("categories.technology"),
+    FOR_ME("categories.forMe", false),
+    ALL("categories.all", false);
 
     private final String interCode;
     private final boolean trueCategory;
