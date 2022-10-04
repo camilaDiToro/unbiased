@@ -28,7 +28,6 @@ public class ImageDaoTest {
     private DataSource ds;
 
     private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert simpleJdbcInsert;
 
     protected static final String IMAGE_TABLE = "image";
     public static final String IMAGE_TYPE = "image/jpeg";
@@ -39,7 +38,6 @@ public class ImageDaoTest {
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(ds);
         imageDao = new ImageJdbcDao(ds);
-        simpleJdbcInsert = new SimpleJdbcInsert(ds).withTableName(IMAGE_TABLE);
     }
 
 
