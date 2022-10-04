@@ -58,7 +58,7 @@ public class NewsServiceImplTest {
     @Test
     public void testCreate(){
         News.NewsBuilder newsBuilder = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
-        Mockito.when(mockNewsDao.create(Mockito.any())).thenReturn(mockNews);
+        Mockito.lenient().when(mockNewsDao.create(Mockito.any())).thenReturn(mockNews);
 
         try{
             String[] categories = new String[0];
@@ -78,8 +78,8 @@ public class NewsServiceImplTest {
     public void testGetNewsForUserProfile(){
         News.NewsBuilder NEWS_BUILDER = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
         FullNews fullNews = new FullNews(mockNews, mockUser, null, null);
-        Mockito.when(mockNewsDao.create(Mockito.eq(NEWS_BUILDER))).thenReturn(mockNews);
-        Mockito.when(mockNewsDao.getById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.of(fullNews));
+        Mockito.lenient().when(mockNewsDao.create(Mockito.eq(NEWS_BUILDER))).thenReturn(mockNews);
+        Mockito.lenient().when(mockNewsDao.getById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.of(fullNews));
 
         try{
             String[] categories = new String[0];
