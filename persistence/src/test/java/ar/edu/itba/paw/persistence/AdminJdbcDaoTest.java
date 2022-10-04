@@ -89,6 +89,7 @@ public class AdminJdbcDaoTest {
 
         optionalNews.ifPresent(opt -> assertTrue(adminDao.hasReported(optionalNews.get(), optionalNews.get().getCreatorId())));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -100,6 +101,8 @@ public class AdminJdbcDaoTest {
 
         optionalNews.ifPresent(opt -> assertEquals(PAGE_SIZE, reportList.getTotalPages()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + news.getNewsId()));
+
     }
 
     @Test
@@ -111,5 +114,6 @@ public class AdminJdbcDaoTest {
 
         optionalNews.ifPresent(opt -> assertEquals(ReportReason.LIE, reportList.getContent().get(0).getReason()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + optionalNews.get().getNewsId()));
     }
 }

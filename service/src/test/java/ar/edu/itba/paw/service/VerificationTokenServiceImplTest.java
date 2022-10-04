@@ -47,26 +47,16 @@ public class VerificationTokenServiceImplTest {
         Mockito.when(mockverificationDao.createEmailToken(Mockito.anyLong(), Mockito.anyString(), Mockito.any()))
                 .thenReturn(mockVT);
 
-        try {
-            VerificationToken token = tokenService.newToken(mockVT.getUserId());
-            Assert.assertEquals(TOKEN, token.getToken());
-        }
-        catch (Exception e){
-            LOGGER.warn("Unexpected error during operation create token test threw exception");
-        }
+        VerificationToken token = tokenService.newToken(mockVT.getUserId());
+        Assert.assertEquals(TOKEN, token.getToken());
     }
 
     @Test
     public void testGetToken() {
-        Mockito.when(mockverificationDao.createEmailToken(Mockito.eq(mockUser.getId()), Mockito.eq(TOKEN), Mockito.eq(DATE)))
-                .thenReturn(mockVT);
+        Mockito.when(mockverificationDao.getEmailToken(mockVT.getToken()))
+                .thenReturn(Optional.of(mockVT));
 
-        try {
-            Optional<VerificationToken> token = tokenService.getToken(TOKEN);
-            Assert.assertEquals(token.get().getToken(), mockVT.getToken());
-        }
-        catch (Exception e){
-            LOGGER.warn("Unexpected error during operation get token test threw exception");
-        }
+        Optional<VerificationToken> token = tokenService.getToken(TOKEN);
+        Assert.assertEquals(token.get().getToken(), mockVT.getToken());
     }
 }

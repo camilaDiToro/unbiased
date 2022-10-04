@@ -80,7 +80,9 @@ public class NewsJdbcDaoTest {
             assertEquals(news.getTitle(), optionalNews.get().getTitle());
             assertEquals(news.getBody(), optionalNews.get().getBody());
         }
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+
     }
 
     @Test
@@ -92,6 +94,7 @@ public class NewsJdbcDaoTest {
 
         optionalNews.ifPresent(opt -> assertEquals(news.getNewsId(), optionalNews.get().getNews().getNewsId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -104,18 +107,15 @@ public class NewsJdbcDaoTest {
 
         optionalNews.ifPresent(opt -> assertEquals(news.getNewsId(), optionalNews.get().getNews().getNewsId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
     public void testFindByNewsIdFailure() {
         Optional<FullNews> optionalFullNews = newsDao.getById(80, null);
-        try{
-            assertFalse(optionalFullNews.isPresent());
-            assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
-        }
-        catch (Exception e){
-            LOGGER.warn("Unexpected error during operation find by newsId");
-        }
+
+        assertFalse(optionalFullNews.isPresent());
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
     @Test
@@ -127,6 +127,7 @@ public class NewsJdbcDaoTest {
 
         optionalFullNews.ifPresent(opt -> assertEquals(optionalFullNews.get().getNews().getNewsId(), news.getNewsId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -151,6 +152,7 @@ public class NewsJdbcDaoTest {
 
         optionalNews.ifPresent(opt -> assertEquals(news.getNewsId(), optionalNews.get().getNewsId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -165,6 +167,7 @@ public class NewsJdbcDaoTest {
         if(addCategory)
             optionalFullNews.ifPresent(opt ->assertEquals(1, newsList.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -180,6 +183,7 @@ public class NewsJdbcDaoTest {
             optionalFullNews.ifPresent(opt ->assertEquals(1, catList.size()));
         }
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -195,6 +199,7 @@ public class NewsJdbcDaoTest {
             optionalFullNews.ifPresent(opt -> assertEquals(PAGE_SIZE, pagesCategory));
         }
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -206,6 +211,7 @@ public class NewsJdbcDaoTest {
 
         optionalFullNews.ifPresent(opt -> assertEquals(PAGE_SIZE, newsDao.getTotalPagesAllNews()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -217,7 +223,9 @@ public class NewsJdbcDaoTest {
         List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, null).getContent();
 
         optionalFullNews.ifPresent( opt -> assertEquals(1, newsList.size()));
+
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -230,6 +238,7 @@ public class NewsJdbcDaoTest {
 
         optionalFullNews.ifPresent( opt -> assertEquals(PAGE_SIZE, newsList));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -241,7 +250,9 @@ public class NewsJdbcDaoTest {
         newsDao.saveNews(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
 
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, SAVED_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, SAVED_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -256,8 +267,11 @@ public class NewsJdbcDaoTest {
 
         optionalFullNews.ifPresent( opt -> assertTrue(savedNes.isEmpty()));
 
+
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
         assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, SAVED_TABLE));
+        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, SAVED_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -271,7 +285,9 @@ public class NewsJdbcDaoTest {
 
         optionalFullNews.ifPresent( opt -> assertEquals(1, savedList.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, SAVED_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, SAVED_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -284,8 +300,11 @@ public class NewsJdbcDaoTest {
         int savedPages = newsDao.getTotalPagesNewsFromUserSaved(PAGE_SIZE, optionalFullNews.get().getUser());
 
         optionalFullNews.ifPresent(opt -> assertEquals(PAGE_SIZE, savedPages));
+
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, SAVED_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, SAVED_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -299,6 +318,7 @@ public class NewsJdbcDaoTest {
 
         optionalFullNews.ifPresent(opt->assertEquals(1, rating.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
 
@@ -311,7 +331,9 @@ public class NewsJdbcDaoTest {
         newsDao.setRating(optionalFullNews.get().getNews().getNewsId(), optionalFullNews.get().getNews().getCreatorId(), Rating.DOWNVOTE);
         List<FullNews> rating = newsDao.getNewsDownvotedByUser(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, null).getContent();
         optionalFullNews.ifPresent(opt->assertEquals(1, rating.size()));
+
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -324,7 +346,9 @@ public class NewsJdbcDaoTest {
         int rating = newsDao.getTotalPagesNewsFromUserRating(PAGE_SIZE, user.getId(), true);
 
         optionalFullNews.ifPresent(opt->assertEquals(PAGE_SIZE, rating));
+
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -338,6 +362,7 @@ public class NewsJdbcDaoTest {
 
         optionalFullNews.ifPresent(opt->assertEquals(PAGE_SIZE, rating));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 
 
@@ -351,8 +376,11 @@ public class NewsJdbcDaoTest {
         Page<Comment> commentPage = newsDao.getComments(optionalFullNews.get().getNews().getNewsId(), PAGE_SIZE);
 
         optionalFullNews.ifPresent(opt-> assertEquals(commentPage.getContent().get(0).getComment(), COMMENT));
+
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE,  "news_id = " + news.getNewsId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, COMMENT_TABLE,  "news_id = " + news.getNewsId()));
     }
 
     @Test
@@ -365,5 +393,6 @@ public class NewsJdbcDaoTest {
 
         optionalFullNews.ifPresent(opt ->assertEquals(PAGE_SIZE, recommendation.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
     }
 }

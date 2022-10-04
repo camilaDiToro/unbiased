@@ -64,6 +64,7 @@ public class UserJdbcDaoTest {
 
         optionalUser.ifPresent(opt -> assertEquals(EMAIL, optionalUser.get().getEmail()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "user_id = " + optionalUser.get().getId()));
     }
 
     @Test
@@ -73,19 +74,15 @@ public class UserJdbcDaoTest {
 
         optionalUser.ifPresent(opt -> assertEquals(optionalUser.get().getId(), us.getId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "user_id = " + optionalUser.get().getId()));
     }
 
     @Test
     public void testFailFindByUserId() {
-        try {
-            Optional<User> optionalUser = userDao.getUserById(1L);
+        Optional<User> optionalUser = userDao.getUserById(1L);
 
-            assertFalse(optionalUser.isPresent());
-            assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
-        }
-        catch (Exception e){
-            LOGGER.warn("Unexpected error during operation find by userId");
-        }
+        assertFalse(optionalUser.isPresent());
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
@@ -95,19 +92,16 @@ public class UserJdbcDaoTest {
 
         optionalUser.ifPresent(opt -> assertEquals(EMAIL, optionalUser.get().getEmail()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "user_id = " + optionalUser.get().getId()));
+
     }
 
     @Test
     public void testFailFindByEmail() {
-        try{
-            Optional<User> usr = userDao.findByEmail(EMAIL);
+        Optional<User> usr = userDao.findByEmail(EMAIL);
 
-            assertFalse(usr.isPresent());
-            assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
-        }
-        catch (Exception e){
-            LOGGER.warn("Unexpected error during operation find by userId");
-        }
+        assertFalse(usr.isPresent());
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
     }
 
     @Test
@@ -119,6 +113,7 @@ public class UserJdbcDaoTest {
 
         optionalUser.ifPresent(opt-> assertEquals(UserStatus.REGISTERED, optionalUser.get().getStatus()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "user_id = " + optionalUser.get().getId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, TOKEN_TABLE));
     }
 
@@ -130,18 +125,13 @@ public class UserJdbcDaoTest {
 
         optionalUser.ifPresent(opt-> assertEquals(USERNAME, optionalUser.get().getUsername()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "user_id = " + optionalUser.get().getId()));
     }
 
     @Test
     public void testFailFindByUsername() {
-        try {
-            final Optional<User> user = userDao.findByUsername(USERNAME);
-
-            assertFalse(user.isPresent());
-        }
-        catch (Exception e){
-            LOGGER.warn("Unexpected error during operation find by username");
-        }
+        final Optional<User> user = userDao.findByUsername(USERNAME);
+        assertFalse(user.isPresent());
     }
 
     @Test
@@ -155,7 +145,8 @@ public class UserJdbcDaoTest {
 
         optionalUser.ifPresent(opt-> assertTrue(userFollow));
         assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "user_id = " + us.getId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USER_TABLE, "user_id = " + follow.getId()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, FOLLOWS_TABLE));
-
     }
 }
