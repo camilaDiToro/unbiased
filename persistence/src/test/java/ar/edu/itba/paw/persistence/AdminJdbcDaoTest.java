@@ -48,15 +48,15 @@ public class AdminJdbcDaoTest {
     protected static final String TITTLE = "titulo";
     protected static final String SUBTITTLE = "subtitulo";
     protected static final String BODY = "cuerpo";
-    protected static final int PAGE_SIZE = 1;
 
-    private User getMockUser() {
+
+    private User createUser() {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
         return userDao.create(usBuilder);
     }
 
-    private News getMockNews() {
-        User user = getMockUser();
+    private News createNews() {
+        User user = createUser();
         News.NewsBuilder nsBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         return newsDao.create(nsBuilder);
     }
@@ -64,16 +64,16 @@ public class AdminJdbcDaoTest {
     @Before
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(ds);
+        categoryDao = new CategoryJdbcDao(ds);
         newsDao = new NewsJdbcDao(ds, categoryDao);
         userDao = new UserJdbcDao(ds);
-        categoryDao = new CategoryJdbcDao(ds);
         roleDao = new RoleJdbcDao(ds);
         adminDao = new AdminJdbcDao(ds);
     }
 
     @Test
     public void testMakeUserAdmin(){
-        User user = getMockUser();
+        User user = createUser();
         adminDao.makeUserAdmin(user);
         List<String> roleList = roleDao.getRoles(user.getId());
 
@@ -83,23 +83,19 @@ public class AdminJdbcDaoTest {
 
     @Test
     public void testReportedNews(){
-        News news = getMockNews();
-        Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
-        adminDao.reportNews(optionalNews.get(), optionalNews.get().getCreatorId(), ReportReason.LIE);
+        News news = createNews();
+        adminDao.reportNews(news, news.getCreatorId(), ReportReason.LIE);
 
-        optionalNews.ifPresent(opt -> assertTrue(adminDao.hasReported(optionalNews.get(), optionalNews.get().getCreatorId())));
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
+        assertTrue(adminDao.hasReported(news, news.getCreatorId()));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + news.getNewsId()));
     }
 
     @Test
     public void testGetReportedNews(){
-        News news = getMockNews();
-        Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
-        adminDao.reportNews(optionalNews.get(), optionalNews.get().getCreatorId(), ReportReason.LIE);
-        Page<ReportedNews> reportList = adminDao.getReportedNews(PAGE_SIZE, ReportOrder.REP_DATE_DESC);
+        News news = createNews();
+        adminDao.reportNews(news, news.getCreatorId(), ReportReason.LIE);
+        Page<ReportedNews> reportList = adminDao.getReportedNews(1, ReportOrder.REP_DATE_DESC);
 
-        optionalNews.ifPresent(opt -> assertEquals(PAGE_SIZE, reportList.getTotalPages()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + news.getNewsId()));
 
@@ -107,13 +103,12 @@ public class AdminJdbcDaoTest {
 
     @Test
     public void testGetReportedNewsDetail(){
-        News news = getMockNews();
-        Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
-        adminDao.reportNews(optionalNews.get(), optionalNews.get().getCreatorId(), ReportReason.LIE);
-        Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(PAGE_SIZE, optionalNews.get());
+        News news = createNews();
+        adminDao.reportNews(news, news.getCreatorId(), ReportReason.LIE);
+        Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(1, news);
 
-        optionalNews.ifPresent(opt -> assertEquals(ReportReason.LIE, reportList.getContent().get(0).getReason()));
+        assertEquals(ReportReason.LIE, reportList.getContent().get(0).getReason());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + optionalNews.get().getNewsId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + news.getNewsId()));
     }
 }
