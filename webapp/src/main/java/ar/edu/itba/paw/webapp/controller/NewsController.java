@@ -159,10 +159,6 @@ public class NewsController {
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
-        for(String s : createNewsFrom.getCategories()){
-            System.out.println("%" + s);
-        }
-
         final News news = newsService.create(newsBuilder, createNewsFrom.getCategories());
         return new ModelAndView("redirect:/news/" + news.getNewsId());
     }

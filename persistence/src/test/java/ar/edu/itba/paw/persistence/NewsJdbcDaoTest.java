@@ -237,7 +237,7 @@ public class NewsJdbcDaoTest {
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
-        List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, optionalFullNews.get().getNews().getCreatorId()).getContent();
+        List<FullNews> newsList = newsDao.getAllNewsFromUser(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, null).getContent();
 
         optionalFullNews.ifPresent( opt -> assertEquals(1, newsList.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
@@ -268,7 +268,6 @@ public class NewsJdbcDaoTest {
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
         newsDao.saveNews(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
 
-        optionalFullNews.ifPresent(opt -> assertTrue(optionalFullNews.get().getLoggedUserParameters().isSaved()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, SAVED_TABLE));
     }
@@ -302,7 +301,7 @@ public class NewsJdbcDaoTest {
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
         newsDao.saveNews(optionalFullNews.get().getNews(), optionalFullNews.get().getUser());
-        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, optionalFullNews.get().getNews().getCreatorId()).getContent();
+        List<FullNews> savedList = newsDao.getSavedNews(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW, null).getContent();
 
         optionalFullNews.ifPresent( opt -> assertEquals(1, savedList.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));

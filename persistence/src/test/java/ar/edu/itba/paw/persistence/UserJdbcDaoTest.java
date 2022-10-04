@@ -162,18 +162,6 @@ public class UserJdbcDaoTest {
     }
 
     @Test
-    public void testTotalUsers(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-
-        User us = userDao.create(usBuilder);
-        Optional<User> optionalUser = userDao.getUserById(us.getId());
-        List<User> users = userDao.getAll(1);
-
-        optionalUser.ifPresent( opt -> assertEquals(1, users.size()));
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USER_TABLE));
-    }
-
-    @Test
     public void testIsFollowing(){
         JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
         JdbcTestUtils.deleteFromTables(jdbcTemplate, FOLLOWS_TABLE);
