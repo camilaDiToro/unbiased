@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = mayBeUser.get();
-        if(user.getStatus().equals(UserStatus.REGISTERED)){
+        if(!user.getStatus().equals(UserStatus.UNABLE)){
             LOGGER.info("Trying to resend verification email to {}, but this email is already registered", email);
             return VerificationToken.Status.ALREADY_VERIFIED;
         }

@@ -39,6 +39,7 @@ public class UserServiceImplTest {
     private static final String PASS = "userpass";
     private static final long ID = 1;
     private User user;
+    private static final User.UserBuilder USER_BUILDER = new User.UserBuilder(EMAIL).userId(ID);
 
     //TOKEN
     private static final String TOKEN = "A1234";
@@ -46,17 +47,11 @@ public class UserServiceImplTest {
     @Mock
     private VerificationToken mockVerificationToken;
 
-    private static final LocalDateTime DATE = LocalDateTime.now().plusDays(1);
-    private static User.UserBuilder USER_BUILDER = new User.UserBuilder(EMAIL);
+
     @Mock
     private UserDao mockUserDao;
-
-
     @Mock
     private VerificationTokenDao mockVerifDao;
-    @Mock
-    private RoleDao mockRoleDao;
-
     @Mock
     private EmailService mockEmailService;
     @Mock
@@ -66,11 +61,6 @@ public class UserServiceImplTest {
 
     @InjectMocks
     private UserServiceImpl userService;
-
-    /*@Before
-    public void setTest() {
-
-    }*/
 
     @Test
     public void testGetRegisteredUserByIdGetRegistered(){
@@ -94,20 +84,18 @@ public class UserServiceImplTest {
 
     @Test
     public void testCreate(){
-        user = new User.UserBuilder(EMAIL).userId(ID).username(USERNAME).build();
-        Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(user);
+        Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(USER_BUILDER.build());
 
         User u = userService.create(USER_BUILDER);
 
         assertNotNull(u);
-        assertEquals(u.getId(), user.getId());
-        assertEquals(u.getEmail(), user.getEmail());
+        assertEquals(u.getId(), ID);
+        assertEquals(u.getEmail(), EMAIL);
     }
 
     @Test(expected = UserNotFoundException.class)
     public void testVerifyUserEmailInvalidUser(){
 
-        Mockito.when(mockVerificationToken.isValidToken()).thenReturn(false);
         Mockito.when(mockVerificationToken.getUserId()).thenReturn(ID);
         Mockito.when(mockVerificationTokenService.getToken(Mockito.eq(TOKEN))).thenReturn(Optional.of(mockVerificationToken));
         Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.empty());
@@ -147,25 +135,24 @@ public class UserServiceImplTest {
 
     @Test
     public void testResendUserVerificationInvalidEmail() {
-        Mockito.when(mockUserDao.findByEmail(Mockito.eq("invalid@mail.com"))).thenThrow(new UserNotFoundException());
-        try{
-            userService.resendEmailVerification("invalid@mail.com");
-        }
-        catch (UserNotFoundException e){
-            LOGGER.warn("Unexpected error during operation resend email test threw exception");
-        }
+        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.empty());
+        assertEquals(VerificationToken.Status.NOT_EXISTS, userService.resendEmailVerification(EMAIL));
     }
 
     @Test
-    public void testUpdateProfile() {
-        Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(user);
-        Mockito.doNothing().when(mockUserDao).updateUsername(Mockito.eq(user), Mockito.eq(USERNAME));
+    public void testResendUserVerificationAlreadyVerified() {
+        user = new User.UserBuilder(EMAIL).userId(ID).status(UserStatus.REGISTERED.getStatus()).build();
+        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(user));
 
-        User user = userService.create(USER_BUILDER);
-        userService.updateProfile(user, USERNAME, null);
+        assertEquals(VerificationToken.Status.ALREADY_VERIFIED, userService.resendEmailVerification(EMAIL));
+    }
 
-        assertEquals(user.getUsername(), user.getUsername());
-        Mockito.verify(mockUserDao).updateUsername(Mockito.any(User.class),Mockito.anyString());
+    @Test
+    public void testResendUserVerificationSuccessfullyResended() {
+        user = new User.UserBuilder(EMAIL).userId(ID).status(UserStatus.UNABLE.getStatus()).build();
+        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(user));
+
+        assertEquals(VerificationToken.Status.SUCCESSFULLY_RESENDED, userService.resendEmailVerification(EMAIL));
     }
 
 }
