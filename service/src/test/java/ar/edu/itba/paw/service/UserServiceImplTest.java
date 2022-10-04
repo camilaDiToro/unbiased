@@ -132,15 +132,20 @@ public class UserServiceImplTest {
 
     @Test
     public void testAddRole(){
+        List<String> roleList = new ArrayList<>();
+        roleList.add("ROLE_ADMIN");
         Mockito.when(mockUserDao.create(Mockito.eq(USER_BUILDER))).thenReturn(mockUser);
+        Mockito.when(mockUserDao.getUserById(Mockito.anyLong())).thenReturn(Optional.of(mockUser));
+        Mockito.doNothing().when(mockRoleDao).addRole(mockUser.getId(), Role.ADMIN);
+        Mockito.when(mockRoleDao.getRoles(mockUser.getId())).thenReturn(roleList);
 
         try{
             User user = userService.create(USER_BUILDER);
             Optional<User> optionalUser = userService.getUserById(user.getId());
             userService.addRole(optionalUser.get(), Role.ADMIN);
-            List<Role> roleList = userService.getRoles(optionalUser.get());
+            List<Role> newRoleList = userService.getRoles(optionalUser.get());
 
-            assertEquals(roleList.size(), 1);
+            assertEquals(1, newRoleList.size());
         }
         catch ( UserNotFoundException e){
             LOGGER.warn("Unexpected error during operation add role test threw exception");
