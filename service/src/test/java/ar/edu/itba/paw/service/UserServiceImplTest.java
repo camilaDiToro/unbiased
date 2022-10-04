@@ -30,7 +30,6 @@ import javax.swing.text.html.Option;
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-@Transactional
 public class UserServiceImplTest {
 
     //User

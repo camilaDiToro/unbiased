@@ -1,97 +1,107 @@
 package ar.edu.itba.paw.service;
 
+
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
+import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
-import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jws.soap.SOAPBinding;
+import java.util.Collections;
 import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewsServiceImplTest {
-    private static final String EMAIL = "user@mail.com";
-    protected static final String TITTLE = "titulo";
-    protected static final String SUBTITTLE = "subtitulo";
-    protected static final String BODY = "cuerpo";
 
-    @Mock
-    private User mockUser;
+    // USER
+    private static final String EMAIL = "user@mail.com";
+    private static final User.UserBuilder USER_BUILDER = new User.UserBuilder(EMAIL);
+
+    // NEWS
+    private static final String TITTLE = "Title";
+    private static final String SUBTITTLE = "Subtitle";
+    private static final String BODY = "Body";
+    private static final String INVALID_CATEGORY = "invalid.category";
+    private static final String INVALID_NEWSORDER = "invalid.newsOrder";
+    private static final long CREATOR_ID = 8;
+    private static final News.NewsBuilder NEWS_BUILDER = new News.NewsBuilder(CREATOR_ID,BODY,TITTLE,SUBTITTLE);
+
+    // GET NEWS
+    private static final int LOWER_PAGE = -5;
+    private static final int TOTAL_PAGES = 5;
+    private static final int UPPER_PAGE =  15;
+
     @Mock
     private UserDao mockUserDao;
     @Mock
     private NewsDao mockNewsDao;
     @Mock
-    private News mockNews;
+    private UserService userService;
+    @Mock
+    private SecurityService mockSecurityService;
 
     @InjectMocks
     private NewsServiceImpl newsService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(NewsServiceImplTest.class);
 
 
-    @Before
+    /*@Before
     public void setTest() {
         mockUser = new User.UserBuilder(EMAIL).build();
         mockNews = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE).newsId(8).build();
+    }*/
+
+    @Test(expected = InvalidCategoryException.class)
+    public void testCreateInvalidCategory(){
+        Mockito.when(userService.getUserById(Mockito.eq(CREATOR_ID))).thenReturn(Optional.of(USER_BUILDER.build()));
+        Mockito.when(userService.getRoles(Mockito.any())).thenReturn(Collections.singletonList(Role.JOURNALIST));
+        newsService.create(NEWS_BUILDER,new String[]{INVALID_CATEGORY});
+        Assert.fail("Should have thrown InvalidCategoryException");
     }
-
-    // @Test(expected = IllegalsTATEeXCEPTION.class)
-    // AssertNotNull
-    // AssertEmail is equal
-
-    //.when(userDao.create(eq(EMAIL))).thenThrow(...)
 
     @Test
-    public void testCreate(){
-        News.NewsBuilder newsBuilder = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
-        Mockito.when(mockNewsDao.create(Mockito.any())).thenReturn(mockNews);
-
-        try{
-            String[] categories = new String[0];
-            News news = newsService.create(newsBuilder, categories);
-
-            Assert.assertEquals(mockNews.getTitle(), news.getTitle());
-            Assert.assertEquals(mockNews.getBody(), news.getBody());
-            Mockito.verify(mockNewsDao).create(Mockito.any());
-        }
-        catch (Exception e){
-            LOGGER.warn("Unexpected error during operation create news test threw exception");
-        }
+    public void testGetNewsLowerInvalidPage(){
+        Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
+        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any())).thenReturn(TOTAL_PAGES);
+        Page<FullNews> returnValue = newsService.getNews(LOWER_PAGE, "ALL", NewsOrder.NEW.getDescription(), "");
+        assertEquals(1,returnValue.getCurrentPage());
     }
-
 
     @Test
-    public void testGetNewsForUserProfile(){
-        News.NewsBuilder NEWS_BUILDER = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
-        FullNews fullNews = new FullNews(mockNews, mockUser, null, null);
-        Mockito.when(mockNewsDao.create(Mockito.eq(NEWS_BUILDER))).thenReturn(mockNews);
-        Mockito.when(mockNewsDao.getById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.of(fullNews));
-
-        try{
-            String[] categories = new String[0];
-            News news = newsService.create(NEWS_BUILDER, categories);
-            Optional<FullNews> optionalFullNews = newsService.getById(news.getNewsId());
-            Page<FullNews> fullNewsPage = newsService.getNewsForUserProfile(1, NewsOrder.NEW.getDescription(), optionalFullNews.get().getUser(), ProfileCategory.MY_POSTS.getDescription());
-
-            Assert.assertEquals(1, fullNewsPage.getTotalPages());
-            Mockito.verify(mockNewsDao).create(Mockito.any());
-        }
-        catch (Exception e){
-            LOGGER.warn("Unexpected error during operation get news for user profile test threw exception");
-        }
+    public void testGetNewsUpperInvalidPage(){
+        Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
+        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any())).thenReturn(TOTAL_PAGES);
+        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, "ALL", NewsOrder.NEW.getDescription(), "");
+        assertEquals(TOTAL_PAGES,returnValue.getCurrentPage());
     }
+
+    @Test(expected = InvalidOrderException.class)
+    public void testGetNewsInvalidNewsOrder(){
+        Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
+        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any())).thenReturn(TOTAL_PAGES);
+        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, "ALL", INVALID_NEWSORDER, "");
+        Assert.fail("Should have thrown InvalidOrderException");
+    }
+
+    @Test(expected = InvalidCategoryException.class)
+    public void testGetNewsInvalidCategory(){
+        Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
+        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any())).thenReturn(TOTAL_PAGES);
+        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, INVALID_CATEGORY, NewsOrder.NEW.getDescription(), "");
+        Assert.fail("Should have thrown InvalidOrderException");
+    }
+
 }

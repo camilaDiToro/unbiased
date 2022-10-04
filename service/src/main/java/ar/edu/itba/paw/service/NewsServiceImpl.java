@@ -42,7 +42,7 @@ public class NewsServiceImpl implements NewsService {
 
         for(String category : categories){
             Category c = Category.getByCode(category);
-            if(c.equals(Category.ALL) || c.equals(Category.FOR_ME))
+            if(c == null || !c.isTrueCategory())
                 throw new InvalidCategoryException();
             newsBuilder.addCategory(c);
         }

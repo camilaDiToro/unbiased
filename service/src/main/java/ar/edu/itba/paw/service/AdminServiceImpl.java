@@ -24,7 +24,6 @@ public class AdminServiceImpl implements AdminService{
     private final NewsService newsService;
     private final SecurityService securityService;
 
-
     @Autowired
     public AdminServiceImpl(AdminDao adminDao, NewsService newsService, SecurityService securityService) {
         this.adminDao = adminDao;
@@ -65,5 +64,4 @@ public class AdminServiceImpl implements AdminService{
     public void makeUserAdmin(User user) {
         adminDao.makeUserAdmin(user);
     }
-
 }

@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 
 public enum Category{
 
-    TOURISM("categories.tourism", 2),
-    SHOW("categories.entertainment", 3),
-    POLITICS("categories.politics", 4),
-    ECONOMICS("categories.economics", 5),
-    SPORTS("categories.sports", 6),
-    TECHNOLOGY("categories.technology", 7),
+    TOURISM("categories.tourism", true,2),
+    SHOW("categories.entertainment", true, 3),
+    POLITICS("categories.politics", true, 4),
+    ECONOMICS("categories.economics", true,5),
+    SPORTS("categories.sports", true,6),
+    TECHNOLOGY("categories.technology", true, 7),
     FOR_ME("categories.forMe", false, 0),
     ALL("categories.all", false, 1);
 
@@ -43,8 +43,6 @@ public enum Category{
     public int getOrder() {
         return order;
     }
-
-
 
     public long getId() {
         return ordinal();
@@ -85,7 +83,6 @@ public enum Category{
     }
 
     public static List<Category> categoriesInOrder() {
-
         return Arrays.stream(values()).sorted(comparator).collect(Collectors.toList());
     }
 }

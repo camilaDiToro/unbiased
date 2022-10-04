@@ -17,8 +17,6 @@ public interface NewsService {
     void setRating(News news, Rating rating);
     boolean toggleSaveNews(FullNews news, User user);
     void deleteNews(News news);
-
-
     Iterable<ProfileCategory> getProfileCategories(User user);
     Iterable<Category> getHomeCategories();
     Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String pc);
