@@ -93,14 +93,14 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.NOT_EXISTS;
         }
         VerificationToken vt = mayBeVt.get();
-        User user = userDao.getUserById(vt.getUserId()).get();
+        User user = userDao.getUserById(vt.getUserId()).orElseThrow(UserNotFoundException::new);
 
         if(!vt.isValidToken()){
             LOGGER.info("Trying to validate token {}, but it has expired", token);
             return VerificationToken.Status.EXPIRED;
         }
         userDao.verifyEmail(vt.getUserId());
-        login(getUserById(vt.getUserId()).orElseThrow(UserNotFoundException::new));
+        login(user);
         verificationTokenService.deleteEmailToken(user);
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
@@ -182,7 +182,7 @@ public class UserServiceImpl implements UserService {
     private void login(User user) {
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
-        LOGGER.debug("User {} has loged in automatuically", user);
+        LOGGER.debug("User {} has loged in automatically", user);
     }
 
     @Override
