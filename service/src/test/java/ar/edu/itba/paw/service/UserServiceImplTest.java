@@ -69,6 +69,7 @@ public class UserServiceImplTest {
         Optional<User> mayBeUser = userService.getRegisteredUserById(ID);
 
         assertTrue(mayBeUser.isPresent());
+        assertEquals(EMAIL, mayBeUser.get().getEmail());
     }
 
     @Test

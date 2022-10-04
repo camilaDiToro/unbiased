@@ -393,7 +393,7 @@ public class NewsJdbcDao implements NewsDao {
                             "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                     params, FULLNEWS_ROW_MAPPER);
         }else{
-            ln = namedJdbcTemplate.query("SELECT *, null as logged_user FROM saved_news NATURAL JOIN full_news " +
+            ln = namedJdbcTemplate.query("SELECT news_id, full_news.*, null as logged_user FROM saved_news NATURAL JOIN full_news " +
                             "    WHERE user_id = :userId " +
                             "ORDER BY " + ns.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                     params, FULLNEWS_ROW_MAPPER);

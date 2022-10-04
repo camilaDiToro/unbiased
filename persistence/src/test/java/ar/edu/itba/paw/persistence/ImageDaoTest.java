@@ -45,7 +45,6 @@ public class ImageDaoTest {
 
     @Test
     public void testGetImageById(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, IMAGE_TABLE);
 
         Image image = new Image(IMAGE_ID,IMAGE_DATA, IMAGE_TYPE);
         imageDao.uploadImage(image.getBytes(), image.getDataType());
@@ -57,7 +56,6 @@ public class ImageDaoTest {
 
     @Test
     public void testFailGetImageById() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, IMAGE_TABLE);
 
         Optional<Image> optionalImage = imageDao.getImageById(IMAGE_ID);
 
@@ -66,7 +64,6 @@ public class ImageDaoTest {
     }
     @Test
     public void testUploadImage() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, IMAGE_TABLE);
 
         imageDao.uploadImage(IMAGE_DATA, IMAGE_TYPE);
 
@@ -75,7 +72,6 @@ public class ImageDaoTest {
 
     @Test
     public void testDeleteImage() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, IMAGE_TABLE);
 
         Image image = new Image(IMAGE_ID,IMAGE_DATA, IMAGE_TYPE);
         imageDao.uploadImage(image.getBytes(), image.getDataType());
