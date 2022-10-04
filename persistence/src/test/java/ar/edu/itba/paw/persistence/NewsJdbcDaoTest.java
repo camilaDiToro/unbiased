@@ -18,7 +18,9 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -29,22 +31,28 @@ import static org.junit.Assert.*;
 @Transactional
 public class NewsJdbcDaoTest {
     private NewsJdbcDao newsDao;
-    private UserJdbcDao userDao;
+//    private UserJdbcDao userDao;
     @Autowired
     private DataSource ds;
     private CategoryDao categoryDao;
     protected JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
+
+    private SimpleJdbcInsert jdbcUserInsert;
+
 
 
     //TABLES
     protected static final String NEWS_TABLE = "news";
+    protected static final String USER_TABLE = "users";
+
     protected static final String CATEGORY_TABLE = "news_category";
     protected static final String SAVED_TABLE = "saved_news";
     protected static final String COMMENT_TABLE = "comments";
 
     //USERS DATA
-    protected static final String EMAIL = "user@gmail.com";
+    protected static final String EMAIL = "user@gmail.com";// por que protected???
+
+    private static final long USER_ID = 1;
 
     //NEWS DATA
     protected static final String TITTLE = "titulo";
@@ -52,26 +60,29 @@ public class NewsJdbcDaoTest {
     protected static final String BODY = "cuerpo";
     protected static final String COMMENT = "comment";
     protected static final int PAGE_SIZE = 1;
-    private static final Logger LOGGER = LoggerFactory.getLogger(NewsJdbcDaoTest.class);
 
 
-    private User getMockUser() {
-        User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        return userDao.create(usBuilder);
+    private User insertUser() {
+        Map<String, Object> userValues = new HashMap<>();
+        userValues.put("email", EMAIL);
+        userValues.put("status", "REGISTERED");
+        userValues.put("user_id", USER_ID);
+        jdbcUserInsert.execute(userValues);
+        return new User.UserBuilder(EMAIL).userId(USER_ID).build();
     }
 
     @Before
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(ds);
         newsDao = new NewsJdbcDao(ds, categoryDao);
-        userDao = new UserJdbcDao(ds);
         categoryDao = new CategoryJdbcDao(ds);
-        jdbcInsert = new SimpleJdbcInsert(ds).withTableName(NEWS_TABLE).usingGeneratedKeyColumns("newsId");
+        jdbcUserInsert = new SimpleJdbcInsert(ds).withTableName(USER_TABLE).usingGeneratedKeyColumns("newsId");
+
     }
 
     @Test
     public void testCreateNews() {
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
@@ -87,7 +98,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testFindByNewsIdNotLoggedUser() {
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalNews = newsDao.getById(news.getNewsId(), null);
@@ -99,7 +110,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testFindByNewsIdLoggedUser() {
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         FullNews fullnews = new FullNews(news, user, null);
@@ -120,7 +131,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testFindByAuthorId() {
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -132,7 +143,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testDeleteNews() {
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
@@ -145,7 +156,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetSimpleNewsById() {
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional <News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
@@ -157,7 +168,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetNewsByCategory(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -168,11 +179,12 @@ public class NewsJdbcDaoTest {
             optionalFullNews.ifPresent(opt ->assertEquals(1, newsList.size()));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
-    }
+    } // TODO para mi tendriamos que traer todo lo del categoryDao al newsDao asi no hay que pasarlo por constructor,
+    // porque si mockeamos el categoryDao, tambien tenemos que accedr a la base de datos de todas formas
 
     @Test
     public void testGetNewsCategory(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -188,7 +200,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesCategory(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -204,7 +216,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPageNews(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -216,7 +228,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetAllNewsFromUser(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
@@ -230,7 +242,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesNewsFromUser(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -243,7 +255,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testSaveNews(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
@@ -257,7 +269,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testRemoveSavedNews(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
@@ -276,7 +288,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetSavedNews(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), news.getCreatorId());
@@ -292,7 +304,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesNewsFromUserSaved(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -309,7 +321,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetNewsUpvotedByUser(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -324,7 +336,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetNewsDownvotedByUser(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -338,7 +350,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesNewsFromUserUpvoted(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -353,7 +365,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesNewsFromUserDownvoted(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -368,7 +380,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetComments(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
@@ -385,7 +397,7 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetRecommendation(){
-        User user = getMockUser();
+        User user = insertUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
         Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);

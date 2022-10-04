@@ -72,7 +72,7 @@ public class AdminJdbcDaoTest {
     }
 
     @Test
-    public void testMakeUserAdmin(){
+    public void testMakeUserAdmin() {
         User user = getMockUser();
         adminDao.makeUserAdmin(user);
         List<String> roleList = roleDao.getRoles(user.getId());
@@ -82,7 +82,7 @@ public class AdminJdbcDaoTest {
     }
 
     @Test
-    public void testReportedNews(){
+    public void testReportedNews() {
         News news = getMockNews();
         Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
         adminDao.reportNews(optionalNews.get(), optionalNews.get().getCreatorId(), ReportReason.LIE);
