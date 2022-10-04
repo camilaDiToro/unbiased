@@ -45,7 +45,6 @@ public class ImageDaoTest {
 
     @Test
     public void testGetImageById(){
-
         Image image = new Image(IMAGE_ID,IMAGE_DATA, IMAGE_TYPE);
         imageDao.uploadImage(image.getBytes(), image.getDataType());
         Optional<Image> optionalImage = imageDao.getImageById(image.getImageId());
@@ -56,7 +55,6 @@ public class ImageDaoTest {
 
     @Test
     public void testFailGetImageById() {
-
         Optional<Image> optionalImage = imageDao.getImageById(IMAGE_ID);
 
         assertFalse(optionalImage.isPresent());
@@ -64,7 +62,6 @@ public class ImageDaoTest {
     }
     @Test
     public void testUploadImage() {
-
         imageDao.uploadImage(IMAGE_DATA, IMAGE_TYPE);
 
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, IMAGE_TABLE));
@@ -72,7 +69,6 @@ public class ImageDaoTest {
 
     @Test
     public void testDeleteImage() {
-
         Image image = new Image(IMAGE_ID,IMAGE_DATA, IMAGE_TYPE);
         imageDao.uploadImage(image.getBytes(), image.getDataType());
         imageDao.deleteImage(image.getImageId());

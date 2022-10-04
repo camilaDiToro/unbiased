@@ -49,8 +49,6 @@ public class VerificationTokenDaoTest {
 
     @Test
     public void testCreateVerificationToken() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, TOKEN_TABLE);
-
         User user = getMockUser();
         Optional<User> optionalUser = userDao.getUserById(user.getId());
         LocalDateTime date = LocalDateTime.now().plusDays(TOKEN_DURATION);
@@ -66,8 +64,6 @@ public class VerificationTokenDaoTest {
     }
     @Test
     public void testGetToken(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, TOKEN_TABLE);
-
         LocalDateTime date = LocalDateTime.now().plusDays(TOKEN_DURATION);
         User user = getMockUser();
         Optional<User> optionalUser = userDao.getUserById(user.getId());

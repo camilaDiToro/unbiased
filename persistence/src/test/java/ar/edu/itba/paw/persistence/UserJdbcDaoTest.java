@@ -59,8 +59,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testCreateUser() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-
         User user = userDao.create(usBuilder);
         Optional<User> optionalUser = userDao.getUserById(user.getId());
 
@@ -70,8 +68,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFindById(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-
         User us = userDao.create(usBuilder);
         Optional<User> optionalUser = userDao.getUserById(us.getId());
 
@@ -81,8 +77,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFailFindByUserId() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-
         try {
             Optional<User> optionalUser = userDao.getUserById(1L);
 
@@ -96,8 +90,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFindByEmail() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-
         User us = userDao.create(usBuilder);
         Optional<User> optionalUser = userDao.getUserById(us.getId());
 
@@ -107,8 +99,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFailFindByEmail() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-
         try{
             Optional<User> usr = userDao.findByEmail(EMAIL);
 
@@ -122,9 +112,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testVerifyEmail(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, TOKEN_TABLE);
-
         User us = userDao.create(usBuilder);
         VerificationToken vt = verificationTokenDao.createEmailToken(us.getId(), "token", LocalDateTime.now().plusDays(1));
         userDao.verifyEmail(vt.getUserId());
@@ -137,8 +124,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFindByUsername() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-
         User us = userDao.create(usBuilder);
         userDao.updateUsername(us, USERNAME);
         Optional<User> optionalUser = userDao.getUserById(us.getId());
@@ -149,8 +134,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testFailFindByUsername() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-
         try {
             final Optional<User> user = userDao.findByUsername(USERNAME);
 
@@ -163,9 +146,6 @@ public class UserJdbcDaoTest {
 
     @Test
     public void testIsFollowing(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, USER_TABLE);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, FOLLOWS_TABLE);
-
         User.UserBuilder followBuilder = new User.UserBuilder("follow@mail.com");
         User us = userDao.create(usBuilder);
         User follow = userDao.create(followBuilder);

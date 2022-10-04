@@ -73,8 +73,6 @@ public class AdminJdbcDaoTest {
 
     @Test
     public void testMakeUserAdmin(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, ROLE_TABLE);
-
         User user = getMockUser();
         adminDao.makeUserAdmin(user);
         List<String> roleList = roleDao.getRoles(user.getId());
@@ -85,8 +83,6 @@ public class AdminJdbcDaoTest {
 
     @Test
     public void testReportedNews(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, REPORT_TABLE);
-
         News news = getMockNews();
         Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
         adminDao.reportNews(optionalNews.get(), optionalNews.get().getCreatorId(), ReportReason.LIE);
@@ -97,8 +93,6 @@ public class AdminJdbcDaoTest {
 
     @Test
     public void testGetReportedNews(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, REPORT_TABLE);
-
         News news = getMockNews();
         Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
         adminDao.reportNews(optionalNews.get(), optionalNews.get().getCreatorId(), ReportReason.LIE);
@@ -110,8 +104,6 @@ public class AdminJdbcDaoTest {
 
     @Test
     public void testGetReportedNewsDetail(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, REPORT_TABLE);
-
         News news = getMockNews();
         Optional<News> optionalNews = newsDao.getSimpleNewsById(news.getNewsId());
         adminDao.reportNews(optionalNews.get(), optionalNews.get().getCreatorId(), ReportReason.LIE);

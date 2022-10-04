@@ -71,8 +71,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testCreateNews() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -87,8 +85,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testFindByNewsIdNotLoggedUser() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -100,8 +96,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testFindByNewsIdLoggedUser() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -126,8 +120,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testFindByAuthorId() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -139,8 +131,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testDeleteNews() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -154,8 +144,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetSimpleNewsById() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -167,8 +155,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetNewsByCategory(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -183,8 +169,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetNewsCategory(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -200,9 +184,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesCategory(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, CATEGORY_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -218,8 +199,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPageNews(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -231,8 +210,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetAllNewsFromUser(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -245,8 +222,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesNewsFromUser(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -259,9 +234,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testSaveNews(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, SAVED_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -274,9 +246,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testRemoveSavedNews(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, SAVED_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -293,9 +262,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetSavedNews(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, SAVED_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -310,9 +276,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesNewsFromUserSaved(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, SAVED_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -327,8 +290,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetNewsUpvotedByUser(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -343,8 +304,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetNewsDownvotedByUser(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -357,8 +316,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesNewsFromUserUpvoted(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -372,8 +329,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetTotalPagesNewsFromUserDownvoted(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -388,9 +343,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetComments(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, COMMENT_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
@@ -405,8 +357,6 @@ public class NewsJdbcDaoTest {
 
     @Test
     public void testGetRecommendation(){
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, NEWS_TABLE);
-
         User user = getMockUser();
         News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
         News news = newsDao.create(nwBuilder);
