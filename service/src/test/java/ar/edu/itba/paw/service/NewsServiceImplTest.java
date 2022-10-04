@@ -49,6 +49,12 @@ public class NewsServiceImplTest {
         mockNews = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE).newsId(8).build();
     }
 
+    // @Test(expected = IllegalsTATEeXCEPTION.class)
+    // AssertNotNull
+    // AssertEmail is equal
+
+    //.when(userDao.create(eq(EMAIL))).thenThrow(...)
+
     @Test
     public void testCreate(){
         News.NewsBuilder newsBuilder = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
@@ -66,6 +72,7 @@ public class NewsServiceImplTest {
             LOGGER.warn("Unexpected error during operation create news test threw exception");
         }
     }
+
 
     @Test
     public void testGetNewsForUserProfile(){
