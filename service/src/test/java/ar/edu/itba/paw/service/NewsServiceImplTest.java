@@ -77,7 +77,9 @@ public class NewsServiceImplTest {
     @Test
     public void testGetNewsForUserProfile(){
         News.NewsBuilder NEWS_BUILDER = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE);
+        FullNews fullNews = new FullNews(mockNews, mockUser, null, null);
         Mockito.when(mockNewsDao.create(Mockito.eq(NEWS_BUILDER))).thenReturn(mockNews);
+        Mockito.when(mockNewsDao.getById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(Optional.of(fullNews));
 
         try{
             String[] categories = new String[0];
