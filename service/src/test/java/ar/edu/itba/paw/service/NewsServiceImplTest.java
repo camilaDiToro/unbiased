@@ -58,12 +58,6 @@ public class NewsServiceImplTest {
     private NewsServiceImpl newsService;
 
 
-    /*@Before
-    public void setTest() {
-        mockUser = new User.UserBuilder(EMAIL).build();
-        mockNews = new News.NewsBuilder(mockUser.getId(), BODY, TITTLE, SUBTITTLE).newsId(8).build();
-    }*/
-
     @Test(expected = InvalidCategoryException.class)
     public void testCreateInvalidCategory(){
         Mockito.when(userService.getUserById(Mockito.eq(CREATOR_ID))).thenReturn(Optional.of(USER_BUILDER.build()));
@@ -83,24 +77,23 @@ public class NewsServiceImplTest {
     @Test
     public void testGetNewsUpperInvalidPage(){
         Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
-        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any())).thenReturn(TOTAL_PAGES);
-        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, "ALL", NewsOrder.NEW.getDescription(), "");
+        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.eq("A"))).thenReturn(TOTAL_PAGES);
+        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, "ALL", NewsOrder.NEW.getDescription(), "A");
         assertEquals(TOTAL_PAGES,returnValue.getCurrentPage());
     }
 
     @Test(expected = InvalidOrderException.class)
     public void testGetNewsInvalidNewsOrder(){
         Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
-        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any())).thenReturn(TOTAL_PAGES);
-        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, "ALL", INVALID_NEWSORDER, "");
+        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, "ALL", INVALID_NEWSORDER, "A");
         Assert.fail("Should have thrown InvalidOrderException");
     }
 
+
     @Test(expected = InvalidCategoryException.class)
-    public void testGetNewsInvalidCategory(){
+    public void testGetNewsInvalidCategory() {
         Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
-        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any())).thenReturn(TOTAL_PAGES);
-        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, INVALID_CATEGORY, NewsOrder.NEW.getDescription(), "");
+        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, INVALID_CATEGORY, NewsOrder.NEW.getDescription(), "A");
         Assert.fail("Should have thrown InvalidOrderException");
     }
 
