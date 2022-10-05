@@ -30,57 +30,50 @@ public class VerificationTokenDaoTest {
     private VerificationTokenDao verificationTokenDao;
     private UserDao userDao;
     private JdbcTemplate jdbcTemplate;
-    protected static final String TOKEN_TABLE = "email_verification_token";
+    private static final String TOKEN_TABLE = "email_verification_token";
     private static final int TOKEN_DURATION = 1;
-    protected static final String EMAIL = "user@gmail.com";
-    protected static final String TOKEN = "token";
+    private static final String EMAIL = "user@gmail.com";
+    private static final String TOKEN = "token";
+
+    private User user;
+    private static final LocalDateTime TOKEN_DUE_DATE = LocalDateTime.now().plusDays(TOKEN_DURATION);
 
     @Before
     public void setUp() {
         userDao = new UserJdbcDao(ds);
         verificationTokenDao = new VerificationTokenJdbcDao(ds);
         jdbcTemplate = new JdbcTemplate(ds);
+        user = createUser();
     }
 
-    private User getMockUser() {
+    private User createUser() {
         User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
         return userDao.create(usBuilder);
     }
 
     @Test
     public void testCreateVerificationToken() {
-        User user = getMockUser();
-        Optional<User> optionalUser = userDao.getUserById(user.getId());
-        LocalDateTime date = LocalDateTime.now().plusDays(TOKEN_DURATION);
+        VerificationToken token = verificationTokenDao.createEmailToken(user.getId(), TOKEN, TOKEN_DUE_DATE);
 
-        if (optionalUser.isPresent()) {
-            VerificationToken token = verificationTokenDao.createEmailToken(optionalUser.get().getId(), "token", date);
-
-            assertEquals(optionalUser.get().getId(), token.getUserId());
-            assertEquals("token", token.getToken());
-            assertEquals(date, token.getExpiryDate());
-        }
+        assertEquals(user.getId(), token.getUserId());
+        assertEquals(TOKEN, token.getToken());
+        assertEquals(TOKEN_DUE_DATE, token.getExpiryDate());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, TOKEN_TABLE));
     }
     @Test
     public void testGetToken(){
-        LocalDateTime date = LocalDateTime.now().plusDays(TOKEN_DURATION);
-        User user = getMockUser();
-        Optional<User> optionalUser = userDao.getUserById(user.getId());
 
+        VerificationToken tokenVef = verificationTokenDao.createEmailToken(user.getId(), TOKEN, TOKEN_DUE_DATE);
+        Optional<VerificationToken> token = verificationTokenDao.getEmailToken(TOKEN);
+        token.ifPresent(opt -> assertEquals(token.get().getUserId(), tokenVef.getId()));
 
-        if(optionalUser.isPresent()){
-            VerificationToken tokenVef = verificationTokenDao.createEmailToken(optionalUser.get().getId(), TOKEN, date);
-            Optional<VerificationToken> token = verificationTokenDao.getEmailToken(TOKEN);
-            token.ifPresent(opt -> assertEquals(token.get().getUserId(), tokenVef.getId()));
-        }
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, TOKEN_TABLE));
     }
 
     @Test
     public void testFindByTokenFailed() {
-        Optional<VerificationToken> token= verificationTokenDao.getEmailToken("token");
-        token.ifPresent(opt -> assertFalse(token.isPresent()));
+        Optional<VerificationToken> token= verificationTokenDao.getEmailToken("othertoken");
+        assertFalse(token.isPresent());
         assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, TOKEN_TABLE));
     }
 
