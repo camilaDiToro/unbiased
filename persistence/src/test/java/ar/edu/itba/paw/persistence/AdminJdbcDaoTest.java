@@ -40,11 +40,10 @@ import static org.junit.Assert.assertEquals;
 @Transactional
 public class AdminJdbcDaoTest {
 
-    private AdminJdbcDao adminDao;
-    private RoleJdbcDao roleDao;
-
     @Autowired
     private DataSource ds;
+    private AdminJdbcDao adminDao;
+    private RoleJdbcDao roleDao;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcUserInsert;
     private SimpleJdbcInsert jdbcNewsInsert;
