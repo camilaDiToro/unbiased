@@ -47,14 +47,12 @@ public class UserJdbcDaoTest {
 
     @Autowired
     private DataSource ds;
-    private SimpleJdbcInsert jdbcInsert;
 
     @Before
     public void setUp() {
         userDao = new UserJdbcDao(ds);
         verificationTokenDao = new VerificationTokenJdbcDao(ds);
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcInsert = new SimpleJdbcInsert(ds).withTableName(USER_TABLE).usingGeneratedKeyColumns("userId");
     }
 
     @Test
