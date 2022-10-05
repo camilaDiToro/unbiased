@@ -102,7 +102,6 @@
                                             <spring:message code="profile.modal.msg"/>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
                                             <form method="post" action="<c:url value="/news/${newsId}/delete"/>">
                                                 <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
                                             </form>
