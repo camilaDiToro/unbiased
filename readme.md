@@ -8,7 +8,7 @@
 
 ### Cuenta de periodista:
 
-**email**: camiladitoro@gmail.com
+**email**: acaeiro@itba.edu.ar
 
-**password**: 12345678
+**password**: password
 
