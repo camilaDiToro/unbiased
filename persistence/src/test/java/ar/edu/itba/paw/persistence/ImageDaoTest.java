@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import static org.junit.Assert.*;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Rollback
@@ -24,28 +27,40 @@ import java.util.Optional;
 public class ImageDaoTest {
 
     private ImageJdbcDao imageDao;
+
     @Autowired
     private DataSource ds;
-
     private JdbcTemplate jdbcTemplate;
+    private SimpleJdbcInsert jdbcImageInsert;
 
-    protected static final String IMAGE_TABLE = "image";
-    public static final String IMAGE_TYPE = "image/jpeg";
+    //TABLES
+    private static final String IMAGE_TABLE = "image";
+
+    //IMAGE_DATA
+    private static final String IMAGE_TYPE = "image/jpeg";
     private static final int IMAGE_ID = 1;
     private static final byte[] IMAGE_DATA = new byte[100];
 
+    private void createImage() {
+        Map<String, Object> imageData = new HashMap<>();
+        imageData.put("image_id", IMAGE_ID);
+        imageData.put("bytes", IMAGE_DATA);
+        imageData.put("data_type", IMAGE_TYPE);
+        jdbcImageInsert.execute(imageData);
+    }
+
     @Before
     public void setUp() {
-        jdbcTemplate = new JdbcTemplate(ds);
         imageDao = new ImageJdbcDao(ds);
+        jdbcTemplate = new JdbcTemplate(ds);
+        jdbcImageInsert = new SimpleJdbcInsert(ds).withTableName(IMAGE_TABLE);
     }
 
 
     @Test
     public void testGetImageById(){
-        Image image = new Image(IMAGE_ID,IMAGE_DATA, IMAGE_TYPE);
-        imageDao.uploadImage(image.getBytes(), image.getDataType());
-        Optional<Image> optionalImage = imageDao.getImageById(image.getImageId());
+        createImage();
+        Optional<Image> optionalImage = imageDao.getImageById(IMAGE_ID);
 
         optionalImage.ifPresent(opt -> assertEquals(optionalImage.get().getImageId(), IMAGE_ID));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, IMAGE_TABLE));
@@ -67,9 +82,8 @@ public class ImageDaoTest {
 
     @Test
     public void testDeleteImage() {
-        Image image = new Image(IMAGE_ID,IMAGE_DATA, IMAGE_TYPE);
-        imageDao.uploadImage(image.getBytes(), image.getDataType());
-        imageDao.deleteImage(image.getImageId());
+        createImage();
+        imageDao.deleteImage(IMAGE_ID);
 
         assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, IMAGE_TABLE));
     }
