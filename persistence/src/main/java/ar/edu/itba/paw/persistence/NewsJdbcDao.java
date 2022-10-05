@@ -1,12 +1,13 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.persistence.jdbcFunctional.GetNewsProfileFunction;
+import ar.edu.itba.paw.persistence.functional.GetNewsProfileFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
@@ -225,9 +225,8 @@ public class NewsJdbcDao implements NewsDao {
 
     @Override
     public List<Category> getNewsCategory(News news) {
-        List<Category> categories = jdbcTemplate.query("SELECT category_id FROM news NATURAL JOIN news_category WHERE news_id = ?",
+        return jdbcTemplate.query("SELECT category_id FROM news NATURAL JOIN news_category WHERE news_id = ?",
                 new Object[]{news.getNewsId()}, CATEGORIES_ROW_MAPPER);
-        return categories;
     }
 
     @Override
@@ -245,8 +244,9 @@ public class NewsJdbcDao implements NewsDao {
     public void setRating(Long newsId, Long userId, Rating rating) {
         jdbcTemplate.update("DELETE FROM upvotes WHERE user_id = ? AND news_id = ?",
                 new Object[]{userId, newsId});
-        if (rating.equals(Rating.NO_RATING))
+        if (rating.equals(Rating.NO_RATING)){
             return;
+        }
 
         final Map<String, Object> ratingData = new HashMap<>();
         ratingData.put("news_id", newsId);
@@ -317,7 +317,7 @@ public class NewsJdbcDao implements NewsDao {
                 .addValue("userId", user.getId())
                 .addValue("date", Timestamp.valueOf(LocalDateTime.now().minusDays(1)));
 
-        List<FullNews> fullNews = namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :userId) " +
+        return namedJdbcTemplate.query("WITH logged_params AS (SELECT * FROM logged_news_parameters WHERE logged_user = :userId) " +
                         "SELECT news_id, full_news.*, upvote, saved_date, :userId AS logged_user, 1 as priority FROM full_news JOIN follows " +
                         "ON (:userId = follows.user_id AND follows.follows=full_news.creator ) " +
                         "NATURAL LEFT JOIN logged_params WHERE full_news.creation_date >= :date " +
@@ -333,7 +333,6 @@ public class NewsJdbcDao implements NewsDao {
                         "AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId))" +
                         "ORDER BY priority, " + newsOrder.getQuery() + " LIMIT :pageSize OFFSET :offset ",
                 params, FULLNEWS_ROW_MAPPER);
-        return fullNews;
     }
 
     @Override

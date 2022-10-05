@@ -5,10 +5,7 @@ import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
-import ar.edu.itba.paw.model.news.Category;
-import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
@@ -29,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -125,7 +121,7 @@ public class AdminJdbcDaoTest {
     public void testGetReportedNews(){
         createNews();
         adminDao.reportNews(NEWS, NEWS.getCreatorId(), ReportReason.LIE);
-        Page<ReportedNews> reportList = adminDao.getReportedNews(1, ReportOrder.REP_DATE_DESC);
+        adminDao.getReportedNews(1, ReportOrder.REP_DATE_DESC);
 
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + NEWS.getNewsId()));

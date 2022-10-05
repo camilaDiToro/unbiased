@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -80,8 +79,9 @@ public class AdminJdbcDao implements AdminDao{
     }
     @Override
     public boolean hasReported(News news, Long loggedUser) {
-        if (loggedUser == null)
+        if (loggedUser == null){
             return false;
+        }
         int rowsCount = jdbcTemplate.queryForObject("SELECT COUNT(*) AS row_count FROM report WHERE user_id = ? AND news_id = ?", new Object[]{loggedUser, news.getNewsId()}, Integer.class);
         return rowsCount > 0;
     }
@@ -89,8 +89,9 @@ public class AdminJdbcDao implements AdminDao{
     @Override
     public void makeUserAdmin(User user) {
         int rowsCount = jdbcTemplate.queryForObject("SELECT COUNT(*) as row_count FROM user_role WHERE user_id = ? AND user_role = ?", new Object[]{user.getId(), Role.ADMIN.getRole()},Integer.class);
-        if(rowsCount!=0)
+        if(rowsCount!=0){
             return;
+        }
         final Map<String, Object> adminData = new HashMap<>();
         adminData.put("user_role", Role.ADMIN.getRole());
         adminData.put("user_id", user.getId());

@@ -3,7 +3,6 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
-import ar.edu.itba.paw.model.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
