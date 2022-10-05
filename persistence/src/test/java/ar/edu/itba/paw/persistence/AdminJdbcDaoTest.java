@@ -5,23 +5,30 @@ import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
+import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.UserStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -32,50 +39,75 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class AdminJdbcDaoTest {
+
     private AdminJdbcDao adminDao;
-    private NewsJdbcDao newsDao;
-    private UserJdbcDao userDao;
     private RoleJdbcDao roleDao;
-    private CategoryDao categoryDao;
+
     @Autowired
     private DataSource ds;
-    protected JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
+    private SimpleJdbcInsert jdbcUserInsert;
+    private SimpleJdbcInsert jdbcNewsInsert;
+
     //TABLES
-    protected static final String ROLE_TABLE = "user_role";
-    protected static final String REPORT_TABLE = "report";
+    private static final String USER_TABLE = "users";
+    private static final String ROLE_TABLE = "user_role";
+    private static final String REPORT_TABLE = "report";
+    private static final String NEWS_TABLE = "news";
 
-    protected static final String EMAIL = "user@gmail.com";
-    protected static final String TITTLE = "titulo";
-    protected static final String SUBTITTLE = "subtitulo";
-    protected static final String BODY = "cuerpo";
+    //USER DATA
+    private static final String USERNAME = "username";
+    private static final String EMAIL = "user@gmail.com";
+    private static final UserStatus USER_STATUS = UserStatus.UNABLE;
+    private static final long USER_ID = 6;
+    private static final User USER = new User.UserBuilder(EMAIL).userId(USER_ID).username(USERNAME).status(USER_STATUS.getStatus()).build();
+
+    // NEWS DATA
+    private static final String TITLE = "titulo";
+    private static final String SUBTITLE = "subtitulo";
+    private static final String BODY = "cuerpo";
+    private static final long NEWS_ID = 12;
+    private static final Timestamp NEWS_DATE = Timestamp.valueOf(LocalDateTime.now());
+    private static final long NEWS_ACCESSES = 0;
+    private static final News NEWS = new News.NewsBuilder(USER_ID,BODY,TITLE,SUBTITLE).newsId(NEWS_ID).build();
 
 
-    private User createUser() {
-        User.UserBuilder usBuilder = new User.UserBuilder(EMAIL);
-        return userDao.create(usBuilder);
+    private void createUser() {
+        Map<String, Object> userValues = new HashMap<>();
+        userValues.put("email", EMAIL);
+        userValues.put("username", USERNAME);
+        userValues.put("status", USER_STATUS.getStatus());
+        userValues.put("user_id", USER_ID);
+        jdbcUserInsert.execute(userValues);
     }
 
-    private News createNews() {
-        User user = createUser();
-        News.NewsBuilder nsBuilder = new News.NewsBuilder(user.getId(), BODY, TITTLE, SUBTITTLE);
-        return newsDao.create(nsBuilder);
+    private void createNews() {
+        createUser();
+        Map<String, Object> newsValues = new HashMap<>();
+        newsValues.put("body", BODY);
+        newsValues.put("title", TITLE);
+        newsValues.put("subtitle", SUBTITLE);
+        newsValues.put("creator", USER_ID);
+        newsValues.put("news_id", NEWS_ID);
+        newsValues.put("creation_date", NEWS_DATE);
+        newsValues.put("accesses", NEWS_ACCESSES);
+        jdbcNewsInsert.execute(newsValues);
     }
 
     @Before
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(ds);
-        categoryDao = new CategoryJdbcDao(ds);
-        newsDao = new NewsJdbcDao(ds, categoryDao);
-        userDao = new UserJdbcDao(ds);
+        jdbcNewsInsert = new SimpleJdbcInsert(ds).withTableName(NEWS_TABLE);
+        jdbcUserInsert = new SimpleJdbcInsert(ds).withTableName(USER_TABLE);
         roleDao = new RoleJdbcDao(ds);
         adminDao = new AdminJdbcDao(ds);
     }
 
     @Test
     public void testMakeUserAdmin(){
-        User user = createUser();
-        adminDao.makeUserAdmin(user);
-        List<String> roleList = roleDao.getRoles(user.getId());
+        createUser();
+        adminDao.makeUserAdmin(USER);
+        List<String> roleList = roleDao.getRoles(USER.getId());
 
         assertEquals(Role.ADMIN.getRole(), roleList.get(0));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, ROLE_TABLE));
@@ -83,32 +115,32 @@ public class AdminJdbcDaoTest {
 
     @Test
     public void testReportedNews(){
-        News news = createNews();
-        adminDao.reportNews(news, news.getCreatorId(), ReportReason.LIE);
+        createNews();
+        adminDao.reportNews(NEWS, NEWS.getCreatorId(), ReportReason.LIE);
 
-        assertTrue(adminDao.hasReported(news, news.getCreatorId()));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + news.getNewsId()));
+        assertTrue(adminDao.hasReported(NEWS, NEWS.getCreatorId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + NEWS.getNewsId()));
     }
 
     @Test
     public void testGetReportedNews(){
-        News news = createNews();
-        adminDao.reportNews(news, news.getCreatorId(), ReportReason.LIE);
+        createNews();
+        adminDao.reportNews(NEWS, NEWS.getCreatorId(), ReportReason.LIE);
         Page<ReportedNews> reportList = adminDao.getReportedNews(1, ReportOrder.REP_DATE_DESC);
 
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + news.getNewsId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + NEWS.getNewsId()));
 
     }
 
     @Test
     public void testGetReportedNewsDetail(){
-        News news = createNews();
-        adminDao.reportNews(news, news.getCreatorId(), ReportReason.LIE);
-        Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(1, news);
+        createNews();
+        adminDao.reportNews(NEWS, NEWS.getCreatorId(), ReportReason.LIE);
+        Page<ReportDetail> reportList = adminDao.getReportedNewsDetail(1, NEWS);
 
         assertEquals(ReportReason.LIE, reportList.getContent().get(0).getReason());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + news.getNewsId()));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, REPORT_TABLE, "news_id = " + NEWS.getNewsId()));
     }
 }
