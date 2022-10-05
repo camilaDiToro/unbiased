@@ -3,6 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.UserStatus;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,6 +70,8 @@ public class NewsJdbcDaoTest {
     protected static final String EMAIL = "user@gmail.com";// por que protected???
 
     private static final long CREATOR_ID = 1;
+
+    private static final UserStatus CREATOR_STATUS = UserStatus.REGISTERED;
     private static final long NEWS_ID = 1;
 
     private static final Timestamp NEWS_DATE = Timestamp.valueOf(LocalDateTime.now());
@@ -95,7 +99,7 @@ public class NewsJdbcDaoTest {
     private void addCreatorToTable() {
         Map<String, Object> userValues = new HashMap<>();
         userValues.put("email", EMAIL);
-        userValues.put("status", "REGISTERED");
+        userValues.put("status", CREATOR_STATUS.getStatus());
         userValues.put("user_id", CREATOR_ID);
         jdbcUserInsert.execute(userValues);
     }
