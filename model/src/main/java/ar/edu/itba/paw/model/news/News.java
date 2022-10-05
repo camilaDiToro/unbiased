@@ -10,9 +10,12 @@ import java.util.Objects;
 
 public class News {
 
-    private final long newsId, creatorId;
+    private final long newsId;
+    private final long creatorId;
     private final Long imageId;
-    private final String body, title, subtitle;
+    private final String body;
+    private final String title;
+    private final String subtitle;
     private final LocalDateTime creationDate;
 
 
@@ -80,13 +83,15 @@ public class News {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof News))
+        if (!(obj instanceof News)){
             return false;
+        }
 
         News aux = (News) obj;
 
-        if (aux.equals(this))
+        if (aux.equals(this)){
             return true;
+        }
 
         return newsId == aux.newsId;
     }
@@ -104,7 +109,9 @@ public class News {
         private final long creatorId;
         private long newsId;
         private Long imageId;
-        private final String body, title, subtitle;
+        private final String body;
+        private final String title;
+        private final String subtitle;
         private LocalDateTime creationDate;
         private final Collection<Category> categories;
 

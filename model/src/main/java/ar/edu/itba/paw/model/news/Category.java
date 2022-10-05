@@ -20,9 +20,7 @@ public enum Category{
 
     private final String interCode;
     private final boolean trueCategory;
-
     private final int order;
-
     private static final Comparator<Category> comparator = Comparator.comparingInt(Category::getOrder);
 
     Category(String interCode, boolean trueCategory, int order) {
@@ -69,7 +67,7 @@ public enum Category{
         try{
             return Category.valueOf(value);
         }catch (IllegalArgumentException e){
-            throw new InvalidCategoryException();
+            throw new InvalidCategoryException(e);
         }
     }
 

@@ -34,7 +34,7 @@ public enum NewsOrder {
         try{
             return NewsOrder.valueOf(value);
         }catch (IllegalArgumentException e){
-            throw new InvalidOrderException();
+            throw new InvalidOrderException(e);
         }
     }
 }

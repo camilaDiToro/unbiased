@@ -2,9 +2,9 @@ package ar.edu.itba.paw.model.news;
 
 import java.time.*;
 
-public class TimeUtils {
-    private TimeUtils() {
+public final class TimeUtils {
 
+    private TimeUtils() {
     }
 
     static Amount calculateTimeAgoWithPeriodAndDuration(LocalDateTime pastTime) {

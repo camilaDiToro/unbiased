@@ -3,8 +3,10 @@ package ar.edu.itba.paw.model;
 import java.util.List;
 
 public class Page<T>{
+
     private final List<T> content;
-    private final int currentPage, totalPages;
+    private final int currentPage;
+    private final int totalPages;
 
 
     public Page(List<T> content, int currentPage, int totalPages) {
@@ -27,10 +29,12 @@ public class Page<T>{
 
     public int getMinPage() {
         int minPage = 1;
-        if (currentPage - 2 >= 1)
+        if (currentPage - 2 >= 1){
             minPage = currentPage - 2;
-        else if (currentPage - 1 >= 1)
+        }
+        else if (currentPage - 1 >= 1){
             minPage = currentPage - 1;
+        }
         return minPage;
     }
 
@@ -39,8 +43,9 @@ public class Page<T>{
         if (currentPage + 2 <= totalPages) {
             maxPage = currentPage + 2;
         }
-        else if (currentPage + 1 <= totalPages)
+        else if (currentPage + 1 <= totalPages){
             maxPage = currentPage + 1;
+        }
         return maxPage;
     }
 }

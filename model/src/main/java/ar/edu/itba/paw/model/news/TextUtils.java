@@ -6,7 +6,7 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jsoup.Jsoup;
 
-public class TextUtils {
+public final class TextUtils {
 
     private static final int WPM = 265;
 

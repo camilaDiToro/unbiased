@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.model;
 
 public enum Rating {
+
     UPVOTE {
         @Override
         public String toString() {
@@ -25,8 +26,9 @@ public enum Rating {
 
 
     public static Rating getRating(Boolean value) {
-        if (value == null)
+        if (value == null){
             return NO_RATING;
+        }
         if (value) {
             return Rating.UPVOTE;
         } else {
