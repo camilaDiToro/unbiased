@@ -36,16 +36,14 @@ public class UserController {
     private final NewsService newsService;
     private final ImageService imageService;
     private final SecurityService securityService;
-    private final AdminService adminService;
     private final OwnerCheck ownerCheck;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
     @Autowired
-    public UserController(UserService userService, AdminService adminService, ImageService imageService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
+    public UserController(UserService userService, ImageService imageService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
         this.userService = userService;
         this.imageService = imageService;
         this.securityService = securityService;
-        this.adminService = adminService;
         this.newsService = newsService;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
         this.ownerCheck = ownerCheck;
@@ -71,28 +69,25 @@ public class UserController {
 
         User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
 
-        final User user = userService.create(userBuilder);
+        userService.create(userBuilder);
         return new ModelAndView("email_verification_pending");
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
-        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
-        return mav;
+        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
     public ModelAndView profileFollow(@PathVariable("userId") long userId) {
         userService.followUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
-        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
-        return mav;
+        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
     public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
         userService.unfollowUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
-        final ModelAndView mav = new ModelAndView("redirect:/profile/" + userId + "/TOP");
-        return mav;
+        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
 
@@ -110,8 +105,9 @@ public class UserController {
 
         Iterable<ProfileCategory> profileCategoryList = newsService.getProfileCategories(profileUser);
         ProfileCategory catObject;
-        if (category.equals(""))
+        if (category.equals("")){
             catObject = profileCategoryList.iterator().next();
+        }
         else {
             catObject = userService.getProfileCategory(category, profileUser);
         }
@@ -187,8 +183,9 @@ public class UserController {
         }
 
         VerificationToken.Status s = userService.resendEmailVerification(userForm.getEmail());
-        if(s.equals(VerificationToken.Status.ALREADY_VERIFIED))
+        if(s.equals(VerificationToken.Status.ALREADY_VERIFIED)){
             return new ModelAndView("email_already_verified");
+        }
         return new ModelAndView("email_verification_pending");
     }
 
@@ -197,7 +194,7 @@ public class UserController {
     @RequestMapping( value = "/profile/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
             produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @ResponseBody
-    public byte[] profileImage(@PathVariable(value = "imageId") long imageId) {
+    public byte[] profileImage(@PathVariable("imageId") long imageId) {
         return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
     }
 

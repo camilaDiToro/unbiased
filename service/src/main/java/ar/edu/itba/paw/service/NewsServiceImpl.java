@@ -7,8 +7,6 @@ import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +40,9 @@ public class NewsServiceImpl implements NewsService {
 
         for(String category : categories){
             Category c = Category.getByCode(category);
-            if(c == null || !c.isTrueCategory())
+            if(c == null || !c.isTrueCategory()){
                 throw new InvalidCategoryException();
+            }
             newsBuilder.addCategory(c);
         }
 
@@ -120,8 +119,9 @@ public class NewsServiceImpl implements NewsService {
         if (news.getLoggedUserParameters().isSaved()) {
             newsDao.removeSaved(news.getNews(), user);
             return false;
-        } else
+        } else {
             newsDao.saveNews(news.getNews(), user);
+        }
         return true;
     }
 

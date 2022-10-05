@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ErrorController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @RequestMapping(value = "/400")
+    @RequestMapping("/400")
     public ModelAndView error400() {
         ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","400");
@@ -18,28 +18,25 @@ public class ErrorController {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @RequestMapping(value = "/400/invalid_category")
+    @RequestMapping("/400/invalid_category")
     public ModelAndView error400InvalidCategory() {
-        ModelAndView mav = new ModelAndView("errors/invalid_category");
-        return mav;
+        return new ModelAndView("errors/invalid_category");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @RequestMapping(value = "/400/invalid_filter")
+    @RequestMapping("/400/invalid_filter")
     public ModelAndView error400InvalidFilter() {
-        ModelAndView mav = new ModelAndView("errors/invalid_filter");
-        return mav;
+        return new ModelAndView("errors/invalid_filter");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @RequestMapping(value = "/400/invalid_order")
+    @RequestMapping("/400/invalid_order")
     public ModelAndView error400InvalidOrder() {
-        ModelAndView mav = new ModelAndView("errors/invalid_order");
-        return mav;
+        return new ModelAndView("errors/invalid_order");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @RequestMapping(value = "/401")
+    @RequestMapping("/401")
     public ModelAndView error401() {
         ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","401");
@@ -47,7 +44,7 @@ public class ErrorController {
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @RequestMapping(value = "/403")
+    @RequestMapping( "/403")
     public ModelAndView error403() {
         ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","403");
@@ -55,7 +52,7 @@ public class ErrorController {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @RequestMapping(value = "/404")
+    @RequestMapping( "/404")
     public ModelAndView error404() {
         ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","404");
@@ -63,7 +60,7 @@ public class ErrorController {
     }
 
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    @RequestMapping(value = "/405")
+    @RequestMapping( "/405")
     public ModelAndView error405() {
         ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","405");
@@ -71,7 +68,7 @@ public class ErrorController {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @RequestMapping(value = "/500")
+    @RequestMapping( "/500")
     public ModelAndView error500() {
         ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","500");

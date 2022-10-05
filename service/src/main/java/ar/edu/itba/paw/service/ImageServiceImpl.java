@@ -2,7 +2,6 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.persistence.ImageDao;
-import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +26,9 @@ public class ImageServiceImpl implements ImageService{
     @Override
     @Transactional
     public Long uploadImage(byte[] bytes, String dataType) {
-        if (bytes.length == 0)
+        if (bytes.length == 0){
             return null;
+        }
         return imageDao.uploadImage(bytes, dataType);
     }
 

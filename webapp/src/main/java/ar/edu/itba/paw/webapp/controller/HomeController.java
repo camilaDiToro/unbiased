@@ -13,28 +13,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Arrays;
 
 @Controller
 public class HomeController {
 
-    private final UserService us;
-    private final NewsService ns;
-    private final SecurityService ss;
-    private final EmailService es;
-    private final AdminService as;
+    private final UserService userService;
+    private final NewsService newsService;
+    private final SecurityService securityService;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
 
     @Autowired
-    public HomeController(final UserService us, final NewsService ns, SecurityService ss, EmailService es, AdminService as){
-        this.us = us;
-        this.ns = ns;
-        this.ss = ss;
-        this.es = es;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, ss);
-        this.as = as;
+    public HomeController(final UserService userService, final NewsService newsService, SecurityService securityService){
+        this.userService = userService;
+        this.newsService = newsService;
+        this.securityService = securityService;
+        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
     @RequestMapping("/")
@@ -50,19 +45,19 @@ public class HomeController {
             @RequestParam(name = "category", defaultValue = "ALL") final String category,
             @RequestParam(name="type", defaultValue="article") String type){
 
-        Page<FullNews> newsPage = ns.getNews(page,category,orderBy,query);
+        Page<FullNews> newsPage = newsService.getNews(page,category,orderBy,query);
 
         MyModelAndView.Builder builder= mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
-                .withObject("topCreators", us.getTopCreators(5))
+                .withObject("topCreators", userService.getTopCreators(5))
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", orderBy)
                 .withObject("query", query)
                 .withObject("type", type)
-                .withObject("categories", ns.getHomeCategories())
+                .withObject("categories", newsService.getHomeCategories())
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
         if (type.equals("creator")) {
-            builder.withObject("usersPage", us.searchUsers(page, query));
+            builder.withObject("usersPage", userService.searchUsers(page, query));
         }
         else if (type.equals("article")) {
             builder.withObject("newsPage", newsPage);
@@ -75,8 +70,8 @@ public class HomeController {
         final Long newsId = payload.getNewsId();
         final boolean isActive = payload.isActive();
 
-        ns.setRating(ns.getOrThrowException(newsId).getNews(), isActive ? action : Rating.NO_RATING);
-        final FullNews news = ns.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.setRating(newsService.getOrThrowException(newsId).getNews(), isActive ? action : Rating.NO_RATING);
+        final FullNews news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
 
         return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
     }

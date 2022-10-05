@@ -14,43 +14,43 @@ import javax.xml.ws.http.HTTPException;
 public class AdviceErrorController {
 
     @ExceptionHandler(InvalidCategoryException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView restaurantNotFound() {
         return new ModelAndView("forward:/400/invalid_category");
     }
 
     @ExceptionHandler(InvalidOrderException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView orderNotFound() {
         return new ModelAndView("forward:/400/invalid_order");
     }
 
     @ExceptionHandler(InvalidFilterException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView filterNotFound() {
         return new ModelAndView("forward:/400/invalid_filter");
     }
 
     @ExceptionHandler(HTTPException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ModelAndView numberedError(HTTPException exception) {
         return new ModelAndView("forward:/" + exception.getStatusCode());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ModelAndView userNotFound(UserNotFoundException ex) {
         return new ModelAndView("errors/userNotFound");
     }
 
     @ExceptionHandler(UserNotAuthorized.class)
-    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ModelAndView invalidUser(UserNotAuthorized ex) {
         return new ModelAndView("errors/invalid_user");
     }
 
     @ExceptionHandler(NewsNotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ModelAndView newsNotFound()    {
         return new ModelAndView("errors/newsNotFound");
     }

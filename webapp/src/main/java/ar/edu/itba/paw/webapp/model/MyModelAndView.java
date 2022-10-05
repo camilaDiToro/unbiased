@@ -30,8 +30,9 @@ public class MyModelAndView extends ModelAndView {
         }
 
         public MyModelAndView.Builder withStringParam(String param) {
-            if (TextType.INTERCODE != textType)
+            if (TextType.INTERCODE != textType){
                 throw new IllegalStateException();
+            }
 
             this.params.append(',').append(param);
             return this;

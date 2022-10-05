@@ -4,7 +4,6 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
-import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
@@ -85,7 +84,7 @@ public class NewsServiceImplTest {
     @Test(expected = InvalidOrderException.class)
     public void testGetNewsInvalidNewsOrder(){
         Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
-        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, "ALL", INVALID_NEWSORDER, "A");
+        newsService.getNews(UPPER_PAGE, "ALL", INVALID_NEWSORDER, "A");
         Assert.fail("Should have thrown InvalidOrderException");
     }
 
@@ -93,7 +92,7 @@ public class NewsServiceImplTest {
     @Test(expected = InvalidCategoryException.class)
     public void testGetNewsInvalidCategory() {
         Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
-        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, INVALID_CATEGORY, NewsOrder.NEW.getDescription(), "A");
+        newsService.getNews(UPPER_PAGE, INVALID_CATEGORY, NewsOrder.NEW.getDescription(), "A");
         Assert.fail("Should have thrown InvalidOrderException");
     }
 

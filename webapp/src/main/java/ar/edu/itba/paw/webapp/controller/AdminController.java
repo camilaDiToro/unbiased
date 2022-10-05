@@ -3,10 +3,8 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
-import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateAdminForm;
@@ -41,8 +39,9 @@ public class AdminController {
 
     @RequestMapping(value = "/admin/add_admin", method = RequestMethod.GET)
     public ModelAndView addAdmin(@Valid @ModelAttribute("createAdminForm") CreateAdminForm form, final BindingResult errors) {
-        if (errors.hasErrors())
+        if (errors.hasErrors()){
             return addAdminPanel(form);
+        }
 
         adminService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
         return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)

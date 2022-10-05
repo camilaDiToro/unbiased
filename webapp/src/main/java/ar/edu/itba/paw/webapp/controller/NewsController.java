@@ -32,7 +32,6 @@ import java.util.Optional;
 public class NewsController {
 
     private final NewsService newsService;
-    private final UserService userService;
     private final ImageService imageService;
     private final SecurityService securityService;
     private final AdminService adminService;
@@ -41,9 +40,8 @@ public class NewsController {
 
 
     @Autowired
-    public NewsController(final AdminService adminService, final NewsService newsService, final UserService userService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
+    public NewsController(AdminService adminService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
         this.newsService = newsService;
-        this.userService = userService;
         this.imageService = imageService;
         this.securityService = ss;
         this.adminService = adminService;
@@ -107,7 +105,7 @@ public class NewsController {
     @RequestMapping( value = "/news/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
             produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @ResponseBody
-    public byte[] newsImage(@PathVariable(value = "imageId") long imageId) {
+    public byte[] newsImage(@PathVariable("imageId") long imageId) {
          return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
     }
 
@@ -121,7 +119,7 @@ public class NewsController {
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<SavedResult> saveNews(@PathVariable(value = "newsId") long newsId){
+    public ResponseEntity<SavedResult> saveNews(@PathVariable("newsId") long newsId){
         Optional<User> maybeUser = securityService.getCurrentUser();
         Optional<FullNews> maybeNews = newsService.getById(newsId);
 

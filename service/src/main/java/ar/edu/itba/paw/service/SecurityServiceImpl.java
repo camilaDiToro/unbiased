@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,8 +33,9 @@ public class SecurityServiceImpl implements SecurityService {
     public Optional<User> getCurrentUser() {
         String email = getCurrentUserEmail();
 
-        if (email == null)
+        if (email == null){
             return Optional.empty();
+        }
 
         return userDao.findByEmail(email);
     }
@@ -43,8 +43,9 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public boolean isCurrentUserAdmin() {
         Optional<User> mayBeUser = getCurrentUser();
-        if(!mayBeUser.isPresent())
+        if(!mayBeUser.isPresent()){
             return false;
+        }
         User user= mayBeUser.get();
         List<String> roles = roleDao.getRoles(user.getId());
         return roles.contains(Role.ADMIN.getRole());

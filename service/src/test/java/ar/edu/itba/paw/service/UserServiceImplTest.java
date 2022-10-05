@@ -1,15 +1,12 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
-import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
-import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import ar.edu.itba.paw.persistence.VerificationTokenDao;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -18,14 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.swing.text.html.Option;
 
 import static org.junit.Assert.*;
 
@@ -100,9 +90,9 @@ public class UserServiceImplTest {
         Mockito.when(mockVerificationTokenService.getToken(Mockito.eq(TOKEN))).thenReturn(Optional.of(mockVerificationToken));
         Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.empty());
 
-        VerificationToken.Status vt = userService.verifyUserEmail(TOKEN);
+        userService.verifyUserEmail(TOKEN);
 
-        Assert.fail("Should have thrown UserNotFoundException");
+        fail("Should have thrown UserNotFoundException");
     }
 
     @Test

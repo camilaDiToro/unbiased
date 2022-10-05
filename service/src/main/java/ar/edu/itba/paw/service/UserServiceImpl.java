@@ -58,10 +58,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getRegisteredUserById(long id) {
         Optional<User> mayBeUser = userDao.getUserById(id);
-        if(!mayBeUser.isPresent())
+
+        if(!mayBeUser.isPresent()){
             return Optional.empty();
-        if(!mayBeUser.get().getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()))
+        }
+
+        if(!mayBeUser.get().getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus())){
             return Optional.empty();
+        }
+
         return mayBeUser;
     }
 
@@ -144,13 +149,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateProfile(User user, String username, Long imageId) {
         if(imageId!=null){
-            if(user.getImageId()!=null)
+            if(user.getImageId()!=null){
                 imageService.deleteImage(user.getImageId());
+            }
             userDao.updateImage(user,imageId);
         }
 
-        if(username!= null && !username.isEmpty())
+        if(username!= null && !username.isEmpty()){
             userDao.updateUsername(user,username);
+        }
     }
 
     @Override
@@ -201,15 +208,17 @@ public class UserServiceImpl implements UserService {
         try {
             cat = ProfileCategory.valueOf(category);
         } catch(IllegalArgumentException e) {
+            throw new InvalidFilterException(e);
+        }
+        if (!getRoles(profile).contains(Role.JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS)){
             throw new InvalidFilterException();
         }
-        if (!getRoles(profile).contains(Role.JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS))
-            throw new InvalidFilterException();
 
         if (cat.equals(ProfileCategory.SAVED) &&
                 !(securityService.getCurrentUser().isPresent() &&
-                securityService.getCurrentUser().get().equals(profile)))
+                securityService.getCurrentUser().get().equals(profile))){
             throw new InvalidFilterException();
+        }
 
         return cat;
     }

@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class FileSizeValidator implements ConstraintValidator<FileSize, MultipartFile> {
 
-    private final long mb = 10;
+    private static final long mb = 10;
 
     @Override
     public void initialize(FileSize constraintAnnotation) {
@@ -16,7 +16,9 @@ public class FileSizeValidator implements ConstraintValidator<FileSize, Multipar
 
     @Override
     public boolean isValid(MultipartFile value, ConstraintValidatorContext context) {
-        if (value == null || value.getSize() == 0) return true;
+        if (value == null || value.getSize() == 0) {
+            return true;
+        }
         try {
             value.getBytes();
         } catch (IOException e) {

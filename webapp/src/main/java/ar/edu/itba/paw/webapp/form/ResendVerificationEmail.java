@@ -1,11 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.constraints.ExistingEmail;
-import ar.edu.itba.paw.webapp.constraints.NotExistingEmail;
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotBlank;
-
-import javax.validation.constraints.NotNull;
 
 public class ResendVerificationEmail {
 

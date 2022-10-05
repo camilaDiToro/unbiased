@@ -3,7 +3,6 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.persistence.VerificationTokenDao;
-import jdk.nashorn.internal.parser.Token;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,10 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -29,7 +25,6 @@ public class VerificationTokenServiceImplTest {
 
     private static final String TOKEN = "token";
     private static final LocalDateTime DATE = LocalDateTime.now().plusDays(1);
-    private static final Logger LOGGER = LoggerFactory.getLogger(VerificationTokenServiceImplTest.class);
 
     @InjectMocks
     private VerificationTokenServiceImpl tokenService;

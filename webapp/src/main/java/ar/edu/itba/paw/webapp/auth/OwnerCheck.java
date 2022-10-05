@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.NewsService;
@@ -29,8 +28,9 @@ public class OwnerCheck {
     }
 
     public boolean checkSavedNewsAccess(String category, long userId){
-        if(!category.equals(ProfileCategory.SAVED.getDescription()))
+        if(!category.equals(ProfileCategory.SAVED.getDescription())){
             return true;
+        }
         Optional<User> mayBeUser = securityService.getCurrentUser();
         return mayBeUser.filter(user -> user.getId() == userId).isPresent();
     }
