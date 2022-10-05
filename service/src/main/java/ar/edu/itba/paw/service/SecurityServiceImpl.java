@@ -24,20 +24,20 @@ public class SecurityServiceImpl implements SecurityService {
 
     public String getCurrentUserEmail() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        if (securityContext != null) {
-            Authentication authentication = securityContext.getAuthentication();
-            if (authentication != null) return authentication.getName();
+        if (securityContext != null && securityContext.getAuthentication() != null) {
+             return securityContext.getAuthentication().getName();
         }
         return null;
     }
 
     @Override
     public Optional<User> getCurrentUser() {
-        String username = getCurrentUserEmail();
+        String email = getCurrentUserEmail();
 
-        if (username == null) return Optional.empty();
+        if (email == null)
+            return Optional.empty();
 
-        return userDao.findByEmail(getCurrentUserEmail());
+        return userDao.findByEmail(email);
     }
 
     @Override

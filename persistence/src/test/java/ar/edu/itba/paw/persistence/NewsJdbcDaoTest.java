@@ -33,66 +33,49 @@ import static org.junit.Assert.*;
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
 public class NewsJdbcDaoTest {
+
     private NewsJdbcDao newsDao;
+
     @Autowired
     private DataSource ds;
     @Mock
     private CategoryDao categoryDao;
-    protected JdbcTemplate jdbcTemplate;
-
+    private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcUserInsert;
     private SimpleJdbcInsert jdbcCategoryInsert;
     private SimpleJdbcInsert jdbcNewsInsert;
-
     private SimpleJdbcInsert jdbcSavedNewsInsert;
-
     private SimpleJdbcInsert jdbcNewsUpvotesInsert;
-
     private SimpleJdbcInsert jdbcNewsCommentsInsert;
 
 
-
-
-
-
     //TABLES
-    protected static final String NEWS_TABLE = "news";
-    protected static final String USER_TABLE = "users";
-
-    protected static final String CATEGORY_TABLE = "news_category";
-    protected static final String SAVED_TABLE = "saved_news";
-    protected static final String COMMENT_TABLE = "comments";
-
-    protected static final String UPVOTES_TABLE = "upvotes";
+    private static final String NEWS_TABLE = "news";
+    private static final String USER_TABLE = "users";
+    private static final String CATEGORY_TABLE = "news_category";
+    private static final String SAVED_TABLE = "saved_news";
+    private static final String COMMENT_TABLE = "comments";
+    private static final String UPVOTES_TABLE = "upvotes";
 
 
     //USERS DATA
-    protected static final String EMAIL = "user@gmail.com";// por que protected???
-
+    private static final String EMAIL = "user@gmail.com";
     private static final long CREATOR_ID = 1;
-
     private static final UserStatus CREATOR_STATUS = UserStatus.REGISTERED;
     private static final long NEWS_ID = 1;
-
     private static final Timestamp NEWS_DATE = Timestamp.valueOf(LocalDateTime.now());
-
     private static final long NEWS_ACCESSES = 0;
-
     protected static final String COMMENT_CONTENT = "comment";
 
 
     //NEWS DATA
-    protected static final String TITLE = "titulo";
-    protected static final String SUBTITLE = "subtitulo";
-    protected static final String BODY = "cuerpo";
-    protected static final String COMMENT = "comment";
-    protected static final int PAGE_SIZE = 1;
-
+    private static final String TITLE = "titulo";
+    private static final String SUBTITLE = "subtitulo";
+    private static final String BODY = "cuerpo";
+    private static final String COMMENT = "comment";
+    private static final int PAGE_SIZE = 1;
     private static final Category CATEGORY = Category.SPORTS;
-
     private static final User CREATOR = new User.UserBuilder(EMAIL).userId(CREATOR_ID).build();
-
-
     private static final News NEWS = new News.NewsBuilder(CREATOR_ID,BODY,TITLE,SUBTITLE).creationDate(NEWS_DATE.toLocalDateTime()).newsId(NEWS_ID).build();
 
 
@@ -169,8 +152,6 @@ public class NewsJdbcDaoTest {
         jdbcSavedNewsInsert = new SimpleJdbcInsert(ds).withTableName(SAVED_TABLE);
         jdbcNewsUpvotesInsert = new SimpleJdbcInsert(ds).withTableName(UPVOTES_TABLE);
         jdbcNewsCommentsInsert = new SimpleJdbcInsert(ds).withTableName(COMMENT_TABLE);
-
-
     }
 
     @Test
@@ -184,7 +165,6 @@ public class NewsJdbcDaoTest {
         assertEquals(CREATOR_ID, optionalNews.get().getCreatorId());
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + NEWS_ID));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
-
     }
 
     @Test
@@ -351,8 +331,6 @@ public class NewsJdbcDaoTest {
         List<FullNews> savedNews = newsDao.getSavedNews(PAGE_SIZE, CREATOR, NewsOrder.NEW, NEWS_ID).getContent();
 
         assertTrue(savedNews.isEmpty());
-
-
         assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, SAVED_TABLE));
         assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, SAVED_TABLE, "news_id = " + NEWS_ID));
     }
@@ -491,17 +469,4 @@ public class NewsJdbcDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, COMMENT_TABLE,  "news_id = " + NEWS_ID));
     }
-
-//    @Test
-//    public void testGetRecommendation(){
-//        addCreatorToTable();
-//        News.NewsBuilder nwBuilder = new News.NewsBuilder(user.getId(), BODY, TITLE, SUBTITLE);
-//        News news = newsDao.create(nwBuilder);
-//        Optional<FullNews> optionalFullNews = newsDao.getById(news.getNewsId(), null);
-//        List<FullNews> recommendation = newsDao.getRecommendation(PAGE_SIZE, optionalFullNews.get().getUser(), NewsOrder.NEW);
-//
-//        optionalFullNews.ifPresent(opt ->assertEquals(PAGE_SIZE, recommendation.size()));
-//        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
-//        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + news.getNewsId()));
-//    }
 }
