@@ -2,7 +2,6 @@ package ar.edu.itba.paw.model.news;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.commonmark.node.Node;
-import org.commonmark.node.Text;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jsoup.Jsoup;

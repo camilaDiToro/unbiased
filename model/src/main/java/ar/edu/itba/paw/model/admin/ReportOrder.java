@@ -1,8 +1,6 @@
 package ar.edu.itba.paw.model.admin;
 
-import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
-import ar.edu.itba.paw.model.news.Category;
 
 public enum ReportOrder {
 

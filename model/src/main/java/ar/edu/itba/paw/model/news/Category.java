@@ -2,7 +2,6 @@ package ar.edu.itba.paw.model.news;
 
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;

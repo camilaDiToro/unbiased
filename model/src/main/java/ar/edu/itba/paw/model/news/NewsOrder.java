@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.model.news;
 
-import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
 
 public enum NewsOrder {

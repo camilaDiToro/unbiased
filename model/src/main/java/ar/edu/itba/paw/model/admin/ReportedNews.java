@@ -3,7 +3,6 @@ package ar.edu.itba.paw.model.admin;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 
-import java.util.List;
 
 public class ReportedNews {
 

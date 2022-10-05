@@ -5,8 +5,6 @@ public class UpvoteAction {
     private boolean active;
 
 
-
-
     public long getNewsId() {
         return newsId;
     }
