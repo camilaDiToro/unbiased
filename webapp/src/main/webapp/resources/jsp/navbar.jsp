@@ -3,7 +3,7 @@
 
 <nav class="d-flex navbar navbar-dark navbar-expand-sm bg-primary text-white">
     <div class="d-flex container-fluid" >
-        <a class="navbar-brand  " href="<c:url value="/TOP"/>">
+        <a class="navbar-brand  " href="<c:url value="/"/>">
             <img src="<c:url value="/resources/images/unbiased_navbar.png"/>" height="35" alt="" class="d-inline-block align-middle mr-2">
             <span class="text-info">unbiased</span>
         </a>

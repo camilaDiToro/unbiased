@@ -44,7 +44,10 @@
                 <div class="tab">
                     <c:if test="${empty news}" >
                         <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
+                            <p class="lead">
 
+                                    <spring:message code="moderation.emptyArticles" arguments="${query}"/>
+                            </p>
                         </div>
                     </c:if>
 
