@@ -209,6 +209,8 @@
             <div class="card-body">
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
                 <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${profileUser.email}"/> </span>
+                <p class="mb-0 text-center">descripcion </p><%--<c:out value="${profileUser.description}"/>--%>
+
                 <div class="d-flex justify-content-center align-items-center">
                     <c:if test="${loggedUser != null && !isMyProfile}">
                         <c:if test="${!isFollowing}">
@@ -279,8 +281,9 @@
                                     <spring:message code="profile.modal.changeDescription" var="changeDescription"/>
                                     <form:label path="image"><spring:message code="profile.modal.changeDescription"/></form:label>
                                     <div class="input-group mb-3">
-                                        <form:input type="text" cssClass="form-control" id="description-input" placeholder="${changeDescription}"/>
+                                        <form:input type="text" path="" cssClass="form-control" id="description-input" placeholder="${changeDescription}"/>
                                         <div class="w-100">
+                                            <form:errors cssClass="text-danger" path="username" element="p"/>
                                         </div>
                                     </div>
 
