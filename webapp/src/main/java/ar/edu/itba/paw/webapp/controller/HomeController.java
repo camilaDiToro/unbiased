@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+
 
 @Controller
 public class HomeController {
@@ -33,8 +35,9 @@ public class HomeController {
     }
 
     @RequestMapping("/")
-    public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        return new ModelAndView("redirect:/" + NewsOrder.values()[0]);
+    public ModelAndView homePage(@RequestParam(name = "query", defaultValue = "") final String query){
+
+        return new ModelAndView("redirect:/" + newsService.getOrderBy() + "?query=" + query);
     }
 
     @RequestMapping("/{orderBy}")
@@ -42,8 +45,14 @@ public class HomeController {
             @PathVariable("orderBy") final String orderBy,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "query", defaultValue = "") final String query,
-            @RequestParam(name = "category", defaultValue = "ALL") final String category,
+            @RequestParam(name = "category", defaultValue = "") String category,
             @RequestParam(name="type", defaultValue="article") String type){
+
+        Iterable<Category> categoryList = newsService.getHomeCategories();
+
+        if (category.equals("")) {
+            category = categoryList.iterator().next().name();
+        }
 
         Page<FullNews> newsPage = newsService.getNews(page,category,orderBy,query);
 
@@ -53,8 +62,8 @@ public class HomeController {
                 .withObject("orderBy", orderBy)
                 .withObject("query", query)
                 .withObject("type", type)
-                .withObject("categories", newsService.getHomeCategories())
-                .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
+                .withObject("categories", categoryList)
+                .withObject("category", Category.getByValue(category));
 
         if (type.equals("creator")) {
             builder.withObject("usersPage", userService.searchUsers(page, query));

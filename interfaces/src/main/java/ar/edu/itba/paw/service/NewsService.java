@@ -30,4 +30,6 @@ public interface NewsService {
     FullNews getOrThrowException(long newsId);
     void addComment(News news, String comment);
     Page<Comment> getComments(News news, int page);
+
+    NewsOrder getOrderBy();
 }
