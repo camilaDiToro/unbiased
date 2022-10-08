@@ -115,6 +115,8 @@
                 </div>
             </div>
         </div>
+        </div>
+
             <br/>
 
         <%--<div class="h-auto w-75 min-vh-75 justify-content-center align-center-xl ">
@@ -168,7 +170,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex gap-1 align-items-center justify-content-between w-100">
                 <div class="d-flex align-items-center justify-content-center">
-                    <h4 class="text-lg-left mb-0 text-white"><c:out value="${news.subtitle}"/></h4>
+                    <h5 class="article-subtitle text-lg-left mb-0"><c:out value="${news.subtitle}"/></h5>
 
                 </div>
                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
@@ -267,7 +269,7 @@
 
         <div class="d-flex flex-column w-75 align-items-center justify-content-center align-self-center" id="comments">
             <h2 class="align-self-start my-2 text-white"><spring:message code="showNews.comments"/></h2>
-            <c:if test="${loggedUser != null}">
+
 
             <div class="d-flex flex-column w-100 mb-4">
 
@@ -276,22 +278,30 @@
                         <form:form modelAttribute="commentNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post">
                         <div class="d-flex flex-column mt-4 mb-4">
                             <div class="form-group w-100">
-                                <form:textarea path="comment" cssClass="form-control w-100 custom-comment-area text-white" rows="5" id="comment"></form:textarea>
+                                <spring:message code="createArticle.description.placeholder"  var="descPlaceholder" />
+                                <form:textarea placeholder="${titlePlaceholder}" path="comment" cssClass="form-control w-100 custom-comment-area text-white" rows="5" id="comment"></form:textarea>
                             </div>
                             <div class="w-100">
                                 <form:errors cssClass="text-danger" path="comment" element="p"/>
 
                             </div>
-                            <button class="btn btn-primary flex-grow-0 align-self-end" type="submit"><spring:message code="showNews.comment.submit"/></button>
+                            <c:if test="${loggedUser != null}">
+                                <button class="btn btn-primary flex-grow-0 align-self-end" type="submit"><spring:message code="showNews.comment.submit"/></button>
+                            </c:if>
+                            <c:if test="${loggedUser == null}">
+                                <a href="<c:url value = "/create"/>">
+                                <button class="btn btn-primary flex-grow-0 align-self-end"><spring:message code="showNews.comment.submit"/></button>
+                                </a>
+                            </c:if>
                             </form:form>
 
                         </div>
 
                     </div>
             </div>
-            </c:if>
 
-            <div class="d-flex flex-column w-100 ">
+
+            <div class="d-flex flex-column w-100 justify-content-center">
                 <c:forEach var="comment" items="${commentsPage.content}">
 
                 <c:set var="user" value="${comment.user}"/>
@@ -351,6 +361,6 @@
     </div>
 </div>
 
-
+</div>
 </body>
 </html>
