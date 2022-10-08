@@ -109,7 +109,7 @@
                     </div>
                     <div class="col-md-6">
                         <c:if test="${news.hasImage()}">
-                            <img src="<c:url value="/news/${news.imageId}/image"/>" class="img-fluid d-block m-l-none"/>
+                            <img src="<c:url value="/news/${news.imageId}/image"/>" class="img-fluid d-block m-l-none" style="padding-top: 1rem"/>
                         </c:if>
                     </div>
                 </div>
