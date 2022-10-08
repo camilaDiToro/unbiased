@@ -352,7 +352,7 @@
                 </c:forEach>
 
                 <c:if test="${commentPage.content == null}">
-                    <h6 class="text-info m-1"><spring:message code="home.emptyCreators"/></h6>
+                    <h6 class="text-info m-1">No hay comentarios aun, se el primer comentario en la noticia</h6>
                 </c:if>
 
 
