@@ -276,6 +276,14 @@
                                         </div>
                                     </div>
 
+                                    <spring:message code="profile.modal.changeDescription" var="changeDescription"/>
+                                    <form:label path="image"><spring:message code="profile.modal.changeDescription"/></form:label>
+                                    <div class="input-group mb-3">
+                                        <form:input type="text" cssClass="form-control" id="description-input" placeholder="${changeDescription}"/>
+                                        <div class="w-100">
+                                        </div>
+                                    </div>
+
                                     <spring:message code="profile.modal.changeProfilePicture" var="changeUserPicture"/>
                                     <form:label path="image"><spring:message code="profile.modal.changeProfilePicture"/> </form:label>
                                     <div class="input-group mb-3">
@@ -297,6 +305,8 @@
                                             })
                                         </script>
                                     </div>
+
+
                             </div>
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-primary h-40"><spring:message code="profile.modal.save"/></button>

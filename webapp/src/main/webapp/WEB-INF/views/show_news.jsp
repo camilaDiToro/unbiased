@@ -105,7 +105,7 @@
                                 </a>
                             </c:forEach>
                         </div>
-                        <p class="text-sm-left text-secondary"><c:out value="${fullNews.readTime}"/> min read</p>
+                        <p class="text-sm-left text-secondary"><spring:message code="home.read" arguments="${fullNews.readTime}"/></p>
                     </div>
                     <div class="col-md-6">
                         <c:if test="${news.hasImage()}">
@@ -295,7 +295,7 @@
                         <h6 class="m-2 align-self-center"><spring:message code="showNews.emptyComments" arguments="${login},${signup}"/></h6>
                     </c:if>
                     <c:if test="${loggedUser != null && empty commentsPage.content}">
-                        <h6 class="m-2 align-self-center">Nadie ha comentado todavía, se el primer comentario de la noticia!</h6>
+                        <h6 class="m-2 align-self-center"><spring:message code="showNews.emptyCommentsLogged"/></h6>
                     </c:if>
                     <c:forEach var="comment" items="${commentsPage.content}">
 
@@ -335,17 +335,17 @@
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title">¿Estás seguro que quieres eliminar este comentario?</h5>
+                                                            <h5 class="modal-title"><spring:message code="showNews.deleteCommentQuestion"/></h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Al eliminar de este comentario no podra volver a recuperarla. ¿Estás seguro que deseas continuar?
+                                                            <spring:message code="showNews.deleteCommentBody"/>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <form method="post" action="">
-                                                                <button type="submit" class="btn btn-primary">Borrar comentario</button>
+                                                                <button type="submit" class="btn btn-primary"><spring:message code="showNews.deleteComment"/></button>
                                                             </form>
                                                         </div>
                                                     </div>
