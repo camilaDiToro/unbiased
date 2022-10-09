@@ -20,6 +20,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -30,7 +33,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
+@Primary
 public class NewsJpaDao implements NewsDao {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
 
     private static final double PAGE_SIZE = 10.0;
@@ -43,9 +50,10 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public News create(News.NewsBuilder newsBuilder) {
+        final News news = newsBuilder.build();
+        entityManager.persist(news);
 
-
-        return null;
+        return news;
     }
 
     @Override
@@ -55,7 +63,10 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public List<FullNews> getNews(int page, String query, NewsOrder ns, Long loggedUser) {
-        return null;
+        final TypedQuery<FullNews> typedQuery = entityManager.createQuery("from FullNews f WHERE f.news.title LIKE :query",FullNews.class)
+                .setParameter("query", '%' + query + '%');
+        List<FullNews> news = typedQuery.getResultList();
+        return news;
     }
 
     @Override

@@ -45,6 +45,7 @@ public class HomeController {
             @RequestParam(name = "category", defaultValue = "ALL") final String category,
             @RequestParam(name="type", defaultValue="article") String type){
 
+
         Page<FullNews> newsPage = newsService.getNews(page,category,orderBy,query);
 
         MyModelAndView.Builder builder= mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)

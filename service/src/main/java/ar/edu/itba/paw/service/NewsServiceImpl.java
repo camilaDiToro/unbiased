@@ -60,6 +60,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Page<FullNews> getNews(int page, String category, String newsOrder, String query) {
+        newsDao.getNews(0, "a", null, 2L); // TODO: remove
         int totalPages;
         page = page <= 0 ? 1 : page;
 

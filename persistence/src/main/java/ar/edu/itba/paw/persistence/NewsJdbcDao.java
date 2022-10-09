@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-@Primary
+//@Primary
 public class NewsJdbcDao implements NewsDao {
 
     private final JdbcTemplate jdbcTemplate;
