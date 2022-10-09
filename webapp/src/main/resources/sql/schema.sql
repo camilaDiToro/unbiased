@@ -85,7 +85,6 @@ CREATE TABLE IF NOT EXISTS report (
 
 DROP VIEW IF EXISTS full_news_with_logged_params;
 
-
 DROP VIEW IF EXISTS full_news;
 
 

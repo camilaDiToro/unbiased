@@ -1,13 +1,36 @@
 package ar.edu.itba.paw.model.user;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "users")
 public class User {
 
-    private final long userId;
-    private final Long imageId;
-    private final String email, username, pass;
-    private final UserStatus status;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
+    @SequenceGenerator(name="users_user_id_seq", sequenceName = "users_user_id_seq", allocationSize = 1)
+    private Long userId;
 
-    private final PositivityStats positivityStats;
+    @Column
+    private Long imageId;
+
+    @Column(unique = true, length = 100, nullable = false)
+    private String email;
+
+    @Column(unique = true, length = 50)
+    private String username;
+
+    @Column(length = 200, nullable = false)
+    private String pass;
+
+    @Column(nullable = false)
+    private UserStatus status;
+
+    private PositivityStats positivityStats;
+
+    /* package */ User(){
+        //Just for Hibernate
+    }
 
     public User(User.UserBuilder userBuilder) {
         this.userId = userBuilder.userId;
@@ -74,7 +97,7 @@ public class User {
     }
 
     public static class UserBuilder{
-        private long userId;
+        private Long userId;
         private Long imageId;
         private final String email;
         private String username, pass;
@@ -90,7 +113,7 @@ public class User {
             status = UserStatus.UNREGISTERED;
         }
 
-        public UserBuilder userId(long userId){
+        public UserBuilder userId(Long userId){
             this.userId = userId;
             return this;
         }
@@ -125,7 +148,7 @@ public class User {
             return new User(this);
         }
 
-        public long getUserId() {
+        public Long getUserId() {
             return userId;
         }
 
