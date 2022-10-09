@@ -8,6 +8,7 @@ import java.util.Iterator;
 @Table(name = "user_positivity")
 public class PositivityStats {
 
+    @Transient
     private Positivity positivity;
 
     @Id
@@ -19,10 +20,10 @@ public class PositivityStats {
     @Column(nullable = false)
     private int downvotes;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @OneToOne
+//    @MapsId
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     /* package */ PositivityStats() {
         // Just for Hibernate

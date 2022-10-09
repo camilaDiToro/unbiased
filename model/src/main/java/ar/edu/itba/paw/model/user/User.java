@@ -24,7 +24,7 @@ public class User {
     @Column(length = 200, nullable = false)
     private String pass;
 
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private UserStatus status;
 
     // TODO: Check if its posible to generate a custom fetchType.
