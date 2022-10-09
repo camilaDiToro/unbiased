@@ -1,16 +1,21 @@
 package ar.edu.itba.paw.model.user;
 
 import javax.persistence.*;
+import java.util.Set;
+import java.util.function.BiFunction;
 
 @Entity
 @Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
     @SequenceGenerator(name="users_user_id_seq", sequenceName = "users_user_id_seq", allocationSize = 1)
     @Column(name = "user_id")
     private Long userId;
+
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
+    }
 
     @Column(name="image_id")
     private Long imageId;
@@ -18,40 +23,80 @@ public class User {
     @Column(unique = true, length = 100, nullable = false)
     private String email;
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Column(unique = true, length = 50)
     private String username;
 
     @Column(length = 200, nullable = false)
     private String pass;
 
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
     // TODO: Check if its posible to generate a custom fetchType.
     // in jdbc we just retrived the positivity stats if the user was a journalist
-    @JoinColumn(name = "user_id")
-    @OneToOne(fetch = FetchType.LAZY)
+    @Transient
     private PositivityStats positivityStats;
 
-    /* package */ User(){
+    public Set<Upvote> getUpvoteSet() {
+        return upvoteSet;
+    }
+
+    public void setUpvoteSet(Set<Upvote> upvoteSet) {
+        this.upvoteSet = upvoteSet;
+    }
+
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
+    private Set<Upvote> upvoteSet;
+
+    public Set<Follow> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<Follow> following) {
+        this.following = following;
+    }
+
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Follow> following;
+
+    /* package */ User() {
         //Just for Hibernate
     }
 
     public User(User.UserBuilder userBuilder) {
+        this();
         this.userId = userBuilder.userId;
         this.email = userBuilder.email;
         this.imageId = userBuilder.imageId;
         this.username = userBuilder.username;
         this.pass = userBuilder.pass;
         this.status = userBuilder.status;
-        this.positivityStats = userBuilder.positivity;
+//        this.positivityStats = userBuilder.positivity;
+    }
+
+    @PostLoad
+    private void setPositivity() {
+        int upvotes = upvoteSet
+                .stream().map(upvote -> upvote.isValue() ? 1 : 0)
+                .reduce(0, Integer::sum);
+        int downvotes = upvoteSet
+                .stream().map(upvote -> upvote.isValue() ? 0 : 1)
+                .reduce(0, Integer::sum);
+        positivityStats = new PositivityStats(upvotes, downvotes);
     }
 
     @Override
     public String toString() {
         return username != null ? username : email;
     }
-
 
     public long getId() {
         return userId;

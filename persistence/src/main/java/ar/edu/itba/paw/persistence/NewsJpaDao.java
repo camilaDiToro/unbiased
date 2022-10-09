@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-@Primary
 public class NewsJpaDao implements NewsDao {
 
 

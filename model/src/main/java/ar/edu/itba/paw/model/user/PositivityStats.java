@@ -4,30 +4,23 @@ import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
-@Entity
-@Table(name = "user_positivity")
+
 public class PositivityStats {
 
-    @Transient
     private Positivity positivity;
 
-    @Id
-    private long user_id;
-
-    @Column(nullable = false)
     private int upvotes;
 
-    @Column(nullable = false)
     private int downvotes;
+
+
+    private final int interactions = upvotes + downvotes;
 
 //    @OneToOne
 //    @MapsId
 //    @JoinColumn(name = "user_id")
 //    private User user;
 
-    /* package */ PositivityStats() {
-        // Just for Hibernate
-    }
 
 
     public PositivityStats(int upvotes, int downvotes) {

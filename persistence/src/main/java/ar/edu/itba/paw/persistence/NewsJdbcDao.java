@@ -11,6 +11,7 @@ import ar.edu.itba.paw.persistence.functional.GetNewsProfileFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -25,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
+@Primary
 public class NewsJdbcDao implements NewsDao {
 
     private final JdbcTemplate jdbcTemplate;

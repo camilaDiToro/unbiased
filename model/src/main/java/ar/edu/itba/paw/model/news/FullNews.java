@@ -12,8 +12,6 @@ public class FullNews {
     private LoggedUserParameters loggedUserParameters;
 
 
-
-
     public FullNews(News news, User creator, PositivityStats positivityStats, LoggedUserParameters loggedUserParameters) {
         this.news = news;
 
