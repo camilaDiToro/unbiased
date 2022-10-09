@@ -9,9 +9,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
     @SequenceGenerator(name="users_user_id_seq", sequenceName = "users_user_id_seq", allocationSize = 1)
+    @Column(name = "user_id")
     private Long userId;
 
-    @Column
+    @Column(name="image_id")
     private Long imageId;
 
     @Column(unique = true, length = 100, nullable = false)
@@ -26,6 +27,10 @@ public class User {
     @Column(nullable = false)
     private UserStatus status;
 
+    // TODO: Check if its posible to generate a custom fetchType.
+    // in jdbc we just retrived the positivity stats if the user was a journalist
+    @JoinColumn(name = "user_id")
+    @OneToOne(fetch = FetchType.LAZY)
     private PositivityStats positivityStats;
 
     /* package */ User(){

@@ -1,12 +1,34 @@
 package ar.edu.itba.paw.model.user;
 
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
+@Entity
+@Table(name = "user_positivity")
 public class PositivityStats {
-    private final Positivity positivity;
-    private final int upvotes;
-    private final int downvotes;
+
+    private Positivity positivity;
+
+    @Id
+    private long user_id;
+
+    @Column(nullable = false)
+    private int upvotes;
+
+    @Column(nullable = false)
+    private int downvotes;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    /* package */ PositivityStats() {
+        // Just for Hibernate
+    }
+
+
     public PositivityStats(int upvotes, int downvotes) {
         this.upvotes = upvotes;
         this.downvotes = downvotes;
@@ -26,6 +48,7 @@ public class PositivityStats {
     public Positivity getPositivity() {
         return positivity;
     }
+
     public enum Positivity {
 
         POSITIVE("positive", 0.8, "home.newsCard.positive", "looking-positivity.svg"),

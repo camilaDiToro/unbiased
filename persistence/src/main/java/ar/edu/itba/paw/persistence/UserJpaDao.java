@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,20 +33,21 @@ public class UserJpaDao implements UserDao{
 
     @Override
     public Optional<User> findByEmail(String email) {
-        final TypedQuery<User> query = entityManager.createQuery("FROM User WHERE email = :email",User.class);
+        final TypedQuery<User> query = entityManager.createQuery("from User as u WHERE u.email = :email",User.class);
         query.setParameter("email", email);
         return query.getResultList().stream().findFirst();
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-
-        return Optional.empty();
+        final TypedQuery<User> query = entityManager.createQuery("FROM User WHERE username = :username",User.class);
+        query.setParameter("username", username);
+        return query.getResultList().stream().findFirst();
     }
 
     @Override
     public void verifyEmail(long id) {
-
+        // Not implemented yet
     }
 
     @Override
@@ -55,31 +57,32 @@ public class UserJpaDao implements UserDao{
 
     @Override
     public void updateUsername(User user, String username) {
-
+        // Should be done by updating the entity
     }
 
     @Override
     public void updateImage(User user, Long imageId) {
-
+        // Should be done by updating the entity
     }
 
     @Override
     public void addFollow(long userId, long follows) {
-
+        // Not implemented yet
     }
 
     @Override
     public void unfollow(long userId, long follows) {
-
+        // Not implemented yet
     }
 
     @Override
     public boolean isFollowing(long userId, long followId) {
+        // Not implemented yet
         return false;
     }
 
     @Override
     public Page<User> searchUsers(int page, String search) {
-        return null;
+        return new Page<>(new ArrayList<>(), 1,1);
     }
 }
