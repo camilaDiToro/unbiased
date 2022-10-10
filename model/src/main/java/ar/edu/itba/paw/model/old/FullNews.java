@@ -1,9 +1,13 @@
-package ar.edu.itba.paw.model.news;
+package ar.edu.itba.paw.model.old;
 
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.TextUtils;
 import ar.edu.itba.paw.model.user.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +25,9 @@ public class FullNews {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "news_id", referencedColumnName = "news_id")
     private News news;
+
+
+
     @Transient
     private int readTime;
     @OneToOne(fetch = FetchType.EAGER)
@@ -35,6 +42,8 @@ public class FullNews {
 
     @Column(name = "downvotes")
     private Integer downvotes = 0;
+
+
     @Transient
     private LoggedUserParameters loggedUserParameters;
 
@@ -45,8 +54,13 @@ public class FullNews {
     private Map<Upvote, Upvote> upvoteMap;
 
 
-    @OneToMany(mappedBy="newsId",fetch = FetchType.EAGER)
-    private Set<Saved> usersSaved;
+    @ManyToMany
+    @JoinTable(name = "saved_news",
+            joinColumns = @JoinColumn(name = "news_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> usersSaved;
+
+
 
 
     public FullNews(News news, User creator, PositivityStats positivityStats, LoggedUserParameters loggedUserParameters) {
@@ -80,7 +94,7 @@ public class FullNews {
         Upvote upvote = upvoteMap.get(
                 new Upvote(newsId, userId));
         Rating rating = upvote != null ? (upvote.isValue() ? Rating.UPVOTE : Rating.DOWNVOTE) : Rating.NO_RATING;
-        loggedUserParameters = new LoggedUserParameters(rating, usersSaved.contains(new Saved(newsId, userId)));
+        loggedUserParameters = new LoggedUserParameters(rating, usersSaved.contains(new Saved(news, userId)));
         Set<Upvote> set = upvoteMap.keySet();
         int total = set.size();
         int upvotes =

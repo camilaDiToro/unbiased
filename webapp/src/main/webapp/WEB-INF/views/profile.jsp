@@ -75,7 +75,7 @@
                         <div class="row row-cols-1">
                             <c:set var="maxLength" value="${100}"/>
                             <c:forEach var="fullNews" items="${news}">
-                                <c:set var="article" value="${fullNews.news}"/>
+                                <c:set var="article" value="${fullNews}"/>
 
                                 <c:set var="newsId" value="${article.newsId}"/>
                                 <c:set var="loggedParams" value="${fullNews.loggedUserParameters}"/>

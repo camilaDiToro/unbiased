@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.model.user;
 
+import ar.edu.itba.paw.model.news.News;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -13,8 +15,8 @@ public class Saved {
 
     }
 
-    public Saved(long newsId, long userId) {
-        this.newsId = newsId;
+    public Saved(News news, long userId) {
+        this.news = news;
         this.userId = userId;
         this.date = Timestamp.valueOf(LocalDateTime.now());
 
@@ -22,7 +24,7 @@ public class Saved {
 
     @Override
     public int hashCode() {
-        return Objects.hash(newsId, userId);
+        return Objects.hash(news, userId);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class Saved {
         if (!(obj instanceof Saved))
             return false;
         Saved aux = (Saved) obj;
-        return aux.newsId == newsId && aux.userId == userId;
+        return aux.news.equals(news) && aux.userId == userId;
     }
 
     @Id
@@ -40,8 +42,10 @@ public class Saved {
     @SequenceGenerator(name="upvote_seq", sequenceName = "upvote_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name= "news_id", nullable = false)
-    private long newsId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "news_id", referencedColumnName = "news_id")
+    private News news;
+
 
     @Column(name= "user_id", nullable = false)
     private long userId;
@@ -57,13 +61,6 @@ public class Saved {
         this.id = id;
     }
 
-    public long getNewsId() {
-        return newsId;
-    }
-
-    public void setNewsId(long newsId) {
-        this.newsId = newsId;
-    }
 
     public long getUserId() {
         return userId;

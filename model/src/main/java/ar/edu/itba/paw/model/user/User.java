@@ -2,7 +2,6 @@ package ar.edu.itba.paw.model.user;
 
 import javax.persistence.*;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 @Entity
 @Table(name = "users")
@@ -56,6 +55,14 @@ public class User {
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Upvote> upvoteSet;
 
+//    @ElementCollection(targetClass = News.class)
+//    @JoinTable(name = "saved_news", joinColumns = @JoinColumn(name = "user_id"))
+//    @Column(name = "news_id")
+//    private Collection<News> savedNews;
+
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
+    private Set<Saved> savedNews;
+
     public Set<Follow> getFollowing() {
         return following;
     }
@@ -66,6 +73,7 @@ public class User {
 
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Follow> following;
+
 
     /* package */ User() {
         //Just for Hibernate
@@ -144,6 +152,34 @@ public class User {
         User aux = (User) o;
 
         return aux.userId == userId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+
+    public void setPositivityStats(PositivityStats positivityStats) {
+        this.positivityStats = positivityStats;
+    }
+
+    public Set<Saved> getSavedNews() {
+        return savedNews;
+    }
+
+    public void setSavedNews(Set<Saved> savedNews) {
+        this.savedNews = savedNews;
     }
 
     public static class UserBuilder{

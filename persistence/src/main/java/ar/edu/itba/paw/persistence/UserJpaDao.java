@@ -63,14 +63,14 @@ public class UserJpaDao implements UserDao{
 
     @Override
     public List<User> getTopCreators(int qty) {
-        List<User> list =  entityManager.createQuery("FROM User u",
+        List<User> list =  entityManager.createQuery("SELECT u FROM User u",
                 User.class).getResultList();
-        list.sort((u1, u2) -> {
-            Predicate<Upvote> predicate = u -> u.getDate().toLocalDateTime().toLocalDate().equals(LocalDate.now());
-            return (int) u1.getUpvoteSet().stream()
-                    .filter(predicate).count() - (int) u2.getUpvoteSet().stream()
-                    .filter(predicate).count();
-        });
+//        list.sort((u1, u2) -> {
+//            Predicate<Upvote> predicate = u -> u.getDate().toLocalDateTime().toLocalDate().equals(LocalDate.now());
+//            return (int) u1.getUpvoteSet().stream()
+//                    .filter(predicate).count() - (int) u2.getUpvoteSet().stream()
+//                    .filter(predicate).count();
+//        }); TODO: fix
 
         return list.stream().limit(qty).collect(Collectors.toList());
 

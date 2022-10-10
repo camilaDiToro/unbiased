@@ -8,6 +8,14 @@ public class Page<T>{
     private final int currentPage;
     private final int totalPages;
 
+    public static int getPageCount(long elemCount, int pageSize) {
+        double result = elemCount / (double) pageSize;
+
+        int pageQty = (int) Math.ceil(result);
+
+        return pageQty == 0 ? 1 : pageQty;
+    }
+
 
     public Page(List<T> content, int currentPage, int totalPages) {
         this.content = content;

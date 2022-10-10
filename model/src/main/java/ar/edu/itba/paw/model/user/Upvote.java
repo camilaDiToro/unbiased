@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.model.user;
 
+import ar.edu.itba.paw.model.news.News;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -13,20 +15,21 @@ public class Upvote {
 
     }
 
-    public Upvote(long newsId, long userId) {
-        this.newsId = newsId;
+    public Upvote(News news, long userId) {
+        this.news = news;
         this.userId = userId;
+        this.date = Timestamp.valueOf(LocalDateTime.now());
+
     }
 
-    public Upvote(long newsId, long userId, boolean value) {
-        this(newsId , userId);
+    public Upvote(News news, long userId, boolean value) {
+        this(news , userId);
         this.value = value;
-        this.date = Timestamp.valueOf(LocalDateTime.now());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(newsId, userId);
+        return Objects.hash(news, userId);
     }
 
     @Override
@@ -36,7 +39,7 @@ public class Upvote {
         if (!(obj instanceof Upvote))
             return false;
         Upvote aux = (Upvote) obj;
-        return aux.newsId == newsId && aux.userId == userId;
+        return aux.news.equals(news) && aux.userId == userId;
     }
 
     @Id
@@ -47,8 +50,9 @@ public class Upvote {
     @Column(name= "upvote", nullable = false)
     private boolean value;
 
-    @Column(name= "news_id", nullable = false)
-    private long newsId;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "news_id", referencedColumnName = "news_id")
+    private News news;
 
     @Column(name= "user_id", nullable = false)
     private long userId;
@@ -72,12 +76,12 @@ public class Upvote {
         this.value = value;
     }
 
-    public long getNewsId() {
-        return newsId;
+    public News getNews() {
+        return news;
     }
 
-    public void setNewsId(long newsId) {
-        this.newsId = newsId;
+    public void setNews(News news) {
+        this.news = news;
     }
 
     public long getUserId() {

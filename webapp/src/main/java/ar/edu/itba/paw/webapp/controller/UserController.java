@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
-import ar.edu.itba.paw.model.news.FullNews;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.ProfileCategory;
@@ -112,7 +112,7 @@ public class UserController {
             catObject = userService.getProfileCategory(category, profileUser);
         }
 
-        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
+        Page<News> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
 
@@ -129,7 +129,8 @@ public class UserController {
                 .withObject("hasErrors", hasErrors)
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
-                   mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
+//                   mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
+            userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
         }
 
         mavBuilder.withObject("category", catObject);

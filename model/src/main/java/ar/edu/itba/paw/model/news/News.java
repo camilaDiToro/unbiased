@@ -19,8 +19,6 @@ public class News {
     @Column(name = "news_id")
     private Long newsId;
 
-    @Column(name = "creator")
-    private Long creatorId;
     @Column(name = "image_id")
     private Long imageId;
     @Column(name = "body")
@@ -30,11 +28,62 @@ public class News {
     @Column(name = "subtitle")
     private String subtitle;
 
+    @Column(name = "accesses")
+    private int accesses;
+
     @Column(name = "creation_date")
     private Timestamp date;
 
     @Transient
     private LocalDateTime creationDate;
+
+    @ElementCollection(targetClass = Category.class)
+    @JoinTable(name = "news_category", joinColumns = @JoinColumn(name = "news_id"))
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "category_id")
+    private Collection<Category> categories;
+
+
+    @Transient
+    private int readTime;
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "creator", referencedColumnName = "user_id")
+    private User creator;
+
+    @Transient
+    private PositivityStats positivityStats;
+
+    @Column(name = "upvotes")
+    private Integer upvotes = 0;
+
+    @Column(name = "downvotes")
+    private Integer downvotes = 0;
+
+
+    @Transient
+    private LoggedUserParameters loggedUserParameters;
+
+    @OneToMany(mappedBy="news",fetch = FetchType.EAGER)
+    @MapKey(name = "userId")
+    private Map<Long,Upvote> upvoteMap;
+
+
+
+    @ManyToMany
+    @JoinTable(name = "saved_news",
+            joinColumns = @JoinColumn(name = "news_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @MapKey(name = "userId")
+    private Map<Long,User> usersSaved;
 
 
 
@@ -43,7 +92,7 @@ public class News {
     public String toString() {
         return "News{" +
                 "newsId=" + newsId +
-                ", creatorId=" + creatorId +
+                ", creatorId=" + creator.getId() +
                 ", imageId=" + imageId +
                 ", body='" + body + '\'' +
                 ", title='" + title + '\'' +
@@ -59,12 +108,40 @@ public class News {
 
     @PostLoad
     private void postLoad() {
+        readTime = TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(body));
+        upvotes = upvotes == null ? 0 : upvotes;
+        downvotes = downvotes == null ? 0 : downvotes; // TODO: ver clase, esto no parece estar del todo bien pero por ahora anda
+        positivityStats = new PositivityStats(upvotes, downvotes);
         creationDate = date.toLocalDateTime();
+
+    }
+
+    public void setUserSpecificVariables(long userId) {
+        Upvote upvote = upvoteMap.get(userId); // TODO fix
+        Rating rating = upvote != null ? (upvote.isValue() ? Rating.UPVOTE : Rating.DOWNVOTE) : Rating.NO_RATING;
+        loggedUserParameters = new LoggedUserParameters(rating, usersSaved.containsKey(userId));
+        Collection<Upvote> set = upvoteMap.values();
+        int total = set.size();
+        int upvotes =
+                set.stream().map(u -> u.isValue() ? 1 : 0)
+                        .reduce(0, Integer::sum);
+        int downvotes = total - upvotes;
+        positivityStats = new PositivityStats(upvotes, downvotes);
+    }
+
+    public boolean hasLoggedUserParameters() {
+        return loggedUserParameters != null;
+    }
+
+    public LoggedUserParameters getLoggedUserParameters() {
+
+
+        return loggedUserParameters;
     }
 
     public News(NewsBuilder builder) {
-        this.newsId = builder.newsId;
-        this.creatorId = builder.creatorId;
+//        this.newsId = builder.newsId;
+        this.creator = builder.creator;
         this.imageId = builder.imageId;
         this.body = TextUtils.convertMarkdownToHTML(builder.body);
         this.title = builder.title;
@@ -82,7 +159,7 @@ public class News {
     }
 
     public long getCreatorId() {
-        return creatorId;
+        return creator.getId();
     }
 
     public Long getImageId() {
@@ -136,19 +213,36 @@ public class News {
         return imageId!=null ;
     }
 
+    public int getReadTime() {
+        return readTime;
+    }
+
+
+
+    public User getUser() {
+        return creator;
+    }
+
+
+
+
+    public PositivityStats getPositivityStats() {
+        return positivityStats;
+    }
+
     public static class NewsBuilder {
-        private final long creatorId;
+        private User creator;
         private long newsId;
         private Long imageId;
-        private final String body;
-        private final String title;
-        private final String subtitle;
+        private String body;
+        private String title;
+        private String subtitle;
         private LocalDateTime creationDate;
-        private final Collection<Category> categories;
+        private Collection<Category> categories;
 
 
-        public NewsBuilder(long creatorId, String body, String title, String subtitle) {
-            this.creatorId = creatorId;
+        public NewsBuilder(User creator, String body, String title, String subtitle) {
+            this.creator = creator;
             this.body = body;
             this.title = title;
             this.subtitle = subtitle;
@@ -156,8 +250,17 @@ public class News {
             this.categories = new ArrayList<>();
         }
 
+        private NewsBuilder() {
+
+        }
+
         public NewsBuilder imageId(Long imageId){
             this.imageId = imageId;
+            return this;
+        }
+
+        public NewsBuilder body(String body){
+            this.body = body;
             return this;
         }
 
@@ -189,8 +292,8 @@ public class News {
             return new News(this);
         }
 
-        public long getCreatorId() {
-            return creatorId;
+        public User getCreator() {
+            return creator;
         }
 
         public long getNewsId() {

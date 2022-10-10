@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
+
 
 @Controller
 public class HomeController {
@@ -46,15 +48,15 @@ public class HomeController {
             @RequestParam(name="type", defaultValue="article") String type){
 
 
-        Page<FullNews> newsPage = newsService.getNews(page,category,orderBy,query);
+        Page<News> newsPage = newsService.getNews(page,category,orderBy,query);
 
         MyModelAndView.Builder builder= mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
-                .withObject("topCreators", userService.getTopCreators(5))
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", orderBy)
                 .withObject("query", query)
                 .withObject("type", type)
                 .withObject("categories", newsService.getHomeCategories())
+                .withObject("topCreators", new ArrayList<>()) // TODO: fix
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
         if (type.equals("creator")) {
@@ -71,8 +73,11 @@ public class HomeController {
         final Long newsId = payload.getNewsId();
         final boolean isActive = payload.isActive();
 
-        newsService.setRating(newsService.getOrThrowException(newsId).getNews(), isActive ? action : Rating.NO_RATING);
-        final FullNews news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+
+
+        newsService.setRating(newsService.getOrThrowException(newsId), isActive ? action : Rating.NO_RATING);
+
+        final News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
 
         return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
     }
