@@ -113,7 +113,6 @@ public class UserJpaDao implements UserDao{
     public void unfollow(long userId, long follows) {
         User user = getUserById(userId).get();
         user.getFollowing().remove(new Follow(userId, follows));
-        // TODO: figure out why set modification is not persisting in database
         entityManager.persist(user);
     }
 

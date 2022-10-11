@@ -48,7 +48,7 @@ public class User {
         this.following = following;
     }
 
-    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Follow> following;
 
 
