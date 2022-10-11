@@ -56,7 +56,7 @@ public class HomeController {
                 .withObject("query", query)
                 .withObject("type", type)
                 .withObject("categories", newsService.getHomeCategories())
-                .withObject("topCreators", new ArrayList<>()) // TODO: fix
+                .withObject("topCreators", userService.getTopCreators(5))
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
 
         if (type.equals("creator")) {

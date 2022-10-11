@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
+/*
 @Entity
 @Table(name = "full_news")
 public class FullNews {
@@ -136,3 +136,4 @@ public class FullNews {
         return positivityStats;
     }
 }
+*/
