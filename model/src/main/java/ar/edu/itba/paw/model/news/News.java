@@ -62,10 +62,10 @@ public class News {
     @Transient
     private PositivityStats positivityStats;
 
-    @Column(name = "upvotes")
+    @Transient
     private Integer upvotes = 0;
 
-    @Column(name = "downvotes")
+    @Transient
     private Integer downvotes = 0;
 
 
