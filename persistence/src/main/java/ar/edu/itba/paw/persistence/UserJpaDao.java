@@ -99,21 +99,25 @@ public class UserJpaDao implements UserDao{
 
     @Override
     public void addFollow(long userId, long follows) {
-        // Not implemented yet
         User user = getUserById(userId).get();
         user.getFollowing().add(new Follow(userId, follows));
         entityManager.persist(user);
     }
 
     @Override
+    public User merge(User user) {
+        return entityManager.merge(user);
+    }
+
+    @Override
     public void unfollow(long userId, long follows) {
-        // Not implemented yet
         User user = getUserById(userId).get();
         user.getFollowing().remove(new Follow(userId, follows));
         // TODO: figure out why set modification is not persisting in database
         entityManager.persist(user);
-
     }
+
+
 
     @Override
     public boolean isFollowing(long userId, long followId) {

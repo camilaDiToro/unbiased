@@ -19,8 +19,8 @@ public class Follow {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "follows_seq")
-    @SequenceGenerator(name="follows_seq", sequenceName = "follows_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "follows_id_seq")
+    @SequenceGenerator(name="follows_id_seq", sequenceName = "follows_id_seq", allocationSize = 1)
     private Long id;
 
 

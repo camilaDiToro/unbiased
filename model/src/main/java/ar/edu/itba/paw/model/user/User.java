@@ -12,29 +12,17 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    public void setImageId(Long imageId) {
-        this.imageId = imageId;
-    }
-
     @Column(name="image_id")
     private Long imageId;
 
     @Column(unique = true, length = 100, nullable = false)
     private String email;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     @Column(unique = true, length = 50)
     private String username;
 
     @Column(length = 200, nullable = false)
     private String pass;
-
-    public void setStatus(UserStatus status) {
-        this.status = status;
-    }
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
@@ -43,14 +31,6 @@ public class User {
     // in jdbc we just retrived the positivity stats if the user was a journalist
     @Transient
     private PositivityStats positivityStats;
-
-    public Set<Upvote> getUpvoteSet() {
-        return upvoteSet;
-    }
-
-    public void setUpvoteSet(Set<Upvote> upvoteSet) {
-        this.upvoteSet = upvoteSet;
-    }
 
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Upvote> upvoteSet;
@@ -63,9 +43,6 @@ public class User {
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Saved> savedNews;
 
-    public Set<Follow> getFollowing() {
-        return following;
-    }
 
     public void setFollowing(Set<Follow> following) {
         this.following = following;
@@ -99,6 +76,30 @@ public class User {
                 .stream().map(upvote -> upvote.isValue() ? 0 : 1)
                 .reduce(0, Integer::sum);
         positivityStats = new PositivityStats(upvotes, downvotes);
+    }
+
+    public Set<Upvote> getUpvoteSet() {
+        return upvoteSet;
+    }
+
+    public void setUpvoteSet(Set<Upvote> upvoteSet) {
+        this.upvoteSet = upvoteSet;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
+    }
+
+    public Set<Follow> getFollowing() {
+        return following;
     }
 
     @Override

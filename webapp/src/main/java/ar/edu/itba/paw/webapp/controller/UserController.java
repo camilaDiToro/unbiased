@@ -129,8 +129,7 @@ public class UserController {
                 .withObject("hasErrors", hasErrors)
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
-//                   mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
-            userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+            mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
         }
 
         mavBuilder.withObject("category", catObject);
