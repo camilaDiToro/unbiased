@@ -12,6 +12,7 @@ import ar.edu.itba.paw.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*@Primary
 @Repository
 public class AdminJdbcDao implements AdminDao{
 
@@ -135,7 +137,7 @@ public class AdminJdbcDao implements AdminDao{
     }
 
 }
-
+*/
 
 
 

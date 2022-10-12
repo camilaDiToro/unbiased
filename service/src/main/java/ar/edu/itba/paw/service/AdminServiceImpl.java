@@ -10,6 +10,7 @@ import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.AdminDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AdminServiceImpl implements AdminService{
@@ -29,8 +30,10 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
+    @Transactional
     public void reportNews(News news, ReportReason reportReason) {
-        adminDao.reportNews(news,getLoggedUserId(),reportReason);
+        User user = securityService.getCurrentUser().get();
+        adminDao.reportNews(news,user,reportReason);
     }
 
     @Override
