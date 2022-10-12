@@ -109,10 +109,16 @@ public class News {
     @PostLoad
     private void postLoad() {
         readTime = TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(body));
-        upvotes = upvotes == null ? 0 : upvotes;
-        downvotes = downvotes == null ? 0 : downvotes; // TODO: ver clase, esto no parece estar del todo bien pero por ahora anda
+        Collection<Upvote> set = upvoteMap.values();
+        int total = set.size();
+        upvotes =
+                set.stream().map(u -> u.isValue() ? 1 : 0)
+                        .reduce(0, Integer::sum);
+        downvotes = total - upvotes;
+        positivityStats = new PositivityStats(upvotes, downvotes);
         positivityStats = new PositivityStats(upvotes, downvotes);
         creationDate = date.toLocalDateTime();
+
 
     }
 
@@ -120,13 +126,7 @@ public class News {
         Upvote upvote = upvoteMap.get(userId); // TODO fix
         Rating rating = upvote != null ? (upvote.isValue() ? Rating.UPVOTE : Rating.DOWNVOTE) : Rating.NO_RATING;
         loggedUserParameters = new LoggedUserParameters(rating, usersSaved.containsKey(userId));
-        Collection<Upvote> set = upvoteMap.values();
-        int total = set.size();
-        int upvotes =
-                set.stream().map(u -> u.isValue() ? 1 : 0)
-                        .reduce(0, Integer::sum);
-        int downvotes = total - upvotes;
-        positivityStats = new PositivityStats(upvotes, downvotes);
+
     }
 
     public boolean hasLoggedUserParameters() {

@@ -9,16 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Transient;
-import javax.persistence.TypedQuery;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import javax.persistence.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @Primary
@@ -63,10 +57,10 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public List<News> getNews(int page, String query, NewsOrder ns, Long loggedUser) {
-//        User u = entityManager.createQuery("SELECT u FROM User u WHERE u.userId = 9", User.class).getSingleResult();
-        final TypedQuery<News> typedQuery = entityManager.createQuery("SELECT f from News f WHERE f.title LIKE :query ORDER BY " + ns.getQuery(),News.class)
-                .setParameter("query", '%' + query + '%');
-        List<News> news = typedQuery.getResultList();
+        Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE title LIKE :query ORDER BY " + ns.getQueryPaged())
+                .setParameter("query", "%" + query + "%");
+
+        List<News> news = getNewsOfPage(queryObj, page, PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
@@ -95,9 +89,11 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public List<News> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser) {
-        final TypedQuery<News> typedQuery = entityManager.createQuery("from News f WHERE :category MEMBER OF f.categories ORDER BY " + ns.getQuery(),News.class)
-                .setParameter("category", category);
-        List<News> news = typedQuery.getResultList();
+        Query query = entityManager.createNativeQuery("SELECT news_id FROM news f NATURAL JOIN news_category WHERE category_id = :category ORDER BY " +ns.getQueryPaged())
+                .setParameter("category", category.getId());
+
+
+        List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
@@ -166,10 +162,52 @@ public class NewsJpaDao implements NewsDao {
         entityManager.persist(commentObj);
     }
 
+    private List<Comment> getCommentsOfPage(Query query,int page, int pageSize) {
+        @SuppressWarnings("unchecked")
+        List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
+                .setParameter("offset", pageSize*(page-1))
+                .getResultList().stream().map(o -> ((Integer)o).longValue()).collect(Collectors.toList());
+
+        if (ids.isEmpty())
+            return new ArrayList<>();
+
+        final TypedQuery<Comment> typedQuery = entityManager.createQuery("SELECT f from Comment f WHERE f.id IN :ids",Comment.class)
+                .setParameter("ids", ids);
+
+        List<Comment> comments = typedQuery.getResultList();
+        return comments;
+    }
+
+    private List<News> getNewsOfPage(Query query,int page, int pageSize) {
+        @SuppressWarnings("unchecked")
+        List<Long> ids = getIdsOfPage(query, page, pageSize);
+
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        final TypedQuery<News> typedQuery = entityManager.createQuery("SELECT f from News f WHERE f.id IN :ids",News.class)
+                .setParameter("ids", ids);
+
+        List<News> news = typedQuery.getResultList();
+        return news;
+    }
+
+    private List<Long> getIdsOfPage(Query query,int page, int pageSize) {
+        @SuppressWarnings("unchecked")
+        List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
+                .setParameter("offset", pageSize*(page-1))
+                .getResultList().stream().map(o -> ((Integer)o).longValue()).collect(Collectors.toList());
+
+        return ids;
+    }
+
     @Override
     public Page<Comment> getComments(long newsId, int page) {
-        List<Comment> comments = entityManager.createQuery("SELECT c from Comment c WHERE c.news.newsId = :newsId", Comment.class)
-                .setParameter("newsId", newsId).setFirstResult(page*COMMENT_PAGE_SIZE).setMaxResults(COMMENT_PAGE_SIZE).getResultList();
+        Query query = entityManager.createNativeQuery("SELECT f.id from comments f WHERE news_id = :newsId LIMIT :pageSize OFFSET :offset")
+                .setParameter("newsId", newsId);
+        List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
+
         return new Page<>(comments, page, getTotalPagesComments(newsId));
     }
 
@@ -198,23 +236,24 @@ public class NewsJpaDao implements NewsDao {
 
 
     Page<News> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
-        final TypedQuery<News> typedQuery = entityManager.createQuery("from News f WHERE f.creator = :user ORDER BY " + ns.getQuery(),News.class)
-                .setParameter("user", user);
-        List<News> news = typedQuery.getResultList();
+        Query query  = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE creator = :userId order by " + ns.getQueryPaged())
+                .setParameter("userId", user.getId());
+        List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
+
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
-        return new Page<>(news, page, getTotalPagesNewsFromUser(page, user));
+        return new Page<>(news, page, getTotalPagesNewsFromUser(user));
     }
 
     Page<News> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser) {
-        final TypedQuery<News> typedQuery = entityManager.createQuery("SELECT f from News f WHERE :user MEMBER OF f.usersSaved order by " + ns.getQuery() + ")",News.class)
-                .setParameter("user", user);
-        List<News> news = typedQuery.getResultList();
+        Query query = entityManager.createNativeQuery("SELECT news_id FROM saved_news NATURAL JOIN news f WHERE user_id = :userId order by " + ns.getQueryPaged())
+                .setParameter("userId", user.getId());
+        List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
-        return new Page<>(news, page, getTotalPagesNewsFromUser(page, user));
+        return new Page<>(news, page, getTotalPagesNewsFromUser(user));
     }
 
 
@@ -223,14 +262,13 @@ public class NewsJpaDao implements NewsDao {
         Map<NewsOrder, String> map = new HashMap<>();
         map.put(NewsOrder.NEW, "u.news.date desc");
         map.put(NewsOrder.TOP, "u.news.accesses desc"); // TODO es feo pero por ahora no se me ocurre otra cosa
-        final TypedQuery<News> typedQuery = entityManager.createQuery("SELECT u.news AS f from Upvote u WHERE u.userId = :user AND u.value = :value order by " +map.get(ns),News.class)
-                .setParameter("user", user.getId())
-                .setParameter("value", upvote);
-        List<News> news = typedQuery.getResultList();
+        Query query = entityManager.createNativeQuery("SELECT news_id FROM upvotes NATURAL JOIN news f WHERE upvote = :value AND user_id = :userId order by " + ns.getQueryPaged())
+                .setParameter("value", upvote).setParameter("userId", user.getId());
+        List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
-        return new Page<>(news, page, getTotalPagesNewsFromUserRating(page, user.getId(), upvote));
+        return new Page<>(news, page, getTotalPagesNewsFromUserRating(user.getId(), upvote));
     }
 
     Page<News> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
@@ -242,20 +280,20 @@ public class NewsJpaDao implements NewsDao {
 
     }
 
-    int getTotalPagesNewsFromUser(int page, User user) {
+    int getTotalPagesNewsFromUser(User user) {
         long elemCount =  entityManager.createQuery("SELECT count(f) from News f WHERE f.creator = :user",Long.class)
                 .setParameter("user", user) .getSingleResult();
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
     }
 
-    int getTotalPagesNewsFromUserRating(int page, long userId, boolean upvoted) {
+    int getTotalPagesNewsFromUserRating(long userId, boolean upvoted) {
         long elemCount =  entityManager.createQuery("SELECT count(u) from Upvote u WHERE u.userId = :user AND u.value = :value",Long.class)
                 .setParameter("user", userId)
                 .setParameter("value", upvoted).getSingleResult();
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
     }
 
-    int getTotalPagesNewsFromUserSaved(int page, User user) {
+    int getTotalPagesNewsFromUserSaved(User user) {
         long elemCount =  entityManager.createQuery("SELECT u.upvoteSet.size from User u WHERE u.userId = :user",Long.class)
                 .setParameter("user", user.getId())
                 .getSingleResult();

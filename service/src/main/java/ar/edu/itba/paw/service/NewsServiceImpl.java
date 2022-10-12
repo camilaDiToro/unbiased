@@ -57,8 +57,6 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Page<News> getNews(int page, String category, String newsOrder, String query) {
-        newsDao.getNews(0, "a", NewsOrder.NEW, 2L); // TODO: remove
-        User user = userService.getUserById(9).get();
         int totalPages;
         page = page <= 0 ? 1 : page;
 
