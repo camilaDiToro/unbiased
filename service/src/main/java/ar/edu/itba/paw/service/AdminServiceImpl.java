@@ -37,7 +37,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<ReportedNews> getReportedNews(int page, String reportOrder) {
+    public Page<News> getReportedNews(int page, String reportOrder) {
        ReportOrder reportOrderObject = ReportOrder.getByValue(reportOrder);
        return adminDao.getReportedNews(page, reportOrderObject);
     }

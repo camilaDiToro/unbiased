@@ -10,7 +10,7 @@ import ar.edu.itba.paw.model.user.User;
 
 public interface AdminDao {
     void reportNews(News news, User reporter, ReportReason reportReason);
-    Page<ReportedNews> getReportedNews(int page, ReportOrder reportOrder);
+    Page<News> getReportedNews(int page, ReportOrder reportOrder);
     Page<ReportDetail> getReportedNewsDetail(int page, News news);
     void makeUserAdmin(User user);
     boolean hasReported(News news, Long loggedUser);

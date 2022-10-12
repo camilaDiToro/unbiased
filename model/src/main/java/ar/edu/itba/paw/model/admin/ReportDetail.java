@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
+import java.util.Objects;
 
 @Entity
 @Table(name = "report")
@@ -24,7 +25,7 @@ public class ReportDetail {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User reporter;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "news_id", referencedColumnName = "news_id", nullable = false)
     private News news;
 
@@ -92,5 +93,18 @@ public class ReportDetail {
 
     public void setReason(ReportReason reason) {
         this.reason = reason;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ReportDetail that = (ReportDetail) o;
+        return id == that.id && reporter.equals(that.reporter) && news.equals(that.news) && reason == that.reason;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, reporter, news, reason);
     }
 }

@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateAdminForm;
@@ -54,7 +55,7 @@ public class AdminController {
                                      @PathVariable("newsOrder") String newsOrder) {
 
 
-        Page<ReportedNews> reportedNewsPage = adminService.getReportedNews(page, newsOrder);
+        Page<News> reportedNewsPage = adminService.getReportedNews(page, newsOrder);
         return mavBuilderSupplier.supply("moderation_panel", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", ReportOrder.values())

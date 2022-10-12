@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.model.news;
 
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.user.*;
 
 import javax.persistence.*;
@@ -86,6 +87,8 @@ public class News {
     private Map<Long,User> usersSaved;
 
 
+    @OneToMany(mappedBy = "news")
+    private List<ReportDetail> reports;
 
 
     @Override
@@ -187,7 +190,13 @@ public class News {
                 " - " + creationDate.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
+    /*public Timestamp getFirstReportDate(){
+        return Timestamp.valueOf(reports.stream().map(ReportDetail::getCreationDate).min(LocalDateTime::compareTo).get());
+    }
 
+    public Timestamp getLastReportDate(){
+        return Timestamp.valueOf(reports.stream().map(ReportDetail::getCreationDate).max(LocalDateTime::compareTo).get());
+    }*/
 
     @Override
     public boolean equals(Object obj) {
@@ -228,6 +237,14 @@ public class News {
 
     public PositivityStats getPositivityStats() {
         return positivityStats;
+    }
+
+    public List<ReportDetail> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<ReportDetail> reports) {
+        this.reports = reports;
     }
 
     public static class NewsBuilder {
