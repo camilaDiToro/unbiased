@@ -25,7 +25,7 @@ public interface NewsDao {
 
     Optional<News> getById(long id, Long loggedUser);
     List<Category> getNewsCategory(News news);
-    void setRating(Long newsId, Long userId, Rating rating);
+    void setRating(News news, User user, Rating rating);
     void addComment(User user, News news, String comment);
     void saveNews(News news, User user);
     void removeSaved(News news, User user);

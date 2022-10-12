@@ -128,6 +128,7 @@ public class User {
     }
 
     public PositivityStats getPositivityStats() {
+
         return positivityStats;
     }
 

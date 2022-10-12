@@ -51,6 +51,10 @@ public class NewsServiceImpl implements NewsService {
         return this.newsDao.create(newsBuilder);
     }
 
+    private User getLoggedUser() {
+        return securityService.getCurrentUser().orElse(null);
+    }
+
     private Long getLoggedUserId() {
         return securityService.getCurrentUser().map(User::getId).orElse(null);
     }
@@ -106,7 +110,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public void setRating(News news, Rating rating) {
-        newsDao.setRating(news.getNewsId(), getLoggedUserId(), rating);
+        newsDao.setRating(news, getLoggedUser(), rating);
     }
 
     @Override

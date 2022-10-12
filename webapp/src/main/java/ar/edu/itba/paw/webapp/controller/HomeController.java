@@ -73,11 +73,10 @@ public class HomeController {
         final Long newsId = payload.getNewsId();
         final boolean isActive = payload.isActive();
 
+        News news = newsService.getOrThrowException(newsId);
 
+        newsService.setRating(news, isActive ? action : Rating.NO_RATING);
 
-        newsService.setRating(newsService.getOrThrowException(newsId), isActive ? action : Rating.NO_RATING);
-
-        final News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
 
         return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
     }

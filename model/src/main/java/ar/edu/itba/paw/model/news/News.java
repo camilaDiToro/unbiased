@@ -60,8 +60,6 @@ public class News {
     @JoinColumn(name = "creator", referencedColumnName = "user_id")
     private User creator;
 
-    @Transient
-    private PositivityStats positivityStats;
 
     @Transient
     private Integer upvotes = 0;
@@ -73,7 +71,15 @@ public class News {
     @Transient
     private LoggedUserParameters loggedUserParameters;
 
-    @OneToMany(mappedBy="news",fetch = FetchType.EAGER)
+    public Map<Long, Upvote> getUpvoteMap() {
+        return upvoteMap;
+    }
+
+    public void setUpvoteMap(Map<Long, Upvote> upvoteMap) {
+        this.upvoteMap = upvoteMap;
+    }
+
+    @OneToMany(mappedBy="news",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapKey(name = "userId")
     private Map<Long,Upvote> upvoteMap;
 
@@ -112,16 +118,8 @@ public class News {
     @PostLoad
     private void postLoad() {
         readTime = TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(body));
-        Collection<Upvote> set = upvoteMap.values();
-        int total = set.size();
-        upvotes =
-                set.stream().map(u -> u.isValue() ? 1 : 0)
-                        .reduce(0, Integer::sum);
-        downvotes = total - upvotes;
-        positivityStats = new PositivityStats(upvotes, downvotes);
-        positivityStats = new PositivityStats(upvotes, downvotes);
-        creationDate = date.toLocalDateTime();
 
+        creationDate = date.toLocalDateTime();
 
     }
 
@@ -233,10 +231,14 @@ public class News {
     }
 
 
-
-
     public PositivityStats getPositivityStats() {
-        return positivityStats;
+        Collection<Upvote> set = upvoteMap.values();
+        int total = set.size();
+        upvotes =
+                set.stream().map(u -> u.isValue() ? 1 : 0)
+                        .reduce(0, Integer::sum);
+        downvotes = total - upvotes;
+        return new PositivityStats(upvotes, downvotes);
     }
 
     public List<ReportDetail> getReports() {

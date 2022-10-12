@@ -119,21 +119,23 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public void setRating(Long newsId, Long userId, Rating rating) {
+    public void setRating(News news, User user, Rating rating) {
+        Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
         if (rating.equals(Rating.NO_RATING)) {
-            entityManager.createQuery("DELETE FROM Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId")
-                    .setParameter("newsId", newsId)
-                    .setParameter("userId", userId).executeUpdate();
+//            entityManager.createQuery("DELETE FROM Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId")
+//                    .setParameter("newsId", news)
+//                    .setParameter("userId", user).executeUpdate();
+            upvoteMap.remove(user.getId());
             return;
         }
 
-        Optional<Upvote> maybeUpvote = entityManager.createQuery("SELECT u from Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId", Upvote.class)
-            .setParameter("newsId", newsId)
-            .setParameter("userId", userId).getResultList().stream().findFirst();
-        Upvote upvote = maybeUpvote.orElseGet(() -> new Upvote(getById(newsId, null).get(), userId));
-        upvote.setValue(rating.equals(Rating.UPVOTE));
-        entityManager.persist(upvote);
-
+//        Optional<Upvote> maybeUpvote = entityManager.createQuery("SELECT u from Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId", Upvote.class)
+//            .setParameter("newsId", news)
+//            .setParameter("userId", user).getResultList().stream().findFirst();
+//        Upvote upvote = maybeUpvote.orElseGet(() -> new Upvote(getById(news, null).get(), user));
+//        upvote.setValue(rating.equals(Rating.UPVOTE));
+//        entityManager.persist(upvote);
+        upvoteMap.put(user.getId(), new Upvote(news, user.getId(), rating.equals(Rating.UPVOTE)));
     }
 
     @Override
@@ -146,7 +148,6 @@ public class NewsJpaDao implements NewsDao {
             Saved saved = new Saved(news, user.getId());
             entityManager.persist(saved);
         }
-
 
     }
 
