@@ -176,6 +176,13 @@ public class NewsJpaDao implements NewsDao {
                 .setParameter("ids", ids);
 
         List<Comment> comments = typedQuery.getResultList();
+        Map<Long, Comment> map = new HashMap<>();
+
+        for (Comment comment1 : comments) {
+            map.put(comment1.getId(), comment1);
+        }
+        comments = ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
+
         return comments;
     }
 
@@ -191,6 +198,12 @@ public class NewsJpaDao implements NewsDao {
                 .setParameter("ids", ids);
 
         List<News> news = typedQuery.getResultList();
+        Map<Long, News> map = new HashMap<>();
+        for (News news1 : news) {
+            map.put(news1.getNewsId(), news1);
+        }
+        // map id -> news
+        news =  ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
         return news;
     }
 
