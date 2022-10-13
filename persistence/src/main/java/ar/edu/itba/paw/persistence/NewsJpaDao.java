@@ -194,7 +194,7 @@ public class NewsJpaDao implements NewsDao {
             return new ArrayList<>();
         }
 
-        final TypedQuery<News> typedQuery = entityManager.createQuery("SELECT f from News f WHERE f.id IN :ids",News.class)
+        final TypedQuery<News> typedQuery = entityManager.createQuery("SELECT f from News f WHERE f.newsId IN :ids",News.class)
                 .setParameter("ids", ids);
 
         List<News> news = typedQuery.getResultList();
@@ -218,7 +218,7 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public Page<Comment> getComments(long newsId, int page) {
-        Query query = entityManager.createNativeQuery("SELECT f.id from comments f WHERE news_id = :newsId LIMIT :pageSize OFFSET :offset")
+        Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId LIMIT :pageSize OFFSET :offset")
                 .setParameter("newsId", newsId);
         List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
 
@@ -240,12 +240,51 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public List<News> getRecommendation(int page, User user, NewsOrder newsOrder) {
-       return getNews(page, "",newsOrder, user.getId()); // TODO implement
+//       return getNews(page, "",newsOrder, user.getId()); // TODO implement
+        Query query = entityManager.createNativeQuery("SELECT news_id FROM\n" +
+                                "((SELECT news_id, 1 as priority, accesses, creation_date FROM news f JOIN follows\n" +
+                                "                        ON (:userId = follows.user_id AND follows.follows=f.creator )\n" +
+                                "                        ORDER BY creation_date DESC LIMIT :limit)\n" +
+                                "UNION\n" +
+                                "(SELECT news_id, 2 as priority, accesses, creation_date FROM news f WHERE\n" +
+                                "                        creator IN (SELECT creator FROM news f NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)\n" +
+                                "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
+                                "                        ORDER BY creation_date DESC LIMIT :limit)\n" +
+                                "UNION\n" +
+                                "(SELECT news_id, 3 as priority, accesses, creation_date FROM news f WHERE\n" +
+                                "                       creator NOT IN (SELECT creator FROM news f NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)\n" +
+                                "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
+                                "                        ORDER BY creation_date DESC LIMIT :limit)\n" +
+                                "ORDER BY priority, " + newsOrder.getQueryPaged() + "  ) AS news"
+//                        +  + ") AS news"
+                ).setParameter("userId", user.getId())
+                .setParameter("limit", 5);
+
+        return getNewsOfPage(query, page, PAGE_SIZE);
     }
 
     @Override
-    public int getTodayNewsPageCount() {
-        return 1; // TODO implement
+    public int getTodayNewsPageCount(User user) {
+
+        long elemCount =   ((Number)entityManager.createNativeQuery("SELECT count(*) FROM ((SELECT news_id FROM news JOIN follows\n" +
+                        "                        ON (:userId = follows.user_id AND follows.follows=news.creator )\n" +
+                        "                    ORDER BY creation_date DESC LIMIT :limit)\n" +
+                        "\n" +
+                        "                    UNION\n" +
+                        "                        (SELECT news_id FROM news f WHERE\n" +
+                        "                        creator IN (SELECT creator FROM news f NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)\n" +
+                        "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
+                        "                         ORDER BY creation_date DESC LIMIT :limit\n" +
+                        "                        )\n" +
+                        "                        UNION\n" +
+                        "                        (SELECT news_id FROM news f WHERE\n" +
+                        "                        creator NOT IN (SELECT creator FROM news f NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)\n" +
+                        "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
+                        "                         ORDER BY creation_date DESC LIMIT :limit\n" +
+                        "                        )) AS ids"
+                     ).setParameter("userId", user.getId())
+                .setParameter("limit", 5).getSingleResult()).longValue();
+        return Page.getPageCount(elemCount, PAGE_SIZE);
     }
 
 

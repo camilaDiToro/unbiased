@@ -14,6 +14,14 @@ import java.util.Locale;
 public class Comment {
 
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_seq")
     @SequenceGenerator(name="comment_seq", sequenceName = "comment_seq", allocationSize = 1)

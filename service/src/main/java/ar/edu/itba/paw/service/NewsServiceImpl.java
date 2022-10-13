@@ -9,9 +9,7 @@ import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import sun.reflect.generics.reflectiveObjects.GenericArrayTypeImpl;
 
 import javax.xml.ws.http.HTTPException;
 import java.util.Arrays;
@@ -74,7 +72,7 @@ public class NewsServiceImpl implements NewsService {
             page = Math.min(page, totalPages);
             ln = newsDao.getNews(page, query, newsOrderObject, loggedUser);
         } else if (catObject.equals(Category.FOR_ME)) {
-            totalPages = newsDao.getTodayNewsPageCount();
+            totalPages = newsDao.getTodayNewsPageCount(getLoggedUser());
             page = Math.min(page, totalPages);
             ln = newsDao.getRecommendation(page, getLoggedUserOrThrowException(), newsOrderObject);
         }
@@ -158,7 +156,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Page<News> getRecommendation(int page, User user, NewsOrder newsOrder) {
-        int totalPages = newsDao.getTodayNewsPageCount();
+        int totalPages = newsDao.getTodayNewsPageCount(user);
         page = Math.min(Math.max(page, 1), totalPages);
         return new Page<>(newsDao.getRecommendation(page, user, newsOrder),page, totalPages);
     }

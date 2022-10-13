@@ -18,7 +18,7 @@ public interface NewsDao {
     List<News> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser);
     int getTotalPagesCategory(Category category);
     List<News> getRecommendation(int page, User user, NewsOrder newsOrder);
-    int getTodayNewsPageCount();
+    int getTodayNewsPageCount(User user);
 
     int getTotalPagesAllNews();
     News create(News.NewsBuilder newsBuilder);
