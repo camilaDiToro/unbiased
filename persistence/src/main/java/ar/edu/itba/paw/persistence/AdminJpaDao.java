@@ -78,11 +78,6 @@ public class AdminJpaDao implements AdminDao{
     }
 
     @Override
-    public void makeUserAdmin(User user) {
-        /* Implement after role dao */
-    }
-
-    @Override
     public boolean hasReported(News news, Long loggedUser) {
         if (loggedUser == null){
             return false;

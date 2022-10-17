@@ -4,10 +4,11 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
-import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.AdminDao;
+import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +19,14 @@ public class AdminServiceImpl implements AdminService{
     private final AdminDao adminDao;
     private final NewsService newsService;
     private final SecurityService securityService;
+    private final UserDao userDao;
 
     @Autowired
-    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, SecurityService securityService) {
+    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, SecurityService securityService, UserDao userDao) {
         this.adminDao = adminDao;
         this.newsService = newsService;
         this.securityService = securityService;
+        this.userDao = userDao;
     }
     private Long getLoggedUserId() {
         return securityService.getCurrentUser().map(User::getId).orElse(null);
@@ -58,7 +61,9 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
+    @Transactional
     public void makeUserAdmin(User user) {
-        adminDao.makeUserAdmin(user);
+        userDao.merge(user);
+        user.addRole(Role.ROLE_ADMIN);
     }
 }
