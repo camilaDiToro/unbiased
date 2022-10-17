@@ -1,6 +1,10 @@
 package ar.edu.itba.paw.model.user;
 
+import ar.edu.itba.paw.model.news.Category;
+
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,18 +31,17 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    // TODO: Check if its posible to generate a custom fetchType.
-    // in jdbc we just retrived the positivity stats if the user was a journalist
     @Transient
     private PositivityStats positivityStats;
 
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Upvote> upvoteSet;
 
-//    @ElementCollection(targetClass = News.class)
-//    @JoinTable(name = "saved_news", joinColumns = @JoinColumn(name = "user_id"))
-//    @Column(name = "news_id")
-//    private Collection<News> savedNews;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role")
+    private Collection<Role> roles;
 
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Saved> savedNews;
@@ -182,6 +185,20 @@ public class User {
 
     public void setSavedNews(Set<Saved> savedNews) {
         this.savedNews = savedNews;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void addRole(Role role){
+        if(!roles.contains(role)){
+            roles.add(role);
+        }
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 
     public static class UserBuilder{

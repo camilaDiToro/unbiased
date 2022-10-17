@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
-import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,19 +28,17 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final VerificationTokenService verificationTokenService;
-    private final RoleDao roleDao;
     private final ImageService imageService;
     private final SecurityService securityService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService, SecurityService securityService) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, ImageService imageService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
-        this.roleDao = roleDao;
         this.imageService = imageService;
         this.securityService = securityService;
     }
@@ -137,12 +131,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addRole(User user, Role role) {
-        roleDao.addRole(user.getId(), role);
+        user.addRole(role);
     }
 
     @Override
-    public List<Role> getRoles(User user) {
-        return roleDao.getRoles(user.getId()).stream().map(Role::getRole).collect(Collectors.toList());
+    @Transactional
+    public Collection<Role> getRoles(User user) {
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa getRoles");
+        user = userDao.merge(user);
+        return user.getRoles();
     }
 
     @Override
