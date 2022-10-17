@@ -4,7 +4,6 @@ import ar.edu.itba.paw.model.news.Category;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -37,7 +36,7 @@ public class User {
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Upvote> upvoteSet;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")

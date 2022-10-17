@@ -43,10 +43,7 @@ public class SecurityServiceImpl implements SecurityService {
         if(!mayBeUser.isPresent()){
             return false;
         }
-        User user= mayBeUser.get();
-        //System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa isCurrentUserAdmin");
-        //List<String> roles = user.getRoles().stream().map(Role::getRole).collect(Collectors.toList());
 
-        return true;
+        return mayBeUser.get().getRoles().contains(Role.ROLE_ADMIN);
     }
 }

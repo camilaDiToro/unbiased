@@ -22,6 +22,6 @@ public class NotExistingAdminValidator implements ConstraintValidator<NotExistin
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         Optional<User> user = userService.findByEmail(value);
-        return !user.isPresent() || !userService.getRoles(user.get()).contains(Role.ROLE_ADMIN);
+        return !user.isPresent() || !user.get().getRoles().contains(Role.ROLE_ADMIN);
     }
 }

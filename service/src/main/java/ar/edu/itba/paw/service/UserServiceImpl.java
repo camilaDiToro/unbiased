@@ -134,13 +134,13 @@ public class UserServiceImpl implements UserService {
         user.addRole(role);
     }
 
-    @Override
-    @Transactional
-    public Collection<Role> getRoles(User user) {
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa getRoles");
-        user = userDao.merge(user);
-        return user.getRoles();
-    }
+//    @Override
+//    @Transactional
+//    public Collection<Role> getRoles(User user) {
+////        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa getRoles");
+////        user = userDao.merge(user);
+//        return user.getRoles();
+//    }
 
     @Override
     @Transactional
@@ -207,7 +207,7 @@ public class UserServiceImpl implements UserService {
         } catch(IllegalArgumentException e) {
             throw new InvalidFilterException(e);
         }
-        if (!getRoles(profile).contains(Role.ROLE_JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS)){
+        if (!profile.getRoles().contains(Role.ROLE_JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS)){
             throw new InvalidFilterException();
         }
 
