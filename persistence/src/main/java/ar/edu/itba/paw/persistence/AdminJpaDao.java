@@ -66,15 +66,18 @@ public class AdminJpaDao implements AdminDao{
         return new Page<>(news,page,getTotalReportedNews());
     }
 
+    @Override
+    public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
+        List<ReportDetail> rd = news.getReports();
+        int totalPages = Page.getPageCount(rd.size(), PAGE_SIZE);
+        page = Math.min(Math.max(page, 1), totalPages);
+        return new Page<>(rd.subList((page-1)*PAGE_SIZE, Math.min(rd.size(), page*PAGE_SIZE)), page, totalPages);
+    }
+
     private int getTotalReportedNews() {
         long count = entityManager.createQuery("SELECT COUNT(distinct r.news) FROM ReportDetail r", Long.class)
                 .getSingleResult();
         return Page.getPageCount(count, PAGE_SIZE);
-    }
-
-    @Override
-    public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
-        return null;
     }
 
     @Override

@@ -83,8 +83,6 @@ public class News {
     @MapKey(name = "userId")
     private Map<Long,Upvote> upvoteMap;
 
-
-
     @ManyToMany
     @JoinTable(name = "saved_news",
             joinColumns = @JoinColumn(name = "news_id"),
@@ -94,6 +92,7 @@ public class News {
 
 
     @OneToMany(mappedBy = "news")
+    @OrderBy("creationDate DESC")
     private List<ReportDetail> reports;
 
 
