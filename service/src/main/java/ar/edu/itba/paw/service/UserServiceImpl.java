@@ -207,7 +207,7 @@ public class UserServiceImpl implements UserService {
         } catch(IllegalArgumentException e) {
             throw new InvalidFilterException(e);
         }
-        if (!getRoles(profile).contains(Role.JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS)){
+        if (!getRoles(profile).contains(Role.ROLE_JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS)){
             throw new InvalidFilterException();
         }
 
