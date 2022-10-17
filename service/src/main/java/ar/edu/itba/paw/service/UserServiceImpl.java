@@ -134,14 +134,6 @@ public class UserServiceImpl implements UserService {
         user.addRole(role);
     }
 
-//    @Override
-//    @Transactional
-//    public Collection<Role> getRoles(User user) {
-////        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa getRoles");
-////        user = userDao.merge(user);
-//        return user.getRoles();
-//    }
-
     @Override
     @Transactional
     public void updateProfile(User user, String username, Long imageId) {

@@ -1,16 +1,35 @@
 package ar.edu.itba.paw.model.user;
 
+import ar.edu.itba.paw.model.converter.LocalDateTimeConverter;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "email_verification_token")
 public class VerificationToken {
 
-    private final long id;
-    private final String token;
-    private final long userId;
-    private final LocalDateTime expiryDate;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "email_verification_token_token_id_seq")
+    @SequenceGenerator(name="email_verification_token_token_id_seq", sequenceName = "email_verification_token_token_id_seq", allocationSize = 1)
+    @Column(name = "token_id")
+    private long id;
 
-    public VerificationToken(long id, String token, long userId, LocalDateTime expiryDate) {
-        this.id = id;
+    @Column(name = "token", nullable = false)
+    private String token;
+
+    @Column(name = "user_id", nullable = false)
+    private long userId;
+
+    @Convert(converter = LocalDateTimeConverter.class)
+    @Column(name = "expiration_date", nullable = false)
+    private LocalDateTime expiryDate;
+
+    /* package */ VerificationToken(){
+        // Just for hibernate
+    }
+
+    public VerificationToken(String token, long userId, LocalDateTime expiryDate) {
         this.token = token;
         this.userId = userId;
         this.expiryDate = expiryDate;
@@ -34,6 +53,22 @@ public class VerificationToken {
 
     public boolean isValidToken() {
         return LocalDateTime.now().isBefore(expiryDate);
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public void setExpiryDate(LocalDateTime expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
     public enum Status{
