@@ -57,15 +57,15 @@ public class AdminJpaDao implements AdminDao{
             return new Page<>(new ArrayList<>(),page,getTotalReportedNews());
         }
 
-        Map<ReportOrder, String> map = new HashMap<>();
-        map.put(ReportOrder.REP_COUNT_DESC, "n.reports.size desc");
-        map.put(ReportOrder.REP_COUNT_ASC, "n.reports.size asc"); // TODO es feo pero por ahora no se me ocurre otra cosa
-        map.put(ReportOrder.REP_DATE_DESC, "n.getFirstReportDate() asc");
-        map.put(ReportOrder.REP_DATE_ASC, "n.getLastReportDate() desc");
-
-        List<News> news = entityManager.createQuery("SELECT n from News n WHERE n.newsId IN :ids ORDER BY " + map.get(reportOrder), News.class)
+        List<News> news = entityManager.createQuery("SELECT n from News n WHERE n.newsId IN :ids " , News.class)
                 .setParameter("ids", ids).getResultList();
 
+        Map<Long, News> map = new HashMap<>();
+        for (News news1 : news) {
+            map.put(news1.getNewsId(), news1);
+        }
+        // map id -> news
+        news =  ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
 
         return new Page<>(news,page,getTotalReportedNews());
     }
