@@ -145,7 +145,7 @@
                                                 <div class="d-flex align-items-center w-auto gap-1">
                                                     <div class="img-container-article">
                                                         <c:if test="${fullNews.user.hasImage()}">
-                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${fullNews.user.imageId}/image"/>" alt="">
+                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${fullNews.user.userId}/image"/>" alt="">
                                                         </c:if>
                                                         <c:if test="${!fullNews.user.hasImage()}">
                                                             <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
@@ -229,7 +229,7 @@
 
         <div class="profile">
             <c:if test="${profileUser.hasImage()}">
-                <img src="<c:url value="/profile/${profileUser.imageId}/image"/>" class="rounded-circle" width="80">
+                <img src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
             </c:if>
             <c:if test="${!profileUser.hasImage()}">
                 <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle" width="80">

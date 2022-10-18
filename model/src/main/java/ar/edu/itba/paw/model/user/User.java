@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.model.user;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.news.Category;
 
 import javax.persistence.*;
@@ -15,8 +16,9 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name="image_id")
-    private Long imageId;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     @Column(unique = true, length = 100, nullable = false)
     private String email;
@@ -60,13 +62,11 @@ public class User {
 
     public User(User.UserBuilder userBuilder) {
         this();
-        this.userId = userBuilder.userId;
+        //this.userId = userBuilder.userId;
         this.email = userBuilder.email;
-        this.imageId = userBuilder.imageId;
         this.username = userBuilder.username;
         this.pass = userBuilder.pass;
         this.status = userBuilder.status;
-//        this.positivityStats = userBuilder.positivity;
     }
 
     @PostLoad
@@ -96,10 +96,6 @@ public class User {
         this.username = username;
     }
 
-    public void setImageId(Long imageId) {
-        this.imageId = imageId;
-    }
-
     public Set<Follow> getFollowing() {
         return following;
     }
@@ -113,12 +109,8 @@ public class User {
         return userId;
     }
 
-    public Long getImageId() {
-        return imageId;
-    }
-
     public boolean hasImage() {
-        return imageId != null;
+        return image != null;
     }
 
     public String getEmail() {
@@ -200,9 +192,16 @@ public class User {
         this.roles = roles;
     }
 
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
     public static class UserBuilder{
-        private Long userId;
-        private Long imageId;
+        //private Long userId;
         private final String email;
         private String username, pass;
         private UserStatus status;
@@ -217,15 +216,10 @@ public class User {
             status = UserStatus.UNREGISTERED;
         }
 
-        public UserBuilder userId(Long userId){
+        /*public UserBuilder userId(Long userId){
             this.userId = userId;
             return this;
-        }
-
-        public UserBuilder imageId(Long imageId){
-            this.imageId = imageId;
-            return this;
-        }
+        }*/
 
         public UserBuilder username(String username){
             this.username = username;
@@ -252,13 +246,13 @@ public class User {
             return new User(this);
         }
 
-        public Long getUserId() {
+        /*public Long getUserId() {
             return userId;
-        }
+        }*/
 
-        public Long getImageId() {
+        /*public Long getImageId() {
             return imageId;
-        }
+        }*/
 
         public String getEmail() {
             return email;

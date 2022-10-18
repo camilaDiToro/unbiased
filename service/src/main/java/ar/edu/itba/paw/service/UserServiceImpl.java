@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
 import ar.edu.itba.paw.model.user.*;
@@ -28,18 +29,16 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final VerificationTokenService verificationTokenService;
-    private final ImageService imageService;
     private final SecurityService securityService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, ImageService imageService, SecurityService securityService) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
-        this.imageService = imageService;
         this.securityService = securityService;
     }
 
@@ -136,12 +135,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateProfile(User user, String username, Long imageId) {
-        if(imageId!=null){
-            if(user.getImageId()!=null){
-                imageService.deleteImage(user.getImageId());
-            }
-            userDao.updateImage(user,imageId);
+    public void updateProfile(User user, String username, byte[] bytes, String dataType) {
+        userDao.merge(user);
+        if(bytes!=null && bytes.length != 0){
+            userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
 
         if(username!= null && !username.isEmpty()){
