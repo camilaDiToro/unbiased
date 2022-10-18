@@ -34,8 +34,8 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public News create(News.NewsBuilder newsBuilder, String[] categories) {
-        if(!userService.getRoles(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new)).contains(Role.JOURNALIST)){
-            userService.addRole(userService.getUserById(newsBuilder.getCreatorId()).orElseThrow(UserNotFoundException::new),Role.JOURNALIST);
+        if(!newsBuilder.getCreator().getRoles().contains(Role.ROLE_JOURNALIST)){
+            userService.addRole(userService.getUserById(newsBuilder.getCreator().getId()).orElseThrow(UserNotFoundException::new),Role.ROLE_JOURNALIST);
         }
 
         for(String category : categories){
@@ -49,9 +49,8 @@ public class NewsServiceImpl implements NewsService {
         return this.newsDao.create(newsBuilder);
     }
 
-    @Override
-    public Optional<FullNews> getById(long id) {
-        return newsDao.getById(id, getLoggedUserId());
+    private User getLoggedUser() {
+        return securityService.getCurrentUser().orElse(null);
     }
 
     private Long getLoggedUserId() {
@@ -59,21 +58,21 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<FullNews> getNews(int page, String category, String newsOrder, String query) {
+    public Page<News> getNews(int page, String category, String newsOrder, String query) {
         int totalPages;
         page = page <= 0 ? 1 : page;
 
         Long loggedUser = getLoggedUserId();
         NewsOrder newsOrderObject  = NewsOrder.getByValue(newsOrder);
         Category catObject = Category.getByValue(category);
-        List<FullNews> ln;
+        List<News> ln;
 
         if (catObject.equals(Category.ALL)) {
             totalPages = newsDao.getTotalPagesAllNews(query);
             page = Math.min(page, totalPages);
             ln = newsDao.getNews(page, query, newsOrderObject, loggedUser);
         } else if (catObject.equals(Category.FOR_ME)) {
-            totalPages = newsDao.getTodayNewsPageCount();
+            totalPages = newsDao.getTodayNewsPageCount(getLoggedUser());
             page = Math.min(page, totalPages);
             ln = newsDao.getRecommendation(page, getLoggedUserOrThrowException(), newsOrderObject);
         }
@@ -89,7 +88,7 @@ public class NewsServiceImpl implements NewsService {
 
 
     @Override
-    public Page<FullNews> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
+    public Page<News> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
         NewsOrder newsOrderObject = NewsOrder.getByValue(newsOrder);
         Long loggedUserId = securityService.getCurrentUser().map(User::getId).orElse(null);
         ProfileCategory pc = ProfileCategory.getByValue(profileCategory);
@@ -102,25 +101,25 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public FullNews getOrThrowException(long newsId) {
+    public News getOrThrowException(long newsId) {
         return getById(newsId).orElseThrow(NewsNotFoundException::new);
     }
 
     @Override
     @Transactional
     public void setRating(News news, Rating rating) {
-        newsDao.setRating(news.getNewsId(), getLoggedUserId(), rating);
+        newsDao.setRating(news, getLoggedUser(), rating);
     }
 
     @Override
     @Transactional
-    public boolean toggleSaveNews(FullNews news, User user) {
+    public boolean toggleSaveNews(News news, User user) {
 
         if (news.getLoggedUserParameters().isSaved()) {
-            newsDao.removeSaved(news.getNews(), user);
+            newsDao.removeSaved(news, user);
             return false;
         } else {
-            newsDao.saveNews(news.getNews(), user);
+            newsDao.saveNews(news, user);
         }
         return true;
     }
@@ -143,7 +142,7 @@ public class NewsServiceImpl implements NewsService {
             if (!isMyProfile && c.equals(ProfileCategory.SAVED)) {
                 return false;
             }
-            else if (c.equals(ProfileCategory.MY_POSTS) && !userService.getRoles(user).contains(Role.JOURNALIST)) {
+            else if (c.equals(ProfileCategory.MY_POSTS) && !user.getRoles().contains(Role.ROLE_JOURNALIST)) {
                 return false;
             }
             return true;
@@ -156,15 +155,15 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<FullNews> getRecommendation(int page, User user, NewsOrder newsOrder) {
-        int totalPages = newsDao.getTodayNewsPageCount();
+    public Page<News> getRecommendation(int page, User user, NewsOrder newsOrder) {
+        int totalPages = newsDao.getTodayNewsPageCount(user);
         page = Math.min(Math.max(page, 1), totalPages);
         return new Page<>(newsDao.getRecommendation(page, user, newsOrder),page, totalPages);
     }
 
     @Override
-    public Optional<News> getSimpleNewsById(long id) {
-        return newsDao.getSimpleNewsById(id);
+    public Optional<News> getById(long id) {
+        return newsDao.getById(id, getLoggedUserId());
     }
 
     @Override

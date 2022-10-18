@@ -20,7 +20,7 @@
 
 
 
-<c:set var="news" value="${fullNews.news}"/>
+<c:set var="news" value="${fullNews}"/>
 <c:set var="user" value="${fullNews.user}"/>
 <c:set var="loggedParameters" value="${fullNews.loggedUserParameters}"/>
 <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>

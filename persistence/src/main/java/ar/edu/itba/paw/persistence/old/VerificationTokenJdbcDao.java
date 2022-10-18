@@ -1,7 +1,8 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.old;
 
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
+import ar.edu.itba.paw.persistence.VerificationTokenDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,9 +14,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
+/*
 @Repository
-public class VerificationTokenJdbcDao implements VerificationTokenDao{
+public class VerificationTokenJdbcDao implements VerificationTokenDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert simpleJdbcInsert;
@@ -55,3 +56,4 @@ public class VerificationTokenJdbcDao implements VerificationTokenDao{
     }
 
 }
+*/

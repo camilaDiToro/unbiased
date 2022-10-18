@@ -10,7 +10,7 @@
 <%@ include file="../../resources/jsp/head.jsp" %>
 <script src="<c:url value="/resources/js/upvote-script.js"/>"></script>
 <body>
-<c:set var="news" value="${newsPage.content}"/>
+<c:set var="newsList" value="${newsPage.content}"/>
 <div class="d-flex h-100 flex-column">
 
 
@@ -42,7 +42,7 @@
 
                 <%--CARDS--%>
                 <div class="tab">
-                    <c:if test="${empty news}" >
+                    <c:if test="${empty newsList}" >
                         <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
                             <p class="lead">
 
@@ -51,16 +51,16 @@
                         </div>
                     </c:if>
 
-                    <c:if test="${!empty news}">
+                    <c:if test="${!empty newsList}">
 
                         <div class="container-fluid">
                             <div class="row row-cols-1">
                                 <c:set var="maxLength" value="${100}"/>
-                                <c:forEach var="reportedNews" items="${news}">
-                                    <c:set var="article" value="${reportedNews.news}"/>
+                                <c:forEach var="reportedNews" items="${newsList}">
+                                    <c:set var="article" value="${reportedNews}"/>
 
                                     <c:set var="newsId" value="${article.newsId}"/>
-                                <c:set var="creator" value="${reportedNews.newsOwner}"/>
+                                <c:set var="creator" value="${reportedNews.creator}"/>
                                     <!-- Modal -->
                                     <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -88,7 +88,7 @@
 
                                             <div>
                                                 <span class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="moderation.reportsNum"/> " >
-                                                    <c:out value="${reportedNews.reportCount}"/>
+                                                    <c:out value="${reportedNews.reports.size()}"/>
                                             </span>
                                             </div>
 
@@ -144,7 +144,7 @@
 
         </div>
 
-        <c:if test="${not empty news}">
+        <c:if test="${not empty newsList}">
             <nav class="d-flex justify-content-center align-items-center">
                 <ul class="pagination">
                     <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news/${newsOrder}">

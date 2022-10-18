@@ -3,8 +3,11 @@ package ar.edu.itba.paw.model.admin;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 
+import javax.persistence.Entity;
+
 
 public class ReportedNews {
+
 
     private final News news;
     private final User newsOwner;

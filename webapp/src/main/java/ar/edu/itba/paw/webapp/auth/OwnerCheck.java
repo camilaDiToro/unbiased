@@ -24,7 +24,7 @@ public class OwnerCheck {
     }
 
     public boolean checkNewsOwnership(long newsId) {
-        return newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new).getCreatorId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+        return newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getCreatorId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
     }
 
     public boolean checkSavedNewsAccess(String category, long userId){

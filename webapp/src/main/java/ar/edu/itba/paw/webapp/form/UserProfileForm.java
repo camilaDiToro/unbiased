@@ -6,12 +6,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class UserProfileForm {
 
+    @FileSize
     private MultipartFile image;
 
     @NotExistingUsername
     private String username;
 
-    @FileSize
+    private String description;
+
+    //@FileSize Esto por q estaba aca ?????
     public MultipartFile getImage() {
         return image;
     }
@@ -26,5 +29,13 @@ public class UserProfileForm {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

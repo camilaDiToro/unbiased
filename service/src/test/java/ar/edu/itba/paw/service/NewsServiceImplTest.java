@@ -4,7 +4,6 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
-import ar.edu.itba.paw.model.news.FullNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.Role;
@@ -37,7 +36,7 @@ public class NewsServiceImplTest {
     private static final String INVALID_CATEGORY = "invalid.category";
     private static final String INVALID_NEWSORDER = "invalid.newsOrder";
     private static final long CREATOR_ID = 8;
-    private static final News.NewsBuilder NEWS_BUILDER = new News.NewsBuilder(CREATOR_ID,BODY,TITTLE,SUBTITTLE);
+    private static final News.NewsBuilder NEWS_BUILDER = new News.NewsBuilder(new User(USER_BUILDER),BODY,TITTLE,SUBTITTLE);
 
     // GET NEWS
     private static final int LOWER_PAGE = -5;
@@ -60,7 +59,7 @@ public class NewsServiceImplTest {
     @Test(expected = InvalidCategoryException.class)
     public void testCreateInvalidCategory(){
         Mockito.when(userService.getUserById(Mockito.eq(CREATOR_ID))).thenReturn(Optional.of(USER_BUILDER.build()));
-        Mockito.when(userService.getRoles(Mockito.any())).thenReturn(Collections.singletonList(Role.JOURNALIST));
+//        Mockito.when(userService.getRoles(Mockito.any())).thenReturn(Collections.singletonList(Role.ROLE_JOURNALIST));
         newsService.create(NEWS_BUILDER,new String[]{INVALID_CATEGORY});
         Assert.fail("Should have thrown InvalidCategoryException");
     }
@@ -69,7 +68,7 @@ public class NewsServiceImplTest {
     public void testGetNewsLowerInvalidPage(){
         Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
         Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any())).thenReturn(TOTAL_PAGES);
-        Page<FullNews> returnValue = newsService.getNews(LOWER_PAGE, "ALL", NewsOrder.NEW.getDescription(), "");
+        Page<News> returnValue = newsService.getNews(LOWER_PAGE, "ALL", NewsOrder.NEW.getDescription(), "");
         assertEquals(1,returnValue.getCurrentPage());
     }
 
@@ -77,7 +76,7 @@ public class NewsServiceImplTest {
     public void testGetNewsUpperInvalidPage(){
         Mockito.when(mockSecurityService.getCurrentUser()).thenReturn(Optional.empty());
         Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.eq("A"))).thenReturn(TOTAL_PAGES);
-        Page<FullNews> returnValue = newsService.getNews(UPPER_PAGE, "ALL", NewsOrder.NEW.getDescription(), "A");
+        Page<News> returnValue = newsService.getNews(UPPER_PAGE, "ALL", NewsOrder.NEW.getDescription(), "A");
         assertEquals(TOTAL_PAGES,returnValue.getCurrentPage());
     }
 

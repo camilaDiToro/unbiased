@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
-import ar.edu.itba.paw.model.news.FullNews;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.ProfileCategory;
@@ -21,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,15 +36,13 @@ public class UserController {
 
     private final UserService userService;
     private final NewsService newsService;
-    private final ImageService imageService;
     private final SecurityService securityService;
     private final OwnerCheck ownerCheck;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
     @Autowired
-    public UserController(UserService userService, ImageService imageService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
+    public UserController(UserService userService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
         this.userService = userService;
-        this.imageService = imageService;
         this.securityService = securityService;
         this.newsService = newsService;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
@@ -112,7 +112,7 @@ public class UserController {
             catObject = userService.getProfileCategory(category, profileUser);
         }
 
-        Page<FullNews> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
+        Page<News> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
 
@@ -129,7 +129,7 @@ public class UserController {
                 .withObject("hasErrors", hasErrors)
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
-                   mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
+            mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
         }
 
         mavBuilder.withObject("category", catObject);
@@ -143,9 +143,8 @@ public class UserController {
         if (errors.hasErrors()) {
             return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
-        Long imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
-
-        userService.updateProfile(userService.getUserById(userId).orElseThrow(UserNotFoundException::new), userProfileForm.getUsername(), imageId);
+        userService.updateProfile(userService.getUserById(userId).orElseThrow(UserNotFoundException::new), userProfileForm.getUsername(),
+                userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
         return new ModelAndView("redirect:/profile/" + userId);
     }
 
@@ -191,11 +190,11 @@ public class UserController {
 
 
 
-    @RequestMapping( value = "/profile/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
+    @RequestMapping( value = "/profile/{userId:[0-9]+}/image", method = {RequestMethod.GET},
             produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @ResponseBody
-    public byte[] profileImage(@PathVariable("imageId") long imageId) {
-        return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
+    public byte[] profileImage(@PathVariable("userId") long userId) {
+        return userService.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage().getBytes();
     }
 
 }

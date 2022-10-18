@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.old;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportOrder;
@@ -8,9 +8,11 @@ import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*@Primary
 @Repository
 public class AdminJdbcDao implements AdminDao{
 
@@ -30,12 +33,14 @@ public class AdminJdbcDao implements AdminDao{
     private final SimpleJdbcInsert jdbcReportInsert;
     private final SimpleJdbcInsert jdbcAdminInsert;
 
+    // TODO remove this and implemet AdminJpaDao
     private static final double PAGE_SIZE = 5.0;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminJdbcDao.class);
 
     private static final RowMapper<ReportedNews> REPORT_ROW_MAPPER = (rs, rowNum) ->
-            new ReportedNews(   new News.NewsBuilder(rs.getLong("creator"),rs.getString("body"),rs.getString("title"),rs.getString("subtitle"))
+            // TODO: fix USER param
+            new ReportedNews(   new News.NewsBuilder(new User(new User.UserBuilder("fix").userId(rs.getLong("creator"))),rs.getString("body"),rs.getString("title"),rs.getString("subtitle"))
                                                 .newsId(rs.getLong("news_id"))
                                                 .imageId(rs.getObject("image_id") == null ? null : rs.getLong("image_id"))
                                                 .creationDate(rs.getTimestamp("creation_date").toLocalDateTime())
@@ -132,7 +137,7 @@ public class AdminJdbcDao implements AdminDao{
     }
 
 }
-
+*/
 
 
 

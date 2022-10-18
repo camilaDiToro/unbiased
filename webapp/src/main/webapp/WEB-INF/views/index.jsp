@@ -96,19 +96,17 @@
                         <div class="row row-cols-1 row-cols-md-2">
                             <c:set var="news" value="${newsPage.content}"/>
 
-                            <c:forEach var="fullNews" items="${news}">
-                                <c:set var="article" value="${fullNews.news}"/>
-
+                            <c:forEach var="article" items="${news}">
                                 <c:set var="newsId" value="${article.newsId}"/>
 
-                                <c:set var="loggedParameters" value="${fullNews.loggedUserParameters}"/>
+                                <c:set var="loggedParameters" value="${article.loggedUserParameters}"/>
                                 <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
                                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
                                 <c:set var="timeAmount" value="${article.getAmountAgo()}"/>
 
                                 <div class="col mb-4 max-h-300px">
                                     <div class="card h-100 d-flex flex-row h-100" >
-                                        <c:set var="positivityStats" value="${fullNews.positivityStats}"/>
+                                        <c:set var="positivityStats" value="${article.positivityStats}"/>
 
                                         <c:set var="positivity" value="${positivityStats.positivity}"/>
 
@@ -144,7 +142,7 @@
                                                     <div>
                                                         <p class="text-sm-left text-secondary mb-0 text-white d-flex align-content-center gap-1 op-09">
                                                             <img src="<c:url value="/resources/images/clock-svgrepo-com.svg"/>" alt="..." class="read-clock"/>
-                                                            <spring:message code="home.read" arguments="${fullNews.readTime}"/>
+                                                            <spring:message code="home.read" arguments="${article.readTime}"/>
                                                         </p>
                                                     </div>
 
@@ -154,15 +152,15 @@
                                             <div class="d-flex justify-content-between p-2 w-100">
                                                 <div class="d-flex align-items-center w-auto gap-1">
                                                     <div class="img-container-article">
-                                                        <c:if test="${fullNews.user.hasImage()}">
-                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${fullNews.user.imageId}/image"/>" alt="">
+                                                        <c:if test="${article.creator.hasImage()}">
+                                                            <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${article.creator.userId}/image"/>" alt="">
                                                         </c:if>
-                                                        <c:if test="${!fullNews.user.hasImage()}">
+                                                        <c:if test="${!article.creator.hasImage()}">
                                                             <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
                                                         </c:if>
                                                     </div>
-                                                    <a class="link" href="<c:url value="/profile/${article.creatorId}"/>">
-                                                        <div id="profile_name_card" class="card-name-text text-ellipsis-1">${fullNews.user}</div>
+                                                    <a class="link" href="<c:url value="/profile/${article.creator.userId}"/>">
+                                                        <div id="profile_name_card" class="card-name-text text-ellipsis-1">${article.creator}</div>
 
                                                     </a>
                                                 </div>

@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
-import ar.edu.itba.paw.persistence.RoleDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,20 +29,16 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final VerificationTokenService verificationTokenService;
-    private final RoleDao roleDao;
-    private final ImageService imageService;
     private final SecurityService securityService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, RoleDao roleDao, ImageService imageService, SecurityService securityService) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
-        this.roleDao = roleDao;
-        this.imageService = imageService;
         this.securityService = securityService;
     }
 
@@ -137,26 +130,23 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addRole(User user, Role role) {
-        roleDao.addRole(user.getId(), role);
-    }
-
-    @Override
-    public List<Role> getRoles(User user) {
-        return roleDao.getRoles(user.getId()).stream().map(Role::getRole).collect(Collectors.toList());
+        user.addRole(role);
     }
 
     @Override
     @Transactional
-    public void updateProfile(User user, String username, Long imageId) {
-        if(imageId!=null){
-            if(user.getImageId()!=null){
-                imageService.deleteImage(user.getImageId());
-            }
-            userDao.updateImage(user,imageId);
+    public void updateProfile(User user, String username, byte[] bytes, String dataType, String description) {
+        userDao.merge(user);
+        if(bytes!=null && bytes.length != 0){
+            userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
 
         if(username!= null && !username.isEmpty()){
-            userDao.updateUsername(user,username);
+            user.setUsername(username);
+        }
+
+        if(description!= null && !description.isEmpty()){
+           user.setDescription(description);
         }
     }
 
@@ -210,7 +200,7 @@ public class UserServiceImpl implements UserService {
         } catch(IllegalArgumentException e) {
             throw new InvalidFilterException(e);
         }
-        if (!getRoles(profile).contains(Role.JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS)){
+        if (!profile.getRoles().contains(Role.ROLE_JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS)){
             throw new InvalidFilterException();
         }
 

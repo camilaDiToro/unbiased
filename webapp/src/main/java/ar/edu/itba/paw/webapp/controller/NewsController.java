@@ -53,7 +53,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.checkNewsOwnership(#newsId)")
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        News news = newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         newsService.deleteNews(news);
         return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
@@ -64,7 +64,7 @@ public class NewsController {
         if (errors.hasErrors()) {
             return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1);
         }
-        adminService.reportNews(newsService.getSimpleNewsById(newsId).orElseThrow(NewsNotFoundException::new), ReportReason.valueOf(reportNewsFrom.getReason()));
+        adminService.reportNews(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new), ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
@@ -74,7 +74,7 @@ public class NewsController {
         if (errors.hasErrors()) {
             return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1);
         }
-        newsService.addComment(newsService.getOrThrowException(newsId).getNews(), commentNewsForm.getComment());
+        newsService.addComment(newsService.getOrThrowException(newsId), commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
@@ -84,13 +84,12 @@ public class NewsController {
                                  @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors,
     @RequestParam(name="page", defaultValue="1") int page){
 
-        FullNews fullNews = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        News news = fullNews.getNews();
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         Locale locale = LocaleContextHolder.getLocale();
 
         return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
-                .withObject("fullNews", fullNews)
+                .withObject("fullNews", news)
                 .withObject("hasReported", adminService.hasReported(news))
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("reportNewsForm", reportNewsFrom)
@@ -98,7 +97,7 @@ public class NewsController {
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", locale)
                 .withObject("commentsPage", newsService.getComments(news,page))
-                .withObject("categories", newsService.getNewsCategory(fullNews.getNews())).build();
+                .withObject("categories", newsService.getNewsCategory(news)).build();
 
     }
 
@@ -121,7 +120,7 @@ public class NewsController {
     @ResponseBody
     public ResponseEntity<SavedResult> saveNews(@PathVariable("newsId") long newsId){
         Optional<User> maybeUser = securityService.getCurrentUser();
-        Optional<FullNews> maybeNews = newsService.getById(newsId);
+        Optional<News> maybeNews = newsService.getById(newsId);
 
         if (!maybeUser.isPresent() || !maybeNews.isPresent()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -147,7 +146,7 @@ public class NewsController {
         }
 
         final User user = securityService.getCurrentUser().get();
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user.getId(), createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
         if(!createNewsFrom.getImage().isEmpty()){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));

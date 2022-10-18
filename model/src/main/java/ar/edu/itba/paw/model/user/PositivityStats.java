@@ -1,12 +1,28 @@
 package ar.edu.itba.paw.model.user;
 
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
+
 public class PositivityStats {
-    private final Positivity positivity;
-    private final int upvotes;
-    private final int downvotes;
+
+    private Positivity positivity;
+
+    private int upvotes;
+
+    private int downvotes;
+
+
+    private final int interactions = upvotes + downvotes;
+
+//    @OneToOne
+//    @MapsId
+//    @JoinColumn(name = "user_id")
+//    private User user;
+
+
+
     public PositivityStats(int upvotes, int downvotes) {
         this.upvotes = upvotes;
         this.downvotes = downvotes;
@@ -26,6 +42,7 @@ public class PositivityStats {
     public Positivity getPositivity() {
         return positivity;
     }
+
     public enum Positivity {
 
         POSITIVE("positive", 0.8, "home.newsCard.positive", "looking-positivity.svg"),
