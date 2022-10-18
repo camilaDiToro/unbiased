@@ -12,8 +12,11 @@ CREATE TABLE IF NOT EXISTS users(
     pass           VARCHAR(200)   ,
     status         TEXT           NOT NULL,
     image_id       INTEGER        ,
+
     FOREIGN KEY (image_id) REFERENCES image (image_id) ON DELETE SET NULL
 );
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS description TEXT;
 
 CREATE TABLE IF NOT EXISTS news (
     news_id           SERIAL          PRIMARY KEY,
@@ -41,6 +44,7 @@ CREATE TABLE IF NOT EXISTS email_verification_token (
     user_id INT NOT NULL,
     token TEXT NOT NULL,
     expiration_date TIMESTAMP NOT NULL,
+
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
@@ -83,9 +87,6 @@ ALTER TABLE saved_news ADD CONSTRAINT saved_unique UNIQUE(news_id, user_id);
 ALTER TABLE saved_news DROP CONSTRAINT IF EXISTS saved_news_pkey CASCADE;
 ALTER TABLE saved_news ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
 
-
-
-
 CREATE TABLE IF NOT EXISTS report (
     news_id           INTEGER         NOT NULL,
     user_id           INTEGER         NOT NULL,
@@ -95,22 +96,21 @@ CREATE TABLE IF NOT EXISTS report (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
     PRIMARY KEY (news_id, user_id)
-    );
+);
 
 ALTER TABLE report DROP CONSTRAINT IF EXISTS report_unique CASCADE;
 ALTER TABLE report ADD CONSTRAINT report_unique UNIQUE(news_id, user_id);
 ALTER TABLE report DROP CONSTRAINT IF EXISTS report_pkey CASCADE;
 ALTER table report ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
 
-
-
 CREATE TABLE IF NOT EXISTS follows(
-                                      user_id           INTEGER     NOT NULL,
-                                      follows            INTEGER     NOT NULL,
-                                      FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id           INTEGER     NOT NULL,
+    follows            INTEGER     NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (follows) REFERENCES users(user_id) ON DELETE CASCADE,
     PRIMARY KEY (follows, user_id)
-    );
+);
 
 ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_unique CASCADE;
 ALTER TABLE follows ADD CONSTRAINT follows_unique UNIQUE(user_id, follows);
@@ -119,15 +119,15 @@ ALTER TABLE follows ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
 
 
 CREATE TABLE IF NOT EXISTS comments (
-                                          news_id           INTEGER         NOT NULL,
-                                          user_id           INTEGER         NOT NULL,
-                                          commented_date        TIMESTAMP       NOT NULL,
-                                          comment        TEXT       NOT NULL,
+    news_id           INTEGER         NOT NULL,
+    user_id           INTEGER         NOT NULL,
+    commented_date        TIMESTAMP       NOT NULL,
+    comment        TEXT       NOT NULL,
 
-                                          FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
     PRIMARY KEY (news_id, user_id, commented_date)
-    );
+);
 
 ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_unique CASCADE;
 ALTER TABLE comments ADD CONSTRAINT comments_unique UNIQUE(news_id, user_id, comment);

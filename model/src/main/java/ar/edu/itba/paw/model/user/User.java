@@ -47,6 +47,9 @@ public class User {
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Saved> savedNews;
 
+    @Column(name = "description")
+    private String description;
+
 
     public void setFollowing(Set<Follow> following) {
         this.following = following;
@@ -137,6 +140,7 @@ public class User {
     public boolean hasPositivityStats() {
         return positivityStats != null;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -200,6 +204,14 @@ public class User {
         this.image = image;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public static class UserBuilder{
         //private Long userId;
         private final String email;
@@ -215,11 +227,6 @@ public class User {
             this.email = email;
             status = UserStatus.UNREGISTERED;
         }
-
-        /*public UserBuilder userId(Long userId){
-            this.userId = userId;
-            return this;
-        }*/
 
         public UserBuilder username(String username){
             this.username = username;
@@ -245,14 +252,6 @@ public class User {
         public User build(){
             return new User(this);
         }
-
-        /*public Long getUserId() {
-            return userId;
-        }*/
-
-        /*public Long getImageId() {
-            return imageId;
-        }*/
 
         public String getEmail() {
             return email;

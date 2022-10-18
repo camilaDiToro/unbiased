@@ -44,7 +44,7 @@ public class UserJpaDao implements UserDao{
 
     @Override
     public Optional<User> findByEmail(String email) {
-        final TypedQuery<User> query = entityManager.createQuery("from User as u WHERE u.email = :email",User.class);
+        final TypedQuery<User> query = entityManager.createQuery("FROM User AS u WHERE u.email = :email",User.class);
         query.setParameter("email", email);
         return query.getResultList().stream().findFirst();
     }
@@ -87,12 +87,6 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
-    public void updateUsername(User user, String username) {
-        user.setUsername(username);
-        entityManager.persist(user);
-    }
-
-    @Override
     public void updateImage(User user, Image newImage, Image oldImage) {
         user.setImage(newImage);
         entityManager.persist(user);
@@ -120,8 +114,6 @@ public class UserJpaDao implements UserDao{
         user.getFollowing().remove(new Follow(userId, follows));
         entityManager.persist(user);
     }
-
-
 
     @Override
     public boolean isFollowing(long userId, long followId) {

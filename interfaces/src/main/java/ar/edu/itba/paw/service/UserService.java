@@ -20,7 +20,7 @@ public interface UserService {
     VerificationToken.Status verifyUserEmail(String token);
     VerificationToken.Status resendEmailVerification(String email);
     void addRole(User user, Role role);
-    void updateProfile(User user, String username, byte[] bytes, String dataType);
+    void updateProfile(User user, String username, byte[] bytes, String dataType, String description);
     Optional<User> findByUsername(String username);
     boolean isFollowing(User user);
     void followUser(User user);
