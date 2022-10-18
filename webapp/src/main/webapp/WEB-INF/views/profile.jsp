@@ -290,8 +290,8 @@
                                     <div class="input-group mb-3">
                                             <%--<form:input type="text" path="description" cssClass="form-control" id="description-input" placeholder="${changeDescription}"/>
                                             <form:errors cssClass="text-danger" path="description" element="p"/>--%>
-                                        <form:textarea type="text" path="username" class="form-control" id="description" rows="3"/>
-
+                                        <form:textarea type="text" path="username" cssClass="form-control" id="description-input" rows="3"/>
+                                        <%--<form:textarea type="text" path="description" class="form-control" id="description-input" rows="3"/>--%>
                                     </div>
 
                                     <spring:message code="profile.modal.changeProfilePicture" var="changeUserPicture"/>
