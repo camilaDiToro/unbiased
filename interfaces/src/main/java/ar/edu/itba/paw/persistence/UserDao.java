@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.user.User;
 
@@ -14,7 +15,7 @@ public interface UserDao {
     void verifyEmail(long id);
     List<User> getTopCreators(int qty);
     void updateUsername(User user, String username);
-    void updateImage(User user, Long imageId);
+    void updateImage(User user, Image newImage, Image oldImage);
     void addFollow(long userId, long follows);
     void unfollow(long userId, long follows);
     User merge(User user);

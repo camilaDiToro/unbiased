@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.user.Follow;
 import ar.edu.itba.paw.model.user.Upvote;
@@ -92,9 +93,13 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
-    public void updateImage(User user, Long imageId) {
-        user.setImageId(imageId);
+    public void updateImage(User user, Image newImage, Image oldImage) {
+        user.setImage(newImage);
         entityManager.persist(user);
+        if(oldImage!=null){
+            oldImage = entityManager.merge(oldImage);
+            entityManager.remove(oldImage);
+        }
     }
 
     @Override

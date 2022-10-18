@@ -36,7 +36,7 @@
 
                                                         <div class="img-container-navbar">
                                                             <c:if test="${loggedUser.hasImage()}">
-                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${loggedUser.imageId}/image"/>" alt="">
+                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${loggedUser.userId}/image"/>" alt="">
 
                                                             </c:if>
 

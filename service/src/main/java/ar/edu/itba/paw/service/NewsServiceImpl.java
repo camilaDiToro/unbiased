@@ -34,8 +34,8 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public News create(News.NewsBuilder newsBuilder, String[] categories) {
-        if(!userService.getRoles(userService.getUserById(newsBuilder.getCreator().getId()).orElseThrow(UserNotFoundException::new)).contains(Role.JOURNALIST)){
-            userService.addRole(userService.getUserById(newsBuilder.getCreator().getId()).orElseThrow(UserNotFoundException::new),Role.JOURNALIST);
+        if(!newsBuilder.getCreator().getRoles().contains(Role.ROLE_JOURNALIST)){
+            userService.addRole(userService.getUserById(newsBuilder.getCreator().getId()).orElseThrow(UserNotFoundException::new),Role.ROLE_JOURNALIST);
         }
 
         for(String category : categories){
@@ -142,7 +142,7 @@ public class NewsServiceImpl implements NewsService {
             if (!isMyProfile && c.equals(ProfileCategory.SAVED)) {
                 return false;
             }
-            else if (c.equals(ProfileCategory.MY_POSTS) && !userService.getRoles(user).contains(Role.JOURNALIST)) {
+            else if (c.equals(ProfileCategory.MY_POSTS) && !user.getRoles().contains(Role.ROLE_JOURNALIST)) {
                 return false;
             }
             return true;

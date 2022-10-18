@@ -36,15 +36,13 @@ public class UserController {
 
     private final UserService userService;
     private final NewsService newsService;
-    private final ImageService imageService;
     private final SecurityService securityService;
     private final OwnerCheck ownerCheck;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
     @Autowired
-    public UserController(UserService userService, ImageService imageService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
+    public UserController(UserService userService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
         this.userService = userService;
-        this.imageService = imageService;
         this.securityService = securityService;
         this.newsService = newsService;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
@@ -145,9 +143,10 @@ public class UserController {
         if (errors.hasErrors()) {
             return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
-        Long imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
+        /*Long imageId = imageService.uploadImage(userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
 
-        userService.updateProfile(userService.getUserById(userId).orElseThrow(UserNotFoundException::new), userProfileForm.getUsername(), imageId);
+        userService.updateProfile(userService.getUserById(userId).orElseThrow(UserNotFoundException::new), userProfileForm.getUsername(), imageId);*/
+        userService.updateProfile(userService.getUserById(userId).orElseThrow(UserNotFoundException::new), userProfileForm.getUsername(), userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType());
         return new ModelAndView("redirect:/profile/" + userId);
     }
 
@@ -193,11 +192,11 @@ public class UserController {
 
 
 
-    @RequestMapping( value = "/profile/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
+    @RequestMapping( value = "/profile/{userId:[0-9]+}/image", method = {RequestMethod.GET},
             produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @ResponseBody
-    public byte[] profileImage(@PathVariable("imageId") long imageId) {
-        return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
+    public byte[] profileImage(@PathVariable("userId") long userId) {
+        return userService.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage().getBytes();
     }
 
 }

@@ -59,7 +59,7 @@ public class NewsServiceImplTest {
     @Test(expected = InvalidCategoryException.class)
     public void testCreateInvalidCategory(){
         Mockito.when(userService.getUserById(Mockito.eq(CREATOR_ID))).thenReturn(Optional.of(USER_BUILDER.build()));
-        Mockito.when(userService.getRoles(Mockito.any())).thenReturn(Collections.singletonList(Role.JOURNALIST));
+//        Mockito.when(userService.getRoles(Mockito.any())).thenReturn(Collections.singletonList(Role.ROLE_JOURNALIST));
         newsService.create(NEWS_BUILDER,new String[]{INVALID_CATEGORY});
         Assert.fail("Should have thrown InvalidCategoryException");
     }

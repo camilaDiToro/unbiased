@@ -83,8 +83,6 @@ public class News {
     @MapKey(name = "userId")
     private Map<Long,Upvote> upvoteMap;
 
-
-
     @ManyToMany
     @JoinTable(name = "saved_news",
             joinColumns = @JoinColumn(name = "news_id"),
@@ -94,6 +92,7 @@ public class News {
 
 
     @OneToMany(mappedBy = "news")
+    @OrderBy("creationDate DESC")
     private List<ReportDetail> reports;
 
 
@@ -118,16 +117,13 @@ public class News {
     @PostLoad
     private void postLoad() {
         readTime = TextUtils.estimatedMinutesToRead(TextUtils.extractTextFromHTML(body));
-
         creationDate = date.toLocalDateTime();
-
     }
 
     public void setUserSpecificVariables(long userId) {
         Upvote upvote = upvoteMap.get(userId); // TODO fix
         Rating rating = upvote != null ? (upvote.isValue() ? Rating.UPVOTE : Rating.DOWNVOTE) : Rating.NO_RATING;
         loggedUserParameters = new LoggedUserParameters(rating, usersSaved.containsKey(userId));
-
     }
 
     public boolean hasLoggedUserParameters() {
@@ -188,13 +184,6 @@ public class News {
                 " - " + creationDate.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
-    /*public Timestamp getFirstReportDate(){
-        return Timestamp.valueOf(reports.stream().map(ReportDetail::getCreationDate).min(LocalDateTime::compareTo).get());
-    }
-
-    public Timestamp getLastReportDate(){
-        return Timestamp.valueOf(reports.stream().map(ReportDetail::getCreationDate).max(LocalDateTime::compareTo).get());
-    }*/
 
     @Override
     public boolean equals(Object obj) {
@@ -342,7 +331,6 @@ public class News {
         public Collection<Category> getCategories() {
             return categories;
         }
-
 
     }
 }

@@ -32,7 +32,7 @@ public class PawUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("No user by the name " + username);
         }
-        final Collection<? extends GrantedAuthority> authorities = us.getRoles(user).stream().map(r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
+        final Collection<? extends GrantedAuthority> authorities = user.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
 
         return new org.springframework.security.core.userdetails.User(username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities);
     }
