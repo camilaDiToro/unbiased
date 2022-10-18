@@ -62,6 +62,12 @@ CREATE TABLE IF NOT EXISTS upvotes (
 
 );
 
+ALTER TABLE upvotes DROP CONSTRAINT IF EXISTS upvotes_unique  CASCADE;
+ALTER TABLE upvotes ADD CONSTRAINT upvotes_unique UNIQUE(news_id, user_id);
+ALTER TABLE upvotes DROP CONSTRAINT IF EXISTS upvotes_pkey CASCADE;
+ALTER TABLE upvotes ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
+
+
 CREATE TABLE IF NOT EXISTS saved_news (
     news_id           INTEGER         NOT NULL,
     user_id           INTEGER         NOT NULL,
@@ -71,6 +77,14 @@ CREATE TABLE IF NOT EXISTS saved_news (
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
     PRIMARY KEY (news_id, user_id)
 );
+
+ALTER TABLE saved_news DROP CONSTRAINT IF EXISTS saved_unique CASCADE;
+ALTER TABLE saved_news ADD CONSTRAINT saved_unique UNIQUE(news_id, user_id);
+ALTER TABLE saved_news DROP CONSTRAINT IF EXISTS saved_news_pkey CASCADE;
+ALTER TABLE saved_news ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
+
+
+
 
 CREATE TABLE IF NOT EXISTS report (
     news_id           INTEGER         NOT NULL,
@@ -83,37 +97,11 @@ CREATE TABLE IF NOT EXISTS report (
     PRIMARY KEY (news_id, user_id)
     );
 
--- DROP VIEW IF EXISTS full_news_with_logged_params;
---
--- DROP VIEW IF EXISTS full_news;
---
---
--- DROP VIEW IF EXISTS news_stats;
---
--- DROP VIEW IF EXISTS user_positivity;
---
--- DROP VIEW IF EXISTS is_journalist;
---
---
--- CREATE OR REPLACE VIEW news_stats AS
---             SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, news_id FROM upvotes GROUP BY news_id;
---
--- CREATE OR REPLACE VIEW logged_news_parameters AS
--- SELECT user_id AS logged_user, news_id, upvote, saved_date
--- FROM upvotes NATURAL FULL JOIN
--- saved_news;
---
--- CREATE OR REPLACE VIEW full_news AS
--- SELECT  news.*, upvotes, downvotes, email, username, pass, status, users.image_id as user_image_id FROM news LEFT JOIN news_stats ON news_stats.news_id = news.news_id JOIN users ON creator = user_id;
---
--- CREATE OR REPLACE VIEW full_news_with_logged_params AS
--- SELECT upvote, saved_date, logged_news_parameters.logged_user, full_news.news_id, body, title, subtitle, creator, creation_date, accesses, image_id, upvotes, downvotes, email, username, pass, status, user_image_id  FROM logged_news_parameters RIGHT JOIN full_news ON full_news.news_id = logged_news_parameters.news_id;
---
--- CREATE OR REPLACE VIEW user_positivity AS
--- SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, creator AS user_id FROM upvotes NATURAL JOIN news GROUP BY creator;
---
--- CREATE OR REPLACE VIEW is_journalist AS
--- SELECT user_id, true as is_journalist FROM user_role where user_role = 'ROLE_JOURNALIST';
+ALTER TABLE report DROP CONSTRAINT IF EXISTS report_unique CASCADE;
+ALTER TABLE report ADD CONSTRAINT report_unique UNIQUE(news_id, user_id);
+ALTER TABLE report DROP CONSTRAINT IF EXISTS report_pkey CASCADE;
+ALTER table report ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
+
 
 
 CREATE TABLE IF NOT EXISTS follows(
@@ -123,6 +111,12 @@ CREATE TABLE IF NOT EXISTS follows(
     FOREIGN KEY (follows) REFERENCES users(user_id) ON DELETE CASCADE,
     PRIMARY KEY (follows, user_id)
     );
+
+ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_unique CASCADE;
+ALTER TABLE follows ADD CONSTRAINT follows_unique UNIQUE(user_id, follows);
+ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_pkey CASCADE;
+ALTER TABLE follows ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
+
 
 CREATE TABLE IF NOT EXISTS comments (
                                           news_id           INTEGER         NOT NULL,
@@ -134,3 +128,20 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
     PRIMARY KEY (news_id, user_id, commented_date)
     );
+
+ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_unique CASCADE;
+ALTER TABLE comments ADD CONSTRAINT comments_unique UNIQUE(news_id, user_id, comment);
+ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_pkey CASCADE;
+ALTER TABLE comments ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
+
+
+
+
+
+
+
+
+
+
+
+
