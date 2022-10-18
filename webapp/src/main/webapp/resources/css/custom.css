@@ -663,6 +663,12 @@ body{
     border-color: #2c2c2c80;
 }
 
+#description-input{
+    background: #2c2c2c80;
+    border-radius: 0.5rem;
+    border-color: #2c2c2c80;
+}
+
 #basic-addon1{
     background: #181414;
     border-radius: 0.5rem;

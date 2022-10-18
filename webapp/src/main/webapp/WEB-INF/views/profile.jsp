@@ -210,6 +210,9 @@
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
                 <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${profileUser.email}"/> </span>
                 <div class="d-flex justify-content-center align-items-center">
+                    <c:if test="${isJournalist}">
+                        <div class="text-center font-weight-light m-1"><c:out value="${profileUser.description}"/></div>
+                    </c:if>
                     <c:if test="${loggedUser != null && !isMyProfile}">
                         <c:if test="${!isFollowing}">
                             <a class="btn d-flex btn-info font-weight-bold text-white rounded-pill medium-pill align-items-center justify-content-center" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
@@ -264,7 +267,7 @@
                             <div class="modal-body">
 
                                     <spring:message code="profile.modal.changeUsername" var="changeUsername"/>
-                                    <form:label path="image"><spring:message code="profile.modal.changeUsername"/></form:label>
+                                    <form:label path="username"><spring:message code="profile.modal.changeUsername"/></form:label>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">@</span>
@@ -297,6 +300,18 @@
                                             })
                                         </script>
                                     </div>
+
+                                <c:if test="${isJournalist}">
+                                    <spring:message code="profile.modal.description" var="descriptionText"/>
+                                    <form:label path="description">${descriptionText}</form:label>
+                                    <div class="input-group mb-3">
+                                        <form:input type="text" path="description" cssClass="form-control"  id="description-input" placeholder="${descriptionText}"/>
+                                        <div class="w-100">
+                                            <form:errors cssClass="text-danger" path="description" element="p"/>
+
+                                        </div>
+                                    </div>
+                                </c:if>
                             </div>
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-primary h-40"><spring:message code="profile.modal.save"/></button>
