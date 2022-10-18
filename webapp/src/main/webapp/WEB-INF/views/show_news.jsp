@@ -54,123 +54,23 @@
                 </c:if>
             </div>
 
-                <h1 class="text-xl-center mx-auto max-w-75 m-3 text-white"><c:out value="${news.title}"/></h1>
-<div>
-    <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator-news-view  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
+            <h1 class="text-xl-center mx-auto max-w-75 m-3 text-white"><c:out value="${news.title}"/></h1>
+            <div>
+                <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator-news-view  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
 
-    </div>
+            </div>
 
 
         </div>
+        <hr/>
+        <c:if test="${news.hasImage()}">
+            <img src="<c:url value="/news/${news.imageId}/image"/>" class="w-50 m-4 rounded mx-auto d-block img-thumbnail"/>
 
-        <div class="container">
-            <div class="row">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-md-6">
-                        <hr style="border: 2px solid black; border-radius: 2px; !important;"/>
-                        <p class="text-sm-left text-secondary"><c:out value="${date}"/></p>
-                        <p><spring:message code="showNews.createdBy"/><c:out value=" "/></p>
-                        <div class="w-fit">
-                            <a  href="<c:url value="/profile/${user.id}"/>" class="w-fit link">
-                                <div class="w-fit d-flex flex-row align-items-center p-2 gap-1">
-
-                                    <div class="img-container-article">
-                                        <c:if test="${user.hasImage()}">
-                                            <img class="rounded-circle object-fit-cover mr-1"
-                                                 src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
-
-                                        </c:if>
-                                        <c:if test="${!user.hasImage()}">
-                                            <img class="rounded-circle object-fit-cover mr-1"
-                                                 src="<c:url value="/resources/images/profile-image.png"/>" alt="">
-
-                                        </c:if>
-                                    </div>
-                                    <b id="profile_name_card_show_news"><c:out value="${user.username != null ? user.username : user.email}"/></b>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="d-flex flex-wrap align-items-center gap-1 mt-3">
-                            <c:if test="${not empty categories}">
-                                <div class="text-sm-left font-weight-bold text-white">
-                                    <spring:message code="showNews.categories"/>
-                                </div>
-                            </c:if>
-                            <c:forEach var="category" items="${categories}">
-
-                                <a href="<c:url value = "/TOP">
-                <c:param name = "category" value = "${category}"/>
-                </c:url>"> <span id="span_category" class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
-                                </a>
-                            </c:forEach>
-                        </div>
-                        <p class="text-sm-left text-secondary"><spring:message code="home.read" arguments="${fullNews.readTime}"/></p>
-                    </div>
-                    <div class="col-md-6">
-                        <c:if test="${news.hasImage()}">
-                            <img src="<c:url value="/news/${news.imageId}/image"/>" class="img-fluid d-block m-l-none" style="padding-top: 1rem"/>
-                        </c:if>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-
-            <br/>
-
-        <%--<div class="h-auto w-75 min-vh-75 justify-content-center align-center-xl ">
-            <hr style="border: 2px solid black; border-radius: 2px; width: 50%; margin-right:50% !important;"/>
-            <c:if test="${news.hasImage()}">
-                <img src="<c:url value="/news/${news.imageId}/image"/>" class="float-sm-right w-50 m-4"/>
-
-            </c:if>
-            <p class="text-sm-left text-secondary"><c:out value="${date}"/></p>
-            <p><spring:message code="showNews.createdBy"/><c:out value=" "/></p>
-            <div class="w-fit">
-                <a  href="<c:url value="/profile/${user.id}"/>" class="w-fit link">
-                    <div class="w-fit d-flex flex-row align-items-center p-2 gap-1">
-
-                        <div class="img-container-article">
-                            <c:if test="${user.hasImage()}">
-                                <img class="rounded-circle object-fit-cover mr-1"
-                                     src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
-
-                            </c:if>
-                            <c:if test="${!user.hasImage()}">
-                                <img class="rounded-circle object-fit-cover mr-1"
-                                     src="<c:url value="/resources/images/profile-image.png"/>" alt="">
-
-                            </c:if>
-                        </div>
-                        <b id="profile_name_card_show_news"><c:out value="${user.username != null ? user.username : user.email}"/></b>
-                    </div>
-                </a>
-            </div>
-            <div class="d-flex flex-wrap align-items-center gap-1 mt-3">
-                <c:if test="${not empty categories}">
-                    <div class="text-sm-left font-weight-bold text-white">
-                        <spring:message code="showNews.categories"/>
-                    </div>
-                </c:if>
-                <c:forEach var="category" items="${categories}">
-
-                    <a href="<c:url value = "/TOP">
-                <c:param name = "category" value = "${category}"/>
-                </c:url>"> <span id="span_category" class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
-                    </a>
-                </c:forEach>
-            </div>
-            <p class="text-sm-left text-secondary"><c:out value="${fullNews.readTime}"/> min read</p>
-
-        </div>--%>
-
-
-
+        </c:if>
         <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex gap-1 align-items-center justify-content-between w-100">
                 <div class="d-flex align-items-center justify-content-center">
-                    <h5 class="article-subtitle text-lg-left mb-0"><c:out value="${news.subtitle}"/></h5>
+                    <h4 class="text-lg-left mb-0 text-white"><c:out value="${news.subtitle}"/></h4>
 
                 </div>
                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
@@ -231,8 +131,9 @@
 
                                         <c:forEach var="item" items="${reportReasons}">
                                             <div class="form-check w-100">
-                                                <spring:message code="${item.interCode}" var="label"/>
-                                                <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}" label="${label}"/>
+                                                <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}"/>
+                                                <form:label path="reason" cssClass="form-check-label" for="flexRadioDefault1"> <spring:message code="${item.interCode}"/> </form:label>
+
                                             </div>
                                         </c:forEach>
                                     </div>
@@ -256,7 +157,42 @@
 
 
         </div>
+        <p class="text-sm-left text-secondary"><c:out value="${date}"/>&nbsp · &nbsp<c:out value="${fullNews.readTime}"/> min read</p>
 
+        <div class="w-fit">
+            <a  href="<c:url value="/profile/${user.id}"/>" class="w-fit link">
+                <div class="w-fit d-flex flex-row align-items-center p-2 gap-1">
+
+                    <div class="img-container-article">
+                        <c:if test="${user.hasImage()}">
+                            <img class="rounded-circle object-fit-cover mr-1"
+                                 src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
+
+                        </c:if>
+                        <c:if test="${!user.hasImage()}">
+                            <img class="rounded-circle object-fit-cover mr-1"
+                                 src="<c:url value="/resources/images/profile-image.png"/>" alt="">
+
+                        </c:if>
+                    </div>
+                    <b id="profile_name_card_show_news"><c:out value="${user.username != null ? user.username : user.email}"/></b>
+                </div>
+            </a>
+        </div>
+        <div class="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
+            <c:if test="${not empty categories}">
+                <div class="text-sm-left font-weight-bold text-white">
+                    <spring:message code="showNews.categories"/>
+                </div>
+            </c:if>
+            <c:forEach var="category" items="${categories}">
+
+                <a href="<c:url value = "/TOP">
+            <c:param name = "category" value = "${category}"/>
+            </c:url>"> <span id="span_category" class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
+                </a>
+            </c:forEach>
+        </div>
 
         <div class="d-flex w-100 min-vh-65 align-items-center flex-column">
             <div class="article-body">
@@ -387,12 +323,7 @@
 
         </div>
 
-
-
-
     </div>
 </div>
-
-
 </body>
 </html>
