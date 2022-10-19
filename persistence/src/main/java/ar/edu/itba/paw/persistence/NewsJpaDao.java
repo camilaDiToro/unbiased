@@ -122,19 +122,9 @@ public class NewsJpaDao implements NewsDao {
     public void setRating(News news, User user, Rating rating) {
         Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
         if (rating.equals(Rating.NO_RATING)) {
-//            entityManager.createQuery("DELETE FROM Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId")
-//                    .setParameter("newsId", news)
-//                    .setParameter("userId", user).executeUpdate();
             upvoteMap.remove(user.getId());
             return;
         }
-
-//        Optional<Upvote> maybeUpvote = entityManager.createQuery("SELECT u from Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId", Upvote.class)
-//            .setParameter("newsId", news)
-//            .setParameter("userId", user).getResultList().stream().findFirst();
-//        Upvote upvote = maybeUpvote.orElseGet(() -> new Upvote(getById(news, null).get(), user));
-//        upvote.setValue(rating.equals(Rating.UPVOTE));
-//        entityManager.persist(upvote);
         upvoteMap.put(user.getId(), new Upvote(news, user.getId(), rating.equals(Rating.UPVOTE)));
     }
 
@@ -161,6 +151,12 @@ public class NewsJpaDao implements NewsDao {
     public void addComment(User user, News news, String comment) {
         Comment commentObj = new Comment(user, comment, news);
         entityManager.persist(commentObj);
+    }
+
+    @Override
+    public void deleteComment(long commentId) {
+        Optional<Comment> mayBeComment = entityManager.createQuery("FROM Comment c WHERE c.id = :id", Comment.class).setParameter("id", commentId).getResultList().stream().findFirst();
+        mayBeComment.ifPresent(comment -> entityManager.remove(comment));
     }
 
     private List<Comment> getCommentsOfPage(Query query,int page, int pageSize) {

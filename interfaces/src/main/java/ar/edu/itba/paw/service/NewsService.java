@@ -29,6 +29,6 @@ public interface NewsService {
     News getOrThrowException(long newsId);
     void addComment(News news, String comment);
     Page<Comment> getComments(News news, int page);
-
+    void deleteComment(long commentId);
     NewsOrder getOrderBy();
 }
