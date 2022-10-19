@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -167,7 +168,7 @@ public class NewsJpaDao implements NewsDao {
         @SuppressWarnings("unchecked")
         List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
                 .setParameter("offset", pageSize*(page-1))
-                .getResultList().stream().map(o -> ((Integer)o).longValue()).collect(Collectors.toList());
+                .getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
 
         if (ids.isEmpty())
             return new ArrayList<>();
@@ -211,7 +212,7 @@ public class NewsJpaDao implements NewsDao {
         @SuppressWarnings("unchecked")
         List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
                 .setParameter("offset", pageSize*(page-1))
-                .getResultList().stream().map(o -> ((Integer)o).longValue()).collect(Collectors.toList());
+                .getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
 
         return ids;
     }
