@@ -166,7 +166,7 @@
                     <div class="img-container-article">
                         <c:if test="${user.hasImage()}">
                             <img class="rounded-circle object-fit-cover mr-1"
-                                 src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
+                                 src="<c:url value="/profile/${user.userId}/image"/>" alt="">
 
                         </c:if>
                         <c:if test="${!user.hasImage()}">
@@ -242,7 +242,7 @@
                                 <div class="d-flex flex-row gap-1 align-items-center">
                                     <div class="img-container-navbar">
                                         <c:if test="${user.hasImage()}">
-                                            <img class="object-fit-cover rounded-circle" src="<c:url value="/profile/${user.getImageId()}/image"/>" alt="Image Description">
+                                            <img class="object-fit-cover rounded-circle" src="<c:url value="/profile/${user.userId}/image"/>" alt="Image Description">
 
                                         </c:if>
                                         <c:if test="${!user.hasImage()}">
