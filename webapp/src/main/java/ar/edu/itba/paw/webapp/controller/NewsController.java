@@ -78,7 +78,7 @@ public class NewsController {
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
-    @RequestMapping(value = "/comment/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteComment(@PathVariable("newsId") long newsId, @PathVariable("commentId") long commentId) {
         newsService.deleteComment(commentId);
         return new ModelAndView("redirect:/news/" + newsId);

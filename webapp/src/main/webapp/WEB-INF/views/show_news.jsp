@@ -262,32 +262,33 @@
                                     <p id="comment"><c:out value="${comment.comment}"/></p>
                                 </div>
                                 <div class="d-flex align-items-center float-sm-right">
-                                    <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand ">
+                                    <div data-toggle="modal" data-target="#binModal${comment.id}" class="svg-btn hover-hand ">
                                         <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">
 
                                             <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="Borrar comentario"/>
-                                            <div class="modal fade" id="binModal${comment.user.id}-${comment.id}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title"><spring:message code="showNews.deleteCommentQuestion"/></h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <spring:message code="showNews.deleteCommentBody"/>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <form method="post" action="">
-                                                                <button type="submit" class="btn btn-primary"><spring:message code="showNews.deleteComment"/></button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </c:if>
                                     </div>
+                                    <div class="modal fade" id="binModal${comment.id}"   aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"><spring:message code="showNews.deleteCommentQuestion"/></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <spring:message code="showNews.deleteCommentBody"/>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form method="post" action="<c:url value="/news/${newsId}/comment/${comment.id}/delete"/>">
+                                                        <button type="submit" class="btn btn-primary"><spring:message code="showNews.deleteComment"/></button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
