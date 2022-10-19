@@ -44,7 +44,10 @@
                 <div class="tab">
                     <c:if test="${empty newsList}" >
                         <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
+                            <p class="lead">
 
+                                    <spring:message code="moderation.emptyArticles" arguments="${query}"/>
+                            </p>
                         </div>
                     </c:if>
 
@@ -103,7 +106,7 @@
                                                     <div class="d-flex align-items-center w-auto gap-1">
                                                         <div class="img-container-article">
                                                             <c:if test="${creator.hasImage()}">
-                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.imageId}/image"/>" alt="">
+                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.userId}/image"/>" alt="">
                                                             </c:if>
                                                             <c:if test="${!creator.hasImage()}">
                                                                 <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">

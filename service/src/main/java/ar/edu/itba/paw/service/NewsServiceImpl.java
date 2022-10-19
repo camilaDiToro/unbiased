@@ -177,4 +177,9 @@ public class NewsServiceImpl implements NewsService {
     public Page<Comment> getComments(News news, int page) {
         return newsDao.getComments(news.getNewsId(), page);
     }
+
+    @Override
+    public NewsOrder getOrderBy() {
+        return getLoggedUserId() != null ? NewsOrder.TOP : NewsOrder.NEW;
+    }
 }

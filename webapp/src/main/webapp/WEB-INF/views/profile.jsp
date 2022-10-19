@@ -303,7 +303,7 @@
 
                                 <c:if test="${isJournalist}">
                                     <spring:message code="profile.modal.description" var="descriptionText"/>
-                                    <form:label path="description">${descriptionText}</form:label>
+                                    <form:label path="description"><spring:message code="profile.modal.changeDescription"/> </form:label>
                                     <div class="input-group mb-3">
                                         <form:input type="text" path="description" cssClass="form-control"  id="description-input" placeholder="${descriptionText}"/>
                                         <div class="w-100">

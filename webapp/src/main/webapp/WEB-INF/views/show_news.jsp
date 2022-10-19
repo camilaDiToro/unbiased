@@ -54,11 +54,11 @@
                 </c:if>
             </div>
 
-                <h1 class="text-xl-center mx-auto max-w-75 m-3 text-white"><c:out value="${news.title}"/></h1>
-<div>
-    <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator-news-view  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
+            <h1 class="text-xl-center mx-auto max-w-75 m-3 text-white"><c:out value="${news.title}"/></h1>
+            <div>
+                <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator-news-view  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
 
-    </div>
+            </div>
 
 
         </div>
@@ -156,7 +156,7 @@
             </div>
 
 
-            </div>
+        </div>
         <p class="text-sm-left text-secondary"><c:out value="${date}"/>&nbsp · &nbsp<c:out value="${fullNews.readTime}"/> min read</p>
 
         <div class="w-fit">
@@ -166,7 +166,7 @@
                     <div class="img-container-article">
                         <c:if test="${user.hasImage()}">
                             <img class="rounded-circle object-fit-cover mr-1"
-                                 src="<c:url value="/profile/${user.id}/image"/>" alt="">
+                                 src="<c:url value="/profile/${user.userId}/image"/>" alt="">
 
                         </c:if>
                         <c:if test="${!user.hasImage()}">
@@ -187,104 +187,143 @@
             </c:if>
             <c:forEach var="category" items="${categories}">
 
-            <a href="<c:url value = "/TOP">
+                <a href="<c:url value = "/TOP">
             <c:param name = "category" value = "${category}"/>
             </c:url>"> <span id="span_category" class="badge badge-pill badge-info"><spring:message code="${category.interCode}"/></span>
                 </a>
             </c:forEach>
         </div>
 
-        <div class="d-flex w-100 min-vh-65 justify-content-center align-items-start">
+        <div class="d-flex w-100 min-vh-65 align-items-center flex-column">
             <div class="article-body">
                 <c:out value="${news.body}" escapeXml="false"/>
             </div>
-        </div>
+            <div class="d-flex flex-column w-75 align-items-center justify-content-center align-self-center" id="comments">
+                <h2 class="align-self-start my-2 text-white"><spring:message code="showNews.comments"/></h2>
+                <c:if test="${loggedUser != null}">
 
-        <div class="d-flex flex-column w-75 align-items-center justify-content-center align-self-center" id="comments">
-            <h2 class="align-self-start my-2 text-white"><spring:message code="showNews.comments"/></h2>
-            <c:if test="${loggedUser != null}">
+                    <div class="d-flex flex-column w-100 mb-4">
 
-            <div class="d-flex flex-column w-100 mb-4">
+                        <div class="bg-transparent">
+                            <c:url value="/news/${newsId}/comment" var="postUrl"/>
+                            <form:form modelAttribute="commentNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post">
+                            <div class="d-flex flex-column mt-4 mb-4">
+                                <div class="form-group w-100">
+                                    <form:textarea path="comment" cssClass="form-control w-100 custom-comment-area text-white" rows="5" id="comment"></form:textarea>
+                                </div>
+                                <div class="w-100">
+                                    <form:errors cssClass="text-danger" path="comment" element="p"/>
 
-                    <div class="bg-transparent">
-                        <c:url value="/news/${newsId}/comment" var="postUrl"/>
-                        <form:form modelAttribute="commentNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post">
-                        <div class="d-flex flex-column mt-4 mb-4">
-                            <div class="form-group w-100">
-                                <form:textarea path="comment" cssClass="form-control w-100 custom-comment-area text-white" rows="5" id="comment"></form:textarea>
+                                </div>
+                                <button class="btn btn-primary flex-grow-0 align-self-end" type="submit"><spring:message code="showNews.comment.submit"/></button>
+                                </form:form>
+
                             </div>
-                            <div class="w-100">
-                                <form:errors cssClass="text-danger" path="comment" element="p"/>
-
-                            </div>
-                            <button class="btn btn-primary flex-grow-0 align-self-end" type="submit"><spring:message code="showNews.comment.submit"/></button>
-                            </form:form>
 
                         </div>
-
                     </div>
-            </div>
-            </c:if>
+                </c:if>
 
-            <div class="d-flex flex-column w-100 ">
-                <c:forEach var="comment" items="${commentsPage.content}">
+                <div class="d-flex flex-column w-100 ">
+                    <c:if test="${loggedUser == null && empty commentsPage.content}">
+                        <c:url var="login" value="/login"/>
+                        <c:url var="signup" value="/create"/>
+                        <h6 class="m-2 align-self-center"><spring:message code="showNews.emptyComments" arguments="${login},${signup}"/></h6>
+                    </c:if>
+                    <c:if test="${loggedUser != null && empty commentsPage.content}">
+                        <h6 class="m-2 align-self-center"><spring:message code="showNews.emptyCommentsLogged"/></h6>
+                    </c:if>
+                    <c:forEach var="comment" items="${commentsPage.content}">
 
-                <c:set var="user" value="${comment.user}"/>
-                    <div class="mb-4 w-100 p-4 bg-transparent border-bottom" >
+                        <c:set var="user" value="${comment.user}"/>
+                        <div class="mb-4 w-100 p-4 bg-transparent border-bottom" >
 
-                        <div >
-                            <div class="d-flex flex-row gap-1 align-items-center">
-                                <div class="img-container-navbar">
-                                    <c:if test="${user.hasImage()}">
-                                        <img class="object-fit-cover rounded-circle" src="<c:url value="/profile/${user.id}/image"/>" alt="Image Description">
+                            <div >
+                                <div class="d-flex flex-row gap-1 align-items-center">
+                                    <div class="img-container-navbar">
+                                        <c:if test="${user.hasImage()}">
+                                            <img class="object-fit-cover rounded-circle" src="<c:url value="/profile/${user.userId}/image"/>" alt="Image Description">
 
-                                    </c:if>
+                                        </c:if>
                                         <c:if test="${!user.hasImage()}">
                                             <img class="object-fit-cover rounded-circle" src="<c:url value="/resources/images/profile-image.png"/>" alt="Image Description">
                                         </c:if>
+                                    </div>
+                                    <a class="link" href="<c:url value="/profile/${user.id}"/>"><h5 class="mb-0 link-text"><c:out value="${user}"/></h5></a>
                                 </div>
-                                <a class="link" href="<c:url value="/profile/${user.id}"/>"><h5 class="mb-0 link-text"><c:out value="${user}"/></h5></a>
+                                    <%--                            <span class="font-weight-light">${comment.getFormattedDate(locale)}</span>--%>
+                                <c:set var="timeAmount" value="${comment.getAmountAgo()}"/>
+                                <span class="font-weight-light mt-1 mb-2"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
+
                             </div>
-<%--                            <span class="font-weight-light">${comment.getFormattedDate(locale)}</span>--%>
-                            <c:set var="timeAmount" value="${comment.getAmountAgo()}"/>
-                            <span class="font-weight-light mt-1 mb-2"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
+
+                            <div class="d-flex justify-content-between p-2 w-100">
+                                <div class="d-flex align-items-center w-auto gap-1">
+                                    <p id="comment"><c:out value="${comment.comment}"/></p>
+                                </div>
+                                <div class="d-flex align-items-center float-sm-right">
+                                    <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand ">
+                                        <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">
+
+                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="Borrar comentario"/>
+
+                                            <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"><spring:message code="showNews.deleteCommentQuestion"/></h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <spring:message code="showNews.deleteCommentBody"/>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <form method="post" action="">
+                                                                <button type="submit" class="btn btn-primary"><spring:message code="showNews.deleteComment"/></button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                                <%--                    <ul class="list-inline d-sm-flex my-0">--%>
+                                <%--                        <li class="list-inline-item ">--%>
+                                <%--                            <a class="" href="#!">--%>
+                                <%--                                <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>--%>
+                                <%--                                178--%>
+                                <%--                            </a>--%>
+                                <%--                        </li>--%>
+                                <%--                        <li class="list-inline-item ">--%>
+                                <%--                            <a href="#!">--%>
+                                <%--                                <i ></i>--%>
+                                <%--                                34--%>
+                                <%--                            </a>--%>
+                                <%--                        </li>--%>
+                                <%--                        <li class="list-inline-item ml-auto">--%>
+                                <%--                            <a  href="#!">--%>
+                                <%--                                <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>--%>
+                                <%--                                Reply--%>
+                                <%--                            </a>--%>
+                                <%--                        </li>--%>
+                                <%--                    </ul>--%>
                         </div>
+                    </c:forEach>
 
-                        <p id="comment"><c:out value="${comment.comment}"/></p>
+                </div>
 
-                                                <ul class="list-inline d-sm-flex my-0">
-                                                    <li class="list-inline-item ">
-                                                        <a class="" href="#!">
-                                                            <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>
-                                                            178
-                                                        </a>
-                                                    </li>
-                                                    <li class="list-inline-item ">
-                                                        <a href="#!">
-                                                            <i ></i>
-                                                            34
-                                                        </a>
-                                                    </li>
-                                                    <li class="list-inline-item ml-auto">
-                                                        <a  href="#!">
-                                                            <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>
-                                                            Reply
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                    </div>
-                </c:forEach>
 
             </div>
 
-
         </div>
-
-
 
     </div>
 </div>
-
-
 </body>
 </html>

@@ -69,8 +69,8 @@ public class NewsController {
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
-    public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsForm,
-                                    final BindingResult errors) {
+    public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm")
+                                            final CommentNewsForm commentNewsForm, final BindingResult errors) {
         if (errors.hasErrors()) {
             return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1);
         }
