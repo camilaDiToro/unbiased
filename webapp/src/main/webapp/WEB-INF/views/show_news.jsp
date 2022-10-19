@@ -264,9 +264,8 @@
                                 <div class="d-flex align-items-center float-sm-right">
                                     <div data-toggle="modal" data-target="#binModal${comment.id}" class="svg-btn hover-hand ">
                                         <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">
-
-                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="Borrar comentario"/>
-<%--                                            TODO INTERNACIONALIZAR EL TOOLTIP--%>
+                                            <spring:message code="showNews.deleteComment" var="deleteComment"/>
+                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="${deleteComment}"/>
                                         </c:if>
                                     </div>
                                     <div class="modal fade" id="binModal${comment.id}"   aria-hidden="true">
