@@ -131,8 +131,8 @@
 
                                         <c:forEach var="item" items="${reportReasons}">
                                             <div class="form-check w-100">
-                                                <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}"/>
-                                                <form:label path="reason" cssClass="form-check-label" for="flexRadioDefault1"> <spring:message code="${item.interCode}"/> </form:label>
+                                                <spring:message code="${item.interCode}" var="code"/>
+                                                <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}" label="${code}"/>
 
                                             </div>
                                         </c:forEach>
@@ -180,12 +180,12 @@
             </a>
         </div>
         <div class="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
-            <c:if test="${not empty categories}">
+            <c:if test="${not empty news.categories}">
                 <div class="text-sm-left font-weight-bold text-white">
                     <spring:message code="showNews.categories"/>
                 </div>
             </c:if>
-            <c:forEach var="category" items="${categories}">
+            <c:forEach var="category" items="${news.categories}">
 
                 <a href="<c:url value = "/TOP">
             <c:param name = "category" value = "${category}"/>
@@ -266,8 +266,7 @@
                                         <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">
 
                                             <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="Borrar comentario"/>
-
-                                            <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="binModal${comment.user.id}-${comment.id}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header">

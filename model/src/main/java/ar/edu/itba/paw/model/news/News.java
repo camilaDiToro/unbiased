@@ -38,6 +38,14 @@ public class News {
     @Transient
     private LocalDateTime creationDate;
 
+    public Collection<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Collection<Category> categories) {
+        this.categories = categories;
+    }
+
     @ElementCollection(targetClass = Category.class)
     @JoinTable(name = "news_category", joinColumns = @JoinColumn(name = "news_id"))
     @Enumerated(EnumType.ORDINAL)

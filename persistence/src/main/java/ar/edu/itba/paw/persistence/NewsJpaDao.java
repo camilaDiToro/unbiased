@@ -107,7 +107,7 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public void deleteNews(News news) {
-        entityManager.createQuery("DELETE FROM News n WHERE n.newsId = :id").setParameter("id", news.getNewsId());
+        entityManager.createQuery("DELETE FROM News n WHERE n.newsId = :id").setParameter("id", news.getNewsId()).executeUpdate();
     }
 
     @Override
@@ -135,6 +135,7 @@ public class NewsJpaDao implements NewsDao {
 //        Upvote upvote = maybeUpvote.orElseGet(() -> new Upvote(getById(news, null).get(), user));
 //        upvote.setValue(rating.equals(Rating.UPVOTE));
 //        entityManager.persist(upvote);
+        upvoteMap.remove(user.getId());
         upvoteMap.put(user.getId(), new Upvote(news, user.getId(), rating.equals(Rating.UPVOTE)));
     }
 
