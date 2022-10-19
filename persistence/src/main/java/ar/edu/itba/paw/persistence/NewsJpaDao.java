@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.*;
@@ -119,23 +120,14 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
+    @Transactional
     public void setRating(News news, User user, Rating rating) {
         Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
         if (rating.equals(Rating.NO_RATING)) {
-//            entityManager.createQuery("DELETE FROM Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId")
-//                    .setParameter("newsId", news)
-//                    .setParameter("userId", user).executeUpdate();
             upvoteMap.remove(user.getId());
             return;
         }
 
-//        Optional<Upvote> maybeUpvote = entityManager.createQuery("SELECT u from Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId", Upvote.class)
-//            .setParameter("newsId", news)
-//            .setParameter("userId", user).getResultList().stream().findFirst();
-//        Upvote upvote = maybeUpvote.orElseGet(() -> new Upvote(getById(news, null).get(), user));
-//        upvote.setValue(rating.equals(Rating.UPVOTE));
-//        entityManager.persist(upvote);
-        upvoteMap.remove(user.getId());
         upvoteMap.put(user.getId(), new Upvote(news, user.getId(), rating.equals(Rating.UPVOTE)));
     }
 
