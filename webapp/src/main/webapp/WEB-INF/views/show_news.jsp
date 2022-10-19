@@ -166,7 +166,7 @@
                     <div class="img-container-article">
                         <c:if test="${user.hasImage()}">
                             <img class="rounded-circle object-fit-cover mr-1"
-                                 src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
+                                 src="<c:url value="/profile/${user.id}/image"/>" alt="">
 
                         </c:if>
                         <c:if test="${!user.hasImage()}">
@@ -236,7 +236,7 @@
                             <div class="d-flex flex-row gap-1 align-items-center">
                                 <div class="img-container-navbar">
                                     <c:if test="${user.hasImage()}">
-                                        <img class="object-fit-cover rounded-circle" src="<c:url value="/profile/${user.getImageId()}/image"/>" alt="Image Description">
+                                        <img class="object-fit-cover rounded-circle" src="<c:url value="/profile/${user.id}/image"/>" alt="Image Description">
 
                                     </c:if>
                                         <c:if test="${!user.hasImage()}">
@@ -248,31 +248,30 @@
 <%--                            <span class="font-weight-light">${comment.getFormattedDate(locale)}</span>--%>
                             <c:set var="timeAmount" value="${comment.getAmountAgo()}"/>
                             <span class="font-weight-light mt-1 mb-2"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
-
                         </div>
 
                         <p id="comment"><c:out value="${comment.comment}"/></p>
 
-                            <%--                    <ul class="list-inline d-sm-flex my-0">--%>
-                            <%--                        <li class="list-inline-item ">--%>
-                            <%--                            <a class="" href="#!">--%>
-                            <%--                                <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>--%>
-                            <%--                                178--%>
-                            <%--                            </a>--%>
-                            <%--                        </li>--%>
-                            <%--                        <li class="list-inline-item ">--%>
-                            <%--                            <a href="#!">--%>
-                            <%--                                <i ></i>--%>
-                            <%--                                34--%>
-                            <%--                            </a>--%>
-                            <%--                        </li>--%>
-                            <%--                        <li class="list-inline-item ml-auto">--%>
-                            <%--                            <a  href="#!">--%>
-                            <%--                                <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>--%>
-                            <%--                                Reply--%>
-                            <%--                            </a>--%>
-                            <%--                        </li>--%>
-                            <%--                    </ul>--%>
+                                                <ul class="list-inline d-sm-flex my-0">
+                                                    <li class="list-inline-item ">
+                                                        <a class="" href="#!">
+                                                            <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>
+                                                            178
+                                                        </a>
+                                                    </li>
+                                                    <li class="list-inline-item ">
+                                                        <a href="#!">
+                                                            <i ></i>
+                                                            34
+                                                        </a>
+                                                    </li>
+                                                    <li class="list-inline-item ml-auto">
+                                                        <a  href="#!">
+                                                            <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>
+                                                            Reply
+                                                        </a>
+                                                    </li>
+                                                </ul>
                     </div>
                 </c:forEach>
 
