@@ -266,6 +266,7 @@
                                         <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">
 
                                             <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="Borrar comentario"/>
+<%--                                            TODO INTERNACIONALIZAR EL TOOLTIP--%>
                                         </c:if>
                                     </div>
                                     <div class="modal fade" id="binModal${comment.id}"   aria-hidden="true">
