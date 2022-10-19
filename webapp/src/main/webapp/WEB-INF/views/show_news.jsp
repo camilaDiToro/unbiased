@@ -263,10 +263,10 @@
                                 </div>
                                 <div class="d-flex align-items-center float-sm-right">
                                     <div data-toggle="modal" data-target="#binModal${comment.id}" class="svg-btn hover-hand ">
-                                        <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">
-                                            <spring:message code="showNews.deleteComment" var="deleteComment"/>
-                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="${deleteComment}"/>
-                                        </c:if>
+<%--                                        <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">--%>
+<%--                                            <spring:message code="showNews.deleteComment" var="deleteComment"/>--%>
+<%--                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="${deleteComment}"/>--%>
+<%--                                        </c:if>--%>
                                     </div>
                                     <div class="modal fade" id="binModal${comment.id}"   aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -291,28 +291,6 @@
 
                                 </div>
                             </div>
-
-
-                                <%--                    <ul class="list-inline d-sm-flex my-0">--%>
-                                <%--                        <li class="list-inline-item ">--%>
-                                <%--                            <a class="" href="#!">--%>
-                                <%--                                <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>--%>
-                                <%--                                178--%>
-                                <%--                            </a>--%>
-                                <%--                        </li>--%>
-                                <%--                        <li class="list-inline-item ">--%>
-                                <%--                            <a href="#!">--%>
-                                <%--                                <i ></i>--%>
-                                <%--                                34--%>
-                                <%--                            </a>--%>
-                                <%--                        </li>--%>
-                                <%--                        <li class="list-inline-item ml-auto">--%>
-                                <%--                            <a  href="#!">--%>
-                                <%--                                <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>--%>
-                                <%--                                Reply--%>
-                                <%--                            </a>--%>
-                                <%--                        </li>--%>
-                                <%--                    </ul>--%>
                         </div>
                     </c:forEach>
 
