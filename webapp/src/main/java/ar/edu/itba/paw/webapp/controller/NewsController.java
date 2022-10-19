@@ -78,6 +78,7 @@ public class NewsController {
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
+    @PreAuthorize("@ownerCheck.checkCommentOwnership(#commentId)")
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteComment(@PathVariable("newsId") long newsId, @PathVariable("commentId") long commentId) {
         newsService.deleteComment(commentId);

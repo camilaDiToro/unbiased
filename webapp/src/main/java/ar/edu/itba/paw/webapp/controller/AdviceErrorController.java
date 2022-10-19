@@ -43,6 +43,12 @@ public class AdviceErrorController {
         return new ModelAndView("errors/userNotFound");
     }
 
+    @ExceptionHandler(CommentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ModelAndView commentNotFound(UserNotFoundException ex) {
+        return new ModelAndView("errors/comment_not_found");
+    }
+
     @ExceptionHandler(UserNotAuthorized.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ModelAndView invalidUser(UserNotAuthorized ex) {

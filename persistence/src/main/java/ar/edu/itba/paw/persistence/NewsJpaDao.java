@@ -87,6 +87,11 @@ public class NewsJpaDao implements NewsDao {
 
     }
 
+    @Override
+    public Optional<Comment> getCommentById(long id) {
+        return Optional.ofNullable(entityManager.find(Comment.class, id));
+    }
+
 
     @Override
     public List<News> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser) {

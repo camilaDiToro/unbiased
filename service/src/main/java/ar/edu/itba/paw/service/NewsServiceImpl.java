@@ -168,6 +168,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public Optional<Comment> getCommentById(long id) {
+        return newsDao.getCommentById(id);
+    }
+
+    @Override
     @Transactional
     public void addComment(News news, String comment) {
         User user = getLoggedUserOrThrowException();
