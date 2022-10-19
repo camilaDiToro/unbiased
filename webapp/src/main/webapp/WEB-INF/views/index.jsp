@@ -222,7 +222,7 @@
                                             <div class="d-flex align-items-center w-auto gap-1">
                                                 <div class="img-container-article">
                                                     <c:if test="${user.hasImage()}">
-                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${user.imageId}/image"/>" alt="">
+                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${user.id}/image"/>" alt="">
                                                     </c:if>
                                                     <c:if test="${!user.hasImage()}">
                                                         <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
@@ -260,7 +260,7 @@
                             <div class="card text-white d-flex flex-row p-2 creator-card align-items-center" id="none_shadow_creator">
 <div class="img-container">
 <c:if test="${creator.hasImage()}">
-    <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.imageId}/image"/>" alt="">
+    <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${creator.id}/image"/>" alt="">
 
 </c:if>
     <c:if test="${!creator.hasImage()}">

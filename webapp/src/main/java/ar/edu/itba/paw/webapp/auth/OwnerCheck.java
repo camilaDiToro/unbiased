@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.user.ProfileCategory;
@@ -25,6 +26,10 @@ public class OwnerCheck {
 
     public boolean checkNewsOwnership(long newsId) {
         return newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getCreatorId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+    }
+
+    public boolean checkCommentOwnership(long commentId) {
+        return newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new).getUser().getId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
     }
 
     public boolean checkSavedNewsAccess(String category, long userId){

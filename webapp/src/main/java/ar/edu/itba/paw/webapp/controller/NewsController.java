@@ -78,6 +78,13 @@ public class NewsController {
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
+    @PreAuthorize("@ownerCheck.checkCommentOwnership(#commentId)")
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
+    public ModelAndView deleteComment(@PathVariable("newsId") long newsId, @PathVariable("commentId") long commentId) {
+        newsService.deleteComment(commentId);
+        return new ModelAndView("redirect:/news/" + newsId);
+    }
+
     @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                  @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsFrom,

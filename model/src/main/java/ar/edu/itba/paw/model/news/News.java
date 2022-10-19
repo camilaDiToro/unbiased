@@ -22,10 +22,13 @@ public class News {
 
     @Column(name = "image_id")
     private Long imageId;
+
     @Column(name = "body")
     private String body;
+
     @Column(name = "title")
     private String title;
+
     @Column(name = "subtitle")
     private String subtitle;
 
@@ -38,23 +41,22 @@ public class News {
     @Transient
     private LocalDateTime creationDate;
 
+    public Collection<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Collection<Category> categories) {
+        this.categories = categories;
+    }
+
     @ElementCollection(targetClass = Category.class)
     @JoinTable(name = "news_category", joinColumns = @JoinColumn(name = "news_id"))
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "category_id")
     private Collection<Category> categories;
 
-
     @Transient
     private int readTime;
-
-    public User getCreator() {
-        return creator;
-    }
-
-    public void setCreator(User creator) {
-        this.creator = creator;
-    }
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "creator", referencedColumnName = "user_id")
@@ -70,14 +72,6 @@ public class News {
 
     @Transient
     private LoggedUserParameters loggedUserParameters;
-
-    public Map<Long, Upvote> getUpvoteMap() {
-        return upvoteMap;
-    }
-
-    public void setUpvoteMap(Map<Long, Upvote> upvoteMap) {
-        this.upvoteMap = upvoteMap;
-    }
 
     @OneToMany(mappedBy="news",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapKey(name = "userId")
@@ -109,9 +103,25 @@ public class News {
                 '}';
     }
 
+    public Map<Long, Upvote> getUpvoteMap() {
+        return upvoteMap;
+    }
+
+    public void setUpvoteMap(Map<Long, Upvote> upvoteMap) {
+        this.upvoteMap = upvoteMap;
+    }
 
     News() {
 
+    }
+
+
+    public User getCreator() {
+        return creator;
+    }
+
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     @PostLoad
@@ -213,12 +223,9 @@ public class News {
         return readTime;
     }
 
-
-
     public User getUser() {
         return creator;
     }
-
 
     public PositivityStats getPositivityStats() {
         Collection<Upvote> set = upvoteMap.values();

@@ -106,9 +106,10 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    @Transactional
     public void setRating(News news, Rating rating) {
-        newsDao.setRating(news, getLoggedUser(), rating);
+        User user  = getLoggedUser();
+        newsDao.setRating(news, user, Rating.NO_RATING);
+        newsDao.setRating(news, user, rating);
     }
 
     @Override
@@ -167,6 +168,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public Optional<Comment> getCommentById(long id) {
+        return newsDao.getCommentById(id);
+    }
+
+    @Override
     @Transactional
     public void addComment(News news, String comment) {
         User user = getLoggedUserOrThrowException();
@@ -176,6 +182,12 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Page<Comment> getComments(News news, int page) {
         return newsDao.getComments(news.getNewsId(), page);
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(long commentId) {
+        newsDao.deleteComment(commentId);
     }
 
     @Override

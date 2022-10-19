@@ -24,9 +24,11 @@ public interface NewsDao {
     News create(News.NewsBuilder newsBuilder);
 
     Optional<News> getById(long id, Long loggedUser);
+    Optional<Comment> getCommentById(long id);
     List<Category> getNewsCategory(News news);
     void setRating(News news, User user, Rating rating);
     void addComment(User user, News news, String comment);
+    void deleteComment(long commentId);
     void saveNews(News news, User user);
     void removeSaved(News news, User user);
     void deleteNews(News news);

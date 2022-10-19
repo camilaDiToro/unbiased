@@ -131,8 +131,8 @@
 
                                         <c:forEach var="item" items="${reportReasons}">
                                             <div class="form-check w-100">
-                                                <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}"/>
-                                                <form:label path="reason" cssClass="form-check-label" for="flexRadioDefault1"> <spring:message code="${item.interCode}"/> </form:label>
+                                                <spring:message code="${item.interCode}" var="code"/>
+                                                <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}" label="${code}"/>
 
                                             </div>
                                         </c:forEach>
@@ -180,12 +180,12 @@
             </a>
         </div>
         <div class="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
-            <c:if test="${not empty categories}">
+            <c:if test="${not empty news.categories}">
                 <div class="text-sm-left font-weight-bold text-white">
                     <spring:message code="showNews.categories"/>
                 </div>
             </c:if>
-            <c:forEach var="category" items="${categories}">
+            <c:forEach var="category" items="${news.categories}">
 
                 <a href="<c:url value = "/TOP">
             <c:param name = "category" value = "${category}"/>
@@ -262,57 +262,35 @@
                                     <p id="comment"><c:out value="${comment.comment}"/></p>
                                 </div>
                                 <div class="d-flex align-items-center float-sm-right">
-                                    <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand ">
-                                        <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">
-
-                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="Borrar comentario"/>
-
-                                            <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title"><spring:message code="showNews.deleteCommentQuestion"/></h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <spring:message code="showNews.deleteCommentBody"/>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <form method="post" action="">
-                                                                <button type="submit" class="btn btn-primary"><spring:message code="showNews.deleteComment"/></button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
+                                    <div data-toggle="modal" data-target="#binModal${comment.id}" class="svg-btn hover-hand ">
+<%--                                        <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">--%>
+<%--                                            <spring:message code="showNews.deleteComment" var="deleteComment"/>--%>
+<%--                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="${deleteComment}"/>--%>
+<%--                                        </c:if>--%>
+                                    </div>
+                                    <div class="modal fade" id="binModal${comment.id}"   aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"><spring:message code="showNews.deleteCommentQuestion"/></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <spring:message code="showNews.deleteCommentBody"/>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form method="post" action="<c:url value="/news/${newsId}/comment/${comment.id}/delete"/>">
+                                                        <button type="submit" class="btn btn-primary"><spring:message code="showNews.deleteComment"/></button>
+                                                    </form>
                                                 </div>
                                             </div>
-                                        </c:if>
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
-
-
-                                <%--                    <ul class="list-inline d-sm-flex my-0">--%>
-                                <%--                        <li class="list-inline-item ">--%>
-                                <%--                            <a class="" href="#!">--%>
-                                <%--                                <i class="fa fa-thumbs-up g-pos-rel g-top-1 g-mr-3"></i>--%>
-                                <%--                                178--%>
-                                <%--                            </a>--%>
-                                <%--                        </li>--%>
-                                <%--                        <li class="list-inline-item ">--%>
-                                <%--                            <a href="#!">--%>
-                                <%--                                <i ></i>--%>
-                                <%--                                34--%>
-                                <%--                            </a>--%>
-                                <%--                        </li>--%>
-                                <%--                        <li class="list-inline-item ml-auto">--%>
-                                <%--                            <a  href="#!">--%>
-                                <%--                                <i class="fa fa-reply g-pos-rel g-top-1 g-mr-3"></i>--%>
-                                <%--                                Reply--%>
-                                <%--                            </a>--%>
-                                <%--                        </li>--%>
-                                <%--                    </ul>--%>
                         </div>
                     </c:forEach>
 

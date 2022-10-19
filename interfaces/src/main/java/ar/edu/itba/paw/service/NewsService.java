@@ -16,6 +16,7 @@ import java.util.Optional;
 public interface NewsService {
     News create(News.NewsBuilder newsBuilder, String[] categories);
     Optional<News> getById(long id);
+    Optional<Comment> getCommentById(long id);
     Page<News> getNews(int page, String category, String newsOrder, String query);
     List<Category> getNewsCategory(News news);
     void setRating(News news, Rating rating);
@@ -29,6 +30,6 @@ public interface NewsService {
     News getOrThrowException(long newsId);
     void addComment(News news, String comment);
     Page<Comment> getComments(News news, int page);
-
+    void deleteComment(long commentId);
     NewsOrder getOrderBy();
 }
