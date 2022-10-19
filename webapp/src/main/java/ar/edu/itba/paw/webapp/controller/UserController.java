@@ -6,6 +6,7 @@ import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.service.*;
@@ -127,6 +128,7 @@ public class UserController {
                 .withObject("profileUser", profileUser)
                 .withObject("userId", userId)
                 .withObject("hasErrors", hasErrors)
+                .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
             mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
