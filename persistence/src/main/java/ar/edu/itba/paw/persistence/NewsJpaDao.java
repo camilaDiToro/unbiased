@@ -156,6 +156,12 @@ public class NewsJpaDao implements NewsDao {
         entityManager.persist(commentObj);
     }
 
+    @Override
+    public void deleteComment(long commentId) {
+        Optional<Comment> mayBeComment = entityManager.createQuery("FROM Comment c WHERE c.id = :id", Comment.class).setParameter("id", commentId).getResultList().stream().findFirst();
+        mayBeComment.ifPresent(comment -> entityManager.remove(comment));
+    }
+
     private List<Comment> getCommentsOfPage(Query query,int page, int pageSize) {
         @SuppressWarnings("unchecked")
         List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)

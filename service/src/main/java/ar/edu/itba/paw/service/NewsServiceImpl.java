@@ -180,6 +180,12 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
+    public void deleteComment(long commentId) {
+        newsDao.deleteComment(commentId);
+    }
+
+    @Override
     public NewsOrder getOrderBy() {
         return getLoggedUserId() != null ? NewsOrder.TOP : NewsOrder.NEW;
     }
