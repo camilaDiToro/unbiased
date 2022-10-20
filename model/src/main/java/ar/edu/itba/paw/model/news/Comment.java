@@ -22,6 +22,14 @@ public class Comment {
         this.id = id;
     }
 
+    public Timestamp getCommentedDate() {
+        return commentedDate;
+    }
+
+    public void setCommentedDate(Timestamp commentedDate) {
+        this.commentedDate = commentedDate;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_seq")
     @SequenceGenerator(name="comment_seq", sequenceName = "comment_seq", allocationSize = 1)

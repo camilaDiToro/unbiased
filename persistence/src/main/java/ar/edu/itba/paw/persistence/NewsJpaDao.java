@@ -9,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -86,6 +88,11 @@ public class NewsJpaDao implements NewsDao {
 
     }
 
+    @Override
+    public Optional<Comment> getCommentById(long id) {
+        return Optional.ofNullable(entityManager.find(Comment.class, id));
+    }
+
 
     @Override
     public List<News> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser) {
@@ -107,7 +114,7 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public void deleteNews(News news) {
-        entityManager.createQuery("DELETE FROM News n WHERE n.newsId = :id").setParameter("id", news.getNewsId());
+        entityManager.createQuery("DELETE FROM News n WHERE n.newsId = :id").setParameter("id", news.getNewsId()).executeUpdate();
     }
 
     @Override
@@ -119,22 +126,14 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
+    @Transactional
     public void setRating(News news, User user, Rating rating) {
         Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
         if (rating.equals(Rating.NO_RATING)) {
-//            entityManager.createQuery("DELETE FROM Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId")
-//                    .setParameter("newsId", news)
-//                    .setParameter("userId", user).executeUpdate();
             upvoteMap.remove(user.getId());
             return;
         }
 
-//        Optional<Upvote> maybeUpvote = entityManager.createQuery("SELECT u from Upvote u WHERE u.news.newsId = :newsId AND u.userId = :userId", Upvote.class)
-//            .setParameter("newsId", news)
-//            .setParameter("userId", user).getResultList().stream().findFirst();
-//        Upvote upvote = maybeUpvote.orElseGet(() -> new Upvote(getById(news, null).get(), user));
-//        upvote.setValue(rating.equals(Rating.UPVOTE));
-//        entityManager.persist(upvote);
         upvoteMap.put(user.getId(), new Upvote(news, user.getId(), rating.equals(Rating.UPVOTE)));
     }
 
@@ -163,11 +162,17 @@ public class NewsJpaDao implements NewsDao {
         entityManager.persist(commentObj);
     }
 
+    @Override
+    public void deleteComment(long commentId) {
+        Optional<Comment> mayBeComment = entityManager.createQuery("FROM Comment c WHERE c.id = :id", Comment.class).setParameter("id", commentId).getResultList().stream().findFirst();
+        mayBeComment.ifPresent(comment -> entityManager.remove(comment));
+    }
+
     private List<Comment> getCommentsOfPage(Query query,int page, int pageSize) {
         @SuppressWarnings("unchecked")
         List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
                 .setParameter("offset", pageSize*(page-1))
-                .getResultList().stream().map(o -> ((Integer)o).longValue()).collect(Collectors.toList());
+                .getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
 
         if (ids.isEmpty())
             return new ArrayList<>();
@@ -211,7 +216,7 @@ public class NewsJpaDao implements NewsDao {
         @SuppressWarnings("unchecked")
         List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
                 .setParameter("offset", pageSize*(page-1))
-                .getResultList().stream().map(o -> ((Integer)o).longValue()).collect(Collectors.toList());
+                .getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
 
         return ids;
     }
