@@ -213,6 +213,8 @@
                     <c:if test="${isJournalist}">
                         <div class="text-center font-weight-light m-1"><c:out value="${profileUser.description}"/></div>
                     </c:if>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
                     <c:if test="${loggedUser != null && !isMyProfile}">
                         <c:if test="${!isFollowing}">
                             <a class="btn d-flex btn-info font-weight-bold text-white rounded-pill medium-pill align-items-center justify-content-center" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
