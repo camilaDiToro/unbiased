@@ -21,11 +21,19 @@
     <li>
       <div class="d-flex flex-row pt-2 pl-2 bg-hover">
         <a class="mb-2 nav-link selected pl-0" href="<c:url value="/admin/add_admin_page"/>">
+          <img class="mb-2 moderation-img" src="<c:url value="/resources/images/cancel-comment.svg"/>" alt="...">
+          <spring:message code="moderation.reportedComments"/>
+        </a>
+      </div>
+    </li>
+    <%--<li>
+      <div class="d-flex flex-row pt-2 pl-2 bg-hover">
+        <a class="mb-2 nav-link selected pl-0" href="<c:url value="/admin/add_admin_page"/>">
           <img class="mb-2 moderation-img" src="<c:url value="/resources/images/add-user-svgrepo-com.svg"/>" alt="...">
           <spring:message code="moderation.add"/>
         </a>
       </div>
-    </li>
+    </li>--%>
 
   </ul>
 

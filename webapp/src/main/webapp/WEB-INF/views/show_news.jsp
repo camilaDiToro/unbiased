@@ -263,10 +263,10 @@
                                 </div>
                                 <div class="d-flex align-items-center float-sm-right">
                                     <div data-toggle="modal" data-target="#binModal${comment.id}" class="svg-btn hover-hand ">
-<%--                                        <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">--%>
-<%--                                            <spring:message code="showNews.deleteComment" var="deleteComment"/>--%>
-<%--                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="${deleteComment}"/>--%>
-<%--                                        </c:if>--%>
+                                        <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">
+                                            <spring:message code="showNews.deleteComment" var="deleteComment"/>
+                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="${deleteComment}"/>
+                                        </c:if>
                                     </div>
                                     <div class="modal fade" id="binModal${comment.id}"   aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
@@ -287,6 +287,11 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
+                                        <c:if test="${loggedUser != null }">
+                                            <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportModal"'} class="w-100 h-100 ${hasReported ? '' : 'svg-btn'} svg-bookmark" src="<c:url value="/resources/images/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
+                                        </c:if>
                                     </div>
 
                                 </div>
