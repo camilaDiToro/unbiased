@@ -51,7 +51,7 @@
             </div>
           </c:if>
 
-          <c:if test="${!empty newsList}">
+          <c:if test="${!empty commentsList}">
             <div class="container-fluid">
               <div class="row row-cols-1">
                 <c:set var="maxLength" value="${100}"/>
@@ -87,15 +87,17 @@
                     <div class="card h-100 d-flex flex-row p-3 max-h-300px" id="left-card">
 
                       <div>
-                                                <span class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="moderation.reportsNum"/> " >
-                                                    <c:out value="${reportedComment.reports.size()}"/>
-                                            </span>
+                        <span class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="moderation.reportsNum"/> " >
+                          <c:out value="${reportedComment.reports.size()}"/>
+                        </span>
                       </div>
 
                       <div class="d-flex flex-column justify-content-between w-100">
                         <div class="d-flex w-100 ">
                           <div class="card-body-home pt-0">
-                            <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${comment.comment}"/></h6>
+                            <a href="<c:url value="/news/${comment.newsId}"/>" class="link mh-10">
+                              <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${comment.comment}"/></h6>
+                            </a>
                             <c:set var="timeAmount" value="${comment.getAmountAgo()}"/>
                             <span class="font-weight-light"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
                           </div>
@@ -117,7 +119,7 @@
                           <div class="d-flex align-items-center mr-2" role="group">
 
                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn bin-modal">
-                              <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="bin-image" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
+                              <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="bin-image" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="${deleteComment}"/> "/>
                             </button>
                             <a   class="font-weight-bold hover-hand link" href="<c:url value="/admin/reported_comments_detail/${commentId}"/>">
                               <div class="link-text">
