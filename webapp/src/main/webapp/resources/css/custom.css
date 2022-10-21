@@ -882,3 +882,7 @@ input:checked + .slider:before {
     border-radius: 50%;
 }
 
+.commentDeleted {
+    background-color: rgba(58, 60, 74, 0.5);
+}
+
