@@ -295,7 +295,7 @@
                         </div>
                     </div>
 
-                    <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReportedComment ? 'tooltip' : ''}" data-placement="${hasReportedComment ? 'top' : ''}" title="Comment reported">
+                    <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReportedComment ? 'tooltip' : ''}" data-placement="${hasReportedComment ? 'top' : ''}" title="<spring:message code="tooltip.commentReported"/>">
                         <c:if test="${loggedUser != null }">
                             <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportCommentModal"'} class="w-100 h-100 ${hasReportedComment ? '' : 'svg-btn'} svg-bookmark" src="<c:url value="/resources/images/flag${hasReportedComment ? '-clicked' : ''}.svg"/>" alt="" >
                         </c:if>
