@@ -118,7 +118,7 @@
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                    <h5 class="modal-title" id="binModalLabel"><spring:message code="showNews.reportNewsQuestion"/></h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -288,10 +288,41 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReported ? 'tooltip' : ''}" data-placement="${hasReported ? 'top' : ''}" title="Article reported">
+                                    <div class="news-bookmark d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReportedComment ? 'tooltip' : ''}" data-placement="${hasReportedComment ? 'top' : ''}" title="Comment reported">
                                         <c:if test="${loggedUser != null }">
-                                            <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportModal"'} class="w-100 h-100 ${hasReported ? '' : 'svg-btn'} svg-bookmark" src="<c:url value="/resources/images/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
+                                            <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportCommentModal"'} class="w-100 h-100 ${hasReportedComment ? '' : 'svg-btn'} svg-bookmark" src="<c:url value="/resources/images/flag${hasReportedComment ? '-clicked' : ''}.svg"/>" alt="" >
                                         </c:if>
+                                    </div>
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="reportCommentModal" tabindex="-1" aria-labelledby="binModalLabelComment" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="binModalLabelComment"><spring:message code="showNews.reportCommentQuestion"/></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form:form modelAttribute="reportCommentForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-100">
+
+                                                    <div class="input-group">
+
+                                                    </div>
+                                                    <div class="w-100">
+                                                        <form:errors cssClass="text-danger" path="reason" element="p"/>
+
+                                                    </div>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                                        <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                    </div>
+                                                </form:form>
+
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>
