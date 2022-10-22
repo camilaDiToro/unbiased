@@ -861,11 +861,11 @@ body{
 }
 
 input:checked + .slider {
-    background-color: #2196F3;
+    background-color: #8ea7e8;
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #8ea7e8;
 }
 
 input:checked + .slider:before {
@@ -884,5 +884,9 @@ input:checked + .slider:before {
 
 .commentDeleted {
     background-color: rgba(58, 60, 74, 0.5);
+}
+
+.settings{
+    background-color: #1e1e2d;
 }
 
