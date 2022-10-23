@@ -160,7 +160,6 @@ public class UserJpaDao implements UserDao{
     private int getTotalPagesSearchUsers(String search){
         long count = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) and u.status != 'UNABLE'", Long.class)
                 .setParameter("query", "%" + search.toLowerCase() + "%").getSingleResult();
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + count);
         return Page.getPageCount(count, SEARCH_PAGE_SIZE);
     }
 }
