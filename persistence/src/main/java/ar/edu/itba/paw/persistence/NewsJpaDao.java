@@ -22,7 +22,7 @@ public class NewsJpaDao implements NewsDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-
+    private static final int SEARCH_PAGE_SIZE = 10;
     private static final int PAGE_SIZE = 10;
     private static final int COMMENT_PAGE_SIZE = 5;
     private static final int PROFILE_PAGE_SIZE = 5;
@@ -55,7 +55,7 @@ public class NewsJpaDao implements NewsDao {
         Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query ORDER BY " + ns.getQueryPaged())
                 .setParameter("query", "%" + query.toLowerCase() + "%");
 
-        List<News> news = getNewsOfPage(queryObj, page, PAGE_SIZE);
+        List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
@@ -186,7 +186,7 @@ public class NewsJpaDao implements NewsDao {
 
     private List<News> getNewsOfPage(Query query,int page, int pageSize) {
         @SuppressWarnings("unchecked")
-        List<Long> ids = getIdsOfPage(query, page, pageSize);
+        List<Long> ids = JpaUtils.getIdsOfPage(query, page, pageSize);
 
         if (ids.isEmpty()) {
             return new ArrayList<>();
@@ -203,15 +203,6 @@ public class NewsJpaDao implements NewsDao {
         // map id -> news
         news =  ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
         return news;
-    }
-
-    private List<Long> getIdsOfPage(Query query,int page, int pageSize) {
-        @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
-                .setParameter("offset", pageSize*(page-1))
-                .getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
-
-        return ids;
     }
 
     @Override
