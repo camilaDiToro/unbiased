@@ -296,7 +296,7 @@ public class NewsJpaDao implements NewsDao {
     Page<News> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
         Query query  = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE creator = :userId order by " + ns.getQueryPaged())
                 .setParameter("userId", user.getId());
-        List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
+        List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
 
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
