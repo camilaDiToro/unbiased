@@ -106,8 +106,9 @@ public class NewsJpaDao implements NewsDao {
     } // TODO: delete
 
     @Override
+    @Transactional
     public void deleteNews(News news) {
-        entityManager.createQuery("DELETE FROM News n WHERE n.newsId = :id").setParameter("id", news.getNewsId()).executeUpdate();
+        entityManager.remove(news);
     }
 
     @Override
