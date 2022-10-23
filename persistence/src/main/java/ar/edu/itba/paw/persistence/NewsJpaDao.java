@@ -51,15 +51,9 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public int getTotalPagesAllNews() {
-        long elemCount = entityManager.createQuery("SELECT COUNT(f) from News f",Long.class).getSingleResult();
-        return Page.getPageCount(elemCount, PAGE_SIZE);
-    }
-
-    @Override
     public List<News> getNews(int page, String query, NewsOrder ns, Long loggedUser) {
-        Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE title LIKE :query ORDER BY " + ns.getQueryPaged())
-                .setParameter("query", "%" + query + "%");
+        Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query ORDER BY " + ns.getQueryPaged())
+                .setParameter("query", "%" + query.toLowerCase() + "%");
 
         List<News> news = getNewsOfPage(queryObj, page, PAGE_SIZE);
         if (loggedUser != null)
@@ -70,8 +64,8 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public int getTotalPagesAllNews(String query) {
-        long elemCount = entityManager.createQuery("SELECT count(f) from News f WHERE f.title LIKE :query",Long.class)
-                .setParameter("query", '%' + query + '%').getSingleResult();
+        long elemCount = entityManager.createQuery("SELECT count(f) from News f WHERE LOWER(f.title) LIKE :query",Long.class)
+                .setParameter("query", '%' + query.toLowerCase() + '%').getSingleResult();
 
         return Page.getPageCount(elemCount, PAGE_SIZE);
     }
