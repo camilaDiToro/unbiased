@@ -27,7 +27,7 @@
                         <img class="svg-btn hover-hand back-btn mt-3" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..." data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> " />
                     </a>
                 </div>
-                <c:url value="/admin/add_admin" var="postUrl"/>
+                <c:url value="/owner/add_admin" var="postUrl"/>
                 <div id="custom-form-group" class="m-2 w-50 max-w-750px ">
                     <form:form modelAttribute="createAdminForm" action="${postUrl}" method="GET" cssClass="d-flex flex-column align-items-center">
 

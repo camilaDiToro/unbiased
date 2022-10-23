@@ -12,6 +12,5 @@ public interface AdminService {
     Page<News> getReportedNews(int page, String reportOrder);
     Page<ReportDetail> getReportedNewsDetail(int page, News news);
     void deleteNews(News news);
-    void makeUserAdmin(User user);
     boolean hasReported(News news);
 }

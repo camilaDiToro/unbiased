@@ -61,11 +61,4 @@ public class AdminServiceImpl implements AdminService{
     public void deleteNews(News news) {
         newsService.deleteNews(news);
     }
-
-    @Override
-    @Transactional
-    public void makeUserAdmin(User user) {
-        userDao.merge(user);
-        user.addRole(Role.ROLE_ADMIN);
-    }
 }
