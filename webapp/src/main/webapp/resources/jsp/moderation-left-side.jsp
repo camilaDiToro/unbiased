@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: khcatino
-  Date: 29/09/2022
-  Time: 13:11
-  To change this template use File | Settings | File Templates.
---%>
 <link href="<c:url value="/resources/css/custom.css"/>" rel="stylesheet">
 <div class=" w-25 d-flex flex-column border-white border-right mt-4 m-3 ">
 

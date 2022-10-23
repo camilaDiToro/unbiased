@@ -29,7 +29,7 @@
                 </div>
                 <c:url value="/owner/add_admin" var="postUrl"/>
                 <div id="custom-form-group" class="m-2 w-50 max-w-750px ">
-                    <form:form modelAttribute="createAdminForm" action="${postUrl}" method="GET" cssClass="d-flex flex-column align-items-center">
+                    <form:form modelAttribute="createAdminForm" action="${postUrl}" method="POST" cssClass="d-flex flex-column align-items-center">
 
                         <div class="form-group m-2 w-100 p-3">
                             <form:label cssClass="w-100 font-weight-bold" path="email"><spring:message code="moderation.makeUserAdmin"/> </form:label>

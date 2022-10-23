@@ -29,7 +29,7 @@ public class OwnerController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "/owner/add_admin", method = RequestMethod.GET)
+    @RequestMapping(value = "/owner/add_admin", method = RequestMethod.POST)
     public ModelAndView addAdmin(@Valid @ModelAttribute("createAdminForm") CreateAdminForm form, final BindingResult errors) {
         if (errors.hasErrors()){
             return addAdminPanel(form);
