@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -223,15 +222,20 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public Page<Comment> getComments(long newsId, int page) {
+
+        int totalPages = getTotalPagesComments(newsId);
+        page = Math.min(page, totalPages);
+
         Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId LIMIT :pageSize OFFSET :offset")
                 .setParameter("newsId", newsId);
         List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
 
-        return new Page<>(comments, page, getTotalPagesComments(newsId));
+        return new Page<>(comments, page, totalPages);
     }
 
     @Override
     public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Long loggedUser, ProfileCategory profileCategory) {
+        page = Math.max(page, 1);
         return profileFunctions.get(profileCategory).getNews(page, user, ns, loggedUser);
     }
 
@@ -294,6 +298,10 @@ public class NewsJpaDao implements NewsDao {
 
 
     Page<News> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
+
+        int totalPages = getTotalPagesNewsFromUser(user);
+        page = Math.min(page, totalPages);
+
         Query query  = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE creator = :userId order by " + ns.getQueryPaged())
                 .setParameter("userId", user.getId());
         List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
@@ -301,32 +309,41 @@ public class NewsJpaDao implements NewsDao {
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
-        return new Page<>(news, page, getTotalPagesNewsFromUser(user));
+        return new Page<>(news, page, totalPages);
     }
 
     Page<News> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser) {
+
+        int totalPages = getTotalPagesNewsFromUser(user);
+        page = Math.min(page, totalPages);
+
         Query query = entityManager.createNativeQuery("SELECT news_id FROM saved_news NATURAL JOIN news f WHERE user_id = :userId order by " + ns.getQueryPaged())
                 .setParameter("userId", user.getId());
         List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
-        return new Page<>(news, page, getTotalPagesNewsFromUser(user));
+        return new Page<>(news, page, totalPages);
     }
 
 
 
     private Page<News> getNewsWithRatingFromUser(int page, User user, NewsOrder ns, Long loggedUser, boolean upvote) {
-        Map<NewsOrder, String> map = new HashMap<>();
+        /*Map<NewsOrder, String> map = new HashMap<>();
         map.put(NewsOrder.NEW, "u.news.date desc");
-        map.put(NewsOrder.TOP, "u.news.accesses desc"); // TODO es feo pero por ahora no se me ocurre otra cosa
+        map.put(NewsOrder.TOP, "u.news.accesses desc"); */
+        // TODO es feo pero por ahora no se me ocurre otra cosa
+
+        int totalPages = getTotalPagesNewsFromUserRating(user.getId(), upvote);
+        page = Math.min(page, totalPages);
+
         Query query = entityManager.createNativeQuery("SELECT news_id FROM upvotes NATURAL JOIN news f WHERE upvote = :value AND user_id = :userId order by " + ns.getQueryPaged())
                 .setParameter("value", upvote).setParameter("userId", user.getId());
         List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
-        return new Page<>(news, page, getTotalPagesNewsFromUserRating(user.getId(), upvote));
+        return new Page<>(news, page, totalPages);
     }
 
     Page<News> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
