@@ -65,7 +65,6 @@ public class User {
 
     public User(User.UserBuilder userBuilder) {
         this();
-        //this.userId = userBuilder.userId;
         this.email = userBuilder.email;
         this.username = userBuilder.username;
         this.pass = userBuilder.pass;
@@ -81,6 +80,13 @@ public class User {
                 .stream().map(upvote -> upvote.isValue() ? 0 : 1)
                 .reduce(0, Integer::sum);
         positivityStats = new PositivityStats(upvotes, downvotes);
+    }
+
+    public void removeAdminRole(){
+        roles.forEach(System.out::println);
+        System.out.println("Aaaaaaaaaaaaaaaaaaaaaaaaaa");
+        roles.remove(Role.ROLE_ADMIN);
+        roles.forEach(System.out::println);
     }
 
     public Set<Upvote> getUpvoteSet() {
