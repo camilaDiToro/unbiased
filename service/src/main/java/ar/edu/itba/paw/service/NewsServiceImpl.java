@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.ws.http.HTTPException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -134,6 +132,12 @@ public class NewsServiceImpl implements NewsService {
     public void deleteNews(News news) {
         newsDao.deleteNews(news);
     }
+
+//    @Override
+//    public Map<Long,Boolean> hasReportedComments(News news) {
+//        Page<Comment> comments = newsService.getComments(news,page);
+//        Map<Long, Boolean> hasReportedComment = new HashMap<>();
+//    }
 
     @Override
     public Iterable<ProfileCategory> getProfileCategories(User user) {

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.model.news;
 
+import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.user.User;
 
 import javax.persistence.*;
@@ -7,6 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.List;
 import java.util.Locale;
 
 @Entity
@@ -44,8 +46,27 @@ public class Comment {
     @Column(name = "commented_date")
     Timestamp commentedDate;
 
+    public List<ReportedComment> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<ReportedComment> reports) {
+        this.reports = reports;
+    }
+
+    @OneToMany(mappedBy = "comment")
+    List<ReportedComment> reports;
+
     @Transient
     LocalDateTime date;
+
+    public News getNews() {
+        return news;
+    }
+
+    public void setNews(News news) {
+        this.news = news;
+    }
 
     @ManyToOne
     @JoinColumn(name="news_id", nullable=false)
@@ -67,6 +88,13 @@ public class Comment {
         this(user, comment, news);
         this.date = date;
         this.commentedDate = Timestamp.valueOf(date);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Comment))
+            return false;
+        return id.equals(((Comment) obj).id);
     }
 
     @PostLoad
