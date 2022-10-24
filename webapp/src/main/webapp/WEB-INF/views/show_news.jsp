@@ -311,14 +311,18 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form:form modelAttribute="reportCommentForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-100">
-
+                                    <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-100">
+                                    <%--<form:form modelAttribute="reportCommentForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-100">--%>
                                     <div class="input-group">
-
+                                        <c:forEach var="item" items="${reportReasons}">
+                                            <div class="form-check w-100">
+                                                <spring:message code="${item.interCode}" var="code"/>
+                                                <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}" label="${code}"/>
+                                            </div>
+                                        </c:forEach>
                                     </div>
                                     <div class="w-100">
                                         <form:errors cssClass="text-danger" path="reason" element="p"/>
-
                                     </div>
 
                                     </div>
