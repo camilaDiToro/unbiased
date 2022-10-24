@@ -68,6 +68,21 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Async
+    @Override
+    public void sendAdminEmail(User user, Locale locale) {
+        final String to = user.getEmail();
+        final String subject = messageSource.getMessage("email.admin.subject",null,locale);
+        Map<String, Object> data = new HashMap<>();
+        //data.put("verificationUrl",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-admin.html",data,locale);
+            LOGGER.info("Admin email sent to {}", user.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("Admin email could not be sent to {}",user.getEmail());
+        }
+    }
+
     /* https://www.baeldung.com/spring-email-templates */
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();

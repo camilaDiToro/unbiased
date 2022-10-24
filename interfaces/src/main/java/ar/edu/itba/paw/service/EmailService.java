@@ -6,4 +6,5 @@ import java.util.Locale;
 
 public interface EmailService {
     void sendVerificationEmail(User user, VerificationToken token, Locale locale);
+    void sendAdminEmail(User user, Locale locale);
 }
