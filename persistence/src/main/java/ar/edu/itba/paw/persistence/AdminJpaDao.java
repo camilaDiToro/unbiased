@@ -49,7 +49,7 @@ public class AdminJpaDao implements AdminDao{
     @Override
     public Page<News> getReportedNews(int page, ReportOrder reportOrder) {
         Query query = entityManager.createNativeQuery(
-                "SELECT news_id FROM (report n NATURAL JOIN news GROUP BY news_id ORDER BY "
+                "SELECT news_id FROM report n NATURAL JOIN news GROUP BY news_id ORDER BY "
                         + reportOrder.getQuery() +" LIMIT :limit OFFSET :offset")
                 .setParameter("limit",PAGE_SIZE)
                 .setParameter("offset",(page-1)*PAGE_SIZE);
@@ -97,16 +97,30 @@ public class AdminJpaDao implements AdminDao{
         Map<Long, Comment> map = new HashMap<>();
         for (Comment reportedComment : reportedComments) {
             map.put(reportedComment.getId(), reportedComment);
-        }
+         }
         // map id -> news
         reportedComments =  ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
 
-        return new Page<>(reportedComments,page,Page.getPageCount(reportedComments.size(), PAGE_SIZE));
+        return new Page<>(reportedComments,page,Page.getPageCount(getReportedCommentTotal(), PAGE_SIZE));
+    }
+
+    private int getReportedCommentTotal() {
+        int total =  ((Number) entityManager.createNativeQuery(
+                "SELECT count(comment_id) FROM comment_report").getSingleResult()).intValue();
+        return total;
     }
 
     @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
         List<ReportDetail> rd = news.getReports();
+        int totalPages = Page.getPageCount(rd.size(), PAGE_SIZE);
+        page = Math.min(Math.max(page, 1), totalPages);
+        return new Page<>(rd.subList((page-1)*PAGE_SIZE, Math.min(rd.size(), page*PAGE_SIZE)), page, totalPages);
+    }
+
+    @Override
+    public Page<ReportedComment> getReportedCommentDetail(int page, Comment comment) {
+        List<ReportedComment> rd = comment.getReports();
         int totalPages = Page.getPageCount(rd.size(), PAGE_SIZE);
         page = Math.min(Math.max(page, 1), totalPages);
         return new Page<>(rd.subList((page-1)*PAGE_SIZE, Math.min(rd.size(), page*PAGE_SIZE)), page, totalPages);

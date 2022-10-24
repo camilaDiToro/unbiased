@@ -10,7 +10,7 @@
 <%@ include file="../../resources/jsp/head.jsp" %>
 <script src="<c:url value="/resources/js/upvote-script.js"/>"></script>
 <body>
-<c:set var="newsList" value="${newsPage.content}"/>
+<c:set var="commentsList" value="${commentsPage.content}"/>
 <div class="d-flex h-100 flex-column">
 
 
@@ -31,7 +31,7 @@
                     <ul class="my-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex ">
                         <c:forEach var="order" items="${orders}">
                             <li class="nav-item">
-                                <a class="text-capitalize nav-link rounded-pill hover-pill ml-1 mr-1 <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_news/${order}">
+                                <a class="text-capitalize nav-link rounded-pill hover-pill ml-1 mr-1 <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/admin/reported_comments/${order}">
 
                     </c:url>"><spring:message code="${order.interCode}"/></a>
                             </li>
@@ -42,40 +42,39 @@
 
                 <%--CARDS--%>
                 <div class="tab">
-                    <c:if test="${empty newsList}" >
+                    <c:if test="${empty commentsList}" >
                         <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
                             <p class="lead">
-
-                                    <spring:message code="moderation.emptyArticles" arguments="${query}"/>
+                                    <spring:message code="moderation.emptyComments" arguments="${query}"/>
                             </p>
                         </div>
                     </c:if>
 
-                    <c:if test="${!empty newsList}">
+                    <c:if test="${!empty commentsList}">
 
                         <div class="container-fluid">
                             <div class="row row-cols-1">
                                 <c:set var="maxLength" value="${100}"/>
-                                <c:forEach var="reportedNews" items="${newsList}">
-                                    <c:set var="article" value="${reportedNews}"/>
+                                <c:forEach var="reportedComment" items="${commentsList}">
+                                    <c:set var="article" value="${reportedComment}"/>
 
-                                    <c:set var="newsId" value="${article.newsId}"/>
-                                <c:set var="creator" value="${reportedNews.creator}"/>
+                                    <c:set var="commentId" value="${reportedComment.id}"/>
+                                <c:set var="creator" value="${reportedComment.user}"/>
                                     <!-- Modal -->
-                                    <div class="modal fade" id="binModal${newsId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="binModal${commentId}" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
+                                                    <h5 class="modal-title" id="binModalLabel"><spring:message code="showNews.deleteCommentQuestion"/></h5>
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <spring:message code="profile.modal.msg"/>
+                                                    <spring:message code="showNews.deleteCommentBody"/>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <form method="post" action="<c:url value="/admin/reported_news/${newsId}/delete"/>">
+                                                    <form method="post" action="<c:url value="/admin/reported_comments/${commentId}/delete"/>">
                                                         <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
                                                     </form>
                                                 </div>
@@ -88,16 +87,15 @@
 
                                             <div>
                                                 <span class="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="moderation.reportsNum"/> " >
-                                                    <c:out value="${reportedNews.reports.size()}"/>
+                                                    <c:out value="${reportedComment.reports.size()}"/>
                                             </span>
                                             </div>
 
                                             <div class="d-flex flex-column justify-content-between w-100">
                                                 <div class="d-flex w-100 ">
                                                     <div class="card-body-home pt-0">
-                                                        <a href="<c:url value="/news/${article.newsId}"/>" class="link mh-10"><h5 class="text-ellipsis link-text"><c:out value="${article.title}"/></h5></a>
-                                                        <h6 class="card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
-                                                        <c:set var="timeAmount" value="${article.getAmountAgo()}"/>
+                                                        <a href="<c:url value="/news/${reportedComment.news.newsId}#comment-${reportedComment.id}"/>" class="link mh-10"><h5 class="text-ellipsis link-text">"<c:out value="${reportedComment.comment}"/>"</h5></a>
+                                                        <c:set var="timeAmount" value="${reportedComment.getAmountAgo()}"/>
                                                         <span class="font-weight-light"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
 
                                                     </div>
@@ -112,16 +110,16 @@
                                                                 <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
                                                             </c:if>
                                                         </div>
-                                                        <a href="<c:url value="/profile/${article.creatorId}"/>" class="link">
+                                                        <a href="<c:url value="/profile/${creator.userId}"/>" class="link">
                                                             <div class="card-name-text text-ellipsis-1 link-text">${creator}</div>
                                                         </a>
                                                     </div>
                                                     <div class="d-flex align-items-center mr-2" role="group">
 
-                                                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn bin-modal">
+                                                             <button data-toggle="modal" data-target="#binModal${commentId}" class="btn bin-modal">
                                                                 <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="bin-image" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                                                             </button>
-                                                            <a   class="font-weight-bold hover-hand link" href="<c:url value="/admin/reported_news_detail/${newsId}"/>">
+                                                            <a   class="font-weight-bold hover-hand link" href="<c:url value="/admin/reported_comment_detail/${commentId}"/>">
                                                                 <div class="link-text">
                                                                     <spring:message code="moderation.details"/>
                                                                 </div>
@@ -144,22 +142,22 @@
 
         </div>
 
-        <c:if test="${not empty newsList}">
+        <c:if test="${not empty commentsList}">
             <nav class="d-flex justify-content-center align-items-center">
                 <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news/${newsOrder}">
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_comments/${orderBy}">
                         <c:param name = "page" value = "1"/>
                         </c:url>"><spring:message code="home.pagination.first"/></a></li>
 
 
-                    <c:forEach var = "i" begin = "${newsPage.minPage}" end = "${newsPage.maxPage}">
-                        <li class="page-item"><a class="page-link ${i == newsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/admin/reported_news/${newsOrder}">
+                    <c:forEach var = "i" begin = "${commentsPage.minPage}" end = "${commentsPage.maxPage}">
+                        <li class="page-item"><a class="page-link ${i == commentsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/admin/reported_comments/${orderBy}">
                         <c:param name = "page" value = "${i}"/>
                         </c:url>"><c:out value="${i}"/></a></li>
                     </c:forEach>
 
-                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news/${newsOrder}">
-                        <c:param name = "page" value = "${newsPage.totalPages}"/>
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_comments/${orderBy}">
+                        <c:param name = "page" value = "${commentsPage.totalPages}"/>
                         </c:url>"><spring:message code="home.pagination.last"/></a></li>
                 </ul>
             </nav>

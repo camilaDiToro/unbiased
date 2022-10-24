@@ -66,6 +66,11 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
+    public Page<ReportedComment> getReportedCommentDetail(int page, Comment comment) {
+        return adminDao.getReportedCommentDetail(page, comment);
+    }
+
+    @Override
     public boolean hasReported(News news) {
         return adminDao.hasReported(news, getLoggedUserId());
     }
@@ -73,6 +78,11 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public void deleteNews(News news) {
         newsService.deleteNews(news);
+    }
+
+    @Override
+    public void deleteComment(Comment comment) {
+        newsService.deleteComment(comment.getId());
     }
 
     @Override

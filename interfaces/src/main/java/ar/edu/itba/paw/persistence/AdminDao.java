@@ -16,5 +16,8 @@ public interface AdminDao {
     Page<Comment> getReportedComment(int page, ReportOrder reportOrder);
 
     Page<ReportDetail> getReportedNewsDetail(int page, News news);
+
+    Page<ReportedComment> getReportedCommentDetail(int page, Comment comment);
+
     boolean hasReported(News news, Long loggedUser);
 }

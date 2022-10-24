@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedComment;
+import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;
@@ -26,9 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class NewsController {
@@ -70,6 +70,17 @@ public class NewsController {
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
+    @RequestMapping(value = "/news/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
+    public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                   final BindingResult errors) {
+        if (errors.hasErrors()) {
+            return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1);
+        }
+        Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
+        adminService.reportComment(comment, ReportReason.valueOf(reportNewsFrom.getReason()));
+        return new ModelAndView("redirect:/news/" + comment.getNews().getNewsId() + "#" + "comment-" + commentId);
+    }
+
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
     public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm")
                                             final CommentNewsForm commentNewsForm, final BindingResult errors) {
@@ -96,7 +107,12 @@ public class NewsController {
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         Locale locale = LocaleContextHolder.getLocale();
 
-        return mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
+//        adminService.reportComment(newsService.getComments(news, 1).getContent().get(0), ReportReason.INAP);
+
+        Page<Comment> comments = newsService.getComments(news,page);
+
+
+        MyModelAndView.Builder builder =  mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
                 .withObject("fullNews", news)
                 .withObject("hasReported", adminService.hasReported(news))
@@ -106,7 +122,19 @@ public class NewsController {
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", locale)
                 .withObject("commentsPage", newsService.getComments(news,page))
-                .withObject("categories", newsService.getNewsCategory(news)).build();
+                .withObject("categories", newsService.getNewsCategory(news));
+
+        Optional<User> loggedUser = securityService.getCurrentUser();
+
+        Map<Long, Boolean> hasReportedComment;
+        if (loggedUser.isPresent()) {
+            hasReportedComment = new HashMap<>();
+            User user = loggedUser.get();
+            comments.getContent().forEach(c -> hasReportedComment.put(c.getId(), user.hasReportedComment(c)));
+            builder.withObject("hasReportedCommentMap", hasReportedComment);
+        }
+
+        return builder.build();
 
     }
 

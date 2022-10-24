@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.admin.ReportedNews;
+import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
@@ -61,6 +62,7 @@ public class AdminController {
         return mavBuilderSupplier.supply("moderation_panel_reported_news", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", ReportOrder.values())
+                .withObject("item", "news")
                 .withObject("orderBy", ReportOrder.valueOf(newsOrder)).build();
     }
 
@@ -69,10 +71,11 @@ public class AdminController {
                                      @PathVariable("commentOrder") String commentOrder) {
 
 
-        Page<Comment> reportedNewsPage = adminService.getReportedComments(page, commentOrder);
+        Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, commentOrder);
         return mavBuilderSupplier.supply("moderation_panel_reported_comments", "pageTitle.moderationPanel", TextType.INTERCODE)
-                .withObject("newsPage", reportedNewsPage)
+                .withObject("commentsPage", reportedCommentsPage)
                 .withObject("orders", ReportOrder.values())
+                .withObject("item", "comments")
                 .withObject("orderBy", ReportOrder.valueOf(commentOrder)).build();
     }
 
@@ -88,6 +91,11 @@ public class AdminController {
         return new ModelAndView("redirect:/admin/reported_news/" + ReportOrder.values()[0].name());
     }
 
+    @RequestMapping("/admin/reported_comments")
+    public ModelAndView reportedCommentsRedirect() {
+        return new ModelAndView("redirect:/admin/reported_comments/" + ReportOrder.values()[0].name());
+    }
+
 
     @RequestMapping("/admin/reported_news_detail/{newsId:[0-9]+}")
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
@@ -97,6 +105,19 @@ public class AdminController {
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("newsId", newsId)
+                .withObject("item", "news")
+                .build();
+    }
+
+    @RequestMapping("/admin/reported_comment_detail/{commentId:[0-9]+}")
+    public ModelAndView reportedCommentDetail(@PathVariable("commentId") long commentId,
+                                           @RequestParam(name = "page", defaultValue = "1") int page) {
+        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page,newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
+        return mavBuilderSupplier.supply("moderation_panel_reported_comment_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
+                .withObject("reportedCommentPage", reportedCommentPage)
+                .withObject("locale", LocaleContextHolder.getLocale())
+                .withObject("commentId", commentId)
+                .withObject("item", "comments")
                 .build();
     }
 
@@ -104,6 +125,12 @@ public class AdminController {
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
         adminService.deleteNews(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
         return new ModelAndView("redirect:/admin/reported_news");
+    }
+
+    @RequestMapping(value = "/admin/reported_comments/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
+    public ModelAndView deleteComment(@PathVariable("commentId") long commentId) {
+        adminService.deleteComment(newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
+        return new ModelAndView("redirect:/admin/reported_comments");
     }
 
 

@@ -1,19 +1,25 @@
 package ar.edu.itba.paw.model.admin;
 
 
+import ar.edu.itba.paw.model.converter.LocalDateTimeConverter;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 
 @Entity
-@Table(name="comment_report")
+@Table(name="comment_report",
+        uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "comment_id" }) } )
+
 public class ReportedComment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reported_comments_seq")
     @SequenceGenerator(name="reported_comments_seq", sequenceName = "reported_comments_seq", allocationSize = 1)
-
+    @Column(name = "id")
     private long id;
 
     public Comment getComment() {
@@ -40,12 +46,12 @@ public class ReportedComment {
         this.creationDate = creationDate;
     }
 
-    public ReportReason getReportReason() {
-        return reportReason;
+    public ReportReason getReason() {
+        return reason;
     }
 
-    public void setReportReason(ReportReason reportReason) {
-        this.reportReason = reportReason;
+    public void setReason(ReportReason reason) {
+        this.reason = reason;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,14 +63,25 @@ public class ReportedComment {
     private User reporter;
 
     @Column(name="report_date")
+    @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime creationDate;
 
-    private ReportReason reportReason;
+    private ReportReason reason;
 
-    public ReportedComment(Comment comment, User reporter, ReportReason reportReason) {
+    public ReportedComment(Comment comment, User reporter, ReportReason reason) {
         this.comment = comment;
         this.creationDate = LocalDateTime.now();
         this.reporter = reporter;
-        this.reportReason = reportReason;
+        this.reason = reason;
+    }
+
+    public String getFormattedDate(Locale locale) {
+        return creationDate
+                .format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
+                        .withLocale( locale));
+    }
+
+    ReportedComment() {
+        // hibernate
     }
 }

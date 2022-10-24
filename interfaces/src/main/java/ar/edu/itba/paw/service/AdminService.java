@@ -20,6 +20,12 @@ public interface AdminService {
 
     Page<ReportDetail> getReportedNewsDetail(int page, News news);
     void deleteNews(News news);
+
+    void deleteComment(Comment comment);
+
     void makeUserAdmin(User user);
+
+    Page<ReportedComment> getReportedCommentDetail(int page, Comment comment);
+
     boolean hasReported(News news);
 }

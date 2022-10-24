@@ -2,6 +2,7 @@ package ar.edu.itba.paw.model.user;
 
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.Comment;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -43,6 +44,25 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private Collection<Role> roles;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @JoinTable(name = "comment_report",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "comment_id",
+                    referencedColumnName = "id"
+            ))
+    private Collection<Comment> reports;
+
+    public Collection<Comment> getReports() {
+        return reports;
+    }
+
+    public void setReports(Collection<Comment> reports) {
+        this.reports = reports;
+    }
+
+
 
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Saved> savedNews;
@@ -89,6 +109,10 @@ public class User {
 
     public void setUpvoteSet(Set<Upvote> upvoteSet) {
         this.upvoteSet = upvoteSet;
+    }
+
+    public boolean hasReportedComment(Comment comment) {
+        return reports.contains(comment);
     }
 
     public void setStatus(UserStatus status) {

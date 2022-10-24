@@ -12,7 +12,7 @@
   <ul class="nav flex-column vertical-menu ">
     <li class="nav-item">
       <div class="d-flex flex-row pt-2 pl-2 bg-hover">
-        <a class="mb-2 nav-link selected pl-0" href="<c:url value="/admin/reported_news"/>">
+        <a class="mb-2 nav-link selected pl-0 ${item == 'news' ? 'select' : ''}"" href="<c:url value="/admin/reported_news"/>">
           <img class="mb-2 moderation-img" src="<c:url value="/resources/images/warning-svgrepo-com.svg"/>" alt="...">
           <spring:message code="moderation.reportedArticles"/>
         </a>
@@ -20,7 +20,7 @@
     </li>
     <li>
       <div class="d-flex flex-row pt-2 pl-2 bg-hover">
-        <a class="mb-2 nav-link selected pl-0" href="<c:url value="/admin/add_admin_page"/>">
+        <a class="mb-2 nav-link selected pl-0 ${item == 'comments' ? 'select' : ''}" href="<c:url value="/admin/reported_comments"/>">
           <img class="mb-2 moderation-img" src="<c:url value="/resources/images/cancel-comment.svg"/>" alt="...">
           <spring:message code="moderation.reportedComments"/>
         </a>
