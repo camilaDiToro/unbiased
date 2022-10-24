@@ -3,8 +3,10 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
+import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.service.*;
@@ -56,10 +58,22 @@ public class AdminController {
 
 
         Page<News> reportedNewsPage = adminService.getReportedNews(page, newsOrder);
-        return mavBuilderSupplier.supply("moderation_panel", "pageTitle.moderationPanel", TextType.INTERCODE)
+        return mavBuilderSupplier.supply("moderation_panel_reported_news", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", ReportOrder.values())
                 .withObject("orderBy", ReportOrder.valueOf(newsOrder)).build();
+    }
+
+    @RequestMapping(value = "/admin/reported_comments/{commentOrder}", method = RequestMethod.GET)
+    public ModelAndView reportedComments(@RequestParam(name = "page", defaultValue = "1") int page,
+                                     @PathVariable("commentOrder") String commentOrder) {
+
+
+        Page<Comment> reportedNewsPage = adminService.getReportedComments(page, commentOrder);
+        return mavBuilderSupplier.supply("moderation_panel_reported_comments", "pageTitle.moderationPanel", TextType.INTERCODE)
+                .withObject("newsPage", reportedNewsPage)
+                .withObject("orders", ReportOrder.values())
+                .withObject("orderBy", ReportOrder.valueOf(commentOrder)).build();
     }
 
     @RequestMapping(value = "/admin/add_admin_page", method = RequestMethod.GET)
@@ -79,7 +93,7 @@ public class AdminController {
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
         Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
-        return mavBuilderSupplier.supply("moderation_panel_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
+        return mavBuilderSupplier.supply("moderation_panel_reported_news_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("newsId", newsId)
