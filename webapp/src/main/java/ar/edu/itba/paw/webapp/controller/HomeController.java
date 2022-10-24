@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+
 
 @Controller
 public class HomeController {
@@ -22,20 +25,16 @@ public class HomeController {
     private final SecurityService securityService;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
-    private final OwnerService ownerService;
-
     @Autowired
-    public HomeController(final UserService userService, final NewsService newsService, SecurityService securityService, OwnerService ownerService){
+    public HomeController(final UserService userService, final NewsService newsService, SecurityService securityService){
         this.userService = userService;
         this.newsService = newsService;
         this.securityService = securityService;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
-        this.ownerService = ownerService;
     }
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        ownerService.deleteUserAdmin(userService.getUserById(2).orElseThrow(UserNotFoundException::new));
         return new ModelAndView("redirect:/" + NewsOrder.values()[0]);
     }
 

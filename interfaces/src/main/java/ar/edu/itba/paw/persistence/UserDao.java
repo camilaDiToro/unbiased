@@ -20,4 +20,5 @@ public interface UserDao {
     User merge(User user);
     boolean isFollowing(long userId, long followId);
     Page<User> searchUsers(int page, String search);
+    Page<User> getAdmins(int page, String search);
 }

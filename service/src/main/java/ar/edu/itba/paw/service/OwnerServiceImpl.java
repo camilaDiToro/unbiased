@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.UserDao;
@@ -29,5 +30,10 @@ public class OwnerServiceImpl implements OwnerService{
     public void deleteUserAdmin(User user) {
         userDao.merge(user);
         user.removeAdminRole();
+    }
+
+    @Override
+    public Page<User> getAdmins(int page, String search) {
+        return userDao.getAdmins(page,search);
     }
 }

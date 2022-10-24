@@ -3,10 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.user.Follow;
-import ar.edu.itba.paw.model.user.Upvote;
-import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.user.UserStatus;
+import ar.edu.itba.paw.model.user.*;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.*;
@@ -136,6 +134,21 @@ public class UserJpaDao implements UserDao{
         return new Page<>(users, page,totalPages);
     }
 
+    @Override
+    public Page<User> getAdmins(int page, String search) {
+
+        page = Math.max(page, 1);
+        search = search == null ? "" : search;
+        int totalPages = getTotalPagesGetAdmins(search);
+        page = Math.min(page, totalPages);
+
+        Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) " +
+                "and u.status != 'UNABLE' and user_role.user_role = 'ROLE_ADMIN' LIMIT :pageSize OFFSET :offset").setParameter("query", "%" + search.toLowerCase() + "%");;
+
+        List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
+        return new Page<>(users, page,totalPages);
+    }
+
     private List<User> getUsersOfPage(Query query,int page, int pageSize) {
         @SuppressWarnings("unchecked")
         List<Long> ids = JpaUtils.getIdsOfPage(query, page, pageSize);
@@ -161,5 +174,12 @@ public class UserJpaDao implements UserDao{
         long count = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) and u.status != 'UNABLE'", Long.class)
                 .setParameter("query", "%" + search.toLowerCase() + "%").getSingleResult();
         return Page.getPageCount(count, SEARCH_PAGE_SIZE);
+    }
+
+    private int getTotalPagesGetAdmins(String search){
+        BigInteger count = (BigInteger) entityManager.createNativeQuery("SELECT count(distinct user_id) FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) " +
+                        "and u.status != 'UNABLE' and user_role.user_role = 'ROLE_ADMIN'")
+                        .setParameter("query", "%" + search.toLowerCase() + "%").getResultList().get(0);
+        return Page.getPageCount(count.longValue(), SEARCH_PAGE_SIZE);
     }
 }
