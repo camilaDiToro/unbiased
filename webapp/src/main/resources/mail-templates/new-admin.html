@@ -61,8 +61,8 @@
 
 <div class="contenedor">
   <div style="margin:auto; text-align: center">
-    <h4 class="h-color" th:text="">Tenes un nuevo rol!</h4>
-    <p class="p-color" th:text="">username ahora sos moderador</p>
+    <h4 class="h-color" th:text="#{email.admin.add}"></h4>
+    <p class="p-color" th:text="#{email.admin.user}"></p>
   </div>
 </div>
 
@@ -75,7 +75,7 @@
 
 <br/>
 <div style="text-align: center">
-  <p class="h-color" th:text="">Podes ver los nuevos permisos que tenes haciendo click</p>
+  <p class="h-color" th:text="#{email.admin.panel}"></p>
 </div>
 <div style="align-items: center;justify-content: center; display: flex" >
   <a th:text="#{email.verification.click}" style=" text-decoration: none!important;" th:href="${verificationUrl}" class="btn btn-md btn-info btn-share takeme">
