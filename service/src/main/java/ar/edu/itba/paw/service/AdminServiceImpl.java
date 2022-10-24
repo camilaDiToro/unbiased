@@ -5,15 +5,15 @@ import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.AdminDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Locale;
 
 @Service
 public class AdminServiceImpl implements AdminService{
@@ -21,13 +21,15 @@ public class AdminServiceImpl implements AdminService{
     private final AdminDao adminDao;
     private final NewsService newsService;
     private final SecurityService securityService;
+    private final EmailService emailService;
     private final UserDao userDao;
 
     @Autowired
-    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, SecurityService securityService, UserDao userDao) {
+    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, SecurityService securityService, EmailService emailService, UserDao userDao) {
         this.adminDao = adminDao;
         this.newsService = newsService;
         this.securityService = securityService;
+        this.emailService = emailService;
         this.userDao = userDao;
     }
     private Long getLoggedUserId() {
@@ -59,6 +61,9 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public void deleteNews(News news) {
+        Locale locale = LocaleContextHolder.getLocale();
+        LocaleContextHolder.setLocale(locale, true);
+        emailService.sendNewsDeletedEmail(news.getCreator(), news, locale);
         newsService.deleteNews(news);
     }
 }

@@ -28,7 +28,6 @@ public class OwnerServiceImpl implements OwnerService{
     public void makeUserAdmin(User user) {
         userDao.merge(user);
         if(!user.getRoles().contains(Role.ROLE_ADMIN)){
-            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             user.addRole(Role.ROLE_ADMIN);
             Locale locale = LocaleContextHolder.getLocale();
             LocaleContextHolder.setLocale(locale, true);

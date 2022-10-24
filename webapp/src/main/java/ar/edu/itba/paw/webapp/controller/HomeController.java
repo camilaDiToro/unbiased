@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
@@ -19,23 +18,17 @@ public class HomeController {
 
     private final UserService userService;
     private final NewsService newsService;
-    private final SecurityService securityService;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
-    private final OwnerService ownerService;
-
     @Autowired
-    public HomeController(final UserService userService, final NewsService newsService, SecurityService securityService, OwnerService ownerService){
+    public HomeController(final UserService userService, final NewsService newsService, SecurityService securityService){
         this.userService = userService;
         this.newsService = newsService;
-        this.securityService = securityService;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
-        this.ownerService = ownerService;
     }
 
     @RequestMapping("/")
     public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-        ownerService.makeUserAdmin(userService.getUserById(11).orElseThrow(UserNotFoundException::new));
         return new ModelAndView("redirect:/" + NewsOrder.values()[0]);
     }
 
@@ -74,9 +67,7 @@ public class HomeController {
         final boolean isActive = payload.isActive();
 
         News news = newsService.getOrThrowException(newsId);
-
         newsService.setRating(news, isActive ? action : Rating.NO_RATING);
-
 
         return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
     }
