@@ -2,7 +2,8 @@ package ar.edu.itba.paw.model.user;
 
 public enum Role {
     ROLE_JOURNALIST("ROLE_JOURNALIST"),
-    ROLE_ADMIN("ROLE_ADMIN");
+    ROLE_ADMIN("ROLE_ADMIN"),
+    ROLE_OWNER("ROLE_OWNER");
 
     private final String role;
     Role(String role){
