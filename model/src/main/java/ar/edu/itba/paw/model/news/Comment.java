@@ -60,6 +60,8 @@ public class Comment {
     @Transient
     LocalDateTime date;
 
+    private boolean deleted;
+
     public News getNews() {
         return news;
     }
@@ -95,6 +97,14 @@ public class Comment {
         if (!(obj instanceof Comment))
             return false;
         return id.equals(((Comment) obj).id);
+    }
+
+    public boolean getDeleted() {
+        return deleted;
+    }
+
+    public void delete() {
+        deleted = true;
     }
 
     @PostLoad

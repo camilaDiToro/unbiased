@@ -259,11 +259,21 @@
 
                             <div class="d-flex justify-content-between p-2 w-100">
                                 <div class="d-flex align-items-center w-auto gap-1">
-                                    <p name="comment-${comment.id}" id="comment-${comment.id}" class="comment-text"><c:out value="${comment.comment}"/></p>
+<%--                                    ${comment.deleted}--%>
+                                    <c:choose>
+                                        <c:when test="${comment.deleted}">
+                                            <p name="comment-${comment.id}" id="comment-${comment.id}" class="comment-text font-italic"><spring:message code="showNews.deletedComment"/></p>
+
+                                        </c:when>
+                                        <c:otherwise>
+                                            <p name="comment-${comment.id}" id="comment-${comment.id}" class="comment-text"><c:out value="${comment.comment}"/></p>
+
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                                 <div class="d-flex align-items-center float-sm-right">
                                     <div data-toggle="modal" data-target="#binModal${comment.id}" class="svg-btn hover-hand ">
-                                        <c:if test="${loggedUser != null && comment.user.id == loggedUser.id}">
+                                        <c:if test="${loggedUser != null && !comment.deleted && comment.user.id == loggedUser.id}">
                                             <spring:message code="showNews.deleteComment" var="deleteComment"/>
                                             <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="${deleteComment}"/>
                                         </c:if>
@@ -288,7 +298,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <c:if test="${loggedUser != null }">
+                                    <c:if test="${loggedUser != null && !comment.deleted}">
                                         <c:set var="hasReportedComment" value="${hasReportedCommentMap.get(comment.id)}"/>
 
                                         <c:choose>

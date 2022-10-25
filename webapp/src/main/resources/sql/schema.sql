@@ -134,6 +134,9 @@ ALTER TABLE comments ADD CONSTRAINT comments_unique UNIQUE(news_id, user_id, com
 ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_pkey CASCADE;
 ALTER TABLE comments ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
 
+ALTER TABLE comments ADD COLUMN IF NOT EXISTS deleted BOOLEAN;
+UPDATE comments set deleted = FALSE WHERE deleted IS NULL;
+
 
 
 
