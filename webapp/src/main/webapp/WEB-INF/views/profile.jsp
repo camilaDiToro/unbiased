@@ -223,10 +223,10 @@
                             <div class="info-function d-flex flex-row mb-3">
 
                                 <div class="d-flex">
-                                    <spring:message code="profile.modal.infoChangeUsername"/>
+                                    1. <spring:message code="profile.modal.infoChangeUsername"/>
                                 </div>
 
-                                <div class="d-flex info-enabled">
+                                <div class="d-flex info-enabled info-custom-box">
                                     <spring:message code="profile.modal.enabled"/>
                                 </div>
                             </div>
@@ -234,10 +234,10 @@
                             <div class="info-function d-flex flex-row mb-3">
 
                                 <div class="d-flex">
-                                    <spring:message code="profile.modal.infoChangeProfileimg"/>
+                                    2. <spring:message code="profile.modal.infoChangeProfileimg"/>
                                 </div>
 
-                                <div class="d-flex info-enabled">
+                                <div class="d-flex info-enabled info-custom-box">
                                     <spring:message code="profile.modal.enabled"/>
                                 </div>
                             </div>
@@ -245,17 +245,17 @@
                             <div class="info-function d-flex flex-row">
 
                                 <div class="d-flex">
-                                    <div><spring:message code="profile.modal.infoChangeAddDescription"/></div>
+                                    3. <spring:message code="profile.modal.infoChangeAddDescription"/>
                                 </div>
 
                                 <c:if test="${isJournalist}">
-                                    <div class="d-flex info-enabled">
+                                    <div class="d-flex info-enabled info-custom-box">
                                         <spring:message code="profile.modal.enabled"/>
                                     </div>
                                 </c:if>
 
                                 <c:if test="${!isJournalist}">
-                                    <div class="d-flex info-disabled">
+                                    <div class="d-flex info-disabled info-custom-box" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.infoDisabled"/> ">
                                         <spring:message code="profile.modal.disabled"/>
                                     </div>
                                 </c:if>

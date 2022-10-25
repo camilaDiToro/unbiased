@@ -227,17 +227,16 @@
 .info-function{
     padding: 14px 24px;
     border: 1px solid #606060;
+    border-radius: 4px;
 }
 
 .info-profile-btn:focus{
     outline: none;
 }
 
-.info-enabled{
+.info-custom-box{
     position: absolute;
     right: 35px;
-    color: green;
-    background-color: #28352b;
     font-size: 13px;
     margin-left: 8px;
     margin-right: 16px;
@@ -245,20 +244,19 @@
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     line-height: 20px;
+    width: 85px;
+    justify-content: center;
+    cursor: default;
+}
+
+.info-enabled{
+    color: green;
+    background-color: #28352b;
 }
 
 .info-disabled{
-    position: absolute;
-    right: 35px;
     color: #aaa;
     background-color: #606060;
-    font-size: 13px;
-    margin-left: 8px;
-    margin-right: 16px;
-    padding: 4px 8px;
-    font-weight: 500;
-    -webkit-font-smoothing: antialiased;
-    line-height: 20px;
 }
 
 .reports-indicator {
