@@ -204,6 +204,68 @@
                 <img src="<c:url value="/resources/images/${profilePositivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${profilePositivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${profilePositivityStats.getInteractions()}"/>" />
 
             </c:if>
+
+            <button data-toggle="modal" data-target="#infoModal" class="info-profile-btn bg-transparent border-0" style="background-image: url('<c:url value="/resources/images/info-svgrepo-com.svg"/>')"></button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="infomodal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="infoModalLabel"><spring:message code="profile.modal.infoTitle"/></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h6><spring:message code="profile.modal.infoAllowedMsg"/></h6>
+
+                            <div class="info-function d-flex flex-row mb-3">
+
+                                <div class="d-flex">
+                                    <spring:message code="profile.modal.infoChangeUsername"/>
+                                </div>
+
+                                <div class="d-flex info-enabled">
+                                    <spring:message code="profile.modal.enabled"/>
+                                </div>
+                            </div>
+
+                            <div class="info-function d-flex flex-row mb-3">
+
+                                <div class="d-flex">
+                                    <spring:message code="profile.modal.infoChangeProfileimg"/>
+                                </div>
+
+                                <div class="d-flex info-enabled">
+                                    <spring:message code="profile.modal.enabled"/>
+                                </div>
+                            </div>
+
+                            <div class="info-function d-flex flex-row">
+
+                                <div class="d-flex">
+                                    <div><spring:message code="profile.modal.infoChangeAddDescription"/></div>
+                                </div>
+
+                                <c:if test="${isJournalist}">
+                                    <div class="d-flex info-enabled">
+                                        <spring:message code="profile.modal.enabled"/>
+                                    </div>
+                                </c:if>
+
+                                <c:if test="${!isJournalist}">
+                                    <div class="d-flex info-disabled">
+                                        <spring:message code="profile.modal.disabled"/>
+                                    </div>
+                                </c:if>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <img src="<c:url value="/resources/images/front-page-profile.png"/>" class="card-img-top" alt="...">
 
             <div class="card-body">
