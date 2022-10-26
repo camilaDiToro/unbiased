@@ -39,12 +39,12 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
-    User user;
+    private User user;
     @Column(name = "comment")
-    String comment;
+    private String comment;
 
     @Column(name = "commented_date")
-    Timestamp commentedDate;
+    private Timestamp commentedDate;
 
     public List<ReportedComment> getReports() {
         return reports;
@@ -55,10 +55,10 @@ public class Comment {
     }
 
     @OneToMany(mappedBy = "comment")
-    List<ReportedComment> reports;
+    private List<ReportedComment> reports;
 
     @Transient
-    LocalDateTime date;
+    private LocalDateTime date;
 
     private boolean deleted;
 
@@ -72,7 +72,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name="news_id", nullable=false)
-    News news;
+    private News news;
 
     Comment() {
 
