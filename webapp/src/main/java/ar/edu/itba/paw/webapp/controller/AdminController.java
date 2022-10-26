@@ -11,17 +11,14 @@ import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.service.*;
-import ar.edu.itba.paw.webapp.form.CreateAdminForm;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
 
 @Controller
 public class AdminController {
@@ -41,17 +38,7 @@ public class AdminController {
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
-    @RequestMapping(value = "/admin/add_admin", method = RequestMethod.GET)
-    public ModelAndView addAdmin(@Valid @ModelAttribute("createAdminForm") CreateAdminForm form, final BindingResult errors) {
-        if (errors.hasErrors()){
-            return addAdminPanel(form);
-        }
 
-        adminService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
-        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
-                .withObject("addedAdmin", true)
-                .build();
-    }
 
     @RequestMapping(value = "/admin/reported_news/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
