@@ -192,6 +192,7 @@ public class UserServiceImpl implements UserService {
         return userDao.searchUsers(page, search);
     }
 
+
     @Override
     public ProfileCategory getProfileCategory(String category, User profile) {
         ProfileCategory cat;

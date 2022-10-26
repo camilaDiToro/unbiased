@@ -38,7 +38,6 @@ public class OwnerServiceImpl implements OwnerService{
     @Override
     @Transactional
     public void deleteUserAdmin(User user) {
-        userDao.merge(user);
         user.removeAdminRole();
     }
 

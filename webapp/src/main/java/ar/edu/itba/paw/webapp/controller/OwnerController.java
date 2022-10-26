@@ -10,10 +10,7 @@ import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -38,30 +35,36 @@ public class OwnerController {
     @RequestMapping(value = "/owner/add_admin", method = RequestMethod.POST)
     public ModelAndView addAdmin(@Valid @ModelAttribute("createAdminForm") CreateAdminForm form, final BindingResult errors) {
         if (errors.hasErrors()){
-            return addAdminPanel(form);
+            return addAdminPanel(form, 1, "");
         }
 
         ownerService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
         return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
+                .withObject("usersPage", ownerService.getAdmins(1, ""))
                 .withObject("addedAdmin", true)
                 .withObject("item", "manageAdmins")
-                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .build();
     }
 
-    @RequestMapping(value = "/owner/delete_admin_page/{userId:[0-9]+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/owner/delete_admin_page/{userId:[0-9]+}", method = RequestMethod.GET) // Pongo GET porque en html solo hay post y get
     public ModelAndView deleteAdmin(@PathVariable("userId") long userId) {
 
         ownerService.deleteUserAdmin(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
-        //TODO: return the correct view
-        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
-                .build();
+
+        return new ModelAndView("redirect:/owner/add_admin_page");
     }
 
     @RequestMapping(value = "/owner/add_admin_page", method = RequestMethod.GET)
-    public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form) {
+    public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form, @RequestParam(name = "page", defaultValue = "1") int page,
+                                      @RequestParam(name = "query", defaultValue = "") final String query) {
 
         return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
+                .withObject("usersPage", ownerService.getAdmins(page, query))
+                .withObject("item", "manageAdmins")
+//                .withObject("usersPage", userService.searchUsers(page, query))
+
                 .build();
     }
 }
