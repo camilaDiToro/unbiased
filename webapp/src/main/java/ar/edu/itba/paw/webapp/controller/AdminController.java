@@ -4,12 +4,12 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportedComment;
-import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
@@ -50,6 +50,7 @@ public class AdminController {
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", ReportOrder.values())
                 .withObject("item", "news")
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("orderBy", ReportOrder.valueOf(newsOrder)).build();
     }
 
@@ -63,14 +64,8 @@ public class AdminController {
                 .withObject("commentsPage", reportedCommentsPage)
                 .withObject("orders", ReportOrder.values())
                 .withObject("item", "comments")
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("orderBy", ReportOrder.valueOf(commentOrder)).build();
-    }
-
-    @RequestMapping(value = "/admin/add_admin_page", method = RequestMethod.GET)
-    public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form) {
-
-        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
-                .build();
     }
 
     @RequestMapping("/admin/reported_news")
@@ -92,6 +87,7 @@ public class AdminController {
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("newsId", newsId)
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("item", "news")
                 .build();
     }
@@ -104,6 +100,7 @@ public class AdminController {
                 .withObject("reportedCommentPage", reportedCommentPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("commentId", commentId)
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("item", "comments")
                 .build();
     }
