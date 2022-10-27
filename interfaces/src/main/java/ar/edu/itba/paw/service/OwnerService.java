@@ -5,7 +5,7 @@ import ar.edu.itba.paw.model.user.User;
 
 
 public interface OwnerService {
-    void makeUserAdmin(User user);
-    void deleteUserAdmin(User user);
+    void makeUserAdmin(String email);
+    void deleteUserAdmin(long userId);
     Page<User> getAdmins(int page, String search);
 }

@@ -136,8 +136,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateProfile(User user, String username, byte[] bytes, String dataType, String description) {
-        userDao.merge(user);
+    public void updateProfile(long userId, String username, byte[] bytes, String dataType, String description) {
+        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }

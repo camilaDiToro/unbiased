@@ -37,7 +37,7 @@ public class OwnerController {
             return addAdminPanel(form);
         }
 
-        ownerService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
+        ownerService.makeUserAdmin(form.getEmail());
         return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("addedAdmin", true)
                 .build();
@@ -46,7 +46,7 @@ public class OwnerController {
     @RequestMapping(value = "/owner/delete_admin_page/{userId:[0-9]+}", method = RequestMethod.DELETE)
     public ModelAndView addAdminPanel(@PathVariable("userId") long userId) {
 
-        ownerService.deleteUserAdmin(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        ownerService.deleteUserAdmin(userId);
         //TODO: return the correct view
         return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .build();

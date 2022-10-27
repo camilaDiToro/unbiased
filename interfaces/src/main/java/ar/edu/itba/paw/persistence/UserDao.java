@@ -17,7 +17,6 @@ public interface UserDao {
     void updateImage(User user, Image newImage, Image oldImage);
     void addFollow(long userId, long follows);
     void unfollow(long userId, long follows);
-    User merge(User user);
     boolean isFollowing(long userId, long followId);
     Page<User> searchUsers(int page, String search);
     Page<User> getAdmins(int page, String search);

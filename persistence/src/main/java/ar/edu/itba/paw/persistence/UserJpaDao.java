@@ -102,11 +102,6 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
-    public User merge(User user) {
-        return entityManager.merge(user);
-    }
-
-    @Override
     public void unfollow(long userId, long follows) {
         User user = getUserById(userId).get();
         user.getFollowing().remove(new Follow(userId, follows));
