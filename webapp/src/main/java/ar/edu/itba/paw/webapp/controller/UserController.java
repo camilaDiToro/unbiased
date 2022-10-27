@@ -116,9 +116,6 @@ public class UserController {
         Page<News> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
-
-
-
         MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", newsOrder)
@@ -128,6 +125,8 @@ public class UserController {
                 .withObject("profileUser", profileUser)
                 .withObject("userId", userId)
                 .withObject("hasErrors", hasErrors)
+                .withObject("following", userService.getFollowingCount(userId))
+                .withObject("followers", userService.getFollowersCount(userId))
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
