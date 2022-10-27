@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
 import org.slf4j.Logger;
@@ -65,6 +66,37 @@ public class EmailServiceImpl implements EmailService {
             LOGGER.info("Verification email sent to {}", user.getEmail());
         } catch (MessagingException e) {
             LOGGER.warn("Verification email could not be sent to {}",user.getEmail());
+        }
+    }
+
+    @Async
+    @Override
+    public void sendAdminEmail(User user, Locale locale) {
+        final String to = user.getEmail();
+        final String subject = messageSource.getMessage("email.admin.subject",null,locale);
+        Map<String, Object> data = new HashMap<>();
+        final String url = getUrl("admin/reported_news/REP_COUNT_DESC");
+        data.put("username", user.getUsername());
+        data.put("urlToAdminPanel",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-admin.html",data,locale);
+            LOGGER.info("Admin email sent to {}", user.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("Admin email could not be sent to {}",user.getEmail());
+        }
+    }
+
+    @Async
+    @Override
+    public void sendNewsDeletedEmail(User user, News news, Locale locale) {
+        final String to = user.getEmail();
+        final String subject = messageSource.getMessage("email.newsDeleted.subject",null,locale);
+        Map<String, Object> data = new HashMap<>();
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"news-deleted.html",data,locale);
+            LOGGER.info("News deleted email sent to {}", user.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("News deleted could not be sent to {}",user.getEmail());
         }
     }
 
