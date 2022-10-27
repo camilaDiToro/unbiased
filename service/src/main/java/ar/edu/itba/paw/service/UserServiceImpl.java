@@ -34,7 +34,8 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, SecurityService securityService) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService,
+                           VerificationTokenService verificationTokenService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
@@ -211,5 +212,15 @@ public class UserServiceImpl implements UserService {
         }
 
         return cat;
+    }
+
+    @Override
+    public long getFollowingCount(long userId) {
+        return userDao.getFollowingCount(userId);
+    }
+
+    @Override
+    public long getFollowersCount(long userId) {
+        return userDao.getFollowersCount(userId);
     }
 }

@@ -28,7 +28,11 @@ public class HomeController {
     }
 
     @RequestMapping("/")
-    public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
+    public ModelAndView homePage(){
+        System.out.println("Followers count of 2: " + userService.getFollowersCount(2));
+        System.out.println("Followers count of 12: " + userService.getFollowersCount(12));
+        System.out.println("Following count of 11: " + userService.getFollowingCount(11));
+        System.out.println("Following count of 25: " + userService.getFollowingCount(25));
         return new ModelAndView("redirect:/" + NewsOrder.values()[0]);
     }
 

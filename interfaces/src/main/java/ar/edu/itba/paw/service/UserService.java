@@ -27,4 +27,6 @@ public interface UserService {
     void unfollowUser(User user);
     Page<User> searchUsers(int page, String search);
     ProfileCategory getProfileCategory(String category, User profile);
+    long getFollowingCount(long userId);
+    long getFollowersCount(long userId);
 }

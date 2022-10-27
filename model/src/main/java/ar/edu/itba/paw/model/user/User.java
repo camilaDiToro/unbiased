@@ -50,11 +50,6 @@ public class User {
     @Column(name = "description")
     private String description;
 
-
-    public void setFollowing(Set<Follow> following) {
-        this.following = following;
-    }
-
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Follow> following;
 
@@ -166,6 +161,10 @@ public class User {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public void setFollowing(Set<Follow> following) {
+        this.following = following;
     }
 
     public void setEmail(String email) {
