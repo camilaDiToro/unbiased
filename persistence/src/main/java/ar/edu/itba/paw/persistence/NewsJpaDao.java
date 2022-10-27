@@ -159,7 +159,7 @@ public class NewsJpaDao implements NewsDao {
     @Override
     public void deleteComment(long commentId) {
         Optional<Comment> mayBeComment = entityManager.createQuery("FROM Comment c WHERE c.id = :id", Comment.class).setParameter("id", commentId).getResultList().stream().findFirst();
-        mayBeComment.ifPresent(comment -> entityManager.remove(comment));
+        mayBeComment.ifPresent(Comment::delete);
     }
 
     private List<Comment> getCommentsOfPage(Query query,int page, int pageSize) {
@@ -208,11 +208,10 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public Page<Comment> getComments(long newsId, int page) {
-
         int totalPages = getTotalPagesComments(newsId);
         page = Math.min(page, totalPages);
 
-        Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId LIMIT :pageSize OFFSET :offset")
+        Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId ORDER BY commented_date DESC LIMIT :pageSize OFFSET :offset")
                 .setParameter("newsId", newsId);
         List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
 

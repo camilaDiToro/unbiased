@@ -4,6 +4,8 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.admin.ReportedComment;
+import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
@@ -12,8 +14,6 @@ import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class AdminServiceImpl implements AdminService{
@@ -48,8 +48,26 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
+    @Transactional
+    public void reportComment(Comment comment, ReportReason reportReason) {
+        User user = securityService.getCurrentUser().get();
+        adminDao.reportComment(comment,user,reportReason);
+    }
+
+    @Override
+    public Page<Comment> getReportedComments(int page, String reportOrder) {
+        ReportOrder reportOrderObject = ReportOrder.getByValue(reportOrder);
+        return adminDao.getReportedComment(page, reportOrderObject);
+    }
+
+    @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
         return adminDao.getReportedNewsDetail(page, news);
+    }
+
+    @Override
+    public Page<ReportedComment> getReportedCommentDetail(int page, Comment comment) {
+        return adminDao.getReportedCommentDetail(page, comment);
     }
 
     @Override
@@ -60,6 +78,11 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public void deleteNews(News news) {
         newsService.deleteNews(news);
+    }
+
+    @Override
+    public void deleteComment(Comment comment) {
+        newsService.deleteComment(comment.getId());
     }
 
     @Override

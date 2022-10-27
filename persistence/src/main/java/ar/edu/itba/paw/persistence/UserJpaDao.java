@@ -74,7 +74,7 @@ public class UserJpaDao implements UserDao{
 
         @SuppressWarnings("unchecked")
         List<Long> ids = (List<Long>) idQuery.getResultList().stream()
-                .map(o -> ((Integer)o).longValue()).collect(Collectors.toList());
+                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
 
         if(ids.isEmpty())
             return new ArrayList<>();

@@ -165,19 +165,25 @@
                                                     </a>
                                                 </div>
                                                 <div class="d-flex align-items-center" role="group">
+                                                    <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
+                                                        <a href="<c:url value="/news/${newsId}#comment-section"/>">
+                                                            <img  class="svg-btn svg-bookmark bookmark" src="<c:url value="/resources/images/comment.svg"/>" alt="">
 
+                                                        </a>
+                                                    </div>
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
                                                             <img   onclick="handleBookmarkClick(this)" class="svg-btn svg-bookmark bookmark" src="<c:url value="/resources/images/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
                                                         </div>
                                                     </c:if>
+
                                                 </div>
                                             </div>
                                         </div>
 
                                         <c:if test="${article.hasImage()}">
 
-                                        <div class="bg-secondary position-relative w-40 custom-rounded-corners">
+                                        <div class="position-relative w-40 custom-rounded-corners ml-2">
                                                 <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
                                         </div>
                                         </c:if>
