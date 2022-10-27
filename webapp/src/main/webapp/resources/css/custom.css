@@ -177,6 +177,10 @@
     overflow-wrap: break-word;
 }
 
+.w-85{
+    width: 85%;
+}
+
 .object-cover {
     object-fit: cover;
 }
@@ -252,6 +256,10 @@
 .info-enabled{
     color: green;
     background-color: #28352b;
+}
+
+.custom-btn-follow{
+    height: 23px;
 }
 
 .info-disabled{

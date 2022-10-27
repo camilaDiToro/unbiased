@@ -270,24 +270,23 @@
 
             <div class="card-body">
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
-                <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${profileUser.email}"/> </span>
-                <div class="d-flex justify-content-center align-items-center">
-                    <c:if test="${isJournalist}">
-                        <div class="text-center font-weight-light m-1"><c:out value="${profileUser.description}"/></div>
-                    </c:if>
-                </div>
-                <div class="d-flex justify-content-center align-items-center">
+                <div class="d-flex flex-row align-items-center justify-content-center">
+                    <span class="card-text text-muted d-block mb-2 text- mr-3"><c:out value="${profileUser.email}"/> </span>
                     <c:if test="${loggedUser != null && !isMyProfile}">
                         <c:if test="${!isFollowing}">
-                            <a class="btn d-flex btn-info font-weight-bold text-white rounded-pill medium-pill align-items-center justify-content-center" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
+                            <a class="btn d-flex btn-info btn-sm text-white align-items-center justify-content-center custom-btn-follow" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
                         </c:if>
                         <c:if test="${isFollowing}">
-                            <a class="btn d-flex btn-danger font-weight-bold text-white rounded-pill medium-pill align-items-center justify-content-center" href="<c:url value="/profile/${userId}/unfollow"/>">
-                                <div id="custom-follow-btn">
-                                    <spring:message code="profile.unfollow"/>
-                                </div>
+                            <a class="btn d-flex btn-sm border text-white align-items-center justify-content-center" href="<c:url value="/profile/${userId}/unfollow"/>" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="profile.following"/> ">
+                                <img src="<c:url value="/resources/images/following.svg"/>" alt="...">
                             </a>
                         </c:if>
+                    </c:if>
+                </div>
+
+                <div class="d-flex justify-content-center align-items-center">
+                    <c:if test="${isJournalist}">
+                        <div class="text-center font-weight-light m-1 overflow-wrap w-85"><c:out value="${profileUser.description}"/></div>
                     </c:if>
                 </div>
             </div>
