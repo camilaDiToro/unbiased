@@ -10,10 +10,7 @@ import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -53,9 +50,6 @@ public class OwnerController {
     @RequestMapping(value = "/owner/delete_admin_page/{userId:[0-9]+}", method = RequestMethod.GET) // Pongo GET porque en html solo hay post y get
     public ModelAndView deleteAdmin(@PathVariable("userId") long userId) {
 
-        ownerService.deleteUserAdmin(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
-
-        return new ModelAndView("redirect:/owner/add_admin_page");
         ownerService.deleteUserAdmin(userId);
         return new ModelAndView("redirect:/owner/add_admin_page");
 
