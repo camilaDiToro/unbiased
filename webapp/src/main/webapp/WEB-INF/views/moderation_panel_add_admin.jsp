@@ -21,73 +21,127 @@
             <%--RIGHT SIDE--%>
             <div class="d-flex w-75 flex-column align-items-center">
 
-                <div class="w-100 my-2">
-                    <a  href="<c:url value="/admin/reported_news"/>">
-                        <%--<input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." class="w-50px">--%>
-                        <img class="svg-btn hover-hand back-btn mt-3" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..." data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> " />
-                    </a>
-                </div>
-                <c:url value="/admin/add_admin" var="postUrl"/>
-                <div id="custom-form-group" class="m-2 w-50 max-w-750px ">
-                    <form:form modelAttribute="createAdminForm" action="${postUrl}" method="GET" cssClass="d-flex flex-column align-items-center">
+                <div class="w-100 my-2 d-flex flex-row align-items-center">
 
-                        <div class="form-group m-2 w-100 p-3">
-                            <form:label cssClass="w-100 font-weight-bold" path="email"><spring:message code="moderation.makeUserAdmin"/> </form:label>
-                            <form:input placeholder="Email:" path="email" cssClass="form-control text-white w-100"/>
-                            <form:errors cssClass="text-danger mt-4" path="email" element="small"/>
-                            <c:if test="${addedAdmin}">
-                                <small class="text-success mt-4">
-                                    <spring:message code="moderation.admin.succesfull"/>
-                                </small>
-                            </c:if>
+                    <form class="form-inline m-2 my-lg-0" method="GET" action="<c:url value="/owner/add_admin"/>">
+                        <div>
+                            <spring:message code="navbar.search"  var="searchPlaceholder" />
+                            <input style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white"
+                                   type="search" placeholder="${searchPlaceholder}" id="query" name="query" value="${param.query}"/>
                         </div>
-                        <button class="btn btn-info" type="submit"><spring:message code="moderation.add"/> </button>
-                    </form:form>
-                </div>
-                <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="binModalLabel"><spring:message code="profile.modal.question"/></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+
+                    </form>
+                    <c:url value="/owner/add_admin" var="postUrl"/>
+                    <div id="custom-form-group" class="m-2 w-50 max-w-750px ml-auto p-2">
+                        <form:form modelAttribute="createAdminForm" action="${postUrl}" method="POST" cssClass="d-flex flex-row align-items-center">
+                            <form:label cssClass="font-weight-bold mb-0" path="email"><spring:message code="moderation.makeUserAdmin"/> </form:label>
+
+                            <div class="form-group m-2 w-100 p-3 ">
+                                <form:input placeholder="Email:" path="email" cssClass="form-control text-white w-100"/>
+                                <form:errors cssClass="text-danger mt-4" path="email" element="small"/>
+                                <c:if test="${addedAdmin}">
+                                    <small class="text-success mt-4">
+                                        <spring:message code="moderation.admin.succesfull"/>
+                                    </small>
+                                </c:if>
                             </div>
-                            <div class="modal-body">
-                                <spring:message code="profile.modal.msg"/>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
-                                <form method="post" action="<c:url value="/admin/reported_news/${newsId}/delete"/>">
-                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
-                                </form>
-                            </div>
-                        </div>
+                            <button class="btn btn-info" type="submit"><spring:message code="moderation.add"/> </button>
+                        </form:form>
                     </div>
+
                 </div>
+                <div class="container-fluid">
+                    <div class="row row-cols-1 row-cols-md-3">
+                        <c:forEach var="user" items="${usersPage.content}">
+                            <div class="col mb-4">
+
+
+                                    <div class="card h-100 d-flex flex-row" >
+                                        <button class="bg-transparent h-fit btn text-white" data-toggle="modal" data-target="#removeAdminModal${user.id}">
+                                            x
+                                        </button>
+                                        <c:if test="${user.hasPositivityStats()}">
+                                            <c:set var="positivityStats" value="${user.positivityStats}"/>
+
+                                            <c:set var="positivity" value="${positivityStats.positivity}"/>
+                                            <img src="<c:url value="/resources/images/${positivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${positivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${positivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${positivityStats.getInteractions()}"/>" />
+
+                                        </c:if>
+                                        <div class="d-flex justify-content-between p-2 w-100">
+                                            <div class="d-flex align-items-center w-auto gap-1">
+                                                <div class="img-container-article">
+                                                    <c:if test="${user.hasImage()}">
+                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${user.id}/image"/>" alt="">
+                                                    </c:if>
+                                                    <c:if test="${!user.hasImage()}">
+                                                        <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
+                                                    </c:if>
+                                                </div>
+                                                <a class="link" href="<c:url value="/profile/${user.id}"/>">
+                                                <div class="link-text card-name-text text-ellipsis-1">${user}</div>
+                                                </a>
+
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                <div class="modal fade" id="removeAdminModal${user.id}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="binModalLabel"><spring:message code="owner.removeAdminTitle"/></h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <spring:message code="owner.removeAdminMsg"/>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
+                                                <form method="get" action="<c:url value="/owner/delete_admin_page/${user.id}"/>">
+                                                    <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </c:forEach>
+
+                    </div>
+
+                </div>
+
+
+
 
             </div>
 
 
         </div>
 
-        <c:if test="${not empty reports}">
+        <c:if test="${not empty usersPage.content}">
             <nav class="d-flex justify-content-center align-items-center">
                 <ul class="pagination">
 
-                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news_detail/${newsId}">
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/owner/add_admin_page">
                         <c:param name = "page" value = "1"/>
                         </c:url>"><spring:message code="home.pagination.first"/></a></li>
 
 
-                    <c:forEach var = "i" begin = "${reportedNewsPage.minPage}" end = "${reportedNewsPage.maxPage}">
-                        <li class="page-item"><a class="page-link ${i == reportedNewsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/admin/reported_news_detail/${newsId}">
+                    <c:forEach var = "i" begin = "${usersPage.minPage}" end = "${usersPage.maxPage}">
+                        <li class="page-item"><a class="page-link ${i == usersPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/owner/add_admin_page">
                         <c:param name = "page" value = "${i}"/>
                         </c:url>"><c:out value="${i}"/></a></li>
                     </c:forEach>
 
-                    <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news_detail/${newsId}">
-                        <c:param name = "page" value = "${reportedNewsPage.totalPages}"/>
+                    <li class="page-item"><a class="page-link" href="<c:url value = "/owner/add_admin_page">
+                        <c:param name = "page" value = "${usersPage.totalPages}"/>
                         </c:url>"><spring:message code="home.pagination.last"/></a></li>
 
                 </ul>

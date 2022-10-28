@@ -20,7 +20,6 @@ public interface NewsDao {
     List<News> getRecommendation(int page, User user, NewsOrder newsOrder);
     int getTodayNewsPageCount(User user);
 
-    int getTotalPagesAllNews();
     News create(News.NewsBuilder newsBuilder);
 
     Optional<News> getById(long id, Long loggedUser);

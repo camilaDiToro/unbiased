@@ -8,16 +8,6 @@ import java.util.Objects;
 @Table(name = "follows")
 public class Follow {
 
-
-    Follow() {
-
-    }
-
-    public Follow(long userId, long follows) {
-        this.follows = follows;
-        this.userId = userId;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "follows_id_seq")
     @SequenceGenerator(name="follows_id_seq", sequenceName = "follows_id_seq", allocationSize = 1)
@@ -29,6 +19,15 @@ public class Follow {
 
     @Column(name= "follows", nullable = false)
     private long follows;
+
+    /* package */ Follow() {
+        //Just for Hibernate
+    }
+
+    public Follow(long userId, long follows) {
+        this.follows = follows;
+        this.userId = userId;
+    }
 
     public Long getId() {
         return id;

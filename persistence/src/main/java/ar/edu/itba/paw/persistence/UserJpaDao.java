@@ -2,10 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.user.Follow;
-import ar.edu.itba.paw.model.user.Upvote;
-import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.user.UserStatus;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.user.*;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -13,13 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.math.BigInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Primary
@@ -29,6 +22,8 @@ public class UserJpaDao implements UserDao{
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    private static final int SEARCH_PAGE_SIZE = 15;
 
     @Override
     public Optional<User> getUserById(long id) {
@@ -104,11 +99,6 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
-    public User merge(User user) {
-        return entityManager.merge(user);
-    }
-
-    @Override
     public void unfollow(long userId, long follows) {
         User user = getUserById(userId).get();
         user.getFollowing().remove(new Follow(userId, follows));
@@ -123,8 +113,84 @@ public class UserJpaDao implements UserDao{
 
     @Override
     public Page<User> searchUsers(int page, String search) {
-        List<User> users = entityManager.createQuery("FROM User u WHERE u.username LIKE :query",
-                User.class).setParameter("query", '%' + search + '%').getResultList();
-        return new Page<>(users, 1,1);
+        page = Math.max(page, 1);
+
+        int totalPages = getTotalPagesSearchUsers(search);
+        page = Math.min(page, totalPages);
+
+        Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) and u.status != 'UNABLE' LIMIT :pageSize OFFSET :offset")
+                .setParameter("query", "%" + search.toLowerCase() + "%");
+
+        List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
+
+        return new Page<>(users, page,totalPages);
+    }
+
+    @Override
+    public Page<User> getAdmins(int page, String search) {
+
+        page = Math.max(page, 1);
+        search = search == null ? "" : search;
+        int totalPages = getTotalPagesGetAdmins(search);
+        page = Math.min(page, totalPages);
+
+        Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) " +
+                "and u.status != 'UNABLE' and user_role.user_role = 'ROLE_ADMIN' LIMIT :pageSize OFFSET :offset").setParameter("query", "%" + search.toLowerCase() + "%");
+
+        List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
+        return new Page<>(users, page,totalPages);
+    }
+
+    @Override
+    public void pingNewsToggle(User user, News news) {
+        if (news.equals(user.getPingedNews())) {
+            user.setPingedNews(null);
+        } else {
+            user.setPingedNews(news);
+        }
+    }
+
+    @Override
+    public long getFollowingCount(long userId) {
+        return entityManager.createQuery("SELECT COUNT(follows) FROM Follow WHERE userId = :id", Long.class).setParameter("id", userId).getSingleResult();
+    }
+
+    @Override
+    public long getFollowersCount(long userId) {
+        return entityManager.createQuery("SELECT COUNT(userId) FROM Follow WHERE follows = :id", Long.class).setParameter("id", userId).getSingleResult();
+    }
+
+    private List<User> getUsersOfPage(Query query,int page, int pageSize) {
+        @SuppressWarnings("unchecked")
+        List<Long> ids = JpaUtils.getIdsOfPage(query, page, pageSize);
+
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        final TypedQuery<User> typedQuery = entityManager.createQuery("FROM User u WHERE u.userId IN :ids",User.class)
+                .setParameter("ids", ids);
+
+        List<User> users = typedQuery.getResultList();
+        Map<Long, User> map = new HashMap<>();
+        for (User user : users) {
+            map.put(user.getUserId(), user);
+        }
+        // map id -> user
+        users =  ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
+        return users;
+    }
+
+    private int getTotalPagesSearchUsers(String search){
+        long count = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) and u.status != 'UNABLE'", Long.class)
+                .setParameter("query", "%" + search.toLowerCase() + "%").getSingleResult();
+        return Page.getPageCount(count, SEARCH_PAGE_SIZE);
+    }
+
+    private int getTotalPagesGetAdmins(String search){
+        BigInteger count = (BigInteger) entityManager.createNativeQuery("SELECT count(distinct user_id) FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) " +
+                        "and u.status != 'UNABLE' and user_role.user_role = 'ROLE_ADMIN'")
+                        .setParameter("query", "%" + search.toLowerCase() + "%").getResultList().get(0);
+        return Page.getPageCount(count.longValue(), SEARCH_PAGE_SIZE);
     }
 }
