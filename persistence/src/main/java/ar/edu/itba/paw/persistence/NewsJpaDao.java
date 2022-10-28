@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -133,14 +134,14 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public void saveNews(News news, User user) {
-        Optional<Saved> maybeSaved = entityManager.createQuery("SELECT u from Saved u WHERE u.news = :news AND u.userId = :userId", Saved.class)
-                .setParameter("news", news)
-                .setParameter("userId", user.getId()).getResultList().stream().findFirst();
-
-        if (!maybeSaved.isPresent()) {
-            Saved saved = new Saved(news, user.getId());
-            entityManager.persist(saved);
-        }
+//        Optional<Saved> maybeSaved = entityManager.createQuery("SELECT u from Saved u WHERE u.news = :news AND u.userId = :userId", Saved.class)
+//                .setParameter("news", news)
+//                .setParameter("userId", user.getId()).getResultList().stream().findFirst();
+        user.getSavedNews().add(new Saved(news, user.getId()));
+//        if (!maybeSaved.isPresent()) {
+//            Saved saved = new Saved(news, user.getId());
+//            entityManager.persist(saved);
+//        }
 
     }
 
@@ -226,9 +227,10 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public void removeSaved(News news, User user) {
-        entityManager.createQuery("DELETE FROM Saved s WHERE s.news.newsId = :newsId AND s.userId = :userId")
-                .setParameter("newsId", news.getNewsId())
-                .setParameter("userId", user.getId());
+//        entityManager.createQuery("DELETE FROM Saved s WHERE s.news.newsId = :newsId AND s.userId = :userId")
+//                .setParameter("newsId", news.getNewsId())
+//                .setParameter("userId", user.getId());
+        user.getSavedNews().remove(new Saved(news, user.getId()));
 
     }
 
@@ -314,10 +316,6 @@ public class NewsJpaDao implements NewsDao {
 
 
     private Page<News> getNewsWithRatingFromUser(int page, User user, NewsOrder ns, Long loggedUser, boolean upvote) {
-        /*Map<NewsOrder, String> map = new HashMap<>();
-        map.put(NewsOrder.NEW, "u.news.date desc");
-        map.put(NewsOrder.TOP, "u.news.accesses desc"); */
-        // TODO es feo pero por ahora no se me ocurre otra cosa
 
         int totalPages = getTotalPagesNewsFromUserRating(user.getId(), upvote);
         page = Math.min(page, totalPages);

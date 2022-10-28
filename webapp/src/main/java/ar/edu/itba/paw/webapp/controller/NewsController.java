@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportReason;
-import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.SavedResult;
@@ -37,16 +36,19 @@ public class NewsController {
     private final ImageService imageService;
     private final SecurityService securityService;
     private final AdminService adminService;
+
+    private final UserService userService;
     private final OwnerCheck ownerCheck;
     private final MAVBuilderSupplier mavBuilderSupplier;
 
 
     @Autowired
-    public NewsController(AdminService adminService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
+    public NewsController(AdminService adminService, UserService userService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
         this.newsService = newsService;
         this.imageService = imageService;
         this.securityService = ss;
         this.adminService = adminService;
+        this.userService = userService;
         this.ownerCheck = ownerCheck;
         mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
@@ -131,7 +133,9 @@ public class NewsController {
             hasReportedComment = new HashMap<>();
             User user = loggedUser.get();
             comments.getContent().forEach(c -> hasReportedComment.put(c.getId(), user.hasReportedComment(c)));
-            builder.withObject("hasReportedCommentMap", hasReportedComment);
+            builder.withObject("hasReportedCommentMap", hasReportedComment)
+                    .withObject("myNews", news.getCreator().equals(user))
+                    .withObject("pinned", news.equals(user.getPingedNews()));
         }
 
         return builder.build();
@@ -143,6 +147,14 @@ public class NewsController {
     @ResponseBody
     public byte[] newsImage(@PathVariable("imageId") long imageId) {
          return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
+    }
+
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
+    public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
+
+        userService.pingNewsToggle(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+
+        return new ModelAndView("redirect:/news/" + newsId);
     }
 
     @RequestMapping(value = "/create_article", method = RequestMethod.GET)
