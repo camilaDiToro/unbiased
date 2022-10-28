@@ -132,6 +132,8 @@ public class UserController {
                 .withObject("profileUser", profileUser)
                 .withObject("userId", userId)
                 .withObject("hasErrors", hasErrors)
+                .withObject("following", userService.getFollowingCount(userId))
+                .withObject("followers", userService.getFollowersCount(userId))
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
@@ -149,7 +151,7 @@ public class UserController {
         if (errors.hasErrors()) {
             return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
-        userService.updateProfile(userService.getUserById(userId).orElseThrow(UserNotFoundException::new), userProfileForm.getUsername(),
+        userService.updateProfile(userId, userProfileForm.getUsername(),
                 userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
         return new ModelAndView("redirect:/profile/" + userId);
     }

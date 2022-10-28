@@ -91,7 +91,9 @@ public class EmailServiceImpl implements EmailService {
     public void sendNewsDeletedEmail(User user, News news, Locale locale) {
         final String to = user.getEmail();
         final String subject = messageSource.getMessage("email.newsDeleted.subject",null,locale);
+        final String url = getUrl("create_article");
         Map<String, Object> data = new HashMap<>();
+        data.put("urlToCreateArticle",url);
         try {
             sendMessageUsingThymeleafTemplate(to,subject,"news-deleted.html",data,locale);
             LOGGER.info("News deleted email sent to {}", user.getEmail());

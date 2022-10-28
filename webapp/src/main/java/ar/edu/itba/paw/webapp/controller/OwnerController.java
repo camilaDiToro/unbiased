@@ -10,7 +10,10 @@ import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -38,7 +41,7 @@ public class OwnerController {
             return addAdminPanel(form, 1, "");
         }
 
-        ownerService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
+        ownerService.makeUserAdmin(form.getEmail());
         return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("usersPage", ownerService.getAdmins(1, ""))
@@ -53,6 +56,9 @@ public class OwnerController {
         ownerService.deleteUserAdmin(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
 
         return new ModelAndView("redirect:/owner/add_admin_page");
+        ownerService.deleteUserAdmin(userId);
+        return new ModelAndView("redirect:/owner/add_admin_page");
+
     }
 
     @RequestMapping(value = "/owner/add_admin_page", method = RequestMethod.GET)

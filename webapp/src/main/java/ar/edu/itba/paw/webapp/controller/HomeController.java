@@ -29,10 +29,8 @@ public class HomeController {
     }
 
     @RequestMapping("/")
-    public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-
+    public ModelAndView homePage(){
         return new ModelAndView("redirect:/" + NewsOrder.values()[0]);
-//        return new ModelAndView("settings_panel");
     }
 
     @RequestMapping("/{orderBy}")
