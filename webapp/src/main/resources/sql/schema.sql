@@ -17,6 +17,12 @@ CREATE TABLE IF NOT EXISTS users(
 );
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS pinged_news INTEGER;
+-- ALTER TABLE users DROP CONSTRAINT IF EXISTS fk_column;
+-- ALTER TABLE users ADD CONSTRAINT  fk_column
+--      FOREIGN KEY (pinged_news)
+--      REFERENCES news (news_id)
+--      ON DELETE SET NULL;
 
 CREATE TABLE IF NOT EXISTS news (
     news_id           SERIAL          PRIMARY KEY,

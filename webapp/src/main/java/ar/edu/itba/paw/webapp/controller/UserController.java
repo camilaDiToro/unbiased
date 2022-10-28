@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
@@ -22,8 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -74,6 +72,14 @@ public class UserController {
         return new ModelAndView("email_verification_pending");
     }
 
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}", method = RequestMethod.POST)
+    public ModelAndView pingNews(@PathVariable("userId") final long userId,@PathVariable("newsId") final long newsId) {
+
+        userService.pingNewsToggle(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+
+        return new ModelAndView("redirect:/profile/" + userId);
+    }
+
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
@@ -116,14 +122,12 @@ public class UserController {
         Page<News> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
-
-
-
         MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", newsOrder)
                 .withObject("categories", profileCategoryList)
                 .withObject("newsPage", fullNews)
+                .withObject("pingedNews", profileUser.getPingedNews())
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
                 .withObject("userId", userId)

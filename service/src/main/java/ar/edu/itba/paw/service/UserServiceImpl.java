@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -190,6 +190,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> searchUsers(int page, String search) {
         return userDao.searchUsers(page, search);
+    }
+
+
+    @Override
+    public void pingNewsToggle(News news) {
+        Optional<User> maybeUser = securityService.getCurrentUser();
+        if (!maybeUser.isPresent() || maybeUser.get().getUserId() != news.getCreatorId()) {
+            throw new UserNotAuthorized();
+        }
+        userDao.pingNewsToggle(maybeUser.get(), news);
     }
 
 

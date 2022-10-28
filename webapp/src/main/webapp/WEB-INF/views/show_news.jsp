@@ -84,9 +84,40 @@
                             <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportModal"'} class="w-100 h-100 ${hasReported ? '' : 'svg-btn'} svg-bookmark" src="<c:url value="/resources/images/flag${hasReported ? '-clicked' : ''}.svg"/>" alt="" >
                         </div>
 
-                        <c:if test="${loggedUser != null && news.creatorId == loggedUser.id}">
+                        <c:if test="${myNews}">
                             <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand">
                                 <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
+                            </div>
+                            <div data-toggle="modal" data-target="#pingModal${news.newsId}" class="svg-btn hover-hand">
+                                <c:choose>
+                                    <c:when test="${pinned}">
+                                        pin
+                                    </c:when>
+                                    <c:otherwise>
+                                        unpin
+                                    </c:otherwise>
+                                </c:choose>
+                                    <%--                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>--%>
+                            </div>
+                            <div class="modal fade" id="pingModal${newsId}"  aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"><spring:message code="showNews.reportQuestion"/></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <spring:message code="profile.modal.msg"/>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="post" action="<c:url value="/news/${news.newsId}/pingNews"/>">
+                                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="modal fade" id="binModal" tabindex="-1" aria-labelledby="binModalLabel" aria-hidden="true">
@@ -109,6 +140,8 @@
                                     </div>
                                 </div>
                             </div>
+
+
 
                         </c:if>
                     </div>

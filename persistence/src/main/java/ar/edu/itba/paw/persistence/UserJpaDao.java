@@ -12,10 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Primary
@@ -147,6 +144,15 @@ public class UserJpaDao implements UserDao{
 
         List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
         return new Page<>(users, page,totalPages);
+    }
+
+    @Override
+    public void pingNewsToggle(User user, News news) {
+        if (news.equals(user.getPingedNews())) {
+            user.setPingedNews(null);
+        } else {
+            user.setPingedNews(news);
+        }
     }
 
     private List<User> getUsersOfPage(Query query,int page, int pageSize) {

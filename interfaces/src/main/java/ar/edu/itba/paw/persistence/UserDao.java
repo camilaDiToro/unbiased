@@ -2,12 +2,14 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserDao {
+
     Optional<User> getUserById(long id);
     User create(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
@@ -21,4 +23,6 @@ public interface UserDao {
     boolean isFollowing(long userId, long followId);
     Page<User> searchUsers(int page, String search);
     Page<User> getAdmins(int page, String search);
+
+    void pingNewsToggle(User user, News news);
 }

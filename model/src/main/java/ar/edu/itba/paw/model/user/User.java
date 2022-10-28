@@ -3,9 +3,11 @@ package ar.edu.itba.paw.model.user;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.Comment;
+import ar.edu.itba.paw.model.news.News;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -16,6 +18,19 @@ public class User {
     @SequenceGenerator(name="users_user_id_seq", sequenceName = "users_user_id_seq", allocationSize = 1)
     @Column(name = "user_id")
     private Long userId;
+
+    public News getPingedNews() {
+        return pingedNews;
+    }
+
+    public void setPingedNews(News pingedNews) {
+        this.pingedNews = pingedNews;
+    }
+
+    @OneToOne
+    @JoinColumn(name="pinged_news", referencedColumnName="news_id", nullable=true)
+
+    private News pingedNews;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
@@ -64,7 +79,7 @@ public class User {
 
 
 
-    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Saved> savedNews;
 
     @Column(name = "description")
