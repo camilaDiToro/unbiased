@@ -91,10 +91,10 @@
                             <div data-toggle="modal" data-target="#pingModal${news.newsId}" class="svg-btn hover-hand">
                                 <c:choose>
                                     <c:when test="${pinned}">
-                                        pin
+                                        unpin
                                     </c:when>
                                     <c:otherwise>
-                                        unpin
+                                        pin
                                     </c:otherwise>
                                 </c:choose>
                                     <%--                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>--%>
@@ -103,13 +103,30 @@
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title"><spring:message code="profile.pin.question"/></h5>
+                                            <h5 class="modal-title">
+                                                <c:choose>
+                                                    <c:when test="${pinned}">
+                                                        <spring:message code="profile.unpin.question"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <spring:message code="profile.pin.question"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <spring:message code="profile.pin.body"/>
+                                            <c:choose>
+                                                <c:when test="${pinned}">
+                                                    <spring:message code="profile.unpin.body"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <spring:message code="profile.pin.body"/>
+                                                </c:otherwise>
+                                            </c:choose>
+
                                         </div>
                                         <div class="modal-footer">
                                             <form method="post" action="<c:url value="/news/${news.newsId}/pingNews"/>">

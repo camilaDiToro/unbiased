@@ -23,11 +23,11 @@
 
                 <div class="w-100 my-2 d-flex flex-row justify-content-center">
 
-                    <form class=" d-flex w-100 form-inline m-2 my-lg-0 " method="GET" action="<c:url value="/owner/add_admin"/>">
+                    <form class=" d-flex w-100 form-inline m-2 my-lg-0 " method="GET" action="<c:url value="/owner/add_admin_page"/>">
                         <div class="d-flex w-100 justify-content-center">
                             <spring:message code="navbar.search"  var="searchPlaceholder" />
                             <input id="searchBar_addAdmin" style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white w-55"
-                                   type="search" placeholder="${searchPlaceholder}" name="query" value="${param.query}"/>
+                                   type="search" placeholder="${searchPlaceholder}" name="query" value=""/>
                         </div>
 
                     </form>

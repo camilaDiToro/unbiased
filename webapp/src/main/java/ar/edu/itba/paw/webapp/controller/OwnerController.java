@@ -39,12 +39,7 @@ public class OwnerController {
         }
 
         ownerService.makeUserAdmin(form.getEmail());
-        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
-                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
-                .withObject("usersPage", ownerService.getAdmins(1, ""))
-                .withObject("addedAdmin", true)
-                .withObject("item", "manageAdmins")
-                .build();
+        return new ModelAndView("redirect:/owner/add_admin_page");
     }
 
     @RequestMapping(value = "/owner/delete_admin_page/{userId:[0-9]+}", method = RequestMethod.GET) // Pongo GET porque en html solo hay post y get

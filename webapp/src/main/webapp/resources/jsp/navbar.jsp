@@ -21,7 +21,9 @@
         </button></a>
 </c:if>
 
-            <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP"/>">
+            <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP">
+            <c:param name = "type" value = "${param.type}"/>
+    </c:url>">
                 <div>
                     <spring:message code="navbar.search"  var="searchPlaceholder" />
                     <input style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white"
