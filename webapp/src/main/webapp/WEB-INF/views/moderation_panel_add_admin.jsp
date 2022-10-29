@@ -21,18 +21,20 @@
             <%--RIGHT SIDE--%>
             <div class="d-flex w-75 flex-column align-items-center">
 
-                <div class="w-100 my-2 d-flex flex-row justify-content-center">
+                <div class="w-100 my-3 d-flex flex-row justify-content-center">
 
                     <form class=" d-flex w-100 form-inline m-2 my-lg-0 " method="GET" action="<c:url value="/owner/add_admin"/>">
                         <div class="d-flex w-100 justify-content-center">
-                            <spring:message code="navbar.search"  var="searchPlaceholder" />
+                            <spring:message code="moderation.searchAdmin"  var="searchPlaceholder" />
                             <input id="searchBar_addAdmin" style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white w-55"
                                    type="search" placeholder="${searchPlaceholder}" name="query" value="${param.query}"/>
                         </div>
 
                     </form>
 
-                    <button data-toggle="modal" data-target="#addAdminModal" class="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent" style="background-image: url('<c:url value="/resources/images/plus-svgrepo-com.svg"/>')"></button>
+                    <div data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.addAdmin"/> ">
+                        <button data-toggle="modal" data-target="#addAdminModal" class="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent" style="background-image: url('<c:url value="/resources/images/plus-svgrepo-com.svg"/>')" ></button>
+                    </div>
 
                     <!-- Modal -->
                     <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
@@ -78,7 +80,7 @@
 
 
                                     <div id="add_admin_card" class="card h-100 d-flex flex-row" >
-                                        <button class="bg-transparent h-fit btn text-white" data-toggle="modal" data-target="#removeAdminModal${user.id}">
+                                        <button class="bg-transparent h-fit btn text-white focus-box-shadow-none" data-toggle="modal" data-target="#removeAdminModal${user.id}">
                                             x
                                         </button>
                                         <c:if test="${user.hasPositivityStats()}">
@@ -121,7 +123,6 @@
                                                 <spring:message code="owner.removeAdminMsg"/>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
                                                 <form method="get" action="<c:url value="/owner/delete_admin_page/${user.id}"/>">
                                                     <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
                                                 </form>

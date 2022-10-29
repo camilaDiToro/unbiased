@@ -9,7 +9,7 @@
     <div class="text-center">
         <h1 class="display-1 fw-bold"><c:out value="${errorCode}"/></h1>
         <p class="fs-1"> <span class="text-info font-weight-bold"><spring:message code="genericError.ops"/></span> <spring:message code="genericError.message.${errorCode}"/></p>
-        <a href="<c:url value="/"/>" class="btn btn-primary"><spring:message code="genericError.button.goHome"/></a>
+        <a href="<c:url value="/"/>" class="btn btn-info"><spring:message code="genericError.button.goHome"/></a>
     </div>
 </div>
 </body>

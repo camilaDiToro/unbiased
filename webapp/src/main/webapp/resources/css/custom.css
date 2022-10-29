@@ -276,6 +276,10 @@
     border-color: transparent;
 }
 
+.btn:focus{
+    box-shadow: none;
+}
+
 .custom-btn-follow{
     height: 23px;
 }
