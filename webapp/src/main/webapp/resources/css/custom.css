@@ -181,6 +181,10 @@
     width: 85%;
 }
 
+.w-70{
+    width: 70% !important;
+}
+
 .object-cover {
     object-fit: cover;
 }
@@ -256,6 +260,24 @@
 .info-enabled{
     color: green;
     background-color: #28352b;
+}
+
+.add-admin-btn{
+    height: 40px;
+    width: 40px;
+    background-repeat: no-repeat;
+}
+
+.border-color-transparent{
+    border-color: transparent;
+}
+
+.border-color-transparent:focus{
+    border-color: transparent;
+}
+
+.btn:focus{
+    box-shadow: none;
 }
 
 .custom-btn-follow{
@@ -344,6 +366,14 @@
     border-color: rgba(58, 60, 74, 0.5);
 }
 
+#searchBar_addAdmin.search-form{
+    background-size: 20px !important;
+    padding-left: 2.5rem;
+    background: rgba(58, 60, 74, 0.5) no-repeat 1% 50%;
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
 .btn-outline-focus-none:focus{
     outline: none;
 }
@@ -411,8 +441,8 @@ input:-webkit-autofill:focus {
     width: 50px;
 }
 
-.w-70 {
-    width: 70%;
+.w-55 {
+    width: 55% !important;
 }
 
 .moderation-img {
@@ -556,7 +586,6 @@ input:-webkit-autofill:focus {
 }
 
 
-
 .card:hover{
     transform: translateY(-5px);
     transition: 0.3s;
@@ -567,6 +596,12 @@ input:-webkit-autofill:focus {
     /*box-shadow: 0 2px 2px rgba(0,0,0,.25);*/
     border-radius: 0.5rem;
     background: linear-gradient(rgb(58, 60, 74), rgb(36, 38, 50));
+}
+
+#add_admin_card.card:hover{
+    transform: none;
+    transition: none;
+    box-shadow: none;
 }
 
 #none_shadow.card:hover{

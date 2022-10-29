@@ -21,43 +21,66 @@
             <%--RIGHT SIDE--%>
             <div class="d-flex w-75 flex-column align-items-center">
 
-                <div class="w-100 my-2 d-flex flex-row align-items-center">
+                <div class="w-100 my-3 d-flex flex-row justify-content-center">
 
-                    <form class="form-inline m-2 my-lg-0" method="GET" action="<c:url value="/owner/add_admin"/>">
-                        <div>
-                            <spring:message code="navbar.search"  var="searchPlaceholder" />
-                            <input style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white"
-                                   type="search" placeholder="${searchPlaceholder}" id="query" name="query" value="${param.query}"/>
+                    <form class=" d-flex w-100 form-inline m-2 my-lg-0 " method="GET" action="<c:url value="/owner/add_admin"/>">
+                        <div class="d-flex w-100 justify-content-center">
+                            <spring:message code="moderation.searchAdmin"  var="searchPlaceholder" />
+                            <input id="searchBar_addAdmin" style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white w-55"
+                                   type="search" placeholder="${searchPlaceholder}" name="query" value="${param.query}"/>
                         </div>
 
                     </form>
-                    <c:url value="/owner/add_admin" var="postUrl"/>
-                    <div id="custom-form-group" class="m-2 w-50 max-w-750px ml-auto p-2">
-                        <form:form modelAttribute="createAdminForm" action="${postUrl}" method="POST" cssClass="d-flex flex-row align-items-center">
-                            <form:label cssClass="font-weight-bold mb-0" path="email"><spring:message code="moderation.makeUserAdmin"/> </form:label>
 
-                            <div class="form-group m-2 w-100 p-3 ">
-                                <form:input placeholder="Email:" path="email" cssClass="form-control text-white w-100"/>
-                                <form:errors cssClass="text-danger mt-4" path="email" element="small"/>
-                                <c:if test="${addedAdmin}">
-                                    <small class="text-success mt-4">
-                                        <spring:message code="moderation.admin.succesfull"/>
-                                    </small>
-                                </c:if>
-                            </div>
-                            <button class="btn btn-info" type="submit"><spring:message code="moderation.add"/> </button>
-                        </form:form>
+                    <div data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.addAdmin"/> ">
+                        <button data-toggle="modal" data-target="#addAdminModal" class="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent" style="background-image: url('<c:url value="/resources/images/plus-svgrepo-com.svg"/>')" ></button>
                     </div>
 
+                    <!-- Modal -->
+                    <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="cardModalLabel"><spring:message code="moderation.makeUserAdmin"/></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <c:url value="/owner/add_admin" var="postUrl"/>
+                                    <div id="form-login-index">
+                                        <form:form modelAttribute="createAdminForm" action="${postUrl}" method="POST" cssClass="d-flex flex-column align-items-center">
+                                            <%--<form:label cssClass="font-weight-bold mb-0" path="email"><spring:message code="moderation.makeUserAdmin"/> </form:label>--%>
+
+                                            <div class="d-flex mb-3">
+                                                <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/profile-svgrepo-com.svg"/>" alt="..."/>
+                                                <label for="email-input" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
+                                                <form:input path="email" cssClass="form-control text-white w-100" id="email-input" placeholder="${mailAddressMsg}"/>
+                                                <form:errors cssClass="text-danger mt-4" path="email" element="small"/>
+                                                <c:if test="${addedAdmin}">
+                                                    <small class="text-success mt-4">
+                                                        <spring:message code="moderation.admin.succesfull"/>
+                                                    </small>
+                                                </c:if>
+                                            </div>
+
+                                            <button class="btn btn-info" type="submit"><spring:message code="moderation.add"/> </button>
+                                        </form:form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="container-fluid">
+                <div class="container-fluid mt-3">
                     <div class="row row-cols-1 row-cols-md-3">
                         <c:forEach var="user" items="${usersPage.content}">
                             <div class="col mb-4">
 
 
-                                    <div class="card h-100 d-flex flex-row" >
-                                        <button class="bg-transparent h-fit btn text-white" data-toggle="modal" data-target="#removeAdminModal${user.id}">
+                                    <div id="add_admin_card" class="card h-100 d-flex flex-row" >
+                                        <button class="bg-transparent h-fit btn text-white focus-box-shadow-none" data-toggle="modal" data-target="#removeAdminModal${user.id}">
                                             x
                                         </button>
                                         <c:if test="${user.hasPositivityStats()}">
@@ -100,7 +123,6 @@
                                                 <spring:message code="owner.removeAdminMsg"/>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
                                                 <form method="get" action="<c:url value="/owner/delete_admin_page/${user.id}"/>">
                                                     <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
                                                 </form>
