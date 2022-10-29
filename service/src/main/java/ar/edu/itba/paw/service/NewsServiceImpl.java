@@ -88,9 +88,11 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Page<News> getNewsForUserProfile(int page, String newsOrder, User user, String profileCategory) {
         NewsOrder newsOrderObject = NewsOrder.getByValue(newsOrder);
-        Long loggedUserId = securityService.getCurrentUser().map(User::getId).orElse(null);
+        Optional<User> maybeLoggedUser = securityService.getCurrentUser();
         ProfileCategory pc = ProfileCategory.getByValue(profileCategory);
-        return newsDao.getNewsFromProfile(page, user, newsOrderObject, loggedUserId, pc);
+        Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrderObject, maybeLoggedUser.map(User::getId).orElse(null), pc);
+        maybeLoggedUser.ifPresent(value -> pageObj.getContent().remove(value.getPingedNews()));
+        return pageObj;
     }
 
     @Override
@@ -113,14 +115,16 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public boolean toggleSaveNews(News news, User user) {
-
+        boolean returnValue;
         if (news.getLoggedUserParameters().isSaved()) {
             newsDao.removeSaved(news, user);
-            return false;
+            returnValue =  false;
         } else {
             newsDao.saveNews(news, user);
+            returnValue = true;
         }
-        return true;
+        news.setUserSpecificVariables(user.getId());
+        return returnValue;
     }
 
     private User getLoggedUserOrThrowException() {

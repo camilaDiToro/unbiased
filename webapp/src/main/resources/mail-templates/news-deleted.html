@@ -59,26 +59,26 @@
   </div>
 </div>
 
-<!--<div class="contenedor">-->
-<!--  <div style="margin:auto; text-align: center">-->
-<!--    <img src="https://i.imgur.com/GuajVzM.png" title="warning" class="img-contenedor"/>-->
-<!--  </div>-->
-<!--</div>-->
+<div class="contenedor">
+  <div style="margin:auto; text-align: center">
+    <img src="https://i.imgur.com/GuajVzM.png" title="warning" class="img-contenedor"/>
+  </div>
+</div>
 
-<!--<div class="contenedor">-->
-<!--  <div style="margin:auto; text-align: center">-->
-<!--    <p class="p-color" th:text="">username te informamos que tu noticia ha sido eliminada por no cumplir con las normas de la página</p>-->
-<!--  </div>-->
-<!--</div>-->
+<div class="contenedor">
+  <div style="margin:auto; text-align: center">
+    <p class="p-color" th:text="#{email.report.title}"></p>
+  </div>
+</div>
 
-<!--<br/>-->
-<!--<div style="text-align: center">-->
-<!--  <h4 class="h-color" th:text="">Podes realizar una nueva publicación haciendo click</h4>-->
-<!--</div>-->
-<!--<div style="align-items: center;justify-content: center; display: flex" >-->
-<!--  <a th:text="#{email.verification.click}" style=" text-decoration: none!important;" th:href="${verificationUrl}" class="btn btn-md btn-info btn-share takeme">-->
-<!--  </a>-->
-<!--</div>-->
+<br/>
+<div style="text-align: center">
+  <h4 class="h-color" th:text="#{email.report.body}"></h4>
+</div>
+<div style="align-items: center;justify-content: center; display: flex" >
+  <a th:text="#{email.verification.click}" style=" text-decoration: none!important;" th:href="${urlToCreateArticle}" class="btn btn-md btn-info btn-share takeme">
+  </a>
+</div>
 
 </body>
 </html>

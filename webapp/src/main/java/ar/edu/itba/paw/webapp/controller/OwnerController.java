@@ -38,7 +38,7 @@ public class OwnerController {
             return addAdminPanel(form, 1, "");
         }
 
-        ownerService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
+        ownerService.makeUserAdmin(form.getEmail());
         return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("usersPage", ownerService.getAdmins(1, ""))
@@ -50,9 +50,9 @@ public class OwnerController {
     @RequestMapping(value = "/owner/delete_admin_page/{userId:[0-9]+}", method = RequestMethod.GET) // Pongo GET porque en html solo hay post y get
     public ModelAndView deleteAdmin(@PathVariable("userId") long userId) {
 
-        ownerService.deleteUserAdmin(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
-
+        ownerService.deleteUserAdmin(userId);
         return new ModelAndView("redirect:/owner/add_admin_page");
+
     }
 
     @RequestMapping(value = "/owner/add_admin_page", method = RequestMethod.GET)

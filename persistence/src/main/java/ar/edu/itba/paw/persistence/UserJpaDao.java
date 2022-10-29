@@ -12,10 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Primary
@@ -102,11 +99,6 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
-    public User merge(User user) {
-        return entityManager.merge(user);
-    }
-
-    @Override
     public void unfollow(long userId, long follows) {
         User user = getUserById(userId).get();
         user.getFollowing().remove(new Follow(userId, follows));
@@ -143,10 +135,29 @@ public class UserJpaDao implements UserDao{
         page = Math.min(page, totalPages);
 
         Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) " +
-                "and u.status != 'UNABLE' and user_role.user_role = 'ROLE_ADMIN' LIMIT :pageSize OFFSET :offset").setParameter("query", "%" + search.toLowerCase() + "%");;
+                "and u.status != 'UNABLE' and user_role.user_role = 'ROLE_ADMIN' LIMIT :pageSize OFFSET :offset").setParameter("query", "%" + search.toLowerCase() + "%");
 
         List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
         return new Page<>(users, page,totalPages);
+    }
+
+    @Override
+    public void pingNewsToggle(User user, News news) {
+        if (news.equals(user.getPingedNews())) {
+            user.setPingedNews(null);
+        } else {
+            user.setPingedNews(news);
+        }
+    }
+
+    @Override
+    public long getFollowingCount(long userId) {
+        return entityManager.createQuery("SELECT COUNT(follows) FROM Follow WHERE userId = :id", Long.class).setParameter("id", userId).getSingleResult();
+    }
+
+    @Override
+    public long getFollowersCount(long userId) {
+        return entityManager.createQuery("SELECT COUNT(userId) FROM Follow WHERE follows = :id", Long.class).setParameter("id", userId).getSingleResult();
     }
 
     private List<User> getUsersOfPage(Query query,int page, int pageSize) {

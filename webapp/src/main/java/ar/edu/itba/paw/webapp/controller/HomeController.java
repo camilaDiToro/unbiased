@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
@@ -28,10 +29,8 @@ public class HomeController {
     }
 
     @RequestMapping("/")
-    public ModelAndView homePage( @RequestParam(name = "userId", defaultValue = "1") final long userId){
-
+    public ModelAndView homePage(){
         return new ModelAndView("redirect:/" + NewsOrder.values()[0]);
-//        return new ModelAndView("settings_panel");
     }
 
     @RequestMapping("/{orderBy}")

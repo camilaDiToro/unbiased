@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,7 +34,8 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, SecurityService securityService) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService,
+                           VerificationTokenService verificationTokenService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
@@ -135,8 +136,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateProfile(User user, String username, byte[] bytes, String dataType, String description) {
-        userDao.merge(user);
+    public void updateProfile(long userId, String username, byte[] bytes, String dataType, String description) {
+        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
@@ -194,6 +195,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    public void pingNewsToggle(News news) {
+        Optional<User> maybeUser = securityService.getCurrentUser();
+        if (!maybeUser.isPresent() || maybeUser.get().getUserId() != news.getCreatorId()) {
+            throw new UserNotAuthorized();
+        }
+        userDao.pingNewsToggle(maybeUser.get(), news);
+    }
+
+
+    @Override
     public ProfileCategory getProfileCategory(String category, User profile) {
         ProfileCategory cat;
         try {
@@ -212,5 +223,15 @@ public class UserServiceImpl implements UserService {
         }
 
         return cat;
+    }
+
+    @Override
+    public long getFollowingCount(long userId) {
+        return userDao.getFollowingCount(userId);
+    }
+
+    @Override
+    public long getFollowersCount(long userId) {
+        return userDao.getFollowersCount(userId);
     }
 }

@@ -62,13 +62,11 @@ public class News {
     @JoinColumn(name = "creator", referencedColumnName = "user_id")
     private User creator;
 
-
     @Transient
     private Integer upvotes = 0;
 
     @Transient
     private Integer downvotes = 0;
-
 
     @Transient
     private LoggedUserParameters loggedUserParameters;
@@ -88,6 +86,12 @@ public class News {
     @OneToMany(mappedBy = "news")
     @OrderBy("creationDate DESC")
     private List<ReportDetail> reports;
+
+    @PreRemove
+    private void removeIfPinged() {
+        if (this.equals(creator.getPingedNews()))
+            creator.setPingedNews(null);
+    }
 
 
     @Override
@@ -147,7 +151,6 @@ public class News {
     }
 
     public News(NewsBuilder builder) {
-//        this.newsId = builder.newsId;
         this.creator = builder.creator;
         this.imageId = builder.imageId;
         this.body = TextUtils.convertMarkdownToHTML(builder.body);
@@ -197,15 +200,14 @@ public class News {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == this){
+            return true;
+        }
         if (!(obj instanceof News)){
             return false;
         }
 
         News aux = (News) obj;
-
-        if (aux.equals(this)){
-            return true;
-        }
 
         return newsId == aux.newsId;
     }
