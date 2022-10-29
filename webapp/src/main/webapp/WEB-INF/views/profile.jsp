@@ -106,13 +106,13 @@
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title"><spring:message code="showNews.reportCommentQuestion"/></h5>
+                                                <h5 class="modal-title"><spring:message code="profile.unpin.question"/></h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <spring:message code="profile.modal.msg"/>
+                                                <spring:message code="profile.unpin.body"/>
                                             </div>
                                             <div class="modal-footer">
                                                 <form method="post" action="<c:url value="/profile/${article.user.id}/pingNews/${article.newsId}"/>">
@@ -181,7 +181,7 @@
                                                         <c:if test="${isMyProfile && loggedUser == article.user}">
 
                                                             <button data-toggle="modal" data-target="#binModalPinged" class="btn bin-modal" id="bin_button">
-                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="w-25px" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
+                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-profile" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                                                             </button>
                                                             <div data-toggle="modal" data-target="#pingModalPinged" class="svg-btn hover-hand">
                                                                 unpin
@@ -194,7 +194,7 @@
 
                                                         <c:if test="${loggedUser != null}">
                                                             <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                                <img class="w-25px svg-btn" id="bookmark" onclick="handleBookmarkClick(this)"  src="<c:url value="/resources/images/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                                <img class="icon-profile svg-btn svg-bookmark" id="bookmark" onclick="handleBookmarkClick(this)"  src="<c:url value="/resources/images/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.articleSave"/>">
                                                             </div>
                                                         </c:if>
                                                     </div>
@@ -226,13 +226,13 @@
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title"><spring:message code="showNews.reportCommentQuestion"/></h5>
+                                                <h5 class="modal-title"><spring:message code="profile.pin.question"/></h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <spring:message code="profile.modal.msg"/>
+                                                <spring:message code="profile.pin.body"/>
                                             </div>
                                             <div class="modal-footer">
                                                 <form method="post" action="<c:url value="/profile/${article.user.id}/pingNews/${article.newsId}"/>">
@@ -422,7 +422,7 @@
         </c:if>
 
 
-            <!-- Modal -->
+            <!-- Modal edit profile-->
             <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
