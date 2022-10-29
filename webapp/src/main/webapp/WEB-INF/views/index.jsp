@@ -167,13 +167,13 @@
                                                 <div class="d-flex align-items-center" role="group">
                                                     <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
                                                         <a href="<c:url value="/news/${newsId}#comment-section"/>">
-                                                            <img  class="svg-btn svg-bookmark bookmark" src="<c:url value="/resources/images/comment.svg"/>" alt="">
+                                                            <img  class="icon-index svg-btn svg-bookmark bookmark" src="<c:url value="/resources/images/comment.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.commentArticle"/>">
 
                                                         </a>
                                                     </div>
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                            <img   onclick="handleBookmarkClick(this)" class="svg-btn svg-bookmark bookmark" src="<c:url value="/resources/images/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                            <img   onclick="handleBookmarkClick(this)" class="icon-index svg-btn svg-bookmark bookmark" src="<c:url value="/resources/images/bookmark${saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.articleSave"/>">
                                                         </div>
                                                     </c:if>
 

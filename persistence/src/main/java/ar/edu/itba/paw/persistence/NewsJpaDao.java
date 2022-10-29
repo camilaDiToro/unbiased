@@ -209,11 +209,10 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public Page<Comment> getComments(long newsId, int page) {
-
         int totalPages = getTotalPagesComments(newsId);
         page = Math.min(page, totalPages);
 
-        Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId LIMIT :pageSize OFFSET :offset")
+        Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId ORDER BY commented_date DESC LIMIT :pageSize OFFSET :offset")
                 .setParameter("newsId", newsId);
         List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
 
@@ -317,10 +316,6 @@ public class NewsJpaDao implements NewsDao {
 
 
     private Page<News> getNewsWithRatingFromUser(int page, User user, NewsOrder ns, Long loggedUser, boolean upvote) {
-        /*Map<NewsOrder, String> map = new HashMap<>();
-        map.put(NewsOrder.NEW, "u.news.date desc");
-        map.put(NewsOrder.TOP, "u.news.accesses desc"); */
-        // TODO es feo pero por ahora no se me ocurre otra cosa
 
         int totalPages = getTotalPagesNewsFromUserRating(user.getId(), upvote);
         page = Math.min(page, totalPages);
