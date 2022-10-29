@@ -554,7 +554,7 @@
     </div>
     </div>
 
-    <c:if test="${not empty news}">
+    <c:if test="${not empty news or not empty pingedNews}">
         <nav class="d-flex justify-content-center align-items-center">
             <ul class="pagination">
 
