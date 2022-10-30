@@ -5,6 +5,8 @@ import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedComment;
+import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
@@ -40,8 +42,9 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     @Transactional
-    public void reportNews(News news, ReportReason reportReason) {
+    public void reportNews(long newsId, ReportReason reportReason) {
         User user = securityService.getCurrentUser().get();
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         adminDao.reportNews(news,user,reportReason);
     }
 
@@ -52,8 +55,9 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     @Transactional
-    public void reportComment(Comment comment, ReportReason reportReason) {
+    public void reportComment(long commentId, ReportReason reportReason) {
         User user = securityService.getCurrentUser().get();
+        Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
         adminDao.reportComment(comment,user,reportReason);
     }
 
@@ -63,31 +67,32 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
-        return adminDao.getReportedNewsDetail(page, news);
+    public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
+        return adminDao.getReportedNewsDetail(page, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
     }
 
     @Override
-    public Page<ReportedComment> getReportedCommentDetail(int page, Comment comment) {
-        return adminDao.getReportedCommentDetail(page, comment);
+    public Page<ReportedComment> getReportedCommentDetail(int page, long commentId) {
+        return adminDao.getReportedCommentDetail(page, newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
     }
 
     @Override
-    public boolean hasReported(News news) {
-        return adminDao.hasReported(news, getLoggedUserId());
+    public boolean hasReported(long newsId) {
+        return adminDao.hasReported(newsId, getLoggedUserId());
     }
 
     @Override
-    public void deleteNews(News news) {
+    public void deleteNews(long newsId) {
         Locale locale = LocaleContextHolder.getLocale();
         LocaleContextHolder.setLocale(locale, true);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         emailService.sendNewsDeletedEmail(news.getCreator(), news, locale);
         newsService.deleteNews(news);
     }
 
     @Override
-    public void deleteComment(Comment comment) {
-        newsService.deleteComment(comment.getId());
+    public void deleteComment(long commentId) {
+        newsService.deleteComment(commentId);
     }
 
 }

@@ -81,7 +81,7 @@ public class AdminController {
     @RequestMapping("/admin/reported_news_detail/{newsId:[0-9]+}")
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
-        Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page, newsId);
         return mavBuilderSupplier.supply("moderation_panel_reported_news_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
@@ -94,7 +94,7 @@ public class AdminController {
     @RequestMapping("/admin/reported_comment_detail/{commentId:[0-9]+}")
     public ModelAndView reportedCommentDetail(@PathVariable("commentId") long commentId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
-        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page,newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
+        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page,commentId);
         return mavBuilderSupplier.supply("moderation_panel_reported_comment_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedCommentPage", reportedCommentPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
@@ -106,13 +106,13 @@ public class AdminController {
 
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        adminService.deleteNews(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        adminService.deleteNews(newsId);
         return new ModelAndView("redirect:/admin/reported_news");
     }
 
     @RequestMapping(value = "/admin/reported_comments/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteComment(@PathVariable("commentId") long commentId) {
-        adminService.deleteComment(newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
+        adminService.deleteComment(commentId);
         return new ModelAndView("redirect:/admin/reported_comments");
     }
 

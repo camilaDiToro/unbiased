@@ -133,12 +133,12 @@ public class AdminJpaDao implements AdminDao{
     }
 
     @Override
-    public boolean hasReported(News news, Long loggedUser) {
+    public boolean hasReported(long newsId, Long loggedUser) {
         if (loggedUser == null){
             return false;
         }
         long elemCount = entityManager.createQuery("SELECT COUNT(r) FROM ReportDetail r WHERE r.news.newsId = :news_id AND r.reporter.userId = :user_id",Long.class)
-                .setParameter("news_id", news.getNewsId())
+                .setParameter("news_id", newsId)
                 .setParameter("user_id", loggedUser).getSingleResult();
         return elemCount > 0;
     }

@@ -68,19 +68,19 @@ public class NewsController {
         if (errors.hasErrors()) {
             return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1);
         }
-        adminService.reportNews(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new), ReportReason.valueOf(reportNewsFrom.getReason()));
+        adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
-    @RequestMapping(value = "/news/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
     public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
-                                   final BindingResult errors) {
+                                      final BindingResult errors, @PathVariable("newsId") long newsId) {
         if (errors.hasErrors()) {
             return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1);
         }
-        Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
-        adminService.reportComment(comment, ReportReason.valueOf(reportNewsFrom.getReason()));
-        return new ModelAndView("redirect:/news/" + comment.getNews().getNewsId() + "#" + "comment-" + commentId);
+
+        adminService.reportComment(commentId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        return new ModelAndView("redirect:/news/" + newsId + "#" + "comment-" + commentId);
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
@@ -117,7 +117,7 @@ public class NewsController {
         MyModelAndView.Builder builder =  mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
                 .withObject("fullNews", news)
-                .withObject("hasReported", adminService.hasReported(news))
+                .withObject("hasReported", news.getNewsId())
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("reportNewsForm", reportNewsFrom)
                 .withObject("commentNewsForm", commentNewsFrom)
