@@ -153,7 +153,7 @@ public class News {
     public News(NewsBuilder builder) {
         this.creator = builder.creator;
         this.imageId = builder.imageId;
-        this.body = TextUtils.convertMarkdownToHTML(builder.body);
+        this.body = builder.body;
         this.title = builder.title;
         this.subtitle = builder.subtitle;
         this.creationDate = builder.creationDate;
