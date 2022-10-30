@@ -106,7 +106,7 @@ public class AdminJpaDao implements AdminDao{
 
     private int getReportedCommentTotal() {
         int total =  ((Number) entityManager.createNativeQuery(
-                "SELECT count(comment_id) FROM comment_report").getSingleResult()).intValue();
+                "SELECT count(comment_id) FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false").getSingleResult()).intValue();
         return total;
     }
 
