@@ -46,9 +46,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<News> getReportedNews(int page, String reportOrder) {
-       ReportOrder reportOrderObject = ReportOrder.getByValue(reportOrder);
-       return adminDao.getReportedNews(page, reportOrderObject);
+    public Page<News> getReportedNews(int page, ReportOrder reportOrder) {
+       return adminDao.getReportedNews(page, reportOrder);
     }
 
     @Override
@@ -59,9 +58,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<Comment> getReportedComments(int page, String reportOrder) {
-        ReportOrder reportOrderObject = ReportOrder.getByValue(reportOrder);
-        return adminDao.getReportedComment(page, reportOrderObject);
+    public Page<Comment> getReportedComments(int page, ReportOrder reportOrder) {
+        return adminDao.getReportedComment(page, reportOrder);
     }
 
     @Override

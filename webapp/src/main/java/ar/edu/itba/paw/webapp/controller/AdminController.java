@@ -44,8 +44,7 @@ public class AdminController {
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("newsOrder") String newsOrder) {
 
-
-        Page<News> reportedNewsPage = adminService.getReportedNews(page, newsOrder);
+        Page<News> reportedNewsPage = adminService.getReportedNews(page, ReportOrder.getByValue(newsOrder));
         return mavBuilderSupplier.supply("moderation_panel_reported_news", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", ReportOrder.values())
@@ -59,7 +58,7 @@ public class AdminController {
                                      @PathVariable("commentOrder") String commentOrder) {
 
 
-        Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, commentOrder);
+        Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, ReportOrder.getByValue(commentOrder));
         return mavBuilderSupplier.supply("moderation_panel_reported_comments", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("commentsPage", reportedCommentsPage)
                 .withObject("orders", ReportOrder.values())
@@ -116,6 +115,5 @@ public class AdminController {
         adminService.deleteComment(newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
         return new ModelAndView("redirect:/admin/reported_comments");
     }
-
 
 }
