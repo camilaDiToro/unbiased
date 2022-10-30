@@ -92,15 +92,14 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.NOT_EXISTS;
         }
         VerificationToken vt = mayBeVt.get();
-        User user = userDao.getUserById(vt.getUserId()).orElseThrow(UserNotFoundException::new);
 
         if(!vt.isValidToken()){
             LOGGER.info("Trying to validate token {}, but it has expired", token);
             return VerificationToken.Status.EXPIRED;
         }
         userDao.verifyEmail(vt.getUserId());
-        login(user);
-        verificationTokenService.deleteEmailToken(user);
+        login(vt.getUserId());
+        verificationTokenService.deleteEmailToken(vt.getUserId());
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
 
@@ -120,7 +119,7 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.ALREADY_VERIFIED;
         }
 
-        verificationTokenService.deleteEmailToken(user);
+        verificationTokenService.deleteEmailToken(user.getId());
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
         LocaleContextHolder.setLocale(locale, true);
@@ -177,7 +176,8 @@ public class UserServiceImpl implements UserService {
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
-    private void login(User user) {
+    private void login(long userId) {
+        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
         LOGGER.debug("User {} has loged in automatically", user);

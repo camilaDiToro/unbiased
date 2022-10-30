@@ -37,7 +37,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService{
 
     @Override
     @Transactional
-    public void deleteEmailToken(User user) {
-        verificationTokenDao.deleteEmailToken(user);
+    public void deleteEmailToken(long userId) {
+        verificationTokenDao.deleteEmailToken(userId);
     }
 }

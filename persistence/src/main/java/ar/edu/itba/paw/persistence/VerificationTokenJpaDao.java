@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public class VerificationTokenJpaDao implements VerificationTokenDao{
+public class FVerificationTokenJpaDao implements VerificationTokenDao{
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -36,9 +36,9 @@ public class VerificationTokenJpaDao implements VerificationTokenDao{
     }
 
     @Override
-    public void deleteEmailToken(User user) {
+    public void deleteEmailToken(long userId) {
         final Optional<VerificationToken> mayBeVt= entityManager.createQuery("from VerificationToken as vt WHERE vt.userId = :userId",VerificationToken.class)
-                .setParameter("userId", user.getId()).getResultList().stream().findFirst();
+                .setParameter("userId", userId).getResultList().stream().findFirst();
         mayBeVt.ifPresent(verificationToken -> entityManager.remove(verificationToken));
     }
 }
