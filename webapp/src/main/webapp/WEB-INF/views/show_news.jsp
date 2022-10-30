@@ -383,7 +383,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <c:url value="/news/comment/${comment.id}/report" var="postUrl"/>
+                                                                <c:url value="/news/${newsId}/comment/${comment.id}/report" var="postUrl"/>
                                                                 <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-100">
 
                                                                 <div class="input-group">

@@ -19,16 +19,14 @@ public interface UserService {
     List<User> getTopCreators(int qty);
     VerificationToken.Status verifyUserEmail(String token);
     VerificationToken.Status resendEmailVerification(String email);
-    void addRole(User user, Role role);
+    void addRole(long userId, Role role);
     void updateProfile(long userId, String username, byte[] bytes, String dataType, String description);
     Optional<User> findByUsername(String username);
-    boolean isFollowing(User user);
-    void followUser(User user);
-    void unfollowUser(User user);
+    boolean isFollowing(long userId);
+    void followUser(long userId);
+    void unfollowUser(long userId);
     Page<User> searchUsers(int page, String search);
-
     void pingNewsToggle(News news);
-
     ProfileCategory getProfileCategory(String category, User profile);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);

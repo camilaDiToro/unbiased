@@ -64,19 +64,19 @@ public class NewsController extends BaseController {
         if (errors.hasErrors()) {
             return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1);
         }
-        adminService.reportNews(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new), ReportReason.valueOf(reportNewsFrom.getReason()));
+        adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
-    @RequestMapping(value = "/news/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
     public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
-                                   final BindingResult errors) {
+                                      final BindingResult errors, @PathVariable("newsId") long newsId) {
         if (errors.hasErrors()) {
             return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1);
         }
-        Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
-        adminService.reportComment(comment, ReportReason.valueOf(reportNewsFrom.getReason()));
-        return new ModelAndView("redirect:/news/" + comment.getNews().getNewsId() + "#" + "comment-" + commentId);
+
+        adminService.reportComment(commentId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        return new ModelAndView("redirect:/news/" + newsId + "#" + "comment-" + commentId);
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
@@ -85,7 +85,7 @@ public class NewsController extends BaseController {
         if (errors.hasErrors()) {
             return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1);
         }
-        newsService.addComment(newsService.getOrThrowException(newsId), commentNewsForm.getComment());
+        newsService.addComment(newsId, commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
@@ -105,22 +105,18 @@ public class NewsController extends BaseController {
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         Locale locale = LocaleContextHolder.getLocale();
 
-//        adminService.reportComment(newsService.getComments(news, 1).getContent().get(0), ReportReason.INAP);
-
-        Page<Comment> comments = newsService.getComments(news,page);
-
+        Page<Comment> comments = newsService.getComments(newsId,page);
 
         MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
                 .withObject("fullNews", news)
-                .withObject("hasReported", adminService.hasReported(news))
+                .withObject("hasReported", adminService.hasReported(news.getNewsId()))
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("reportNewsForm", reportNewsFrom)
                 .withObject("commentNewsForm", commentNewsFrom)
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", locale)
-                .withObject("commentsPage", newsService.getComments(news,page))
-                .withObject("categories", newsService.getNewsCategory(news));
+                .withObject("commentsPage", newsService.getComments(newsId,page));
 
         Optional<User> loggedUser = securityService.getCurrentUser();
 
@@ -164,14 +160,7 @@ public class NewsController extends BaseController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<SavedResult> saveNews(@PathVariable("newsId") long newsId){
-        Optional<User> maybeUser = securityService.getCurrentUser();
-        Optional<News> maybeNews = newsService.getById(newsId);
-
-        if (!maybeUser.isPresent() || !maybeNews.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(maybeNews.get(), maybeUser.get()));
+        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(newsId));
         return new ResponseEntity<>(savedResult, HttpStatus.OK);
     }
 

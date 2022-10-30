@@ -103,15 +103,14 @@ public class AdminController extends BaseController{
 
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        adminService.deleteNews(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        adminService.deleteNews(newsId);
         return new ModelAndView("redirect:/admin/reported_news");
     }
 
     @RequestMapping(value = "/admin/reported_comments/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteComment(@PathVariable("commentId") long commentId) {
-        adminService.deleteComment(newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
+        adminService.deleteComment(commentId);
         return new ModelAndView("redirect:/admin/reported_comments");
     }
-
 
 }

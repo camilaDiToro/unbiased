@@ -83,13 +83,13 @@ public class UserController extends BaseController{
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
     public ModelAndView profileFollow(@PathVariable("userId") long userId) {
-        userService.followUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        userService.followUser(userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
     public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
-        userService.unfollowUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        userService.unfollowUser(userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
@@ -115,7 +115,7 @@ public class UserController extends BaseController{
             catObject = userService.getProfileCategory(category, profileUser);
         }
 
-        Page<News> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
+        Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
         MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("profile", "pageTitle.profile", TextType.INTERCODE)
@@ -133,7 +133,7 @@ public class UserController extends BaseController{
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
-            mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
+            mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
         }
 
         mavBuilder.withObject("category", catObject);
