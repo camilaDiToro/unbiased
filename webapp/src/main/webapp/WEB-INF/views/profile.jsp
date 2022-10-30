@@ -106,13 +106,13 @@
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title"><spring:message code="showNews.reportCommentQuestion"/></h5>
+                                                <h5 class="modal-title"><spring:message code="profile.unpin.question"/></h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <spring:message code="profile.modal.msg"/>
+                                                <spring:message code="profile.unpin.body"/>
                                             </div>
                                             <div class="modal-footer">
                                                 <form method="post" action="<c:url value="/profile/${article.user.id}/pingNews/${article.newsId}"/>">
@@ -181,7 +181,7 @@
                                                         <c:if test="${isMyProfile && loggedUser == article.user}">
 
                                                             <button data-toggle="modal" data-target="#binModalPinged" class="btn bin-modal" id="bin_button">
-                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="w-25px" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
+                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-profile" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                                                             </button>
                                                             <div data-toggle="modal" data-target="#pingModalPinged" class="svg-btn hover-hand">
                                                                 unpin
@@ -194,7 +194,7 @@
 
                                                         <c:if test="${loggedUser != null}">
                                                             <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                                <img class="w-25px svg-btn" id="bookmark" onclick="handleBookmarkClick(this)"  src="<c:url value="/resources/images/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                                <img class="icon-profile svg-btn svg-bookmark" id="bookmark" onclick="handleBookmarkClick(this)"  src="<c:url value="/resources/images/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.articleSave"/>">
                                                             </div>
                                                         </c:if>
                                                     </div>
@@ -226,13 +226,13 @@
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title"><spring:message code="showNews.reportCommentQuestion"/></h5>
+                                                <h5 class="modal-title"><spring:message code="profile.pin.question"/></h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <spring:message code="profile.modal.msg"/>
+                                                <spring:message code="profile.pin.body"/>
                                             </div>
                                             <div class="modal-footer">
                                                 <form method="post" action="<c:url value="/profile/${article.user.id}/pingNews/${article.newsId}"/>">
@@ -372,28 +372,89 @@
                 <img src="<c:url value="/resources/images/${profilePositivity.imageName}"/> " alt="..." class="quality-indicator  <c:out value="${profilePositivity}"/>" data-toggle="tooltip" data-placement="top" title="<spring:message code="home.upvotes" arguments="${profilePositivityStats.getPercentageUpvoted()}"/> - <spring:message code="home.interactions" arguments="${profilePositivityStats.getInteractions()}"/>" />
 
             </c:if>
+
+            <button data-toggle="modal" data-target="#infoModal" class="info-profile-btn bg-transparent border-0" style="background-image: url('<c:url value="/resources/images/info-svgrepo-com.svg"/>')"></button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="infomodal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="infoModalLabel"><spring:message code="profile.modal.infoTitle"/></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h6><spring:message code="profile.modal.infoAllowedMsg"/></h6>
+
+                            <div class="info-function d-flex flex-row mb-3">
+
+                                <div class="d-flex">
+                                    1. <spring:message code="profile.modal.infoChangeUsername"/>
+                                </div>
+
+                                <div class="d-flex info-enabled info-custom-box">
+                                    <spring:message code="profile.modal.enabled"/>
+                                </div>
+                            </div>
+
+                            <div class="info-function d-flex flex-row mb-3">
+
+                                <div class="d-flex">
+                                    2. <spring:message code="profile.modal.infoChangeProfileimg"/>
+                                </div>
+
+                                <div class="d-flex info-enabled info-custom-box">
+                                    <spring:message code="profile.modal.enabled"/>
+                                </div>
+                            </div>
+
+                            <div class="info-function d-flex flex-row">
+
+                                <div class="d-flex">
+                                    3. <spring:message code="profile.modal.infoChangeAddDescription"/>
+                                </div>
+
+                                <c:if test="${isJournalist}">
+                                    <div class="d-flex info-enabled info-custom-box">
+                                        <spring:message code="profile.modal.enabled"/>
+                                    </div>
+                                </c:if>
+
+                                <c:if test="${!isJournalist}">
+                                    <div class="d-flex info-disabled info-custom-box" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.infoDisabled"/> ">
+                                        <spring:message code="profile.modal.disabled"/>
+                                    </div>
+                                </c:if>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <img src="<c:url value="/resources/images/front-page-profile.png"/>" class="card-img-top" alt="...">
 
             <div class="card-body">
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
-                <span class="card-text text-muted d-block mb-2 text-center"><c:out value="${profileUser.email}"/> </span>
-                <div class="d-flex justify-content-center align-items-center">
-                    <c:if test="${isJournalist}">
-                        <div class="text-center font-weight-light m-1"><c:out value="${profileUser.description}"/></div>
-                    </c:if>
-                </div>
-                <div class="d-flex justify-content-center align-items-center">
+                <div class="d-flex flex-row align-items-center justify-content-center">
+                    <span class="card-text text-muted d-block mb-2 text- mr-3"><c:out value="${profileUser.email}"/> </span>
                     <c:if test="${loggedUser != null && !isMyProfile}">
                         <c:if test="${!isFollowing}">
-                            <a class="btn d-flex btn-info font-weight-bold text-white rounded-pill medium-pill align-items-center justify-content-center" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
+                            <a class="btn d-flex btn-info btn-sm text-white align-items-center justify-content-center custom-btn-follow" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
                         </c:if>
                         <c:if test="${isFollowing}">
-                            <a class="btn d-flex btn-danger font-weight-bold text-white rounded-pill medium-pill align-items-center justify-content-center" href="<c:url value="/profile/${userId}/unfollow"/>">
-                                <div id="custom-follow-btn">
-                                    <spring:message code="profile.unfollow"/>
-                                </div>
+                            <a class="btn d-flex btn-sm border text-white align-items-center justify-content-center" href="<c:url value="/profile/${userId}/unfollow"/>" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="profile.following"/> ">
+                                <img src="<c:url value="/resources/images/following.svg"/>" alt="...">
                             </a>
                         </c:if>
+                    </c:if>
+                </div>
+
+                <div class="d-flex justify-content-center align-items-center">
+                    <c:if test="${isJournalist}">
+                        <div class="text-center font-weight-light m-1 overflow-wrap w-85"><c:out value="${profileUser.description}"/></div>
                     </c:if>
                 </div>
             </div>
@@ -422,7 +483,7 @@
         </c:if>
 
 
-            <!-- Modal -->
+            <!-- Modal edit profile-->
             <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -493,7 +554,7 @@
     </div>
     </div>
 
-    <c:if test="${not empty news}">
+    <c:if test="${not empty news or not empty pingedNews}">
         <nav class="d-flex justify-content-center align-items-center">
             <ul class="pagination">
 

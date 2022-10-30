@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,6 +45,8 @@ public class SecurityServiceImpl implements SecurityService {
             return false;
         }
 
-        return mayBeUser.get().getRoles().contains(Role.ROLE_ADMIN);
+        Collection<Role> roles = mayBeUser.get().getRoles();
+
+        return roles.contains(Role.ROLE_ADMIN) || roles.contains(Role.ROLE_OWNER);
     }
 }

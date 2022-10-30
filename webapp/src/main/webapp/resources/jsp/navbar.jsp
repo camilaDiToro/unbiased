@@ -21,13 +21,19 @@
         </button></a>
 </c:if>
 
-            <form class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP"/>">
+            <form id="search-form" class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP">
+            </c:url>">
                 <div>
                     <spring:message code="navbar.search"  var="searchPlaceholder" />
                     <input style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white"
                            type="search" placeholder="${searchPlaceholder}" id="query" name="query" value="${param.query}"/>
                 </div>
+                <div class="invisible position-fixed">
+                    <input name="type" value="${param.type}"/>
+                </div>
+                <script>
 
+                </script>
             </form>
             <c:if test="${loggedUser != null}">
                 <div class="dropdown dropdown-p">
