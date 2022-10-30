@@ -28,4 +28,8 @@ public final class TextUtils {
     public static int estimatedMinutesToRead(String text) {
         return (int)Math.ceil(text.split("\\s+").length / (double)WPM);
     }
+
+    public static String escapeSqlLike(String query) {
+        return query.replaceAll("_","[_]").replaceAll("%","[%]"); // TODO encontrar una forma mas oficial (no cubre todos los casos)
+    }
 }

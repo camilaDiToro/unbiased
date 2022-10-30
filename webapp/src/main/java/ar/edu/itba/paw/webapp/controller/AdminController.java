@@ -39,29 +39,30 @@ public class AdminController extends BaseController{
     @RequestMapping(value = "/admin/reported_news/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("newsOrder") String newsOrder) {
+        ReportOrder order = ReportOrder.getByValue(newsOrder);
 
-
-        Page<News> reportedNewsPage = adminService.getReportedNews(page, newsOrder);
+        Page<News> reportedNewsPage = adminService.getReportedNews(page, order);
         return new MyModelAndView.Builder("moderation_panel_reported_news", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", ReportOrder.values())
                 .withObject("item", "news")
                 .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
-                .withObject("orderBy", ReportOrder.valueOf(newsOrder)).build();
+                .withObject("orderBy", order).build();
     }
 
     @RequestMapping(value = "/admin/reported_comments/{commentOrder}", method = RequestMethod.GET)
     public ModelAndView reportedComments(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("commentOrder") String commentOrder) {
+        ReportOrder order = ReportOrder.getByValue(commentOrder);
 
 
-        Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, commentOrder);
+        Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, order);
         return new MyModelAndView.Builder("moderation_panel_reported_comments", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("commentsPage", reportedCommentsPage)
                 .withObject("orders", ReportOrder.values())
                 .withObject("item", "comments")
                 .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
-                .withObject("orderBy", ReportOrder.valueOf(commentOrder)).build();
+                .withObject("orderBy", order).build();
     }
 
     @RequestMapping("/admin/reported_news")
@@ -78,7 +79,7 @@ public class AdminController extends BaseController{
     @RequestMapping("/admin/reported_news_detail/{newsId:[0-9]+}")
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
-        Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsId);
         return new MyModelAndView.Builder("moderation_panel_reported_news_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
@@ -91,7 +92,7 @@ public class AdminController extends BaseController{
     @RequestMapping("/admin/reported_comment_detail/{commentId:[0-9]+}")
     public ModelAndView reportedCommentDetail(@PathVariable("commentId") long commentId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
-        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page,newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
+        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page,commentId);
         return new MyModelAndView.Builder("moderation_panel_reported_comment_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedCommentPage", reportedCommentPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
