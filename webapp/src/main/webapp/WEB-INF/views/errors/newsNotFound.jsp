@@ -7,7 +7,6 @@
 <c:set var="pageTitle" scope="request" value="News not found"/>
 <%@ include file="../../../resources/jsp/head.jsp" %>
 <body>
-<%@ include file="../../../resources/jsp/navbar.jsp" %>
 <div class="d-flex align-items-center justify-content-center h-75">
     <div class="text-center">
         <h1 class="display-1 fw-bold">404</h1>
@@ -15,7 +14,7 @@
         <p class="lead">
             <spring:message code="error.articlNotFound"/>
         </p>
-        <a href="<c:url value="/"/>" class="btn btn-primary"><spring:message code="genericError.button.goHome"/></a>
+        <a href="<c:url value="/"/>" class="btn btn-md btn-info btn-block"><spring:message code="genericError.button.goHome"/></a>
     </div>
 </div>
 </body>

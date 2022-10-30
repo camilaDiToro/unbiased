@@ -12,7 +12,7 @@
         <p class="lead">
             <spring:message code="error.invalidUser"/>
         </p>
-        <a href="<c:url value="/"/>" class="btn btn-primary"><spring:message code="genericError.button.goHome"/></a>
+        <a href="<c:url value="/"/>" class="btn btn-md btn-info btn-block"><spring:message code="genericError.button.goHome"/></a>
     </div>
 </div>
 </body>
