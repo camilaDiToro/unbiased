@@ -119,7 +119,7 @@ public class UserController {
             catObject = userService.getProfileCategory(category, profileUser);
         }
 
-        Page<News> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
+        Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
         MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)

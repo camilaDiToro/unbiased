@@ -17,19 +17,14 @@ public interface NewsService {
     News create(News.NewsBuilder newsBuilder, String[] categories);
     Optional<News> getById(long id);
     Optional<Comment> getCommentById(long id);
-    Page<News> getNews(int page, String category, String newsOrder, String query);
-    List<Category> getNewsCategory(News news);
+    Page<News> getNews(int page, Category category, NewsOrder newsOrder, String query);
     void setRating(News news, Rating rating);
-
-    boolean toggleSaveNews(News news, User user);
+    boolean toggleSaveNews(long newsId);
     void deleteNews(News news);
     Iterable<ProfileCategory> getProfileCategories(User user);
     Iterable<Category> getHomeCategories();
-    Page<News> getNewsForUserProfile(int page, String newsOrder, User user, String pc);
-    Page<News> getRecommendation(int page, User user, NewsOrder newsOrder);
-    News getOrThrowException(long newsId);
-    void addComment(News news, String comment);
-    Page<Comment> getComments(News news, int page);
+    Page<News> getNewsForUserProfile(int page, NewsOrder newsOrder, User user, String pc);
+    void addComment(long newsId, String comment);
+    Page<Comment> getComments(long newsId, int page);
     void deleteComment(long commentId);
-    NewsOrder getOrderBy();
 }

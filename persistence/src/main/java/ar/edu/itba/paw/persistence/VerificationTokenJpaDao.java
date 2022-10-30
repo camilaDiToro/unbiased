@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public class FVerificationTokenJpaDao implements VerificationTokenDao{
+public class VerificationTokenJpaDao implements VerificationTokenDao{
 
     @PersistenceContext
     private EntityManager entityManager;

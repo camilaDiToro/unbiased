@@ -102,11 +102,6 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public List<Category> getNewsCategory(News news) {
-        return null;
-    } // TODO: delete
-
-    @Override
     @Transactional
     public void deleteNews(News news) {
         entityManager.remove(news);
@@ -134,15 +129,7 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public void saveNews(News news, User user) {
-//        Optional<Saved> maybeSaved = entityManager.createQuery("SELECT u from Saved u WHERE u.news = :news AND u.userId = :userId", Saved.class)
-//                .setParameter("news", news)
-//                .setParameter("userId", user.getId()).getResultList().stream().findFirst();
         user.getSavedNews().add(new Saved(news, user.getId()));
-//        if (!maybeSaved.isPresent()) {
-//            Saved saved = new Saved(news, user.getId());
-//            entityManager.persist(saved);
-//        }
-
     }
 
     private int getTotalPagesComments(long newsId) {
@@ -227,9 +214,6 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public void removeSaved(News news, User user) {
-//        entityManager.createQuery("DELETE FROM Saved s WHERE s.news.newsId = :newsId AND s.userId = :userId")
-//                .setParameter("newsId", news.getNewsId())
-//                .setParameter("userId", user.getId());
         user.getSavedNews().remove(new Saved(news, user.getId()));
 
     }

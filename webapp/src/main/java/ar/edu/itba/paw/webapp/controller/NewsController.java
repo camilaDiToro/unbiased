@@ -89,7 +89,7 @@ public class NewsController {
         if (errors.hasErrors()) {
             return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1);
         }
-        newsService.addComment(newsService.getOrThrowException(newsId), commentNewsForm.getComment());
+        newsService.addComment(newsId, commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
@@ -109,22 +109,18 @@ public class NewsController {
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         Locale locale = LocaleContextHolder.getLocale();
 
-//        adminService.reportComment(newsService.getComments(news, 1).getContent().get(0), ReportReason.INAP);
-
-        Page<Comment> comments = newsService.getComments(news,page);
-
+        Page<Comment> comments = newsService.getComments(newsId,page);
 
         MyModelAndView.Builder builder =  mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
                 .withObject("fullNews", news)
-                .withObject("hasReported", news.getNewsId())
+                .withObject("hasReported", adminService.hasReported(news.getNewsId()))
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("reportNewsForm", reportNewsFrom)
                 .withObject("commentNewsForm", commentNewsFrom)
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", locale)
-                .withObject("commentsPage", newsService.getComments(news,page))
-                .withObject("categories", newsService.getNewsCategory(news));
+                .withObject("commentsPage", newsService.getComments(newsId,page));
 
         Optional<User> loggedUser = securityService.getCurrentUser();
 
@@ -168,14 +164,7 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<SavedResult> saveNews(@PathVariable("newsId") long newsId){
-        Optional<User> maybeUser = securityService.getCurrentUser();
-        Optional<News> maybeNews = newsService.getById(newsId);
-
-        if (!maybeUser.isPresent() || !maybeNews.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(maybeNews.get(), maybeUser.get()));
+        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(newsId));
         return new ResponseEntity<>(savedResult, HttpStatus.OK);
     }
 

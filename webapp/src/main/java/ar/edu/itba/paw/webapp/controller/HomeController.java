@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.*;
@@ -41,8 +42,7 @@ public class HomeController {
             @RequestParam(name = "category", defaultValue = "ALL") final String category,
             @RequestParam(name="type", defaultValue="article") String type){
 
-
-        Page<News> newsPage = newsService.getNews(page,category,orderBy,query);
+        Page<News> newsPage = newsService.getNews(page,Category.getByValue(category),NewsOrder.getByValue(orderBy),query);
 
         MyModelAndView.Builder builder= mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
@@ -67,7 +67,7 @@ public class HomeController {
         final Long newsId = payload.getNewsId();
         final boolean isActive = payload.isActive();
 
-        News news = newsService.getOrThrowException(newsId);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         newsService.setRating(news, isActive ? action : Rating.NO_RATING);
 
         return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
