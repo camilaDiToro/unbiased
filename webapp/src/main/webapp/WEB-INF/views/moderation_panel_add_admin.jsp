@@ -27,7 +27,7 @@
                         <div class="d-flex w-100 justify-content-center">
                             <spring:message code="moderation.searchAdmin"  var="searchPlaceholder" />
                             <input id="searchBar_addAdmin" style="background-image: url('<c:url value="/resources/images/loupe-svgrepo-com.svg"/>')!important;" class="search-form search form-control text-white w-55"
-                                   type="search" placeholder="${searchPlaceholder}" name="query" value=""/>
+                                   type="search" placeholder="${searchPlaceholder}" name="query" value="${param.query}"/>
                         </div>
 
                     </form>

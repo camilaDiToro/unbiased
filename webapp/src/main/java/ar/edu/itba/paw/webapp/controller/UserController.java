@@ -15,7 +15,6 @@ import ar.edu.itba.paw.webapp.auth.OwnerCheck;
 import ar.edu.itba.paw.webapp.form.ResendVerificationEmail;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
-import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -31,20 +30,17 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Controller
-public class UserController {
+public class UserController extends BaseController{
 
     private final UserService userService;
     private final NewsService newsService;
-    private final SecurityService securityService;
     private final OwnerCheck ownerCheck;
-    private final MAVBuilderSupplier mavBuilderSupplier;
 
     @Autowired
     public UserController(UserService userService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
+        super(securityService);
         this.userService = userService;
-        this.securityService = securityService;
         this.newsService = newsService;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
         this.ownerCheck = ownerCheck;
     }
 
@@ -55,7 +51,7 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createForm(@ModelAttribute("registerForm") final UserForm userForm) {
-        return mavBuilderSupplier.supply("register", "pageTitle.register", TextType.INTERCODE)
+        return new MyModelAndView.Builder("register", "pageTitle.register", TextType.INTERCODE)
                 .build();
     }
 
@@ -122,7 +118,7 @@ public class UserController {
         Page<News> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
-        MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)
+        MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("profile", "pageTitle.profile", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", newsOrder)
                 .withObject("categories", profileCategoryList)
@@ -161,7 +157,7 @@ public class UserController {
         VerificationToken.Status status = userService.verifyUserEmail(token);
         ModelAndView mav;
         if(status.equals(VerificationToken.Status.SUCCESFFULLY_VERIFIED)){
-            mav = mavBuilderSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.INTERCODE)
+            mav = new MyModelAndView.Builder("email_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                     .build();
         }else{
             mav = new ModelAndView("redirect:/email_not_verified/"+status.getStatus().toLowerCase(Locale.ROOT));
@@ -172,7 +168,7 @@ public class UserController {
     @RequestMapping(value = "/email_not_verified/{status:expired|not_exists}", method = RequestMethod.GET)
     public ModelAndView resendVerificationEmail(@ModelAttribute("resendEmailForm") final ResendVerificationEmail userForm, @PathVariable("status") String status) {
 
-        MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("email_not_verified", "pageTitle.emailVerified", TextType.INTERCODE)
+        MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("email_not_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                 .withObject("status",status);
 
         if(status.equals("expired")){

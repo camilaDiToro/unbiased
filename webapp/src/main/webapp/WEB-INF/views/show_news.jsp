@@ -85,6 +85,7 @@
                         </div>
 
                         <c:if test="${myNews}">
+                            ${msg}
                             <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand">
                                 <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-news svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                             </div>

@@ -13,7 +13,6 @@ import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
-import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -30,27 +29,24 @@ import java.io.IOException;
 import java.util.*;
 
 @Controller
-public class NewsController {
+public class NewsController extends BaseController {
 
     private final NewsService newsService;
     private final ImageService imageService;
-    private final SecurityService securityService;
     private final AdminService adminService;
 
     private final UserService userService;
     private final OwnerCheck ownerCheck;
-    private final MAVBuilderSupplier mavBuilderSupplier;
 
 
     @Autowired
     public NewsController(AdminService adminService, UserService userService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
+        super(ss);
         this.newsService = newsService;
         this.imageService = imageService;
-        this.securityService = ss;
         this.adminService = adminService;
         this.userService = userService;
         this.ownerCheck = ownerCheck;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
 
@@ -114,7 +110,7 @@ public class NewsController {
         Page<Comment> comments = newsService.getComments(news,page);
 
 
-        MyModelAndView.Builder builder =  mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
+        MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
                 .withObject("fullNews", news)
                 .withObject("hasReported", adminService.hasReported(news))
@@ -159,7 +155,7 @@ public class NewsController {
 
     @RequestMapping(value = "/create_article", method = RequestMethod.GET)
     public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
-        return mavBuilderSupplier.supply("create_article", "pageTitle.createArticle", TextType.INTERCODE)
+        return new MyModelAndView.Builder("create_article", "pageTitle.createArticle", TextType.INTERCODE)
                 .withObject("categories", Category.getTrueCategories())
                 .withObject("validate", false).build();
     }

@@ -9,23 +9,18 @@ import java.util.Optional;
 
 public class MyModelAndView extends ModelAndView {
 
-    private MyModelAndView(String viewName, String pageTitle, TextType textType, Optional<User> loggedUser, boolean isAdmin) {
+    private MyModelAndView(String viewName, String pageTitle, TextType textType) {
         super(viewName);
         addObject("pageTitle", pageTitle);
-        User user = loggedUser.orElse(null);
-
-        addObject("loggedUser", user);
-        addObject("isLoggedIn", user != null);
         addObject("textType", textType);
-        addObject("isAdmin", isAdmin);
     }
 
     public static class Builder {
         private final MyModelAndView mav;
         private final TextType textType;
         private final StringBuilder params = new StringBuilder();
-        public Builder(String viewName, String pageTitle, TextType textType, SecurityService ss) {
-            mav = new MyModelAndView(viewName, pageTitle, textType, ss.getCurrentUser(), ss.isCurrentUserAdmin());
+        public Builder(String viewName, String pageTitle, TextType textType) {
+            mav = new MyModelAndView(viewName, pageTitle, textType);
             this.textType = textType;
         }
 

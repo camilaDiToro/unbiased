@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateAdminForm;
-import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,20 +14,17 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 
 @Controller
-public class OwnerController {
+public class OwnerController extends BaseController{
 
-    private final MAVBuilderSupplier mavBuilderSupplier;
     private final OwnerService ownerService;
     private final UserService userService;
 
-    private final SecurityService securityService;
 
     @Autowired
     public OwnerController(SecurityService securityService, OwnerService ownerService, UserService userService) {
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
+        super(securityService);
         this.ownerService = ownerService;
         this.userService = userService;
-        this.securityService = securityService;
     }
 
     @RequestMapping(value = "/owner/add_admin", method = RequestMethod.POST)
@@ -54,12 +49,10 @@ public class OwnerController {
     public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form, @RequestParam(name = "page", defaultValue = "1") int page,
                                       @RequestParam(name = "query", defaultValue = "") final String query) {
 
-        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
+        return new MyModelAndView.Builder("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("usersPage", ownerService.getAdmins(page, query))
                 .withObject("item", "manageAdmins")
-//                .withObject("usersPage", userService.searchUsers(page, query))
-
                 .build();
     }
 }

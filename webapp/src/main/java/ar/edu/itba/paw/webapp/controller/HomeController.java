@@ -2,9 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.*;
-import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,17 +13,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
-public class HomeController {
+public class HomeController extends BaseController{
 
     private final UserService userService;
     private final NewsService newsService;
-    private final MAVBuilderSupplier mavBuilderSupplier;
 
     @Autowired
     public HomeController(final UserService userService, final NewsService newsService, SecurityService securityService){
+        super(securityService);
         this.userService = userService;
         this.newsService = newsService;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
     @RequestMapping("/")
@@ -44,7 +41,7 @@ public class HomeController {
 
         Page<News> newsPage = newsService.getNews(page,category,orderBy,query);
 
-        MyModelAndView.Builder builder= mavBuilderSupplier.supply("index", "pageTitle.home", TextType.INTERCODE)
+        MyModelAndView.Builder builder= new MyModelAndView.Builder("index", "pageTitle.home", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", orderBy)
                 .withObject("query", query)
