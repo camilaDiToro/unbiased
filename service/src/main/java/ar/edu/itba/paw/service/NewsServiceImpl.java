@@ -33,7 +33,7 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public News create(News.NewsBuilder newsBuilder, String[] categories) {
         if(!newsBuilder.getCreator().getRoles().contains(Role.ROLE_JOURNALIST)){
-            userService.addRole(userService.getUserById(newsBuilder.getCreator().getId()).orElseThrow(UserNotFoundException::new),Role.ROLE_JOURNALIST);
+            userService.addRole(newsBuilder.getCreator().getId(),Role.ROLE_JOURNALIST);
         }
 
         for(String category : categories){

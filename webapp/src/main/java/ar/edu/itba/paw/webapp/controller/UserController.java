@@ -87,13 +87,13 @@ public class UserController {
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
     public ModelAndView profileFollow(@PathVariable("userId") long userId) {
-        userService.followUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        userService.followUser(userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
     public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
-        userService.unfollowUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        userService.unfollowUser(userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
@@ -137,7 +137,7 @@ public class UserController {
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
-            mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
+            mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
         }
 
         mavBuilder.withObject("category", catObject);

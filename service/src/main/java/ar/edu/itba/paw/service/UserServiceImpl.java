@@ -130,8 +130,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void addRole(User user, Role role) {
-        user.addRole(role);
+    public void addRole(long userId, Role role) {
+        userDao.getUserById(userId).orElseThrow(UserNotFoundException::new).addRole(role);
     }
 
     @Override
@@ -158,22 +158,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void followUser(User user) {
+    public void followUser(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        userDao.addFollow(myUser.getId(), user.getId());
+        userDao.addFollow(myUser.getId(), userId);
     }
 
     @Override
     @Transactional
-    public void unfollowUser(User user) {
+    public void unfollowUser(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        userDao.unfollow(myUser.getId(), user.getId());
+        userDao.unfollow(myUser.getId(), userId);
     }
 
     @Override
-    public boolean isFollowing(User user) {
+    public boolean isFollowing(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        return userDao.isFollowing(myUser.getId(), user.getId());
+        return userDao.isFollowing(myUser.getId(), userId);
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
