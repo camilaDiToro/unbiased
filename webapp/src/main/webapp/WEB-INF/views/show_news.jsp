@@ -91,13 +91,14 @@
                             <div data-toggle="modal" data-target="#pingModal${news.newsId}" class="svg-btn hover-hand">
                                 <c:choose>
                                     <c:when test="${pinned}">
-                                        unpin
+                                        <img  class="icon-news svg-btn svg-bookmark" src="<c:url value="/resources/images/pin.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.pin"/>">
                                     </c:when>
                                     <c:otherwise>
-                                        pin
+                                        <img  class="icon-news svg-btn svg-bookmark" src="<c:url value="/resources/images/pin${pinned ? '-clicked' : ''}.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.unpin"/>">
+
                                     </c:otherwise>
-                                </c:choose>
-                                    <%--                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>--%>
+                            </c:choose>
+                                <%--                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>--%>
                             </div>
                             <div class="modal fade" id="pingModal${newsId}"  aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -360,13 +361,13 @@
 
                                             <c:when test = "${hasReportedComment}">
                                                 <div class=" d-flex justify-content-center align-items-center hover-hand" >
-                                                    <img  class="icon-comment" src="<c:url value="/resources/images/flag-clicked.svg"/>" alt="" data-toggle=tooltip" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>">
+                                                    <img  class="icon-comment ${hasReportedComment ? '' : 'svg-btn'}" src="<c:url value="/resources/images/flag-clicked.svg"/>" alt="" data-toggle=tooltip" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>">
                                                 </div>
                                             </c:when>
 
                                             <c:otherwise>
-                                                <div class="d-flex justify-content-center align-items-center hover-hand" >
-                                                    <img data-toggle="modal" data-target="#reportComment${comment.id}Modal" class="icon-comment svg-btn svg-bookmark" src="<c:url value="/resources/images/flag.svg"/>" alt="" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>" >
+                                                <div class="d-flex justify-content-center align-items-center hover-hand" data-toggle="${hasReportedComment ? 'tooltip' : ''}">
+                                                    <img data-toggle="modal" data-target="#reportComment${comment.id}Modal" class="icon-comment"  data-placement="${hasReportedComment ? 'bottom' : ''}" src="<c:url value="/resources/images/flag.svg"/>" alt="" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>" >
                                                 </div>
                                                 <!-- Modal report comment-->
                                                 <div class="modal fade" id="reportComment${comment.id}Modal" tabindex="-1"  aria-hidden="true">

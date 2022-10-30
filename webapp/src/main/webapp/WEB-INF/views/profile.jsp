@@ -184,8 +184,7 @@
                                                                 <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-profile" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                                                             </button>
                                                             <div data-toggle="modal" data-target="#pingModalPinged" class="svg-btn hover-hand">
-                                                                unpin
-                                                                    <%--                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>--%>
+                                                                <img onclick="handleBookmarkClick(this)" class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin${pinned ? '-clicked' : ''}.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.unpin"/>">
                                                             </div>
 
 
@@ -321,12 +320,11 @@
 
                                                     <c:if test="${isMyProfile && loggedUser == article.user}">
                                                             <button data-toggle="modal" data-target="#binModal${newsId}" class="btn bin-modal" id="bin_button">
-                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="w-25px" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
+                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-profile" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                                                             </button>
 
                                                         <div data-toggle="modal" data-target="#pingModal${newsId}" class="svg-btn hover-hand">
-                                                            pin
-                                                                <%--                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>--%>
+                                                            <img onclick="handleBookmarkClick(this)" class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.pin"/>">
                                                         </div>
 
 
@@ -335,7 +333,7 @@
 
                                                     <c:if test="${loggedUser != null}">
                                                         <div class=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center" >
-                                                            <img class="w-25px svg-btn" id="bookmark" onclick="handleBookmarkClick(this)"  src="<c:url value="/resources/images/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>">
+                                                            <img class="w-25px svg-btn" id="bookmark" onclick="handleBookmarkClick(this)"  src="<c:url value="/resources/images/bookmark${loggedParams != null && loggedParams.saved ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${article.newsId}/save"/>" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.articleSave"/>">
                                                         </div>
                                                     </c:if>
                                                 </div>
