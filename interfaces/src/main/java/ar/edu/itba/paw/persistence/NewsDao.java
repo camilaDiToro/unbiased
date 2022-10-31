@@ -13,12 +13,10 @@ import java.util.Optional;
 
 public interface NewsDao {
 
-    List<News> getNews(int page, String query, NewsOrder ns, Long loggedUser);
-    int getTotalPagesAllNews(String query);
-    List<News> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser);
-    int getTotalPagesCategory(Category category);
-    List<News> getRecommendation(int page, User user, NewsOrder newsOrder);
-    int getTodayNewsPageCount(User user);
+    Page<News> getNews(int page, String query, NewsOrder ns, Long loggedUser);
+    Page<News> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser);
+    Page<News> getRecommendation(int page, User user, NewsOrder newsOrder);
+
     News create(News.NewsBuilder newsBuilder);
     Optional<News> getById(long id, Long loggedUser);
     void setRating(News news, User user, Rating rating);

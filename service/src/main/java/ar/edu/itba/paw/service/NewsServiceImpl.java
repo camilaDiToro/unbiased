@@ -60,29 +60,13 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Page<News> getNews(int page, Category category, NewsOrder newsOrder, String query) {
-        int totalPages;
-        page = page <= 0 ? 1 : page;
-
         Long loggedUser = getLoggedUserId();
-
-        List<News> ln;
-
         if (category.equals(Category.ALL)) {
-            totalPages = newsDao.getTotalPagesAllNews(query);
-            page = Math.min(page, totalPages);
-            ln = newsDao.getNews(page, query, newsOrder, loggedUser);
+            return newsDao.getNews(page, query, newsOrder, loggedUser);
         } else if (category.equals(Category.FOR_ME)) {
-            totalPages = newsDao.getTodayNewsPageCount(getLoggedUser());
-            page = Math.min(page, totalPages);
-            ln = newsDao.getRecommendation(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new), newsOrder);
+            return newsDao.getRecommendation(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new), newsOrder);
         }
-        else {
-            totalPages = newsDao.getTotalPagesCategory(category);
-            page = Math.min(page, totalPages);
-            ln = newsDao.getNewsByCategory(page, category, newsOrder, loggedUser);
-        }
-
-        return new Page<>(ln, page, totalPages);
+        return newsDao.getNewsByCategory(page, category, newsOrder, loggedUser);
     }
 
 
