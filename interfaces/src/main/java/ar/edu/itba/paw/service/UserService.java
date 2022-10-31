@@ -30,4 +30,5 @@ public interface UserService {
     ProfileCategory getProfileCategory(String category, User profile);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);
+    boolean isUserAdmin(User user);
 }

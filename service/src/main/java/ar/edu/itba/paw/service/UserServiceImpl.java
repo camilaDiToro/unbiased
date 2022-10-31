@@ -224,4 +224,13 @@ public class UserServiceImpl implements UserService {
     public long getFollowersCount(long userId) {
         return userDao.getFollowersCount(userId);
     }
+
+    @Override
+    public boolean isUserAdmin(User user) {
+        if(user == null)
+            return false;
+        Collection<Role> roles = user.getRoles();
+
+        return roles.contains(Role.ROLE_ADMIN) || roles.contains(Role.ROLE_OWNER);
+    }
 }

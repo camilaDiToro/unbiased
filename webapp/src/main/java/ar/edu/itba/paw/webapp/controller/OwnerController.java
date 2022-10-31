@@ -17,14 +17,11 @@ import javax.validation.Valid;
 public class OwnerController extends BaseController{
 
     private final OwnerService ownerService;
-    private final UserService userService;
-
 
     @Autowired
     public OwnerController(SecurityService securityService, OwnerService ownerService, UserService userService) {
-        super(securityService);
+        super(securityService, userService);
         this.ownerService = ownerService;
-        this.userService = userService;
     }
 
     @RequestMapping(value = "/owner/add_admin", method = RequestMethod.POST)
