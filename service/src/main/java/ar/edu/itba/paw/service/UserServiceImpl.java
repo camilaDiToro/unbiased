@@ -51,17 +51,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getRegisteredUserById(long id) {
-        Optional<User> mayBeUser = userDao.getUserById(id);
-
-        if(!mayBeUser.isPresent()){
-            return Optional.empty();
-        }
-
-        if(!mayBeUser.get().getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus())){
-            return Optional.empty();
-        }
-
-        return mayBeUser;
+        return userDao.getRegisteredUserById(id);
     }
 
     @Override

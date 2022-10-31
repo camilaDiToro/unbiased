@@ -32,6 +32,13 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
+    public Optional<User> getRegisteredUserById(long id) {
+        final TypedQuery<User> query = entityManager.createQuery("FROM User WHERE userId = :id and status = :status",User.class);
+        query.setParameter("id", id).setParameter("status", UserStatus.REGISTERED);
+        return query.getResultList().stream().findFirst();
+    }
+
+    @Override
     public User create(User.UserBuilder userBuilder) {
         final User user = userBuilder.build();
         entityManager.persist(user);
