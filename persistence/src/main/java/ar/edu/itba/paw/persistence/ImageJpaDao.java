@@ -1,11 +1,11 @@
-package ar.edu.itba.paw.persistence.old;
+package ar.edu.itba.paw.persistence;
 
 
 import ar.edu.itba.paw.model.Image;
-import ar.edu.itba.paw.persistence.ImageDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,16 +27,16 @@ public class ImageJpaDao implements ImageDao {
     }
 
     @Override
-    public long uploadImage(byte[] bytes, String dataType) {
+    @Transactional
+    public Image uploadImage(byte[] bytes, String dataType) {
         Image image = new Image(bytes, dataType);
 //        final Map<String, Object> imageData = new HashMap<>();
 //        imageData.put("bytes", bytes);
 //        imageData.put("data_type", dataType);
 //        long id = jdbcInsert.executeAndReturnKey(imageData).longValue();
-        long id = image.getImageId();
         entityManager.persist(image);
-        LOGGER.debug("Uploaded image with id {}", id);
-        return id;
+//        LOGGER.debug("Uploaded image with id {}", id);
+        return image;
     }
 
     @Override

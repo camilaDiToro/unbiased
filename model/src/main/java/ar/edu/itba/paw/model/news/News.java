@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.model.news;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.user.*;

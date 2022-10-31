@@ -24,12 +24,11 @@ public class ImageServiceImpl implements ImageService{
     }
 
     @Override
-    @Transactional
     public Long uploadImage(byte[] bytes, String dataType) {
         if (bytes.length == 0){
             return null;
         }
-        return imageDao.uploadImage(bytes, dataType);
+        return imageDao.uploadImage(bytes, dataType).getImageId();
     }
 
     @Override

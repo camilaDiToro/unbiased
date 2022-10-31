@@ -10,7 +10,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_image_id_seq")
     @SequenceGenerator(name="image_image_id_seq", sequenceName = "image_image_id_seq", allocationSize = 1)
     @Column(name = "image_id")
-    private long imageId;
+    private Long imageId;
 
     @Column(name = "bytes")
     private byte[] bytes;
@@ -22,7 +22,7 @@ public class Image {
         // Just for hibernate
     }
 
-    public Image(long imageId, byte[] bytes, String dataType) {
+    public Image(Long imageId, byte[] bytes, String dataType) {
         this.imageId = imageId;
         this.bytes = bytes;
         this.dataType = dataType;
