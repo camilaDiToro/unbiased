@@ -182,7 +182,7 @@ public class NewsController extends BaseController {
         final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, TextUtils.convertMarkdownToHTML(createNewsFrom.getBody()), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-        if(!createNewsFrom.getImage().isEmpty()){
+        if(!createNewsFrom.getImage().isEmpty() && 0 != createNewsFrom.getImage().getBytes().length){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
