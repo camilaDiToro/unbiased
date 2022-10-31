@@ -6,13 +6,13 @@ import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.persistence.CommentDao;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import javax.xml.soap.Text;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,12 +22,14 @@ public class NewsServiceImpl implements NewsService {
     private final NewsDao newsDao;
     private final SecurityService securityService;
     private final UserService userService;
+    private final CommentDao commentDao;
 
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService) {
+    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService, CommentDao commentDao) {
         this.newsDao = newsDao;
         this.userService = userService;
         this.securityService = securityService;
+        this.commentDao = commentDao;
     }
 
     @Override
@@ -155,7 +157,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Optional<Comment> getCommentById(long id) {
-        return newsDao.getCommentById(id);
+        return commentDao.getCommentById(id);
     }
 
     @Override
@@ -163,18 +165,18 @@ public class NewsServiceImpl implements NewsService {
     public void addComment(long newsId, String comment) {
         User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         News news = getById(newsId).orElseThrow(NewsNotFoundException::new);
-        newsDao.addComment(user, news, comment);
+        commentDao.addComment(user, news, comment);
     }
 
     @Override
     public Page<Comment> getComments(long newsId, int page) {
-        return newsDao.getComments(newsId, page);
+        return commentDao.getComments(newsId, page);
     }
 
     @Override
     @Transactional
     public void deleteComment(long commentId) {
-        newsDao.deleteComment(commentId);
+        commentDao.deleteComment(commentId);
     }
 
 }

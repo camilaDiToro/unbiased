@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-@Primary
 public class NewsJpaDao implements NewsDao {
 
     @PersistenceContext
@@ -26,14 +25,12 @@ public class NewsJpaDao implements NewsDao {
 
     private static final int SEARCH_PAGE_SIZE = 10;
     private static final int PAGE_SIZE = 10;
-    private static final int COMMENT_PAGE_SIZE = 5;
     private static final int PROFILE_PAGE_SIZE = 5;
     private static final int RECOMMENDATION_PAGE_SIZE = 10;
 
     final Logger LOGGER = LoggerFactory.getLogger(NewsJpaDao.class);
 
     private final Map<ProfileCategory, GetNewsProfileFunction> profileFunctions;
-
 
     public NewsJpaDao() {
         profileFunctions = new HashMap<>();
@@ -83,11 +80,6 @@ public class NewsJpaDao implements NewsDao {
 
     }
 
-    @Override
-    public Optional<Comment> getCommentById(long id) {
-        return Optional.ofNullable(entityManager.find(Comment.class, id));
-    }
-
 
     @Override
     public List<News> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser) {
@@ -133,46 +125,6 @@ public class NewsJpaDao implements NewsDao {
         user.getSavedNews().add(new Saved(news, user.getId()));
     }
 
-    private int getTotalPagesComments(long newsId) {
-        long count = entityManager.createQuery("SELECT COUNT(c) from Comment c WHERE c.news.newsId = :newsId", Long.class)
-                .setParameter("newsId", newsId).getSingleResult();
-        return Page.getPageCount(count, COMMENT_PAGE_SIZE);
-    }
-
-    @Override
-    public void addComment(User user, News news, String comment) {
-        Comment commentObj = new Comment(user, comment, news);
-        entityManager.persist(commentObj);
-    }
-
-    @Override
-    public void deleteComment(long commentId) {
-        Optional<Comment> mayBeComment = entityManager.createQuery("FROM Comment c WHERE c.id = :id", Comment.class).setParameter("id", commentId).getResultList().stream().findFirst();
-        mayBeComment.ifPresent(Comment::delete);
-    }
-
-    private List<Comment> getCommentsOfPage(Query query,int page, int pageSize) {
-        @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
-                .setParameter("offset", pageSize*(page-1))
-                .getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
-
-        if (ids.isEmpty())
-            return new ArrayList<>();
-
-        final TypedQuery<Comment> typedQuery = entityManager.createQuery("SELECT f from Comment f WHERE f.id IN :ids",Comment.class)
-                .setParameter("ids", ids);
-
-        List<Comment> comments = typedQuery.getResultList();
-        Map<Long, Comment> map = new HashMap<>();
-
-        for (Comment comment1 : comments) {
-            map.put(comment1.getId(), comment1);
-        }
-        comments = ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
-
-        return comments;
-    }
 
     private List<News> getNewsOfPage(Query query,int page, int pageSize) {
         @SuppressWarnings("unchecked")
@@ -195,17 +147,7 @@ public class NewsJpaDao implements NewsDao {
         return news;
     }
 
-    @Override
-    public Page<Comment> getComments(long newsId, int page) {
-        int totalPages = getTotalPagesComments(newsId);
-        page = Math.min(page, totalPages);
 
-        Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId ORDER BY commented_date DESC LIMIT :pageSize OFFSET :offset")
-                .setParameter("newsId", newsId);
-        List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
-
-        return new Page<>(comments, page, totalPages);
-    }
 
     @Override
     public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Long loggedUser, ProfileCategory profileCategory) {
