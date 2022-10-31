@@ -95,9 +95,10 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public void setRating(News news, Rating rating) {
         User user  = getLoggedUser();
-        newsDao.setRating(news, user, Rating.NO_RATING);
+//        newsDao.setRating(news, user, Rating.NO_RATING);
         newsDao.setRating(news, user, rating);
     }
 

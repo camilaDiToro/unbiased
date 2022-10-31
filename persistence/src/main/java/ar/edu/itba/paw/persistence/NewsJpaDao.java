@@ -117,15 +117,16 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    @Transactional
     public void setRating(News news, User user, Rating rating) {
         Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
         if (rating.equals(Rating.NO_RATING)) {
             upvoteMap.remove(user.getId());
             return;
         }
+        long userId = user.getId();
 
-        upvoteMap.put(user.getId(), new Upvote(news, user.getId(), rating.equals(Rating.UPVOTE)));
+        upvoteMap.putIfAbsent(userId, new Upvote(news, user.getId()));
+        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
     }
 
     @Override
