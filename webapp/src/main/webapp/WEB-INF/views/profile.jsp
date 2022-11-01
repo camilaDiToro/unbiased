@@ -473,7 +473,18 @@
 
         <div class="profile">
             <c:if test="${profileUser.hasImage()}">
-                <img src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+
+                <c:if test="${followers >= 0 && followers < 1}">
+                    <img id="default-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+                </c:if>
+
+                <c:if test="${followers >=1 && followers < 2}">
+                    <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+                </c:if>
+
+                <c:if test="${followers >=2}">
+                    <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+                </c:if>
             </c:if>
             <c:if test="${!profileUser.hasImage()}">
                 <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle" width="80">
