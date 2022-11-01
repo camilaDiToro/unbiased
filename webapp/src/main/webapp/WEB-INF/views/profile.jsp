@@ -450,6 +450,18 @@
                     </c:if>
                 </div>
 
+                <div class="d-flex flex-row align-items-center justify-content-center">
+                    <div class="d-flex flex-row mr-5">
+                        <p class="font-weight-bold">${followers}</p>
+                        <p class="custom-follow-text"><spring:message code="profile.followers"/></p>
+                    </div>
+
+                    <div class="d-flex flex-row">
+                        <p class="font-weight-bold">${following}</p>
+                        <p class="custom-follow-text"><spring:message code="profile.following"/></p>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-center align-items-center">
                     <c:if test="${isJournalist}">
                         <div class="text-center font-weight-light m-1 overflow-wrap w-85"><c:out value="${profileUser.description}"/></div>
