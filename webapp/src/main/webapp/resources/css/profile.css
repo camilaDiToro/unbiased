@@ -48,17 +48,14 @@
 
 .profile img#gold-frame-color{
     /*border:3px solid #FFD700;*/
-   /* background: linear-gradient(white, white) padding-box,
-    linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C) border-box;
-    border: 3px solid transparent;*/
     background: linear-gradient(white, white) padding-box,
-    linear-gradient(to right, #e80033, #fdbb30, #ed8b00, #f15d22, #bf0d3e, #910048) border-box;
+    linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C) border-box;
     border: 3px solid transparent;
 }
 
 .profile img#platinum-frame-color{
     background: linear-gradient(white, white) padding-box,
-    linear-gradient(to right, #0f9d58, #FFFFFF) border-box;
+    linear-gradient(to right, #e80033, #fdbb30, #ed8b00, #f15d22, #bf0d3e, #910048) border-box;
     border: 3px solid transparent;
 }
 
