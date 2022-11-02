@@ -195,7 +195,6 @@
 
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
                                     <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
                                 </div>
                                 </form:form>
@@ -402,7 +401,6 @@
 
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
                                                                 <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
                                                             </div>
                                                             </form:form>
