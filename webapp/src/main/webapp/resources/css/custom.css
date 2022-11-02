@@ -974,9 +974,18 @@ input:checked + .slider:before {
     width: 30px;
 }
 
+.icon-news-delete{
+    width: 35px;
+    margin-bottom: 4px;
+}
+
 .icon-profile{
     height: 25px;
     width: 25px;
+}
+
+.gap-4px {
+    gap: 4px;
 }
 
 .icon-index{

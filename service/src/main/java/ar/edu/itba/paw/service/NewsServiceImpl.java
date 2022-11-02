@@ -105,9 +105,9 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public boolean toggleSaveNews(long newsId) {
-
-        News news = newsDao.getById(newsId, null).orElseThrow(NewsNotFoundException::new);
         User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+
+        News news = newsDao.getById(newsId, user.getId()).orElseThrow(NewsNotFoundException::new);
 
         boolean returnValue;
         if (news.getLoggedUserParameters().isSaved()) {

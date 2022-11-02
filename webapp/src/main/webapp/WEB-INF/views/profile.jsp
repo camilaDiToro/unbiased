@@ -184,7 +184,7 @@
                                                                 <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-profile" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                                                             </button>
                                                             <div data-toggle="modal" data-target="#pingModalPinged" class="svg-btn hover-hand">
-                                                                <img onclick="handleBookmarkClick(this)" class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin${pinned ? '-clicked' : ''}.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.unpin"/>">
+                                                                <img class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin-clicked.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.unpin"/>">
                                                             </div>
 
 
@@ -324,7 +324,7 @@
                                                             </button>
 
                                                         <div data-toggle="modal" data-target="#pingModal${newsId}" class="svg-btn hover-hand">
-                                                            <img onclick="handleBookmarkClick(this)" class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.pin"/>">
+                                                            <img class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.pin"/>">
                                                         </div>
 
 

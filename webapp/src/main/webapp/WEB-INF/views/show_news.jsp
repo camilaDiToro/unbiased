@@ -75,19 +75,19 @@
                 </div>
                 <c:set var="saved" value="${loggedParameters != null ? loggedParameters.saved : false}"/>
                 <c:if test="${loggedUser != null}">
-                    <div class="d-flex flex-row align-items-center">
+                    <div class="d-flex flex-row align-items-center gap-4px">
                         <div class="ml-2 d-flex justify-content-center align-items-center" >
                             <img id="bookmark-news" onclick="handleBookmarkClick(this)" class="icon-news svg-btn svg-bookmark" src="<c:url value="/resources/images/bookmark${saved  ? '-clicked' : ''}.svg"/>" alt="" url="<c:url value="/news/${news.newsId}/save"/>" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.articleSave"/>">
                         </div>
 
-                        <div class="ml-2 d-flex justify-content-center align-items-center hover-hand" >
+                        <div class="ml-2 d-flex justify-content-center align-items-center" >
                             <img ${hasReported ? '' : 'data-toggle="modal" data-target="#reportModal"'} class="icon-news ${hasReported ? '' : 'svg-btn'} svg-bookmark" src="<c:url value="/resources/images/flag${hasReported ? '-clicked' : ''}.svg"/>" alt=""  data-toggle=tooltip" data-placement="bottom" title="<spring:message code="tooltip.articleReported"/>">
                         </div>
 
                         <c:if test="${myNews}">
                             ${msg}
-                            <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand">
-                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-news svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
+                            <div data-toggle="modal" data-target="#binModal" class="svg-btn hover-hand d-flex justify-content-center align-items-center">
+                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-news-delete svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                             </div>
                             <div data-toggle="modal" data-target="#pingModal${news.newsId}" class="svg-btn hover-hand">
                                 <c:choose>
@@ -95,7 +95,7 @@
                                         <img  class="icon-news svg-btn svg-bookmark" src="<c:url value="/resources/images/pin.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.unpin"/>">
                                     </c:when>
                                     <c:otherwise>
-                                        <img  class="icon-news svg-btn svg-bookmark" src="<c:url value="/resources/images/pin-clicked.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.pin"/>">
+                                        <img  class="icon-news svg-bookmark" src="<c:url value="/resources/images/pin-clicked.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.pin"/>">
                                     </c:otherwise>
                             </c:choose>
                                 <%--                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>--%>
