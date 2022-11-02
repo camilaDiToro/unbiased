@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/*
 @Repository
 public class ImageJdbcDao implements ImageDao {
 
@@ -54,3 +55,4 @@ public class ImageJdbcDao implements ImageDao {
         jdbcTemplate.update("DELETE FROM image WHERE image_id = ?",id);
     }
 }
+*/

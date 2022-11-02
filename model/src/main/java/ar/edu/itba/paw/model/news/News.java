@@ -24,6 +24,10 @@ public class News {
     @Column(name = "image_id")
     private Long imageId;
 
+    public void setBody(String body) {
+        this.body = body;
+    }
+
     @Column(name = "body")
     private String body;
 
