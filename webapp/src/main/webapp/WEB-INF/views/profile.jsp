@@ -59,7 +59,7 @@
 
             <%--CARDS--%>
             <div class="tab">
-                <c:if test="${empty news}" >
+                <c:if test="${empty news and empty pingedNews}" >
                     <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
                         <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
                         <p class="lead">
@@ -69,7 +69,7 @@
                     </div>
                 </c:if>
 
-                <c:if test="${!empty news}">
+                <c:if test="${not empty news or not empty pingedNews}">
 
                     <div class="container-fluid">
                         <div class="row row-cols-1">
