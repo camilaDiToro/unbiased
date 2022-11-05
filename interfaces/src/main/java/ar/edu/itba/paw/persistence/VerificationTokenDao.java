@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface VerificationTokenDao {
     VerificationToken createEmailToken(long userId, String token, LocalDateTime expiryDate);
     Optional<VerificationToken> getEmailToken(String token);
-    void deleteEmailToken(User user);
+    void deleteEmailToken(long userId);
 }

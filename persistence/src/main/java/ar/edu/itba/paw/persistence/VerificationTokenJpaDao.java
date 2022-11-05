@@ -36,9 +36,9 @@ public class VerificationTokenJpaDao implements VerificationTokenDao{
     }
 
     @Override
-    public void deleteEmailToken(User user) {
+    public void deleteEmailToken(long userId) {
         final Optional<VerificationToken> mayBeVt= entityManager.createQuery("from VerificationToken as vt WHERE vt.userId = :userId",VerificationToken.class)
-                .setParameter("userId", user.getId()).getResultList().stream().findFirst();
+                .setParameter("userId", userId).getResultList().stream().findFirst();
         mayBeVt.ifPresent(verificationToken -> entityManager.remove(verificationToken));
     }
 }

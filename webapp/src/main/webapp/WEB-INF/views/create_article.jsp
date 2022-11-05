@@ -77,14 +77,7 @@
             </div>
 
 
-        <script>
-            $('#fileInput').on('change',function(){
-                //get the file name
-                var fileName = $(this).val();
-                //replace the "Choose a file" label
-                $(this).next('.custom-file-label').html(fileName);
-            })
-        </script>
+
         </div>
     <form:errors path="image" element="div" cssClass="text-danger mb-3"  />
     <div class="dropdown" id="categories-dropdown">

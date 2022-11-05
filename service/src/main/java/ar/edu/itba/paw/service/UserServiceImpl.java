@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,7 +34,8 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService, VerificationTokenService verificationTokenService, SecurityService securityService) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService,
+                           VerificationTokenService verificationTokenService, SecurityService securityService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
@@ -91,15 +92,14 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.NOT_EXISTS;
         }
         VerificationToken vt = mayBeVt.get();
-        User user = userDao.getUserById(vt.getUserId()).orElseThrow(UserNotFoundException::new);
 
         if(!vt.isValidToken()){
             LOGGER.info("Trying to validate token {}, but it has expired", token);
             return VerificationToken.Status.EXPIRED;
         }
         userDao.verifyEmail(vt.getUserId());
-        login(user);
-        verificationTokenService.deleteEmailToken(user);
+        login(vt.getUserId());
+        verificationTokenService.deleteEmailToken(vt.getUserId());
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
 
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.ALREADY_VERIFIED;
         }
 
-        verificationTokenService.deleteEmailToken(user);
+        verificationTokenService.deleteEmailToken(user.getId());
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
         LocaleContextHolder.setLocale(locale, true);
@@ -129,14 +129,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void addRole(User user, Role role) {
-        user.addRole(role);
+    public void addRole(long userId, Role role) {
+        userDao.getUserById(userId).orElseThrow(UserNotFoundException::new).addRole(role);
     }
 
     @Override
     @Transactional
-    public void updateProfile(User user, String username, byte[] bytes, String dataType, String description) {
-        userDao.merge(user);
+    public void updateProfile(long userId, String username, byte[] bytes, String dataType, String description) {
+        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
@@ -157,26 +157,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void followUser(User user) {
+    public void followUser(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        userDao.addFollow(myUser.getId(), user.getId());
+        userDao.addFollow(myUser.getId(), userId);
     }
 
     @Override
     @Transactional
-    public void unfollowUser(User user) {
+    public void unfollowUser(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        userDao.unfollow(myUser.getId(), user.getId());
+        userDao.unfollow(myUser.getId(), userId);
     }
 
     @Override
-    public boolean isFollowing(User user) {
+    public boolean isFollowing(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        return userDao.isFollowing(myUser.getId(), user.getId());
+        return userDao.isFollowing(myUser.getId(), userId);
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
-    private void login(User user) {
+    private void login(long userId) {
+        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
         LOGGER.debug("User {} has loged in automatically", user);
@@ -191,6 +192,17 @@ public class UserServiceImpl implements UserService {
     public Page<User> searchUsers(int page, String search) {
         return userDao.searchUsers(page, search);
     }
+
+
+    @Override
+    public void pingNewsToggle(News news) {
+        Optional<User> maybeUser = securityService.getCurrentUser();
+        if (!maybeUser.isPresent() || maybeUser.get().getUserId() != news.getCreatorId()) {
+            throw new UserNotAuthorized();
+        }
+        userDao.pingNewsToggle(maybeUser.get(), news);
+    }
+
 
     @Override
     public ProfileCategory getProfileCategory(String category, User profile) {
@@ -211,5 +223,15 @@ public class UserServiceImpl implements UserService {
         }
 
         return cat;
+    }
+
+    @Override
+    public long getFollowingCount(long userId) {
+        return userDao.getFollowingCount(userId);
+    }
+
+    @Override
+    public long getFollowersCount(long userId) {
+        return userDao.getFollowersCount(userId);
     }
 }

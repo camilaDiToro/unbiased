@@ -3,9 +3,11 @@ package ar.edu.itba.paw.model.user;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.Comment;
+import ar.edu.itba.paw.model.news.News;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -16,6 +18,19 @@ public class User {
     @SequenceGenerator(name="users_user_id_seq", sequenceName = "users_user_id_seq", allocationSize = 1)
     @Column(name = "user_id")
     private Long userId;
+
+    public News getPingedNews() {
+        return pingedNews;
+    }
+
+    public void setPingedNews(News pingedNews) {
+        this.pingedNews = pingedNews;
+    }
+
+    @OneToOne
+    @JoinColumn(name="pinged_news", referencedColumnName="news_id", nullable=true)
+
+    private News pingedNews;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
@@ -64,16 +79,11 @@ public class User {
 
 
 
-    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Saved> savedNews;
 
     @Column(name = "description")
     private String description;
-
-
-    public void setFollowing(Set<Follow> following) {
-        this.following = following;
-    }
 
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Follow> following;
@@ -85,7 +95,6 @@ public class User {
 
     public User(User.UserBuilder userBuilder) {
         this();
-        //this.userId = userBuilder.userId;
         this.email = userBuilder.email;
         this.username = userBuilder.username;
         this.pass = userBuilder.pass;
@@ -101,6 +110,13 @@ public class User {
                 .stream().map(upvote -> upvote.isValue() ? 0 : 1)
                 .reduce(0, Integer::sum);
         positivityStats = new PositivityStats(upvotes, downvotes);
+    }
+
+    public void removeAdminRole(){
+        roles.forEach(System.out::println);
+        System.out.println("Aaaaaaaaaaaaaaaaaaaaaaaaaa");
+        roles.remove(Role.ROLE_ADMIN);
+        roles.forEach(System.out::println);
     }
 
     public Set<Upvote> getUpvoteSet() {
@@ -184,6 +200,10 @@ public class User {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public void setFollowing(Set<Follow> following) {
+        this.following = following;
     }
 
     public void setEmail(String email) {

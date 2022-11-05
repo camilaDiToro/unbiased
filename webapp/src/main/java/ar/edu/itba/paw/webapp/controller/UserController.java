@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
@@ -15,15 +15,12 @@ import ar.edu.itba.paw.webapp.auth.OwnerCheck;
 import ar.edu.itba.paw.webapp.form.ResendVerificationEmail;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
-import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -33,20 +30,17 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Controller
-public class UserController {
+public class UserController extends BaseController{
 
     private final UserService userService;
     private final NewsService newsService;
-    private final SecurityService securityService;
     private final OwnerCheck ownerCheck;
-    private final MAVBuilderSupplier mavBuilderSupplier;
 
     @Autowired
     public UserController(UserService userService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
+        super(securityService);
         this.userService = userService;
-        this.securityService = securityService;
         this.newsService = newsService;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
         this.ownerCheck = ownerCheck;
     }
 
@@ -57,7 +51,7 @@ public class UserController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public ModelAndView createForm(@ModelAttribute("registerForm") final UserForm userForm) {
-        return mavBuilderSupplier.supply("register", "pageTitle.register", TextType.INTERCODE)
+        return new MyModelAndView.Builder("register", "pageTitle.register", TextType.INTERCODE)
                 .build();
     }
 
@@ -74,6 +68,14 @@ public class UserController {
         return new ModelAndView("email_verification_pending");
     }
 
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}", method = RequestMethod.POST)
+    public ModelAndView pingNews(@PathVariable("userId") final long userId,@PathVariable("newsId") final long newsId) {
+
+        userService.pingNewsToggle(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+
+        return new ModelAndView("redirect:/profile/" + userId);
+    }
+
     @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
     public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
@@ -81,13 +83,13 @@ public class UserController {
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
     public ModelAndView profileFollow(@PathVariable("userId") long userId) {
-        userService.followUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        userService.followUser(userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
     public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
-        userService.unfollowUser(userService.getUserById(userId).orElseThrow(UserNotFoundException::new));
+        userService.unfollowUser(userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
@@ -113,25 +115,25 @@ public class UserController {
             catObject = userService.getProfileCategory(category, profileUser);
         }
 
-        Page<News> fullNews = newsService.getNewsForUserProfile(page, newsOrder, profileUser, catObject.name());
+        Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
-
-
-
-        MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("profile", "pageTitle.profile", TextType.INTERCODE)
+        MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("profile", "pageTitle.profile", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", newsOrder)
                 .withObject("categories", profileCategoryList)
                 .withObject("newsPage", fullNews)
+                .withObject("pingedNews", profileUser.getPingedNews())
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
                 .withObject("userId", userId)
                 .withObject("hasErrors", hasErrors)
+                .withObject("following", userService.getFollowingCount(userId))
+                .withObject("followers", userService.getFollowersCount(userId))
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
         if(securityService.getCurrentUser().isPresent()) {
-            mavBuilder.withObject("isFollowing", userService.isFollowing(userService.getUserById(userId).orElseThrow(UserNotFoundException::new)));
+            mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
         }
 
         mavBuilder.withObject("category", catObject);
@@ -145,7 +147,7 @@ public class UserController {
         if (errors.hasErrors()) {
             return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
-        userService.updateProfile(userService.getUserById(userId).orElseThrow(UserNotFoundException::new), userProfileForm.getUsername(),
+        userService.updateProfile(userId, userProfileForm.getUsername(),
                 userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
         return new ModelAndView("redirect:/profile/" + userId);
     }
@@ -155,7 +157,7 @@ public class UserController {
         VerificationToken.Status status = userService.verifyUserEmail(token);
         ModelAndView mav;
         if(status.equals(VerificationToken.Status.SUCCESFFULLY_VERIFIED)){
-            mav = mavBuilderSupplier.supply("email_verified", "pageTitle.emailVerified", TextType.INTERCODE)
+            mav = new MyModelAndView.Builder("email_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                     .build();
         }else{
             mav = new ModelAndView("redirect:/email_not_verified/"+status.getStatus().toLowerCase(Locale.ROOT));
@@ -166,7 +168,7 @@ public class UserController {
     @RequestMapping(value = "/email_not_verified/{status:expired|not_exists}", method = RequestMethod.GET)
     public ModelAndView resendVerificationEmail(@ModelAttribute("resendEmailForm") final ResendVerificationEmail userForm, @PathVariable("status") String status) {
 
-        MyModelAndView.Builder mavBuilder = mavBuilderSupplier.supply("email_not_verified", "pageTitle.emailVerified", TextType.INTERCODE)
+        MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("email_not_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                 .withObject("status",status);
 
         if(status.equals("expired")){

@@ -20,12 +20,10 @@ public interface NewsDao {
     List<News> getRecommendation(int page, User user, NewsOrder newsOrder);
     int getTodayNewsPageCount(User user);
 
-    int getTotalPagesAllNews();
     News create(News.NewsBuilder newsBuilder);
 
     Optional<News> getById(long id, Long loggedUser);
     Optional<Comment> getCommentById(long id);
-    List<Category> getNewsCategory(News news);
     void setRating(News news, User user, Rating rating);
     void addComment(User user, News news, String comment);
     void deleteComment(long commentId);

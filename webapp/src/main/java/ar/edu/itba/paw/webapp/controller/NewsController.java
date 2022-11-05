@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportReason;
-import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.SavedResult;
@@ -14,7 +13,6 @@ import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
-import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -31,24 +29,24 @@ import java.io.IOException;
 import java.util.*;
 
 @Controller
-public class NewsController {
+public class NewsController extends BaseController {
 
     private final NewsService newsService;
     private final ImageService imageService;
-    private final SecurityService securityService;
     private final AdminService adminService;
+
+    private final UserService userService;
     private final OwnerCheck ownerCheck;
-    private final MAVBuilderSupplier mavBuilderSupplier;
 
 
     @Autowired
-    public NewsController(AdminService adminService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
+    public NewsController(AdminService adminService, UserService userService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
+        super(ss);
         this.newsService = newsService;
         this.imageService = imageService;
-        this.securityService = ss;
         this.adminService = adminService;
+        this.userService = userService;
         this.ownerCheck = ownerCheck;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
 
@@ -66,19 +64,19 @@ public class NewsController {
         if (errors.hasErrors()) {
             return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1);
         }
-        adminService.reportNews(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new), ReportReason.valueOf(reportNewsFrom.getReason()));
+        adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
-    @RequestMapping(value = "/news/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
     public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
-                                   final BindingResult errors) {
+                                      final BindingResult errors, @PathVariable("newsId") long newsId) {
         if (errors.hasErrors()) {
             return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1);
         }
-        Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
-        adminService.reportComment(comment, ReportReason.valueOf(reportNewsFrom.getReason()));
-        return new ModelAndView("redirect:/news/" + comment.getNews().getNewsId() + "#" + "comment-" + commentId);
+
+        adminService.reportComment(commentId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        return new ModelAndView("redirect:/news/" + newsId + "#" + "comment-" + commentId);
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
@@ -87,7 +85,7 @@ public class NewsController {
         if (errors.hasErrors()) {
             return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1);
         }
-        newsService.addComment(newsService.getOrThrowException(newsId), commentNewsForm.getComment());
+        newsService.addComment(newsId, commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
@@ -107,22 +105,18 @@ public class NewsController {
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         Locale locale = LocaleContextHolder.getLocale();
 
-//        adminService.reportComment(newsService.getComments(news, 1).getContent().get(0), ReportReason.INAP);
+        Page<Comment> comments = newsService.getComments(newsId,page);
 
-        Page<Comment> comments = newsService.getComments(news,page);
-
-
-        MyModelAndView.Builder builder =  mavBuilderSupplier.supply("show_news", news.getTitle(), TextType.LITERAL)
+        MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
                 .withObject("fullNews", news)
-                .withObject("hasReported", adminService.hasReported(news))
+                .withObject("hasReported", adminService.hasReported(news.getNewsId()))
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("reportNewsForm", reportNewsFrom)
                 .withObject("commentNewsForm", commentNewsFrom)
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", locale)
-                .withObject("commentsPage", newsService.getComments(news,page))
-                .withObject("categories", newsService.getNewsCategory(news));
+                .withObject("commentsPage", newsService.getComments(newsId,page));
 
         Optional<User> loggedUser = securityService.getCurrentUser();
 
@@ -131,7 +125,9 @@ public class NewsController {
             hasReportedComment = new HashMap<>();
             User user = loggedUser.get();
             comments.getContent().forEach(c -> hasReportedComment.put(c.getId(), user.hasReportedComment(c)));
-            builder.withObject("hasReportedCommentMap", hasReportedComment);
+            builder.withObject("hasReportedCommentMap", hasReportedComment)
+                    .withObject("myNews", news.getCreator().equals(user))
+                    .withObject("pinned", news.equals(user.getPingedNews()));
         }
 
         return builder.build();
@@ -145,9 +141,17 @@ public class NewsController {
          return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
     }
 
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
+    public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
+
+        userService.pingNewsToggle(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+
+        return new ModelAndView("redirect:/news/" + newsId);
+    }
+
     @RequestMapping(value = "/create_article", method = RequestMethod.GET)
     public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
-        return mavBuilderSupplier.supply("create_article", "pageTitle.createArticle", TextType.INTERCODE)
+        return new MyModelAndView.Builder("create_article", "pageTitle.createArticle", TextType.INTERCODE)
                 .withObject("categories", Category.getTrueCategories())
                 .withObject("validate", false).build();
     }
@@ -156,14 +160,7 @@ public class NewsController {
     @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<SavedResult> saveNews(@PathVariable("newsId") long newsId){
-        Optional<User> maybeUser = securityService.getCurrentUser();
-        Optional<News> maybeNews = newsService.getById(newsId);
-
-        if (!maybeUser.isPresent() || !maybeNews.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(maybeNews.get(), maybeUser.get()));
+        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(newsId));
         return new ResponseEntity<>(savedResult, HttpStatus.OK);
     }
 
@@ -183,7 +180,7 @@ public class NewsController {
         }
 
         final User user = securityService.getCurrentUser().get();
-        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, createNewsFrom.getBody(), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, TextUtils.convertMarkdownToHTML(createNewsFrom.getBody()), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
         if(!createNewsFrom.getImage().isEmpty()){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));

@@ -17,6 +17,12 @@ CREATE TABLE IF NOT EXISTS users(
 );
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS pinged_news INTEGER;
+-- ALTER TABLE users DROP CONSTRAINT IF EXISTS fk_column;
+-- ALTER TABLE users ADD CONSTRAINT  fk_column
+--      FOREIGN KEY (pinged_news)
+--      REFERENCES news (news_id)
+--      ON DELETE SET NULL;
 
 CREATE TABLE IF NOT EXISTS news (
     news_id           SERIAL          PRIMARY KEY,
@@ -133,6 +139,9 @@ ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_unique CASCADE;
 ALTER TABLE comments ADD CONSTRAINT comments_unique UNIQUE(news_id, user_id, comment);
 ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_pkey CASCADE;
 ALTER TABLE comments ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
+
+ALTER TABLE comments ADD COLUMN IF NOT EXISTS deleted BOOLEAN;
+UPDATE comments set deleted = FALSE WHERE deleted IS NULL;
 
 
 

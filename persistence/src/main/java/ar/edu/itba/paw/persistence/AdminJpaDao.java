@@ -78,7 +78,7 @@ public class AdminJpaDao implements AdminDao{
     @Override
     public Page<Comment> getReportedComment(int page, ReportOrder reportOrder) {
         Query query = entityManager.createNativeQuery(
-                        "SELECT comment_id FROM (comment_report JOIN comments n ON n.id = comment_report.comment_id) GROUP BY comment_id ORDER BY "
+                        "SELECT comment_id FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false GROUP BY comment_id ORDER BY "
                                 + reportOrder.getQuery() +" LIMIT :limit OFFSET :offset")
                 .setParameter("limit",PAGE_SIZE)
                 .setParameter("offset",(page-1)*PAGE_SIZE);
@@ -133,12 +133,12 @@ public class AdminJpaDao implements AdminDao{
     }
 
     @Override
-    public boolean hasReported(News news, Long loggedUser) {
+    public boolean hasReported(long newsId, Long loggedUser) {
         if (loggedUser == null){
             return false;
         }
         long elemCount = entityManager.createQuery("SELECT COUNT(r) FROM ReportDetail r WHERE r.news.newsId = :news_id AND r.reporter.userId = :user_id",Long.class)
-                .setParameter("news_id", news.getNewsId())
+                .setParameter("news_id", newsId)
                 .setParameter("user_id", loggedUser).getSingleResult();
         return elemCount > 0;
     }

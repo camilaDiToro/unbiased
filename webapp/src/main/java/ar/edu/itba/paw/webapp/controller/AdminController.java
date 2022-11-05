@@ -4,86 +4,65 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportedComment;
-import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.service.*;
-import ar.edu.itba.paw.webapp.form.CreateAdminForm;
-import ar.edu.itba.paw.webapp.model.MAVBuilderSupplier;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
 
 @Controller
-public class AdminController {
+public class AdminController extends BaseController{
 
     private final AdminService adminService;
     private final NewsService newsService;
     private final UserService userService;
-    private final MAVBuilderSupplier mavBuilderSupplier;
-    private final SecurityService securityService;
 
     @Autowired
     public AdminController(AdminService adminService, NewsService newsService, UserService userService, SecurityService ss) {
+        super(ss);
         this.adminService = adminService;
         this.newsService = newsService;
         this.userService = userService;
-        this.securityService = ss;
-        mavBuilderSupplier = (view, title, textType) -> new MyModelAndView.Builder(view, title, textType, securityService);
     }
 
-    @RequestMapping(value = "/admin/add_admin", method = RequestMethod.GET)
-    public ModelAndView addAdmin(@Valid @ModelAttribute("createAdminForm") CreateAdminForm form, final BindingResult errors) {
-        if (errors.hasErrors()){
-            return addAdminPanel(form);
-        }
 
-        adminService.makeUserAdmin(userService.findByEmail(form.getEmail()).get());
-        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
-                .withObject("addedAdmin", true)
-                .build();
-    }
 
     @RequestMapping(value = "/admin/reported_news/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("newsOrder") String newsOrder) {
+        ReportOrder order = ReportOrder.getByValue(newsOrder);
 
-
-        Page<News> reportedNewsPage = adminService.getReportedNews(page, newsOrder);
-        return mavBuilderSupplier.supply("moderation_panel_reported_news", "pageTitle.moderationPanel", TextType.INTERCODE)
+        Page<News> reportedNewsPage = adminService.getReportedNews(page, order);
+        return new MyModelAndView.Builder("moderation_panel_reported_news", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", ReportOrder.values())
                 .withObject("item", "news")
-                .withObject("orderBy", ReportOrder.valueOf(newsOrder)).build();
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
+                .withObject("orderBy", order).build();
     }
 
     @RequestMapping(value = "/admin/reported_comments/{commentOrder}", method = RequestMethod.GET)
     public ModelAndView reportedComments(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("commentOrder") String commentOrder) {
+        ReportOrder order = ReportOrder.getByValue(commentOrder);
 
 
-        Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, commentOrder);
-        return mavBuilderSupplier.supply("moderation_panel_reported_comments", "pageTitle.moderationPanel", TextType.INTERCODE)
+        Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, order);
+        return new MyModelAndView.Builder("moderation_panel_reported_comments", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("commentsPage", reportedCommentsPage)
                 .withObject("orders", ReportOrder.values())
                 .withObject("item", "comments")
-                .withObject("orderBy", ReportOrder.valueOf(commentOrder)).build();
-    }
-
-    @RequestMapping(value = "/admin/add_admin_page", method = RequestMethod.GET)
-    public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form) {
-
-        return mavBuilderSupplier.supply("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
-                .build();
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
+                .withObject("orderBy", order).build();
     }
 
     @RequestMapping("/admin/reported_news")
@@ -100,11 +79,12 @@ public class AdminController {
     @RequestMapping("/admin/reported_news_detail/{newsId:[0-9]+}")
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
-        Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
-        return mavBuilderSupplier.supply("moderation_panel_reported_news_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
+        Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsId);
+        return new MyModelAndView.Builder("moderation_panel_reported_news_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("newsId", newsId)
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("item", "news")
                 .build();
     }
@@ -112,26 +92,26 @@ public class AdminController {
     @RequestMapping("/admin/reported_comment_detail/{commentId:[0-9]+}")
     public ModelAndView reportedCommentDetail(@PathVariable("commentId") long commentId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
-        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page,newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
-        return mavBuilderSupplier.supply("moderation_panel_reported_comment_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
+        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page,commentId);
+        return new MyModelAndView.Builder("moderation_panel_reported_comment_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedCommentPage", reportedCommentPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
                 .withObject("commentId", commentId)
+                .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("item", "comments")
                 .build();
     }
 
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        adminService.deleteNews(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        adminService.deleteNews(newsId);
         return new ModelAndView("redirect:/admin/reported_news");
     }
 
     @RequestMapping(value = "/admin/reported_comments/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteComment(@PathVariable("commentId") long commentId) {
-        adminService.deleteComment(newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
+        adminService.deleteComment(commentId);
         return new ModelAndView("redirect:/admin/reported_comments");
     }
-
 
 }

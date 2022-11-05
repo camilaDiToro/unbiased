@@ -1,12 +1,12 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,12 +19,15 @@ public interface UserService {
     List<User> getTopCreators(int qty);
     VerificationToken.Status verifyUserEmail(String token);
     VerificationToken.Status resendEmailVerification(String email);
-    void addRole(User user, Role role);
-    void updateProfile(User user, String username, byte[] bytes, String dataType, String description);
+    void addRole(long userId, Role role);
+    void updateProfile(long userId, String username, byte[] bytes, String dataType, String description);
     Optional<User> findByUsername(String username);
-    boolean isFollowing(User user);
-    void followUser(User user);
-    void unfollowUser(User user);
+    boolean isFollowing(long userId);
+    void followUser(long userId);
+    void unfollowUser(long userId);
     Page<User> searchUsers(int page, String search);
+    void pingNewsToggle(News news);
     ProfileCategory getProfileCategory(String category, User profile);
+    long getFollowingCount(long userId);
+    long getFollowersCount(long userId);
 }

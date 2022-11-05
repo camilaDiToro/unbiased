@@ -1,6 +1,3 @@
-/** {*/
-/*    word-break: break-all;*/
-/*}*/
 
 .card-img-top {
     width: 100%;
@@ -15,9 +12,6 @@
 
 .w-10 {
     width: 10%;
-}
-.svg-bookmark {
-    width: 40px !important;
 }
 
 .card-body-home{
@@ -177,6 +171,14 @@
     overflow-wrap: break-word;
 }
 
+.w-85{
+    width: 85%;
+}
+
+.w-70{
+    width: 70% !important;
+}
+
 .object-cover {
     object-fit: cover;
 }
@@ -212,6 +214,75 @@
     right: 10px;
     z-index: 2;
 }
+
+.info-profile-btn{
+    position: absolute;
+    display: inline-block;
+    top: 10px;
+    left: 10px;
+    background-repeat: no-repeat;
+    height: 20px;
+    width: 20px;
+
+}
+
+.info-function{
+    padding: 14px 24px;
+    border: 1px solid #606060;
+    border-radius: 4px;
+}
+
+.info-profile-btn:focus{
+    outline: none;
+}
+
+.info-custom-box{
+    position: absolute;
+    right: 35px;
+    font-size: 13px;
+    margin-left: 8px;
+    margin-right: 16px;
+    padding: 4px 8px;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    line-height: 20px;
+    width: 85px;
+    justify-content: center;
+    cursor: default;
+}
+
+.info-enabled{
+    color: green;
+    background-color: #28352b;
+}
+
+.add-admin-btn{
+    height: 40px;
+    width: 40px;
+    background-repeat: no-repeat;
+}
+
+.border-color-transparent{
+    border-color: transparent;
+}
+
+.border-color-transparent:focus{
+    border-color: transparent;
+}
+
+.btn:focus{
+    box-shadow: none;
+}
+
+.custom-btn-follow{
+    height: 23px;
+}
+
+.info-disabled{
+    color: #aaa;
+    background-color: #606060;
+}
+
 .reports-indicator {
     position: absolute;
     top: 10px;
@@ -289,6 +360,14 @@
     border-color: rgba(58, 60, 74, 0.5);
 }
 
+#searchBar_addAdmin.search-form{
+    background-size: 20px !important;
+    padding-left: 2.5rem;
+    background: rgba(58, 60, 74, 0.5) no-repeat 1% 50%;
+    border-radius: 0.5rem;
+    border-color: rgba(58, 60, 74, 0.5);
+}
+
 .btn-outline-focus-none:focus{
     outline: none;
 }
@@ -310,11 +389,6 @@ input:-webkit-autofill:focus {
     max-width: 7%; max-height: 7%
 }
 
-
-
-.news-bookmark {
-    height: 30px;
-}
 #navbar-dropdown.dropdown-menu {
     min-width:inherit;
 }
@@ -343,7 +417,6 @@ input:-webkit-autofill:focus {
 
 .bookmark{
     cursor: pointer;
-    width: 25px !important;
 }
 
 .report-count {
@@ -356,8 +429,8 @@ input:-webkit-autofill:focus {
     width: 50px;
 }
 
-.w-70 {
-    width: 70%;
+.w-55 {
+    width: 55% !important;
 }
 
 .moderation-img {
@@ -420,7 +493,6 @@ input:-webkit-autofill:focus {
 
 #bookmark-news{
     cursor: pointer;
-    width: 35px !important;
 }
 
 .upvote,.downvote {
@@ -501,7 +573,6 @@ input:-webkit-autofill:focus {
 }
 
 
-
 .card:hover{
     transform: translateY(-5px);
     transition: 0.3s;
@@ -512,6 +583,12 @@ input:-webkit-autofill:focus {
     /*box-shadow: 0 2px 2px rgba(0,0,0,.25);*/
     border-radius: 0.5rem;
     background: linear-gradient(rgb(58, 60, 74), rgb(36, 38, 50));
+}
+
+#add_admin_card.card:hover{
+    transform: none;
+    transition: none;
+    box-shadow: none;
 }
 
 #none_shadow.card:hover{
@@ -871,11 +948,11 @@ body{
 }
 
 input:checked + .slider {
-    background-color: #8ea7e8;
+    background-color: #2196F3;
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #8ea7e8;
+    box-shadow: 0 0 1px #2196F3;
 }
 
 input:checked + .slider:before {
@@ -892,11 +969,22 @@ input:checked + .slider:before {
     border-radius: 50%;
 }
 
-.commentDeleted {
-    background-color: rgba(58, 60, 74, 0.5);
+.icon-news{
+    height: 30px;
+    width: 30px;
 }
 
-.settings{
-    background-color: #1e1e2d;
+.icon-profile{
+    height: 25px;
+    width: 25px;
 }
 
+.icon-index{
+    height: 25px;
+    width: 25px;
+}
+
+.icon-comment{
+    height: 25px;
+    width: 25px;
+}
