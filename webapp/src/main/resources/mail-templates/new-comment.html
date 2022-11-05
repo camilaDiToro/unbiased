@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="x-apple-disable-message-reformatting">
+    <meta charset="UTF-8">
+    <title>New follower</title>
+    <style>
+        .bg {
+            background-color: #1e1e2d;
+            padding: 10px;
+        }
+
+        .title {
+            font-size: 60px;
+            font-weight: 400;
+            text-align: center;
+            color: #8ea7e8;
+        }
+        .btn-share{
+            background-color: #8ea7e8;
+            border: none;
+            color: white !important;
+            padding: 12px 30px;
+            text-align: center;
+            font-size: 18px;
+            border-radius: 22px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+        }
+        .btn-share:hover {
+            background-color: #6486df;
+            color: black;
+            border: 2px solid #8ea7e8;
+        }
+        .h-color{
+            color: #8ea7e8;
+        }
+        .p-color{
+            color: #FFFFFF;
+            margin-right: 60px;
+            margin-left: 60px;
+        }
+        .contenedor {
+            display:flex;
+            margin:0 0.5rem;
+
+        }
+        .img-contenedor{
+            max-height:7rem;
+            margin:auto 2.5rem;
+        }
+    </style>
+</head>
+<body class="bg">
+<div class="bg">
+    <div class="text-center">
+        <h1 class="title">unbiased</h1>
+    </div>
+</div>
+
+<div class="contenedor">
+    <div style="margin:auto; text-align: center">
+        <h4 class="h-color" th:text="#{email.comment.title}"></h4>
+    </div>
+</div>
+
+<div class="contenedor">
+    <img class="img-contenedor" src="https://i.imgur.com/dMtrQKo.png"
+         alt="comment_logo" data-image-whitelisted="">
+    <div style="margin:auto; text-align: left">
+        <a th:href="${username}"></a>
+        <p class="p-color" th:text="#{email.comment.subtitle}"></p>
+    </div>
+</div>
+
+
+<br/>
+
+<div style="text-align: center">
+    <h4 class="h-color" th:text="#{email.comment.body}"></h4>
+</div>
+
+<div style="align-items: center;justify-content: center; display: flex" >
+    <a th:text="#{email.verification.click}" style=" text-decoration: none!important;" th:href="${urlToCreateArticle}" class="btn btn-md btn-info btn-share takeme">
+    </a>
+</div>
+
+</body>
+</html>
