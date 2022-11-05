@@ -118,6 +118,22 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Override
+    public void sendNewCommentEmail(User newsOwner, News commentedNews, Locale locale) {
+        final String to = newsOwner.getEmail();
+        final String subject = messageSource.getMessage("email.newComment.subject",null,locale);
+        final String url = getUrl("news/"+commentedNews.getNewsId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("urlToCommentedNews",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-comment.html",data,locale);
+            LOGGER.info("New comment email sent to {}", newsOwner.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("New comment could not be sent to {}",newsOwner.getEmail());
+        }
+
+    }
+
     /* https://www.baeldung.com/spring-email-templates */
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();

@@ -8,11 +8,11 @@ import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import javax.xml.soap.Text;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,12 +22,14 @@ public class NewsServiceImpl implements NewsService {
     private final NewsDao newsDao;
     private final SecurityService securityService;
     private final UserService userService;
+    private final EmailService emailService;
 
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService) {
+    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService, EmailService emailService) {
         this.newsDao = newsDao;
         this.userService = userService;
         this.securityService = securityService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -98,7 +100,6 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public void setRating(News news, Rating rating) {
         User user  = getLoggedUser();
-//        newsDao.setRating(news, user, Rating.NO_RATING);
         newsDao.setRating(news, user, rating);
     }
 
@@ -165,6 +166,12 @@ public class NewsServiceImpl implements NewsService {
         User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         News news = getById(newsId).orElseThrow(NewsNotFoundException::new);
         newsDao.addComment(user, news, comment);
+        User newsOwner = news.getCreator();
+        if(newsOwner.getEmailSettings().isComment()){
+            Locale locale = LocaleContextHolder.getLocale();
+            LocaleContextHolder.setLocale(locale, true);
+            emailService.sendNewCommentEmail(newsOwner,news,locale);
+        }
     }
 
     @Override
