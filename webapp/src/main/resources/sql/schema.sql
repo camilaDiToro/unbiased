@@ -18,11 +18,6 @@ CREATE TABLE IF NOT EXISTS users(
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS description TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS pinged_news INTEGER;
--- ALTER TABLE users DROP CONSTRAINT IF EXISTS fk_column;
--- ALTER TABLE users ADD CONSTRAINT  fk_column
---      FOREIGN KEY (pinged_news)
---      REFERENCES news (news_id)
---      ON DELETE SET NULL;
 
 CREATE TABLE IF NOT EXISTS news (
     news_id           SERIAL          PRIMARY KEY,
@@ -143,7 +138,16 @@ ALTER TABLE comments ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
 ALTER TABLE comments ADD COLUMN IF NOT EXISTS deleted BOOLEAN;
 UPDATE comments set deleted = FALSE WHERE deleted IS NULL;
 
+CREATE TABLE IF NOT EXISTS email_settings (
+    id                SERIAL          PRIMARY KEY,
+    user_id           INTEGER         UNIQUE NOT NULL,
+    follow            BOOLEAN         NOT NULL,
+    comment           BOOLEAN         NOT NULL,
+    following_published BOOLEAN         NOT NULL,
+    positivity_change   BOOLEAN         NOT NULL,
 
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
 
 
 

@@ -170,6 +170,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange) {
+        EmailSettings emailSettings = new EmailSettings(follow,comment,followingPublished,positivityChange, currentUser);
+        currentUser.setEmailSettings(emailSettings);
+    }
+
+    @Override
     public boolean isFollowing(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         return userDao.isFollowing(myUser.getId(), userId);

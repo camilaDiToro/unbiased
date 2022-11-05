@@ -54,6 +54,10 @@ public class User {
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Upvote> upvoteSet;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private EmailSettings emailSettings;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
@@ -254,6 +258,14 @@ public class User {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public EmailSettings getEmailSettings() {
+        return emailSettings;
+    }
+
+    public void setEmailSettings(EmailSettings emailSettings) {
+        this.emailSettings = emailSettings;
     }
 
     public static class UserBuilder{
