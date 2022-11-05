@@ -163,6 +163,7 @@ public class News {
         this.subtitle = builder.subtitle;
         this.creationDate = builder.creationDate;
         this.date = Timestamp.valueOf(creationDate);
+        this.categories = builder.getCategories();
     }
 
     public TimeUtils.Amount getAmountAgo() {

@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,27 +37,21 @@ public class HomeController extends BaseController{
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "query", defaultValue = "") final String query,
             @RequestParam(name = "category", defaultValue = "ALL") final String category,
-            @RequestParam(name="type", defaultValue="article") String type){
+            @RequestParam(name="type", defaultValue="article") String type,
+            @RequestParam(name="time", defaultValue="WEEK") String time){
 
 
-        Page<News> newsPage = newsService.getNews(page,Category.getByValue(category),NewsOrder.getByValue(orderBy),query);
-
-        if (query.equals("markdown")) {
-//            for (int i=1 ; i<= newsPage.getMaxPage() ; i++) {
-//                Page<News> auxPage = newsService.getNews(i, Category.ALL, NewsOrder.NEW, "");
-//                auxPage.getContent().forEach(n -> n.setBody(TextUtils.convertMarkdownToHTML(n.getBody())));
-//            }
-            News news1 = newsService.getById(37).get();
-            news1.setBody(TextUtils.convertMarkdownToHTML(news1.getBody()));
-            News news2 = newsService.getById(34).get();
-            news2.setBody(TextUtils.convertMarkdownToHTML(news2.getBody()));
-        }
+        TimeConstraint timeConstraint = TimeConstraint.getByValue(time);
+        NewsOrder newsOrder = NewsOrder.getByValue(orderBy);
+        Page<News> newsPage = newsService.getNews(page,Category.getByValue(category),newsOrder, timeConstraint, query);
 
         MyModelAndView.Builder builder= new MyModelAndView.Builder("index", "pageTitle.home", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
-                .withObject("orderBy", orderBy)
+                .withObject("orderBy", newsOrder)
                 .withObject("query", query)
                 .withObject("type", type)
+                .withObject("timeConstraints", TimeConstraint.values())
+                .withObject("selectedTimeConstraint", timeConstraint)
                 .withObject("categories", newsService.getHomeCategories())
                 .withObject("topCreators", userService.getTopCreators(5))
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category));

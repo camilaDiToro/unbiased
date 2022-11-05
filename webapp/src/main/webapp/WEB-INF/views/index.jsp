@@ -48,9 +48,26 @@
                     </c:url>"><spring:message code="${order.interCode}"/></a>
                         </li>
                     </c:forEach>
-
-
+                    <c:if test="${orderBy.text == 'TOP'}">
+                        <spring:message var="selected" code="${selectedTimeConstraint.interCode}" />
+                    <div class="btn-group ">
+                        <a class="btn dropdown-toggle text-white" data-toggle="dropdown" href="#">
+                            ${selected} <span class="caret"></span>
+                        </a>
+                            <ul class="dropdown-menu">
+                                <c:forEach var="timeConstraint" items="${timeConstraints}">
+                                    <li><a href="<c:url value="/TOP">
+                            <c:param name = "query" value = "${param.query}"/>
+                            <c:param name = "category" value = "${param.category}"/>
+                            <c:param name = "type" value = "${param.type}"/>
+                            <c:param name = "time" value = "${timeConstraint.text}"/>
+                            </c:url>"><spring:message code="${timeConstraint.interCode}" /></a></li>
+                                </c:forEach>
+                            </ul>
+                    </div>
+                    </c:if >
                 </ul>
+
                 <c:if test="${query != ''}">
                     <div class="m-3 ">
                         <a class="link" href="<c:url value="/${orderBy}"/>"><div class="link-text"><spring:message code="search.filter" arguments="${query}"/></div></a>

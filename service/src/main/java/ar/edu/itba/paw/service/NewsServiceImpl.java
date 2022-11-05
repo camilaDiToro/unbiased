@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import javax.xml.soap.Text;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,7 +56,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<News> getNews(int page, Category category, NewsOrder newsOrder, String query) {
+    public Page<News> getNews(int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query) {
         int totalPages;
         page = page <= 0 ? 1 : page;
 
@@ -66,19 +65,35 @@ public class NewsServiceImpl implements NewsService {
         List<News> ln;
 
         if (category.equals(Category.ALL)) {
-            totalPages = newsDao.getTotalPagesAllNews(query);
-            page = Math.min(page, totalPages);
-            ln = newsDao.getNews(page, query, newsOrder, loggedUser);
+            if (newsOrder.equals(NewsOrder.NEW)) {
+                totalPages = newsDao.getTotalPagesAllNews(query);
+                ln = newsDao.getNewNews(page, query, loggedUser);
+            } else {
+                totalPages = newsDao.getTotalPagesAllNews(query, timeConstraint);
+                ln = newsDao.getTopNews(page, query, timeConstraint, loggedUser);
+            }
         } else if (category.equals(Category.FOR_ME)) {
-            totalPages = newsDao.getTodayNewsPageCount(getLoggedUser());
-            page = Math.min(page, totalPages);
-            ln = newsDao.getRecommendation(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new), newsOrder);
-        }
+            if(newsOrder.equals(NewsOrder.NEW)) {
+                totalPages = newsDao.getRecommendationNewsPageCountNew(getLoggedUser());
+                ln = newsDao.getRecommendationNew(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new));
+            } else {
+                totalPages = newsDao.getRecommendationNewsPageCountTop(getLoggedUser(), timeConstraint);
+                ln = newsDao.getRecommendationTop(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new), timeConstraint);
+
+            }
+           }
         else {
-            totalPages = newsDao.getTotalPagesCategory(category);
-            page = Math.min(page, totalPages);
-            ln = newsDao.getNewsByCategory(page, category, newsOrder, loggedUser);
+            if (category.equals(NewsOrder.NEW)) {
+                totalPages = newsDao.getTotalPagesCategoryNew(category);
+                ln = newsDao.getNewsByCategoryNew(page, category, loggedUser);
+            } else {
+                totalPages = newsDao.getTotalPagesCategoryTop(category, timeConstraint);
+                ln = newsDao.getNewsByCategoryTop(page, category,loggedUser, timeConstraint);
+            }
         }
+
+        page = Math.min(page, totalPages);
+
 
         return new Page<>(ln, page, totalPages);
     }
