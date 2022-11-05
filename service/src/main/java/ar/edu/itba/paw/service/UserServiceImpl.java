@@ -75,6 +75,8 @@ public class UserServiceImpl implements UserService {
         Locale locale = LocaleContextHolder.getLocale();
         LocaleContextHolder.setLocale(locale, true);
         emailService.sendVerificationEmail(user, token, locale);
+        EmailSettings emailSettings = new EmailSettings(true,true,false,true,user);
+        user.setEmailSettings(emailSettings);
         return user;
     }
 
