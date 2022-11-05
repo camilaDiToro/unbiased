@@ -161,7 +161,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void followUser(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         userDao.addFollow(myUser.getId(), userId);
+
+        if(following.getEmailSettings().isFollow()){
+            Locale locale = LocaleContextHolder.getLocale();
+            LocaleContextHolder.setLocale(locale, true);
+            emailService.sendNewFollowerEmail(following,myUser,locale);
+        }
     }
 
     @Override

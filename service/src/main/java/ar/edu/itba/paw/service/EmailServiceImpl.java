@@ -102,6 +102,22 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Async
+    @Override
+    public void sendNewFollowerEmail(User user, User follower, Locale locale) {
+        final String to = user.getEmail();
+        final String subject = messageSource.getMessage("email.newFollower.subject",null,locale);
+        final String url = getUrl("create_article");
+        Map<String, Object> data = new HashMap<>();
+        data.put("urlToCreateArticle",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-follower.html",data,locale);
+            LOGGER.info("New follower email sent to {}", user.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("New follower could not be sent to {}",user.getEmail());
+        }
+    }
+
     /* https://www.baeldung.com/spring-email-templates */
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();

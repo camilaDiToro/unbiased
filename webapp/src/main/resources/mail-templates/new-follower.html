@@ -61,24 +61,25 @@
 
 <div class="contenedor">
   <div style="margin:auto; text-align: center">
-    <p class="h-color" th:text="">Conseguiste un nuevo seguidor</p>
-    <p class="p-color" th:text=""><a th:text="#{email.verification.click}" th:href="${verificationUrl}">userfollower</a>  comenzo a seguirte</p>
+    <p class="h-color" th:text="#{email.follow.title}"></p>
+    <a th:href="${username}"></a><p class="p-color" th:text="#{email.follow.subtitle}"></p>
   </div>
 </div>
 
 <div class="contenedor">
   <div style="margin:auto; text-align: center">
-    <img src="https://i.imgur.com/PqPAUd0.png" title="source: imgur.com" class="img-contenedor"/>
+    <img src="https://i.imgur.com/PqPAUd0.png" title="profile" class="img-contenedor"/>
   </div>
 </div>
 
-
 <br/>
 <div style="text-align: center">
-  <h4 class="h-color" th:text="">Realiza una nueva publicacion para tener nuevos seguidores</h4>
+  <p class="h-color" th:text="#{email.follow.body}"></p>
 </div>
+
+
 <div style="align-items: center;justify-content: center; display: flex" >
-  <a th:text="#{email.verification.click}" style=" text-decoration: none!important;" th:href="${verificationUrl}" class="btn btn-md btn-info btn-share takeme">
+  <a th:text="#{email.verification.click}" style=" text-decoration: none!important;" th:href="${urlToCreateArticle}" class="btn btn-md btn-info btn-share takeme">
   </a>
 </div>
 

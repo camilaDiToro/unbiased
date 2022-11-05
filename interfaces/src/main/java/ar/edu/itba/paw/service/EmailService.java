@@ -9,4 +9,5 @@ public interface EmailService {
     void sendVerificationEmail(User user, VerificationToken token, Locale locale);
     void sendAdminEmail(User user, Locale locale);
     void sendNewsDeletedEmail(User user, News news, Locale locale);
+    void sendNewFollowerEmail(User user, User follower, Locale locale);
 }
