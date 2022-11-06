@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.model.user;
 
 import javax.persistence.*;
+import java.util.Locale;
 
 @Entity
 @Table(name="email_settings")
@@ -19,10 +20,12 @@ public class EmailSettings {
     private boolean comment;
 
     @Column(name= "following_published", nullable = false)
-    private boolean following_published;
+    private boolean followingPublished;
 
     @Column(name= "positivity_change", nullable = false)
-    private boolean positivity_change;
+    private boolean positivityChange;
+
+    private Locale locale;
 
     @OneToOne
     @MapsId
@@ -33,12 +36,13 @@ public class EmailSettings {
         //Just for hibernate
     }
 
-    public EmailSettings(boolean follow, boolean comment, boolean following_published, boolean positivity_change, User user) {
+    public EmailSettings(boolean follow, boolean comment, boolean followingPublished, boolean positivityChange, Locale locale, User user) {
         this.follow = follow;
         this.comment = comment;
-        this.following_published = following_published;
-        this.positivity_change = positivity_change;
+        this.followingPublished = followingPublished;
+        this.positivityChange = positivityChange;
         this.user = user;
+        this.locale=locale;
     }
 
     public Long getId() {
@@ -65,27 +69,35 @@ public class EmailSettings {
         this.comment = comment;
     }
 
-    public boolean isFollowing_published() {
-        return following_published;
-    }
-
-    public void setFollowing_published(boolean following_published) {
-        this.following_published = following_published;
-    }
-
-    public boolean isPositivity_change() {
-        return positivity_change;
-    }
-
-    public void setPositivity_change(boolean positivity_change) {
-        this.positivity_change = positivity_change;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isFollowingPublished() {
+        return followingPublished;
+    }
+
+    public void setFollowingPublished(boolean followingPublished) {
+        this.followingPublished = followingPublished;
+    }
+
+    public boolean isPositivityChange() {
+        return positivityChange;
+    }
+
+    public void setPositivityChange(boolean positivityChange) {
+        this.positivityChange = positivityChange;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }

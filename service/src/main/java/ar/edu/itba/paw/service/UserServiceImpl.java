@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
         Locale locale = LocaleContextHolder.getLocale();
         LocaleContextHolder.setLocale(locale, true);
         emailService.sendVerificationEmail(user, token, locale);
-        EmailSettings emailSettings = new EmailSettings(true,true,false,true,user);
+        EmailSettings emailSettings = new EmailSettings(true,true,false,true,locale, user);
         user.setEmailSettings(emailSettings);
         return user;
     }
@@ -181,8 +181,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange) {
-        EmailSettings emailSettings = new EmailSettings(follow,comment,followingPublished,positivityChange, currentUser);
-        currentUser.setEmailSettings(emailSettings);
+        Locale locale = LocaleContextHolder.getLocale();
+        LocaleContextHolder.setLocale(locale, true);
+        if(currentUser.getEmailSettings() == null){
+            currentUser.setEmailSettings(new EmailSettings(follow,comment,followingPublished,positivityChange,locale, currentUser));
+            return;
+        }
+        currentUser.getEmailSettings().setComment(comment);
+        currentUser.getEmailSettings().setFollow(follow);
+        currentUser.getEmailSettings().setFollowingPublished(followingPublished);
+        currentUser.getEmailSettings().setPositivityChange(positivityChange);
     }
 
     @Override

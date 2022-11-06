@@ -54,7 +54,7 @@ public class User {
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Upvote> upvoteSet;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     private EmailSettings emailSettings;
 

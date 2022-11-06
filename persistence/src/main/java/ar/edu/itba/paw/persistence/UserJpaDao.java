@@ -152,6 +152,16 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
+    public List<User> getFollowersWithEmailPublishNewsActive(User user) {
+        @SuppressWarnings("unchecked")
+        List<Long> ids = (List<Long>) entityManager.createNativeQuery("select user_id from users where user_id IN ( " +
+                        "select follows.user_id from follows join email_settings on follows.user_id = email_settings.user_id  where follows= :userId and following_published=true)")
+                .setParameter("userId", user.getId()).getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());;
+
+        return entityManager.createQuery("FROM User u WHERE u.userId IN :ids",User.class)
+                .setParameter("ids", ids).getResultList();
+    }
+    @Override
     public long getFollowingCount(long userId) {
         return entityManager.createQuery("SELECT COUNT(follows) FROM Follow WHERE userId = :id", Long.class).setParameter("id", userId).getSingleResult();
     }

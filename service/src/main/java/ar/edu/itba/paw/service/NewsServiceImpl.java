@@ -7,6 +7,7 @@ import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
+import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,15 @@ public class NewsServiceImpl implements NewsService {
     private final SecurityService securityService;
     private final UserService userService;
     private final EmailService emailService;
+    private final UserDao userDao;
 
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService, EmailService emailService) {
+    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService, EmailService emailService, UserDao userDao) {
         this.newsDao = newsDao;
         this.userService = userService;
         this.securityService = securityService;
         this.emailService = emailService;
+        this.userDao = userDao;
     }
 
     @Override
@@ -47,7 +50,13 @@ public class NewsServiceImpl implements NewsService {
             newsBuilder.addCategory(c);
         }
 
-        return this.newsDao.create(newsBuilder);
+        News createdNews = newsDao.create(newsBuilder);
+        List<User> userList = userDao.getFollowersWithEmailPublishNewsActive(createdNews.getCreator());
+
+        for(User u : userList){
+            emailService.sendNewPublishedNewsByFollowing(u,createdNews,u.getEmailSettings().getLocale());
+        }
+        return createdNews;
     }
 
     private User getLoggedUser() {

@@ -134,6 +134,23 @@ public class EmailServiceImpl implements EmailService {
 
     }
 
+    @Override
+    public void sendNewPublishedNewsByFollowing(User user, News publishedNews, Locale locale) {
+        final String to = user.getEmail();
+        Object[] args
+                = { publishedNews.getCreator().toString() };
+        final String subject = messageSource.getMessage("email.newsAddedByfollowing.subject",args,locale);
+        final String url = getUrl("news/"+ publishedNews.getNewsId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("urlToCreatedArticle",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-article.html",data,locale);
+            LOGGER.info("New comment email sent to {}", user.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("New comment could not be sent to {}",user.getEmail());
+        }
+    }
+
     /* https://www.baeldung.com/spring-email-templates */
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
