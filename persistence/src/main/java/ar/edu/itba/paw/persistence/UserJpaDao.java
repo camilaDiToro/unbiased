@@ -156,8 +156,11 @@ public class UserJpaDao implements UserDao{
         @SuppressWarnings("unchecked")
         List<Long> ids = (List<Long>) entityManager.createNativeQuery("select user_id from users where user_id IN ( " +
                         "select follows.user_id from follows join email_settings on follows.user_id = email_settings.user_id  where follows= :userId and following_published=true)")
-                .setParameter("userId", user.getId()).getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());;
+                .setParameter("userId", user.getId()).getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
 
+        if(ids.isEmpty()){
+            return Collections.emptyList();
+        }
         return entityManager.createQuery("FROM User u WHERE u.userId IN :ids",User.class)
                 .setParameter("ids", ids).getResultList();
     }

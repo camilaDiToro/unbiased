@@ -37,13 +37,12 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public News create(News.NewsBuilder newsBuilder, String[] categories) {
+    public News create(News.NewsBuilder newsBuilder, List<Category> categories) {
         if(!newsBuilder.getCreator().getRoles().contains(Role.ROLE_JOURNALIST)){
             userService.addRole(newsBuilder.getCreator().getId(),Role.ROLE_JOURNALIST);
         }
 
-        for(String category : categories){
-            Category c = Category.getByCode(category);
+        for(Category c : categories){
             if(c == null || !c.isTrueCategory()){
                 throw new InvalidCategoryException();
             }

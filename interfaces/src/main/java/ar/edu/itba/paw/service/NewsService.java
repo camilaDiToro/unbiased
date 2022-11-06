@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NewsService {
-    News create(News.NewsBuilder newsBuilder, String[] categories);
+    News create(News.NewsBuilder newsBuilder, List<Category> categories);
     Optional<News> getById(long id);
     Optional<Comment> getCommentById(long id);
     Page<News> getNews(int page, Category category, NewsOrder newsOrder, String query);

@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class NewsController extends BaseController {
@@ -185,7 +187,7 @@ public class NewsController extends BaseController {
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
-        final News news = newsService.create(newsBuilder, createNewsFrom.getCategories());
+        final News news = newsService.create(newsBuilder, Arrays.stream(createNewsFrom.getCategories()).map(Category::getByCode).collect(Collectors.toList()));
         return new ModelAndView("redirect:/news/" + news.getNewsId());
     }
 }
