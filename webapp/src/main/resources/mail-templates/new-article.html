@@ -39,7 +39,6 @@
         .p-color{
             color: #FFFFFF;
             margin-right: 60px;
-            margin-left: 60px;
         }
         .contenedor {
             display:flex;
@@ -47,8 +46,8 @@
 
         }
         .img-contenedor{
-            max-height:5rem;
-            margin:auto 1.5rem;
+            max-height:6rem;
+            margin:auto 0.5rem;
         }
     </style>
 </head>
@@ -61,11 +60,11 @@
 
 <br/>
 
-<div class="contenedor">
-    <img class="img-contenedor" src="https://i.imgur.com/zo3b01E.png"
-         alt="article_logo" data-image-whitelisted="">
-    <div style="margin:auto; text-align: left">
-        <a th:href="${username}"></a>
+<div style="align-items: center;justify-content: center; display: flex" >
+    <img class="img-contenedor" src="https://i.imgur.com/zo3b01E.png"  style="float:left;"
+         alt="follow_logo" data-image-whitelisted="">
+    <div>
+        <p class="h-color" th:href="${username}"></p>
         <p class="p-color" th:text="#{email.article.title}"></p>
     </div>
 </div>

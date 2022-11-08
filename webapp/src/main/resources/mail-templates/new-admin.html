@@ -39,7 +39,6 @@
     .p-color{
       color: #FFFFFF;
       margin-right: 60px;
-      margin-left: 60px;
     }
     .contenedor {
       display:flex;
@@ -48,7 +47,7 @@
     }
     .img-contenedor{
       max-height:5rem;
-      margin:auto 1.5rem;
+      margin:auto 0.5rem;
     }
   </style>
 </head>
@@ -62,21 +61,26 @@
 <div class="contenedor">
   <div style="margin:auto; text-align: center">
     <h4 class="h-color" th:text="#{email.admin.add}"></h4>
-    <p class="p-color" th:text="${username}"></p><p class="p-color" th:text="#{email.admin.user}"></p>
   </div>
 </div>
 
-<!--<div class="contenedor">
-  <div style="margin:auto; text-align: center">
-    <img src="https://i.imgur.com/PqPAUd0.png" title="" class="img-contenedor"/>
+
+
+<div style="align-items: center;justify-content: center; display: flex" >
+  <img class="img-contenedor" src="https://i.imgur.com/a2rZ01Z.png"  style="float:left;"
+       alt="admin_logo" data-image-whitelisted="">
+  <div>
+    <p class="h-color" th:href="${username}"></p>
+    <p class="p-color" th:text="#{email.admin.user}"></p>
   </div>
-</div>-->
-
-
+</div>
 <br/>
+
+
 <div style="text-align: center">
   <p class="h-color" th:text="#{email.admin.panel}"></p>
 </div>
+
 
 <div style="align-items: center;justify-content: center; display: flex" >
   <a th:text="#{email.verification.click}" style=" text-decoration: none!important;" th:href="${urlToAdminPanel}" class="btn btn-md btn-info btn-share takeme">
