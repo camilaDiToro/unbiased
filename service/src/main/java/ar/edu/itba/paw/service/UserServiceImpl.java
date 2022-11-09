@@ -73,7 +73,6 @@ public class UserServiceImpl implements UserService {
         User user = userDao.create(userBuilder);
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
-        LocaleContextHolder.setLocale(locale, true);
         emailService.sendVerificationEmail(user, token, locale);
         EmailSettings emailSettings = new EmailSettings(true,true,false,true,locale, user);
         user.setEmailSettings(emailSettings);
@@ -124,7 +123,6 @@ public class UserServiceImpl implements UserService {
         verificationTokenService.deleteEmailToken(user.getId());
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
-        LocaleContextHolder.setLocale(locale, true);
         emailService.sendVerificationEmail(user, token, locale);
         return VerificationToken.Status.SUCCESSFULLY_RESENDED;
     }
@@ -164,9 +162,8 @@ public class UserServiceImpl implements UserService {
         User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         userDao.addFollow(myUser.getId(), userId);
 
-        if(following.getEmailSettings().isFollow()){
+        if(following.getEmailSettings()!= null && following.getEmailSettings().isFollow()){
             Locale locale = LocaleContextHolder.getLocale();
-            LocaleContextHolder.setLocale(locale, true);
             emailService.sendNewFollowerEmail(following,myUser,locale);
         }
     }
@@ -182,7 +179,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange) {
         Locale locale = LocaleContextHolder.getLocale();
-        LocaleContextHolder.setLocale(locale, true);
         if(currentUser.getEmailSettings() == null){
             currentUser.setEmailSettings(new EmailSettings(follow,comment,followingPublished,positivityChange,locale, currentUser));
             return;

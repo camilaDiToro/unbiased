@@ -39,7 +39,6 @@
         .p-color{
             color: #FFFFFF;
             margin-right: 60px;
-            margin-left: 60px;
         }
         .contenedor {
             display:flex;
@@ -47,8 +46,8 @@
 
         }
         .img-contenedor{
-            max-height:7rem;
-            margin:auto 2.5rem;
+            max-height:6rem;
+            margin:auto 0.5rem;
         }
     </style>
 </head>
@@ -65,15 +64,14 @@
     </div>
 </div>
 
-<div class="contenedor">
-    <img class="img-contenedor" src="https://i.imgur.com/dMtrQKo.png"
+<div style="align-items: center;justify-content: center; display: flex" >
+    <img class="img-contenedor" src="https://i.imgur.com/dMtrQKo.png"  style="float:left;"
          alt="comment_logo" data-image-whitelisted="">
-    <div style="margin:auto; text-align: left">
-        <a th:href="${username}"></a>
+    <div>
+        <p class="h-color" th:href="${username}"></p>
         <p class="p-color" th:text="#{email.comment.subtitle}"></p>
     </div>
 </div>
-
 
 <br/>
 
@@ -82,7 +80,7 @@
 </div>
 
 <div style="align-items: center;justify-content: center; display: flex" >
-    <a th:text="#{email.verification.click}" style=" text-decoration: none!important;" th:href="${urlToCommentedNews}" class="btn btn-md btn-info btn-share takeme">
+    <a th:text="#{email.verification.click}" style=" text-decoration: none!important;" th:href="${urlToCreateArticle}" class="btn btn-md btn-info btn-share takeme">
     </a>
 </div>
 
