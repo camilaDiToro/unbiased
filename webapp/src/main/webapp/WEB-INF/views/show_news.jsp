@@ -63,8 +63,9 @@
 
         </div>
         <hr/>
-        <c:if test="${news.hasImage()}">
-            <img src="<c:url value="/news/${news.imageId}/image"/>" class="w-50 m-4 rounded mx-auto d-block img-thumbnail"/>
+        <c:set var="maybeImage" value="${article.getImageId()}"/>
+        <c:if test="${maybeImage.isPresent()}">
+            <img src="<c:url value="/news/${maybeImage.get()}/image"/>" class="w-50 m-4 rounded mx-auto d-block img-thumbnail"/>
 
         </c:if>
         <div class="d-flex align-items-center justify-content-between">

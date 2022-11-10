@@ -199,12 +199,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <c:if test="${article.hasImage()}">
+                                            <c:if test="${maybeImage.isPresent()}">
 
                                                 <div class="bg-secondary position-relative w-40 border-15px">
 
 
-                                                    <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
+                                                    <img src="<c:url value="/news/${maybeImage.get()}/image"/>" class="object-fit-cover" alt="...">
 
                                                 </div>
                                             </c:if>
@@ -339,12 +339,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <c:if test="${article.hasImage()}">
+                                        <c:set var="maybeImage" value="${article.getImageId()}"/>
+                                        <c:if test="${maybeImage.isPresent()}">
 
                                         <div class="bg-secondary position-relative w-40 border-15px">
 
 
-                                                <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
+                                                <img src="<c:url value="/news/${maybeImage.get()}/image"/>" class="object-fit-cover" alt="...">
 
                                         </div>
                                         </c:if>

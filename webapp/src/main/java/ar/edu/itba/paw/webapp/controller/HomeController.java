@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 
 @Controller
@@ -62,6 +66,13 @@ public class HomeController extends BaseController{
         else if (type.equals("article")) {
             builder.withObject("newsPage", newsPage);
         }
+
+        Optional<User> maybeUser = securityService.getCurrentUser();
+        User user = maybeUser.orElse(null);
+
+//        builder.withObject("loggedUser", user);
+//        builder.withObject("isLoggedIn", user != null);
+//        builder.withObject("isAdmin", securityService.isCurrentUserAdmin());
 
         return builder.build();
     }

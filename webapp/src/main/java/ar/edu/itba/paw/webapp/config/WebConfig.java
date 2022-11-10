@@ -31,12 +31,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
@@ -56,6 +58,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
+
+    @PostConstruct
+    public void init() {
+        requestMappingHandlerAdapter.setIgnoreDefaultModelOnRedirect(true);
+    }
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {

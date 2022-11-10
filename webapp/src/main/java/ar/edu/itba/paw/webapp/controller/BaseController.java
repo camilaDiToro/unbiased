@@ -14,6 +14,7 @@ public abstract class BaseController {
     public BaseController(SecurityService ss) {
         this.securityService = ss;
     }
+
     @ModelAttribute
     public void addAttributes(Model model) {
         Optional<User> maybeUser = securityService.getCurrentUser();
@@ -23,4 +24,5 @@ public abstract class BaseController {
         model.addAttribute("isLoggedIn", user != null);
         model.addAttribute("isAdmin", securityService.isCurrentUserAdmin());
     }
+
 }

@@ -33,7 +33,7 @@ public class Image {
         this.dataType = dataType;
     }
 
-    public long getImageId() {
+    public Long getImageId() {
         return imageId;
     }
 
