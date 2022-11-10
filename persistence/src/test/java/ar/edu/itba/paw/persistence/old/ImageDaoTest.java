@@ -1,6 +1,8 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.old;
 
 import ar.edu.itba.paw.model.Image;
+import ar.edu.itba.paw.persistence.ImageJdbcDao;
+import ar.edu.itba.paw.persistence.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
