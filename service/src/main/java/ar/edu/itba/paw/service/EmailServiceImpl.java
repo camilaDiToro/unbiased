@@ -131,7 +131,21 @@ public class EmailServiceImpl implements EmailService {
         } catch (MessagingException e) {
             LOGGER.warn("New comment could not be sent to {}",newsOwner.getEmail());
         }
+    }
 
+    @Override
+    public void sendNewsPositivityChanged(User newsOwner, News news, Locale locale) {
+        final String to = newsOwner.getEmail();
+        final String subject = messageSource.getMessage("email.newPositivity.subject",null,locale);
+        final String url = getUrl("news/"+news.getNewsId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("urlToArticle",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-status-positivity.html",data,locale);
+            LOGGER.info("News positivity changed email sent to {}", newsOwner.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("News positivity changed email could not be sent to {}",newsOwner.getEmail());
+        }
     }
 
     @Override

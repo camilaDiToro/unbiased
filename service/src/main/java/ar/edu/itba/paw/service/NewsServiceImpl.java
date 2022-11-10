@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.*;
 import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
@@ -108,7 +109,15 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public void setRating(News news, Rating rating) {
         User user  = getLoggedUser();
+        PositivityStats.Positivity oldp = news.getPositivityStats().getPositivity();
         newsDao.setRating(news, user, rating);
+        PositivityStats.Positivity newp = news.getPositivityStats().getPositivity();
+        if(oldp != newp){
+            User creator = news.getCreator();
+            if(creator.getEmailSettings() != null && creator.getEmailSettings().isPositivityChange()){
+                emailService.sendNewsPositivityChanged(creator, news, creator.getEmailSettings().getLocale());
+            }
+        }
     }
 
     @Override

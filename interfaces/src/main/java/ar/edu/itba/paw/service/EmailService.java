@@ -12,4 +12,5 @@ public interface EmailService {
     void sendNewFollowerEmail(User user, User follower, Locale locale);
     void sendNewCommentEmail(User newsOwner, News commentedNews, Locale locale);
     void sendNewPublishedNewsByFollowing(User user, News publishedNews, Locale locale);
+    void sendNewsPositivityChanged(User newsOwner, News news, Locale locale);
 }
