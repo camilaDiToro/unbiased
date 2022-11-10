@@ -7,6 +7,7 @@ import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.persistence.CommentDao;
 import ar.edu.itba.paw.persistence.NewsDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,16 @@ public class NewsServiceImpl implements NewsService {
     private final UserService userService;
     private final EmailService emailService;
     private final UserDao userDao;
+    private final CommentDao commentDao;
 
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService, EmailService emailService, UserDao userDao) {
+    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService, EmailService emailService, UserDao userDao, CommentDao commentDao) {
         this.newsDao = newsDao;
         this.userService = userService;
         this.securityService = securityService;
         this.emailService = emailService;
         this.userDao = userDao;
+        this.commentDao = commentDao;
     }
 
     @Override
@@ -69,29 +72,13 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Page<News> getNews(int page, Category category, NewsOrder newsOrder, String query) {
-        int totalPages;
-        page = page <= 0 ? 1 : page;
-
         Long loggedUser = getLoggedUserId();
-
-        List<News> ln;
-
         if (category.equals(Category.ALL)) {
-            totalPages = newsDao.getTotalPagesAllNews(query);
-            page = Math.min(page, totalPages);
-            ln = newsDao.getNews(page, query, newsOrder, loggedUser);
+            return newsDao.getNews(page, query, newsOrder, loggedUser);
         } else if (category.equals(Category.FOR_ME)) {
-            totalPages = newsDao.getTodayNewsPageCount(getLoggedUser());
-            page = Math.min(page, totalPages);
-            ln = newsDao.getRecommendation(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new), newsOrder);
+            return newsDao.getRecommendation(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new), newsOrder);
         }
-        else {
-            totalPages = newsDao.getTotalPagesCategory(category);
-            page = Math.min(page, totalPages);
-            ln = newsDao.getNewsByCategory(page, category, newsOrder, loggedUser);
-        }
-
-        return new Page<>(ln, page, totalPages);
+        return newsDao.getNewsByCategory(page, category, newsOrder, loggedUser);
     }
 
 
@@ -174,7 +161,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Optional<Comment> getCommentById(long id) {
-        return newsDao.getCommentById(id);
+        return commentDao.getCommentById(id);
     }
 
     @Override
@@ -182,7 +169,7 @@ public class NewsServiceImpl implements NewsService {
     public void addComment(long newsId, String comment) {
         User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         News news = getById(newsId).orElseThrow(NewsNotFoundException::new);
-        newsDao.addComment(user, news, comment);
+        commentDao.addComment(user, news, comment);
         User newsOwner = news.getCreator();
         if(newsOwner.getEmailSettings()!=null && newsOwner.getEmailSettings().isComment()){
             Locale locale = LocaleContextHolder.getLocale();
@@ -192,13 +179,13 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Page<Comment> getComments(long newsId, int page) {
-        return newsDao.getComments(newsId, page);
+        return commentDao.getComments(newsId, page);
     }
 
     @Override
     @Transactional
     public void deleteComment(long commentId) {
-        newsDao.deleteComment(commentId);
+        commentDao.deleteComment(commentId);
     }
 
 }

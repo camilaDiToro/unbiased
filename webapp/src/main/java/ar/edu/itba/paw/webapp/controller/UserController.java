@@ -32,14 +32,12 @@ import java.util.Optional;
 @Controller
 public class UserController extends BaseController{
 
-    private final UserService userService;
     private final NewsService newsService;
     private final OwnerCheck ownerCheck;
 
     @Autowired
     public UserController(UserService userService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
-        super(securityService);
-        this.userService = userService;
+        super(securityService, userService);
         this.newsService = newsService;
         this.ownerCheck = ownerCheck;
     }
