@@ -4,8 +4,6 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportedComment;
-import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.TextType;
@@ -24,14 +22,12 @@ public class AdminController extends BaseController{
 
     private final AdminService adminService;
     private final NewsService newsService;
-    private final UserService userService;
 
     @Autowired
     public AdminController(AdminService adminService, NewsService newsService, UserService userService, SecurityService ss) {
-        super(ss);
+        super(ss, userService);
         this.adminService = adminService;
         this.newsService = newsService;
-        this.userService = userService;
     }
 
 

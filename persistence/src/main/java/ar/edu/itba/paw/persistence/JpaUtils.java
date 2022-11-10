@@ -18,4 +18,8 @@ public class JpaUtils {
 
         return ids;
     }
+
+    public static String escapeSqlLike(String query) {
+        return query.replaceAll("_","[_]").replaceAll("%","[%]"); // TODO encontrar una forma mas oficial (no cubre todos los casos)
+    }
 }

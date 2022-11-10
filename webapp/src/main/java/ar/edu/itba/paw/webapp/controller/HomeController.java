@@ -16,13 +16,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController extends BaseController{
 
-    private final UserService userService;
     private final NewsService newsService;
 
     @Autowired
     public HomeController(final UserService userService, final NewsService newsService, SecurityService securityService){
-        super(securityService);
-        this.userService = userService;
+        super(securityService, userService);
         this.newsService = newsService;
     }
 

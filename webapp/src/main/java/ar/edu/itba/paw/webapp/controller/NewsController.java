@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportReason;
-import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;
@@ -34,18 +33,15 @@ public class NewsController extends BaseController {
     private final NewsService newsService;
     private final ImageService imageService;
     private final AdminService adminService;
-
-    private final UserService userService;
     private final OwnerCheck ownerCheck;
 
 
     @Autowired
     public NewsController(AdminService adminService, UserService userService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
-        super(ss);
+        super(ss, userService);
         this.newsService = newsService;
         this.imageService = imageService;
         this.adminService = adminService;
-        this.userService = userService;
         this.ownerCheck = ownerCheck;
     }
 
@@ -182,7 +178,7 @@ public class NewsController extends BaseController {
         final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, TextUtils.convertMarkdownToHTML(createNewsFrom.getBody()), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-        if(!createNewsFrom.getImage().isEmpty()){
+        if(!createNewsFrom.getImage().isEmpty() && 0 != createNewsFrom.getImage().getBytes().length){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
