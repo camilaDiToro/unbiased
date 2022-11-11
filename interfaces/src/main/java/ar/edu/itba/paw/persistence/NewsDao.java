@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
@@ -40,7 +39,10 @@ public interface NewsDao {
     List<News> getNewsByCategoryTop(int page, Category category, Long loggedUser, TimeConstraint timeConstraint);
 
     void deleteNews(News news);
-    Page<Comment> getComments(long newsId, int page);
+    Page<Comment> getNewComments(long newsId, int page);
+
+    Page<Comment> getTopComments(long newsId, int page);
+
     Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Long loggedUser, ProfileCategory profileCategory);
 
     int getRecommendationNewsPageCountTop(User user, TimeConstraint timeConstraint);

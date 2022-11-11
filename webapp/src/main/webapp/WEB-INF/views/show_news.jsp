@@ -21,6 +21,7 @@
 
 
 <c:set var="news" value="${fullNews}"/>
+<c:set var="newsId" value="${news.newsId}"/>
 <c:set var="user" value="${fullNews.user}"/>
 <c:set var="loggedParameters" value="${fullNews.loggedUserParameters}"/>
 <c:set var="rating" value="${loggedParameters != null ? loggedParameters.personalRating : ''}"/>
@@ -28,7 +29,7 @@
 <c:set var="positivity" value="${positivityStats.positivity}"/>
 
 
-
+<div class="d-flex flex-column h-100">
 <a href="../TOP" class="back-button-show-news">
     <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..." data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> "/>
 </a>
@@ -288,7 +289,20 @@
                     <c:if test="${loggedUser != null && empty commentsPage.content}">
                         <h6 class="m-2 align-self-center"><spring:message code="showNews.emptyCommentsLogged"/></h6>
                     </c:if>
-                    <c:forEach var="comment" items="${commentsPage.content}">
+                    <c:set var = "activeClasses" scope = "session" value = "bg-info active"/>
+                    <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
+                    <ul class="my-4 mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex">
+                    <c:forEach var="order" items="${orders}">
+                        <li class="nav-item">
+                            <a class="text-capitalize nav-link fromLeft rounded-pill hover-pill ml-1 <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/news/${newsId}">
+                    <c:param name = "category" value = "${param.category}"/>
+                    <c:param name = "order" value = "${order.toString()}"/>
+                    <c:param name = "page" value = "${param.page}"/>
+                    </c:url>"><spring:message code="${order.interCode}"/></a>
+                        </li>
+                    </c:forEach>
+                    </ul>
+                        <c:forEach var="comment" items="${commentsPage.content}">
 
                         <c:set var="user" value="${comment.user}"/>
                         <c:set var="positivityStats" value="${comment.getPositivityStats()}"/>
@@ -452,6 +466,31 @@
         </div>
 
     </div>
+</div>
+    <c:if test="${not empty commentsPage && not empty commentsPage.content}">
+        <c:set var="page" value="${commentsPage}"/>
+        <nav class="d-flex justify-content-center align-items-center">
+            <ul class="pagination" >
+
+                <li class="page-item"><a class="page-link" href="<c:url value = "/news/${newsId}">
+                <c:param name = "page" value = "1"/>
+</c:url>"><spring:message code="home.pagination.first"/></a></li>
+
+
+                <c:forEach var = "i" begin = "${page.minPage}" end = "${page.maxPage}">
+                    <li class="page-item"><a class="page-link ${i == page.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/news/${newsId}">
+<c:param name = "page" value = "${i}"/></c:url>"><c:out value="${i}"/></a></li>
+                </c:forEach>
+
+                <li class="page-item"><a class="page-link" href="<c:url value = "/news/${newsId}">
+                <c:param name = "page" value = "${page.totalPages}"/>
+</c:url>"><spring:message code="home.pagination.last"/></a></li>
+
+            </ul>
+        </nav>
+
+    </c:if>
+
 </div>
 </body>
 </html>

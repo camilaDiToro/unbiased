@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.functional.GetNewsProfileFunction;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -240,11 +238,25 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public Page<Comment> getComments(long newsId, int page) {
+    public Page<Comment> getNewComments(long newsId, int page) {
         int totalPages = getTotalPagesComments(newsId);
         page = Math.min(page, totalPages);
 
         Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId ORDER BY commented_date DESC LIMIT :pageSize OFFSET :offset")
+                .setParameter("newsId", newsId);
+        List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
+
+        return new Page<>(comments, page, totalPages);
+    }
+
+    @Override
+    public Page<Comment> getTopComments(long newsId, int page) {
+        int totalPages = getTotalPagesComments(newsId);
+        page = Math.min(page, totalPages);
+
+        Query query = entityManager.createNativeQuery("WITH net_upvotes_by_comment as (SELECT comments.id, SUM( CASE WHEN upvote IS NULL THEN 0\n" +
+                        "WHEN upvote THEN 1 ELSE -1 END) upvotes FROM comment_upvotes RIGHT JOIN comments ON comments.id = comment_id AND news_id = :newsId \n" +
+                        "GROUP BY comments.id) SELECT id from net_upvotes_by_comment ORDER BY upvotes DESC LIMIT :pageSize OFFSET :offset")
                 .setParameter("newsId", newsId);
         List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
 

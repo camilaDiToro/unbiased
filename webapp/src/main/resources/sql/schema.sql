@@ -148,7 +148,6 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 
 ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_unique CASCADE;
-ALTER TABLE comments ADD CONSTRAINT comments_unique UNIQUE(news_id, user_id, comment);
 ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_pkey CASCADE;
 ALTER TABLE comments ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
 

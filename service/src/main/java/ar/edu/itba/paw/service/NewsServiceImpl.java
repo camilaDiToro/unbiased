@@ -196,6 +196,24 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public Map<Long, Rating> getCommentsRating(List<Comment> comments, Optional<User> maybeLoggedUser) {
+        return comments.stream().collect(Collectors.toMap(Comment::getId, comment -> {
+            if (!maybeLoggedUser.isPresent())
+                return Rating.NO_RATING;
+
+            User user = maybeLoggedUser.get();
+
+            Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
+
+            if (!upvoteMap.containsKey(user.getId()))
+                return Rating.NO_RATING;
+
+            return comment.getUpvoteMap().get(user.getId()).isValue() ? Rating.UPVOTE : Rating.DOWNVOTE;
+
+        }));
+    }
+
+    @Override
     @Transactional
     public void addComment(long newsId, String comment) {
         User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
@@ -204,8 +222,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<Comment> getComments(long newsId, int page) {
-        return newsDao.getComments(newsId, page);
+    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj) {
+        if (orderByObj.equals(NewsOrder.NEW)) {
+            return newsDao.getNewComments(newsId, page);
+        }
+        return newsDao.getTopComments(newsId, page);
     }
 
     @Override
