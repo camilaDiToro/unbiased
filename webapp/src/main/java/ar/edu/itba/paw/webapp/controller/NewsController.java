@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.CommentUpvote;
 import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
@@ -26,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class NewsController extends BaseController {
@@ -103,8 +107,24 @@ public class NewsController extends BaseController {
 
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         Locale locale = LocaleContextHolder.getLocale();
+        Optional<User> loggedUser = securityService.getCurrentUser();
 
         Page<Comment> comments = newsService.getComments(newsId,page);
+        Map<Long, Rating> commentRatings =
+                comments.getContent().stream().collect(Collectors.toMap(Comment::getId, comment -> {
+                    if (!loggedUser.isPresent())
+                        return Rating.NO_RATING;
+
+                    User user = loggedUser.get();
+
+                    Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
+
+                    if (!upvoteMap.containsKey(user.getId()))
+                        return Rating.NO_RATING;
+
+                    return comment.getUpvoteMap().get(user.getId()).isValue() ? Rating.UPVOTE : Rating.DOWNVOTE;
+
+                }));
 
         MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
@@ -115,9 +135,10 @@ public class NewsController extends BaseController {
                 .withObject("commentNewsForm", commentNewsFrom)
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", locale)
+                .withObject("commentRatings", commentRatings)
                 .withObject("commentsPage", newsService.getComments(newsId,page));
 
-        Optional<User> loggedUser = securityService.getCurrentUser();
+
 
         Map<Long, Boolean> hasReportedComment;
         if (loggedUser.isPresent()) {
@@ -187,5 +208,27 @@ public class NewsController extends BaseController {
 
         final News news = newsService.create(newsBuilder, createNewsFrom.getCategories());
         return new ModelAndView("redirect:/news/" + news.getNewsId());
+    }
+
+    private ResponseEntity<UpvoteActionResponse> toggleHandler(CommentUpvoteAction payload, Rating action) {
+        final Long commentId = payload.getCommentId();
+        final boolean isActive = payload.isActive();
+
+        Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
+        newsService.setCommentRating(comment, isActive ? action : Rating.NO_RATING);
+
+        return new ResponseEntity<>(new UpvoteActionResponse(comment.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/change-comment-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<UpvoteActionResponse>  toggleUpvote(@RequestBody CommentUpvoteAction payload){
+        return toggleHandler(payload, Rating.UPVOTE);
+    }
+
+    @RequestMapping(value = "/change-comment-downvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<UpvoteActionResponse>  toggleDownvote(@RequestBody CommentUpvoteAction payload){
+        return toggleHandler(payload, Rating.DOWNVOTE);
     }
 }

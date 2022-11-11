@@ -3,9 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.*;
 import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.ProfileCategory;
-import ar.edu.itba.paw.model.user.Role;
-import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -114,7 +112,30 @@ public class NewsServiceImpl implements NewsService {
     public void setRating(News news, Rating rating) {
         User user  = getLoggedUser();
 //        newsDao.setRating(news, user, Rating.NO_RATING);
-        newsDao.setRating(news, user, rating);
+        Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
+        if (rating.equals(Rating.NO_RATING)) {
+            upvoteMap.remove(user.getId());
+            return;
+        }
+        long userId = user.getId();
+
+        upvoteMap.putIfAbsent(userId, new Upvote(news, user.getId()));
+        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
+    }
+
+    @Override
+    @Transactional
+    public void setCommentRating(Comment comment, Rating rating) {
+        User user  = getLoggedUser();
+        Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
+        if (rating.equals(Rating.NO_RATING)) {
+            upvoteMap.remove(user.getId());
+            return;
+        }
+        long userId = user.getId();
+
+        upvoteMap.putIfAbsent(userId, new CommentUpvote(comment, user.getId()));
+        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
     }
 
     @Override

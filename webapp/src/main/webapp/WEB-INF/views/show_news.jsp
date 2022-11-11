@@ -39,9 +39,9 @@
         <div class="d-flex align-items-center  ">
             <div class="d-flex flex-column align-items-center" news-id="<c:out value="${news.newsId}"/>">
                 <c:if test="${loggedUser != null}">
-                    <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                    <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                     <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                    <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                    <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                 </c:if>
                 <c:if test="${loggedUser == null}">
                     <a href="<c:url value = "/create"/>">
@@ -291,11 +291,14 @@
                     <c:forEach var="comment" items="${commentsPage.content}">
 
                         <c:set var="user" value="${comment.user}"/>
-                        <div class="mb-4 w-100 p-4 bg-transparent border-bottom" >
+                        <c:set var="positivityStats" value="${comment.getPositivityStats()}"/>
+                        <c:set var="rating" value="${commentRatings.get(comment.id)}"/>
+                        <div class="mb-4 w-100 p-4 bg-black rounded-comment" >
 
                             <div >
-                                <div class="d-flex flex-row gap-1 align-items-center">
-                                    <div class="img-container-navbar">
+                                <div class="d-flex flex-row gap-1 align-items-center p-1 mb-1">
+
+                                    <div class="img-container-comment">
                                         <c:if test="${user.hasImage()}">
                                             <img class="object-fit-cover rounded-circle" src="<c:url value="/profile/${user.userId}/image"/>" alt="Image Description">
 
@@ -312,7 +315,7 @@
 
                             </div>
 
-                            <div class="d-flex justify-content-between p-2 w-100">
+                            <div class="d-flex flex-column justify-content-between p-2 w-100">
                                 <div class="d-flex align-items-center w-auto gap-1">
 <%--                                    ${comment.deleted}--%>
                                     <c:choose>
@@ -326,93 +329,114 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
-                                <div class="d-flex align-items-center float-sm-right">
-                                    <div data-toggle="modal" data-target="#binModal${comment.id}" class="svg-btn hover-hand ">
-                                        <c:if test="${loggedUser != null && !comment.deleted && comment.user.id == loggedUser.id}">
-                                            <spring:message code="showNews.deleteComment" var="deleteComment"/>
-                                            <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-comment svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="${deleteComment}"/>
-                                        </c:if>
-                                    </div>
-                                    <!-- Modal delete comment-->
-                                    <div class="modal fade" id="binModal${comment.id}"   aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title"><spring:message code="showNews.deleteCommentQuestion"/></h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <spring:message code="showNews.deleteCommentBody"/>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <form method="post" action="<c:url value="/news/${newsId}/comment/${comment.id}/delete"/>">
-                                                        <button type="submit" class="btn btn-primary"><spring:message code="showNews.deleteComment"/></button>
-                                                    </form>
+                                <div class="d-flex align-items-center justify-content-between float-sm-right gap-1">
+                                    <c:if test="${!comment.deleted}">
+                                        <div class="d-flex flex-row align-items-center gap-1" comment-id="${comment.id}">
+                                            <c:if test="${loggedUser != null}">
+                                                <img id="upvote"  url="<c:url value = "/change-comment-upvote"/>"  onclick="handleClick(this, 'comment-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
+                                                <img id="downvote"  url="<c:url value = "/change-comment-downvote"/>" onclick="handleClick(this, 'comment-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                            </c:if>
+                                            <c:if test="${loggedUser == null}">
+                                                <a data-toggle="modal" data-target="#cardModal">
+                                                    <img   class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote.svg"/>"/>
+                                                </a>
+                                                <div  ><c:out value="${positivityStats.netUpvotes}"/></div>
+                                                <a data-toggle="modal" data-target="#cardModal">
+                                                    <img    class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote.svg"/>"/>
+                                                </a>
+
+                                            </c:if>
+                                        </div>
+                                    </c:if>
+                                    <div class="d-flex gap-1 align-items-center justify-content-between">
+                                        <div data-toggle="modal" data-target="#binModal${comment.id}" class="svg-btn hover-hand h-fit">
+                                            <c:if test="${loggedUser != null && !comment.deleted && comment.user.id == loggedUser.id}">
+                                                <spring:message code="showNews.deleteComment" var="deleteComment"/>
+                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-comment svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="${deleteComment}"/>
+                                            </c:if>
+                                        </div>
+                                        <!-- Modal delete comment-->
+                                        <div class="modal fade" id="binModal${comment.id}"   aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title"><spring:message code="showNews.deleteCommentQuestion"/></h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <spring:message code="showNews.deleteCommentBody"/>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <form method="post" action="<c:url value="/news/${newsId}/comment/${comment.id}/delete"/>">
+                                                            <button type="submit" class="btn btn-primary"><spring:message code="showNews.deleteComment"/></button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <c:if test="${loggedUser != null && !comment.deleted}">
-                                        <c:set var="hasReportedComment" value="${hasReportedCommentMap.get(comment.id)}"/>
+                                        <c:if test="${loggedUser != null && !comment.deleted}">
+                                            <c:set var="hasReportedComment" value="${hasReportedCommentMap.get(comment.id)}"/>
 
-                                        <c:choose>
+                                            <c:choose>
 
-                                            <c:when test = "${hasReportedComment}">
-                                                <div class=" d-flex justify-content-center align-items-center" >
-                                                    <img src="<c:url value="/resources/images/flag-clicked.svg"/>" alt="..." class="icon-comment svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>"/>
+                                                <c:when test = "${hasReportedComment}">
+                                                    <div class=" d-flex justify-content-center align-items-center h-fit" >
+                                                        <img src="<c:url value="/resources/images/flag-clicked.svg"/>" alt="..." class="icon-comment svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>"/>
 
-<%--                                                    <img  class="icon-comment" src="<c:url value="/resources/images/flag-clicked.svg"/>" alt="..." data-toggle=tooltip" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>">--%>
-                                                </div>
-                                            </c:when>
+                                                            <%--                                                    <img  class="icon-comment" src="<c:url value="/resources/images/flag-clicked.svg"/>" alt="..." data-toggle=tooltip" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>">--%>
+                                                    </div>
+                                                </c:when>
 
-                                            <c:otherwise>
-                                                <div class="d-flex justify-content-center align-items-center hover-hand" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.reportComment"/>">
-                                                    <img data-toggle="modal" data-target="#reportComment${comment.id}Modal" class="icon-comment"  data-placement="bottom" src="<c:url value="/resources/images/flag.svg"/>" alt="" title="<spring:message code="tooltip.commentReported"/>" >
-                                                </div>
-                                                <!-- Modal report comment-->
-                                                <div class="modal fade" id="reportComment${comment.id}Modal" tabindex="-1"  aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="reportComment${comment.id}Modal"><spring:message code="showNews.reportCommentQuestion"/></h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <c:url value="/news/${newsId}/comment/${comment.id}/report" var="postUrl"/>
-                                                                <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-100">
-
-                                                                <div class="input-group">
-
-                                                                    <c:forEach var="item" items="${reportReasons}">
-                                                                        <div class="form-check w-100">
-                                                                            <spring:message code="${item.interCode}" var="code"/>
-                                                                            <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}" label="${code}"/>
-
-                                                                        </div>
-                                                                    </c:forEach>
+                                                <c:otherwise>
+                                                    <div class="d-flex justify-content-center align-items-center hover-hand h-fit" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.reportComment"/>">
+                                                        <img data-toggle="modal" data-target="#reportComment${comment.id}Modal" class="icon-comment"  data-placement="bottom" src="<c:url value="/resources/images/flag.svg"/>" alt="" title="<spring:message code="tooltip.commentReported"/>" >
+                                                    </div>
+                                                    <!-- Modal report comment-->
+                                                    <div class="modal fade" id="reportComment${comment.id}Modal" tabindex="-1"  aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="reportComment${comment.id}Modal"><spring:message code="showNews.reportCommentQuestion"/></h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
                                                                 </div>
-                                                                <div class="w-100">
-                                                                    <form:errors cssClass="text-danger" path="reason" element="p"/>
+                                                                <div class="modal-body">
+                                                                    <c:url value="/news/${newsId}/comment/${comment.id}/report" var="postUrl"/>
+                                                                    <form:form modelAttribute="reportNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-100">
+
+                                                                    <div class="input-group">
+
+                                                                        <c:forEach var="item" items="${reportReasons}">
+                                                                            <div class="form-check w-100">
+                                                                                <spring:message code="${item.interCode}" var="code"/>
+                                                                                <form:radiobutton path="reason" cssClass="form-check-input" value="${item.toString()}" id="${item.toString()}" label="${code}"/>
+
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                    </div>
+                                                                    <div class="w-100">
+                                                                        <form:errors cssClass="text-danger" path="reason" element="p"/>
+
+                                                                    </div>
 
                                                                 </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
+                                                                </div>
+                                                                </form:form>
 
                                                             </div>
-                                                            <div class="modal-footer">
-                                                                <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
-                                                            </div>
-                                                            </form:form>
-
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </c:if>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:if>
+                                    </div>
 
 
                                 </div>

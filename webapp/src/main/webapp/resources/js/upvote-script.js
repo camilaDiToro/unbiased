@@ -20,10 +20,11 @@ async function postData(url = '', data = {}) {
 
 
 
-async function handleClick(img) {
+async function handleClick(img, idName) {
     const src = img.src
     const URL = img.getAttribute('url')
-    const newsId = img.parentElement.getAttribute('news-id')
+    const newsId = img.parentElement.getAttribute(idName)
+    const id = idName.includes('news') ? 'newsId' : 'commentId'
 
     var number
     img.parentElement.childNodes.forEach(e => {
@@ -60,15 +61,15 @@ async function handleClick(img) {
 
     if (src.includes('clicked')) {
         // currently upvoted -> remove upvote
-        postData(URL, {active: false, newsId: newsId}).then(removeActionAndUpdate)
+        postData(URL, {active: false, [id]: newsId}).then(removeActionAndUpdate)
     }
 
     else {
         if (src.includes('upvote')) {
-            postData(URL, {active: true, newsId: newsId}).then(r => addActionAndRemoveOpposite(r, 'downvote', 'upvoted'))
+            postData(URL, {active: true, [id]: newsId}).then(r => addActionAndRemoveOpposite(r, 'downvote', 'upvoted'))
         }
         else {
-            postData(URL, {active: true, newsId: newsId}).then(r => addActionAndRemoveOpposite(r, 'upvote', 'downvoted'))
+            postData(URL, {active: true, [id]: newsId}).then(r => addActionAndRemoveOpposite(r, 'upvote', 'downvoted'))
         }
     }
 

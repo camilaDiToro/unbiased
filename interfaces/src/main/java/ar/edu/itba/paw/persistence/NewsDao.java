@@ -32,7 +32,6 @@ public interface NewsDao {
 
     int getTotalPagesCategoryTop(Category category, TimeConstraint timeConstraint);
 
-    void setRating(News news, User user, Rating rating);
     void addComment(User user, News news, String comment);
     void deleteComment(long commentId);
     void saveNews(News news, User user);

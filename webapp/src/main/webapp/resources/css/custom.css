@@ -74,6 +74,10 @@
     width: 40px; /*any size*/
     height: 40px; /*any size*/
 }
+.img-container-comment {
+    width: 50px; /*any size*/
+    height: 50px; /*any size*/
+}
 .object-fit-cover {
     border-radius: 0 0.5rem 0.5rem 0;
     width: 100%;
@@ -537,7 +541,9 @@ input:-webkit-autofill:focus {
 }
 
 .comment-text {
-    white-space: pre;
+    word-break: break-word;
+    white-space: pre-wrap;
+    -moz-white-space: pre-wrap;
 }
 
 
@@ -982,6 +988,14 @@ input:checked + .slider:before {
 .icon-profile{
     height: 25px;
     width: 25px;
+}
+
+.bg-black {
+    background-color: #0a0a0e;
+}
+
+.rounded-comment {
+    border-radius: 30px;
 }
 
 .gap-4px {
