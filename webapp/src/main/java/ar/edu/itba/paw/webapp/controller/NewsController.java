@@ -4,9 +4,12 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
+<<<<<<< HEAD
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+=======
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+>>>>>>> jpa
 import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.CommentUpvote;
 import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
@@ -66,21 +69,24 @@ public class NewsController{
     @RequestMapping(value = "/news/{newsId:[0-9]+}/report", method = RequestMethod.POST)
     public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                    final BindingResult errors) {
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         if (errors.hasErrors()) {
             return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
         }
-        adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        adminService.reportNews(currentUser, newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
     public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                       final BindingResult errors, @PathVariable("newsId") long newsId) {
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+
         if (errors.hasErrors()) {
             return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
         }
 
-        adminService.reportComment(commentId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        adminService.reportComment(currentUser, commentId, ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId + "#" + "comment-" + commentId);
     }
 
@@ -90,7 +96,8 @@ public class NewsController{
         if (errors.hasErrors()) {
             return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1, "TOP");
         }
-        newsService.addComment(newsId, commentNewsForm.getComment());
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        newsService.addComment(currentUser, newsId, commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
@@ -107,10 +114,10 @@ public class NewsController{
                                  @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors,
     @RequestParam(name="page", defaultValue="1") int page,
                                  @RequestParam(name="order", defaultValue="TOP") String orderBy){
-
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        Locale locale = LocaleContextHolder.getLocale();
         Optional<User> loggedUser = securityService.getCurrentUser();
+
+        News news = newsService.getById(loggedUser,newsId).orElseThrow(NewsNotFoundException::new);
+        Locale locale = LocaleContextHolder.getLocale();
         NewsOrder orderByObj = NewsOrder.getByValue(orderBy);
 
         Page<Comment> comments = newsService.getComments(newsId, page, orderByObj);
@@ -119,7 +126,6 @@ public class NewsController{
         MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
                 .withObject("fullNews", news)
-                .withObject("hasReported", adminService.hasReported(news.getNewsId()))
                 .withObject("reportReasons", ReportReason.values())
                 .withObject("reportNewsForm", reportNewsFrom)
                 .withObject("commentNewsForm", commentNewsFrom)
@@ -139,7 +145,8 @@ public class NewsController{
             comments.getContent().forEach(c -> hasReportedComment.put(c.getId(), user.hasReportedComment(c)));
             builder.withObject("hasReportedCommentMap", hasReportedComment)
                     .withObject("myNews", news.getCreator().equals(user))
-                    .withObject("pinned", news.equals(user.getPingedNews()));
+                    .withObject("pinned", news.equals(user.getPingedNews()))
+                    .withObject("hasReported", adminService.hasReported(user.getId(), news.getNewsId()));
         }
 
         return builder.build();
@@ -155,7 +162,7 @@ public class NewsController{
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
     public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
 
         return new ModelAndView("redirect:/news/" + newsId);
@@ -172,7 +179,8 @@ public class NewsController{
     @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<SavedResult> saveNews(@PathVariable("newsId") long newsId){
-        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(newsId));
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(currentUser, newsId));
         return new ResponseEntity<>(savedResult, HttpStatus.OK);
     }
 
@@ -205,9 +213,9 @@ public class NewsController{
     private ResponseEntity<UpvoteActionResponse> toggleHandler(CommentUpvoteAction payload, Rating action) {
         final Long commentId = payload.getCommentId();
         final boolean isActive = payload.isActive();
-
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
-        newsService.setCommentRating(comment, isActive ? action : Rating.NO_RATING);
+        newsService.setCommentRating(currentUser, comment, isActive ? action : Rating.NO_RATING);
 
         return new ResponseEntity<>(new UpvoteActionResponse(comment.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
     }

@@ -12,21 +12,36 @@ import java.util.Optional;
 
 public interface NewsDao {
     List<News> getNewNews(int page, String query, Long loggedUser);
+
+    List<News> getNewNews(int page, String query);
+
     List<News> getTopNews(int page, String query, TimeConstraint timeConstraint, Long loggedUser);
+
+    Optional<News> getById(long id);
+
     List<News> getNewsByCategoryNew(int page, Category category, Long loggedUser);
     int getTotalPagesCategoryNew(Category category);
     List<News> getRecommendationNew(int page, User user);
     List<News> getRecommendationTop(int page, User user, TimeConstraint timeConstraint);
     int getRecommendationNewsPageCountNew(User user);
     News create(News.NewsBuilder newsBuilder);
+
+    List<News> getTopNews(int page, String query, TimeConstraint timeConstraint);
+
     int getTotalPagesAllNews(String query, TimeConstraint timeConstraint);
     Optional<News> getById(long id, Long loggedUser);
     int getTotalPagesCategoryTop(Category category, TimeConstraint timeConstraint);
     void saveNews(News news, User user);
     void removeSaved(News news, User user);
+
+    List<News> getNewsByCategoryNew(int page, Category category);
+
     List<News> getNewsByCategoryTop(int page, Category category, Long loggedUser, TimeConstraint timeConstraint);
+
+    List<News> getNewsByCategoryTop(int page, Category category, TimeConstraint timeConstraint);
+
     void deleteNews(News news);
-    Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Long loggedUser, ProfileCategory profileCategory);
+    Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Optional<User> loggedUser, ProfileCategory profileCategory);
     int getRecommendationNewsPageCountTop(User user, TimeConstraint timeConstraint);
     CategoryStatistics getCategoryStatistics(final long userId);
 
