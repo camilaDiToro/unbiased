@@ -31,4 +31,5 @@ public interface NewsService {
     void addComment(long newsId, String comment);
     Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj);
     void deleteComment(long commentId);
+    CategoryStatistics getCategoryStatistics(final long userId);
 }

@@ -118,6 +118,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Async
     @Override
     public void sendNewCommentEmail(User newsOwner, News commentedNews, Locale locale) {
         final String to = newsOwner.getEmail();
@@ -133,6 +134,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Async
     @Override
     public void sendNewsPositivityChanged(User newsOwner, News news, Locale locale) {
         final String to = newsOwner.getEmail();
@@ -148,6 +150,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Async
     @Override
     public void sendNewPublishedNewsByFollowing(User user, News publishedNews, Locale locale) {
         final String to = user.getEmail();

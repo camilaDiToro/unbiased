@@ -10,8 +10,8 @@ import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.persistence.AdminDao;
-import ar.edu.itba.paw.persistence.UserDao;
+import ar.edu.itba.paw.persistence.CommentDao;
+import ar.edu.itba.paw.persistence.NewsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,19 +22,19 @@ import java.util.Locale;
 @Service
 public class AdminServiceImpl implements AdminService{
 
-    private final AdminDao adminDao;
+    private final CommentDao commentDao;
     private final NewsService newsService;
     private final SecurityService securityService;
     private final EmailService emailService;
-    private final UserDao userDao;
+    private final NewsDao newsDao;
 
     @Autowired
-    public AdminServiceImpl(AdminDao adminDao, NewsService newsService, SecurityService securityService, EmailService emailService, UserDao userDao) {
-        this.adminDao = adminDao;
+    public AdminServiceImpl(CommentDao commentDao, NewsService newsService, SecurityService securityService, EmailService emailService, NewsDao newsDao) {
+        this.commentDao = commentDao;
         this.newsService = newsService;
         this.securityService = securityService;
         this.emailService = emailService;
-        this.userDao = userDao;
+        this.newsDao = newsDao;
     }
     private Long getLoggedUserId() {
         return securityService.getCurrentUser().map(User::getId).orElse(null);
@@ -45,12 +45,12 @@ public class AdminServiceImpl implements AdminService{
     public void reportNews(long newsId, ReportReason reportReason) {
         User user = securityService.getCurrentUser().get();
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        adminDao.reportNews(news,user,reportReason);
+        newsDao.reportNews(news,user,reportReason);
     }
 
     @Override
     public Page<News> getReportedNews(int page, ReportOrder reportOrder) {
-       return adminDao.getReportedNews(page, reportOrder);
+       return newsDao.getReportedNews(page, reportOrder);
     }
 
     @Override
@@ -58,27 +58,27 @@ public class AdminServiceImpl implements AdminService{
     public void reportComment(long commentId, ReportReason reportReason) {
         User user = securityService.getCurrentUser().get();
         Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
-        adminDao.reportComment(comment,user,reportReason);
+        commentDao.reportComment(comment,user,reportReason);
     }
 
     @Override
     public Page<Comment> getReportedComments(int page, ReportOrder reportOrder) {
-        return adminDao.getReportedComment(page, reportOrder);
+        return commentDao.getReportedComment(page, reportOrder);
     }
 
     @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
-        return adminDao.getReportedNewsDetail(page, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        return newsDao.getReportedNewsDetail(page, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
     }
 
     @Override
     public Page<ReportedComment> getReportedCommentDetail(int page, long commentId) {
-        return adminDao.getReportedCommentDetail(page, newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
+        return commentDao.getReportedCommentDetail(page, newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
     }
 
     @Override
     public boolean hasReported(long newsId) {
-        return adminDao.hasReported(newsId, getLoggedUserId());
+        return newsDao.hasReported(newsId, getLoggedUserId());
     }
 
     @Override

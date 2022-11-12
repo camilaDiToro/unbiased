@@ -266,4 +266,9 @@ public class NewsServiceImpl implements NewsService {
         commentDao.deleteComment(commentId);
     }
 
+    @Override
+    public CategoryStatistics getCategoryStatistics(long userId) {
+        return newsDao.getCategoryStatistics(userId);
+    }
+
 }
