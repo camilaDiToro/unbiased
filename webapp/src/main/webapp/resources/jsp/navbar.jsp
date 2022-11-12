@@ -45,15 +45,6 @@
 
                                                         <div class="img-container-navbar">
 
-                                                            <%--<c:if test="${loggedUser.hasImage()}">
-                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${loggedUser.userId}/image"/>" alt="">
-
-                                                            </c:if>
-
-                                                            <c:if test="${!loggedUser.hasImage()}">
-                                                                <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
-
-                                                            </c:if>--%>
                                                                 <div class="frame-navbar">
                                                                     <c:if test="${loggedUser.hasImage()}">
 

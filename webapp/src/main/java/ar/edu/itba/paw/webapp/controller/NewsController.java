@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportReason;
@@ -117,9 +118,13 @@ public class NewsController{
         News news = newsService.getById(loggedUser,newsId).orElseThrow(NewsNotFoundException::new);
         Locale locale = LocaleContextHolder.getLocale();
         NewsOrder orderByObj = NewsOrder.getByValue(orderBy);
+        long followers = userService.getFollowersCount(news.getCreatorId());
 
         Page<Comment> comments = newsService.getComments(newsId, page, orderByObj);
         Map<Long, Rating> commentRatings = newsService.getCommentsRating(comments.getContent(), loggedUser);
+        Map<Long, Long> commentCreatorsFollowers = comments.getContent().stream()
+                .collect(Collectors.toMap(comment -> comment.getUser().getUserId(),
+                        comment -> userService.getFollowersCount(comment.getUser().getUserId())));
 
         MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
@@ -128,6 +133,8 @@ public class NewsController{
                 .withObject("reportNewsForm", reportNewsFrom)
                 .withObject("commentNewsForm", commentNewsFrom)
                 .withObject("hasErrors", hasErrors)
+                .withObject("commentCreatorsFollowers", commentCreatorsFollowers)
+                .withObject("creatorFollowers", followers)
                 .withObject("locale", locale)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", orderBy)

@@ -308,14 +308,14 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public CategoryStatistics getCategoryStatistics(final long userId) {
-        Object[] results = (Object[]) entityManager.createNativeQuery("SELECT  sum( case when category_id = :tourismCat then 1 else 0 end) as tourism, " +
-                "                                                           sum( case when category_id = :showCat then 1 else 0 end) as show, " +
-                "                                                           sum( case when category_id = :politicsCat then 1 else 0 end) as politics, " +
-                "                                                           sum( case when category_id = :economicsCat then 1 else 0 end) as economics, " +
-                "                                                           sum( case when category_id = :sportCat then 1 else 0 end) as sport, " +
-                "                                                           sum( case when category_id = :techCat then 1 else 0 end) as tech, " +
+        Object[] results = (Object[]) entityManager.createNativeQuery("SELECT coalesce(sum( case when category_id = :tourismCat then 1 else 0 end),0) as tourism, " +
+                "                                                           coalesce(sum( case when category_id = :showCat then 1 else 0 end),0) as show, " +
+                "                                                           coalesce(sum( case when category_id = :politicsCat then 1 else 0 end),0) as politics, " +
+                "                                                           coalesce(sum( case when category_id = :economicsCat then 1 else 0 end),0) as economics, " +
+                "                                                           coalesce(sum( case when category_id = :sportCat then 1 else 0 end),0) as sport, " +
+                "                                                           coalesce(sum( case when category_id = :techCat then 1 else 0 end),0) as tech, " +
                 "                                                           count(*) as all, " +
-                "                                                           sum( case when category_id is null then 1 else 0 end) " +
+                "                                                           coalesce(sum( case when category_id is null then 1 else 0 end),0) " +
                 "from ( select * from news where creator = :userId ) as n natural left join news_category ")
                 .setParameter("userId", userId)
                 .setParameter("tourismCat", Category.TOURISM.ordinal())
