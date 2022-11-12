@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.admin.ReportDetail;
+import ar.edu.itba.paw.model.admin.ReportOrder;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
@@ -26,4 +29,10 @@ public interface NewsDao {
     Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Long loggedUser, ProfileCategory profileCategory);
     int getRecommendationNewsPageCountTop(User user, TimeConstraint timeConstraint);
     CategoryStatistics getCategoryStatistics(final long userId);
+
+
+    void reportNews(News news, User reporter, ReportReason reportReason);
+    Page<News> getReportedNews(int page, ReportOrder reportOrder);
+    Page<ReportDetail> getReportedNewsDetail(int page, News news);
+    boolean hasReported(long newsId, Long loggedUser);
 }
