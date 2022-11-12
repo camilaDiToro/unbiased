@@ -75,7 +75,7 @@ public class NewsController{
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
     public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
-                                      final BindingResult errors, @PathVariable("newsId") long newsId) {
+                                      final BindingResult errors, @PathVariable("newsId") long newsId){
         User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
 
         if (errors.hasErrors()) {
@@ -88,13 +88,15 @@ public class NewsController{
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
     public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm")
-                                            final CommentNewsForm commentNewsForm, final BindingResult errors) {
+                                            final CommentNewsForm commentNewsForm, final BindingResult errors,
+                                    @RequestParam(name = "order") final String order) {
+        NewsOrder newsOrder = NewsOrder.getByValue(order);
         if (errors.hasErrors()) {
             return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1, "TOP");
         }
         User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         newsService.addComment(currentUser, newsId, commentNewsForm.getComment());
-        return new ModelAndView("redirect:/news/" + newsId);
+        return new ModelAndView("redirect:/news/" + newsId + "?order=" + newsOrder.name());
     }
 
     @PreAuthorize("@ownerCheck.checkCommentOwnership(#commentId)")

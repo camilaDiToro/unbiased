@@ -270,7 +270,9 @@
                     <div class="d-flex flex-column w-100 mb-4">
 
                         <div class="bg-transparent">
-                            <c:url value="/news/${newsId}/comment" var="postUrl"/>
+                            <c:url value="/news/${newsId}/comment" var="postUrl">
+                                <c:param name = "order" value = "${orderBy}"/>
+                            </c:url>
                             <form:form modelAttribute="commentNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post">
                             <div class="d-flex flex-column mt-4 mb-4">
                                 <div class="form-group w-100">
@@ -304,7 +306,6 @@
                     <c:forEach var="order" items="${orders}">
                         <li class="nav-item">
                             <a class="text-capitalize nav-link fromLeft rounded-pill hover-pill ml-1 <c:out value = "${orderBy == order ? activeClasses : inactiveClasses}"/>" aria-current="page" href="<c:url value = "/news/${newsId}">
-                    <c:param name = "category" value = "${param.category}"/>
                     <c:param name = "order" value = "${order.toString()}"/>
                     <c:param name = "page" value = "${param.page}"/>
                     </c:url>"><spring:message code="${order.interCode}"/></a>
