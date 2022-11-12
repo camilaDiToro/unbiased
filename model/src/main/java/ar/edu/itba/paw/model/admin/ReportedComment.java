@@ -84,4 +84,8 @@ public class ReportedComment {
     ReportedComment() {
         // hibernate
     }
+
+    public long getId() {
+        return id;
+    }
 }

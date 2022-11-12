@@ -73,7 +73,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Page<ReportedComment> getReportedCommentDetail(int page, long commentId) {
-        return commentDao.getReportedCommentDetail(page, newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new));
+        return commentDao.getReportedCommentDetail(page, commentId);
     }
 
     @Override
