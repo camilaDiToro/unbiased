@@ -14,12 +14,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -34,16 +37,14 @@ public class VerificationTokenJpaDaoTest {
     private JdbcTemplate jdbcTemplate;
     private static final String USERS_TABLE = "users";
     private static final String TOKEN_TABLE = "email_verification_token";
-    private static final int TOKEN_DURATION = 1;
     private static final int TOKEN_ID = 1;
 
-    private static final LocalDateTime EXPIRATION_DATE = LocalDateTime.now().plusDays(TOKEN_DURATION);
+    private static final Timestamp EXPIRATION_DATE = Timestamp.valueOf(LocalDateTime.now());
     //USER DATA
     private static final String USERNAME = "username";
     private static final String PASS = "pass";
     private static final String EMAIL = "user@gmail.com";
     private static final UserStatus USER_STATUS = UserStatus.UNABLE;
-    private static final PositivityStats USER_POSITIVITY= new PositivityStats(1,1);
     private static final long USER_ID = 1;
     private static final String TOKEN = "token";
 
@@ -80,10 +81,28 @@ public class VerificationTokenJpaDaoTest {
     public void testCreateVerificationToken() {
         addUsertoTable();
         User user = userDao.getUserById(USER_ID).get();
-        VerificationToken token = verificationTokenDao.createEmailToken(user.getId(), TOKEN, EXPIRATION_DATE);
+        VerificationToken token = verificationTokenDao.createEmailToken(user.getId(), TOKEN, EXPIRATION_DATE.toLocalDateTime());
 
         assertEquals(user.getId(), token.getUserId());
         assertEquals(TOKEN, token.getToken());
-        assertEquals(EXPIRATION_DATE, token.getExpiryDate());
+        assertEquals(EXPIRATION_DATE.toLocalDateTime(), token.getExpiryDate());
     }
+
+    @Test
+    public void testGetToken(){
+        addTokentoTable();
+        Optional<VerificationToken> token = verificationTokenDao.getEmailToken(TOKEN);
+
+        assertEquals(token.get().getUserId(), USER_ID);
+        assertEquals(token.get().getToken(), TOKEN);
+        assertEquals(token.get().getExpiryDate(), EXPIRATION_DATE.toLocalDateTime());
+    }
+
+    @Test
+    public void testFindByTokenFailed() {
+        Optional<VerificationToken> token= verificationTokenDao.getEmailToken("othertoken");
+        assertFalse(token.isPresent());
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, TOKEN_TABLE));
+    }
+
 }
