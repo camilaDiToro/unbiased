@@ -29,6 +29,8 @@ public class ModelInjectionControllerAdvice {
         User user = maybeUser.orElse(null);
 
         model.addAttribute("loggedUser", user);
+        if(user != null)
+            model.addAttribute("followers", userService.getFollowersCount(user.getUserId()));
         model.addAttribute("isLoggedIn", user != null);
         model.addAttribute("isAdmin", userService.isUserAdmin(user));
     }

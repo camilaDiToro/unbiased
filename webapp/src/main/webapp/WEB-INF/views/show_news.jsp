@@ -313,13 +313,32 @@
                                 <div class="d-flex flex-row gap-1 align-items-center p-1 mb-1">
 
                                     <div class="img-container-comment">
-                                        <c:if test="${user.hasImage()}">
+                                        <%--<c:if test="${user.hasImage()}">
                                             <img class="object-fit-cover rounded-circle" src="<c:url value="/profile/${user.userId}/image"/>" alt="Image Description">
 
                                         </c:if>
                                         <c:if test="${!user.hasImage()}">
                                             <img class="object-fit-cover rounded-circle" src="<c:url value="/resources/images/profile-image.png"/>" alt="Image Description">
-                                        </c:if>
+                                        </c:if>--%>
+                                            <div class="frame-navbar">
+                                                <c:if test="${user.hasImage()}">
+
+                                                    <c:if test="${followers >= 0 && followers < 1}">
+                                                        <img id="default-frame-color" src="<c:url value="/profile/${user.id}/image"/>" class="rounded-circle object-fit-cover mr-1" >
+                                                    </c:if>
+
+                                                    <c:if test="${followers >=1 && followers < 2}">
+                                                        <img id="gold-frame-color" src="<c:url value="/profile/${user.id}/image"/>" class="rounded-circle object-fit-cover mr-1" >
+                                                    </c:if>
+
+                                                    <c:if test="${followers >=2}">
+                                                        <img id="platinum-frame-color" src="<c:url value="/profile/${user.id}/image"/>" class="rounded-circle object-fit-cover">
+                                                    </c:if>
+                                                </c:if>
+                                                <c:if test="${!user.hasImage()}">
+                                                    <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle">
+                                                </c:if>
+                                            </div>
                                     </div>
                                     <a class="link" href="<c:url value="/profile/${user.id}"/>"><h5 class="mb-0 link-text"><c:out value="${user}"/></h5></a>
                                 </div>
