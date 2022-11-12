@@ -24,28 +24,22 @@ public class AdminServiceImpl implements AdminService{
 
     private final CommentDao commentDao;
     private final NewsService newsService;
-    private final SecurityService securityService;
     private final EmailService emailService;
     private final NewsDao newsDao;
 
     @Autowired
-    public AdminServiceImpl(CommentDao commentDao, NewsService newsService, SecurityService securityService, EmailService emailService, NewsDao newsDao) {
+    public AdminServiceImpl(CommentDao commentDao, NewsService newsService, EmailService emailService, NewsDao newsDao) {
         this.commentDao = commentDao;
         this.newsService = newsService;
-        this.securityService = securityService;
         this.emailService = emailService;
         this.newsDao = newsDao;
-    }
-    private Long getLoggedUserId() {
-        return securityService.getCurrentUser().map(User::getId).orElse(null);
     }
 
     @Override
     @Transactional
-    public void reportNews(long newsId, ReportReason reportReason) {
-        User user = securityService.getCurrentUser().get();
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        newsDao.reportNews(news,user,reportReason);
+    public void reportNews(User currentUser, long newsId, ReportReason reportReason) {
+        News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
+        newsDao.reportNews(news,currentUser,reportReason);
     }
 
     @Override
@@ -55,10 +49,9 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     @Transactional
-    public void reportComment(long commentId, ReportReason reportReason) {
-        User user = securityService.getCurrentUser().get();
+    public void reportComment(User currentUser, long commentId, ReportReason reportReason) {
         Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
-        commentDao.reportComment(comment,user,reportReason);
+        commentDao.reportComment(comment,currentUser,reportReason);
     }
 
     @Override
@@ -77,15 +70,15 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public boolean hasReported(long newsId) {
-        return newsDao.hasReported(newsId, getLoggedUserId());
+    public boolean hasReported(long userId, long newsId) {
+        return newsDao.hasReported(newsId, userId);
     }
 
     @Override
-    public void deleteNews(long newsId) {
+    public void deleteNews(User currentUser, long newsId) {
         Locale locale = LocaleContextHolder.getLocale();
         LocaleContextHolder.setLocale(locale, true);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
         emailService.sendNewsDeletedEmail(news.getCreator(), news, locale);
         newsService.deleteNews(news);
     }
