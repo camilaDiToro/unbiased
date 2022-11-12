@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 
 @Controller
@@ -35,15 +39,20 @@ public class HomeController extends BaseController{
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "query", defaultValue = "") final String query,
             @RequestParam(name = "category", defaultValue = "ALL") final String category,
-            @RequestParam(name="type", defaultValue="article") String type){
+            @RequestParam(name="type", defaultValue="article") String type,
+            @RequestParam(name="time", defaultValue="WEEK") String time){
 
-        Page<News> newsPage = newsService.getNews(page,Category.getByValue(category),NewsOrder.getByValue(orderBy),query);
+        TimeConstraint timeConstraint = TimeConstraint.getByValue(time);
+        NewsOrder newsOrder = NewsOrder.getByValue(orderBy);
+        Page<News> newsPage = newsService.getNews(page,Category.getByValue(category),newsOrder, timeConstraint, query);
 
         MyModelAndView.Builder builder= new MyModelAndView.Builder("index", "pageTitle.home", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
-                .withObject("orderBy", orderBy)
+                .withObject("orderBy", newsOrder)
                 .withObject("query", query)
                 .withObject("type", type)
+                .withObject("timeConstraints", TimeConstraint.values())
+                .withObject("selectedTimeConstraint", timeConstraint)
                 .withObject("categories", newsService.getHomeCategories())
                 .withObject("topCreators", userService.getTopCreators(5))
                 .withObject("category", category.equals("ALL")? category:Category.getByValue(category));
@@ -54,6 +63,13 @@ public class HomeController extends BaseController{
         else if (type.equals("article")) {
             builder.withObject("newsPage", newsPage);
         }
+
+        Optional<User> maybeUser = securityService.getCurrentUser();
+        User user = maybeUser.orElse(null);
+
+//        builder.withObject("loggedUser", user);
+//        builder.withObject("isLoggedIn", user != null);
+//        builder.withObject("isAdmin", securityService.isCurrentUserAdmin());
 
         return builder.build();
     }

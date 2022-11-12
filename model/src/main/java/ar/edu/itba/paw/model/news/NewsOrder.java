@@ -4,8 +4,9 @@ import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
 
 public enum NewsOrder {
 
-    TOP("TOP", " accesses desc", "order.top"),
-    NEW("NEW", " creation_date desc", "order.new");
+    NEW("NEW", " creation_date desc", "order.new"),
+
+    TOP("TOP", " accesses desc", "order.top");
 
     private final String description;
     private final String query;
@@ -13,6 +14,12 @@ public enum NewsOrder {
     private final static String pagedQuery = "LIMIT :pageSize OFFSET :offset";
 
     private final String interCode;
+
+    public String getText() {
+        return text;
+    }
+
+    private final String text = toString();
 
     NewsOrder(String description, String query, String interCode){
         this.description = description;

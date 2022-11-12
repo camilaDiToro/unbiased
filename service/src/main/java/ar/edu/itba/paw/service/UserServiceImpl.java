@@ -63,8 +63,9 @@ public class UserServiceImpl implements UserService {
         User user = userDao.create(userBuilder);
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
-        LocaleContextHolder.setLocale(locale, true);
         emailService.sendVerificationEmail(user, token, locale);
+        EmailSettings emailSettings = new EmailSettings(true,true,false,true,locale, user);
+        user.setEmailSettings(emailSettings);
         return user;
     }
 
@@ -112,7 +113,6 @@ public class UserServiceImpl implements UserService {
         verificationTokenService.deleteEmailToken(user.getId());
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
-        LocaleContextHolder.setLocale(locale, true);
         emailService.sendVerificationEmail(user, token, locale);
         return VerificationToken.Status.SUCCESSFULLY_RESENDED;
     }
@@ -149,7 +149,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void followUser(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         userDao.addFollow(myUser.getId(), userId);
+        EmailSettings emailSettings = following.getEmailSettings();
+        if(emailSettings!= null && emailSettings.isFollow()){
+            emailService.sendNewFollowerEmail(following,myUser,emailSettings.getLocale());
+        }
     }
 
     @Override
@@ -157,6 +162,20 @@ public class UserServiceImpl implements UserService {
     public void unfollowUser(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         userDao.unfollow(myUser.getId(), userId);
+    }
+
+    @Override
+    @Transactional
+    public void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange) {
+        Locale locale = LocaleContextHolder.getLocale();
+        if(currentUser.getEmailSettings() == null){
+            currentUser.setEmailSettings(new EmailSettings(follow,comment,followingPublished,positivityChange,locale, currentUser));
+            return;
+        }
+        currentUser.getEmailSettings().setComment(comment);
+        currentUser.getEmailSettings().setFollow(follow);
+        currentUser.getEmailSettings().setFollowingPublished(followingPublished);
+        currentUser.getEmailSettings().setPositivityChange(positivityChange);
     }
 
     @Override

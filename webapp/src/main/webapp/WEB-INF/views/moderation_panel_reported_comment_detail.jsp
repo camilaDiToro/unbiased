@@ -59,7 +59,6 @@
                                 <spring:message code="showNews.deleteCommentBody"/>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><spring:message code="profile.modal.cancel"/></button>
                                 <form method="post" action="<c:url value="/admin/reported_comments/${commentId}/delete"/>">
                                 <button type="submit" class="btn btn-primary"><spring:message code="profile.modal.accept"/></button>
                                 </form>

@@ -113,6 +113,8 @@ public class UserController extends BaseController{
             catObject = userService.getProfileCategory(category, profileUser);
         }
 
+        userService.updateEmailSettings(user.get(),true, false, true, true);
+
         Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject.name());
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 

@@ -74,7 +74,16 @@
                     </div>
                 </div>
                 <div class="container-fluid mt-3">
+                    <c:if test="${empty usersPage.content}" >
+                        <div class="w-100 h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
+                            <p class="lead">
+
+                                <spring:message code="moderation.emptyAdmins" arguments="${query}"/>
+                            </p>
+                        </div>
+                    </c:if>
                     <div class="row row-cols-1 row-cols-md-3">
+
                         <c:forEach var="user" items="${usersPage.content}">
                             <div class="col mb-4">
 
@@ -169,6 +178,7 @@
                 </ul>
             </nav>
         </c:if>
+
 
 
     </div>

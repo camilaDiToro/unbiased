@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.CommentUpvote;
 import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
@@ -26,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class NewsController extends BaseController {
@@ -58,7 +62,7 @@ public class NewsController extends BaseController {
     public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                    final BindingResult errors) {
         if (errors.hasErrors()) {
-            return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1);
+            return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
         }
         adminService.reportNews(newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
         return new ModelAndView("redirect:/news/" + newsId);
@@ -68,7 +72,7 @@ public class NewsController extends BaseController {
     public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                       final BindingResult errors, @PathVariable("newsId") long newsId) {
         if (errors.hasErrors()) {
-            return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1);
+            return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
         }
 
         adminService.reportComment(commentId, ReportReason.valueOf(reportNewsFrom.getReason()));
@@ -79,7 +83,7 @@ public class NewsController extends BaseController {
     public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm")
                                             final CommentNewsForm commentNewsForm, final BindingResult errors) {
         if (errors.hasErrors()) {
-            return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1);
+            return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1, "TOP");
         }
         newsService.addComment(newsId, commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId);
@@ -96,12 +100,16 @@ public class NewsController extends BaseController {
     public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                  @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsFrom,
                                  @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors,
-    @RequestParam(name="page", defaultValue="1") int page){
+    @RequestParam(name="page", defaultValue="1") int page,
+                                 @RequestParam(name="order", defaultValue="TOP") String orderBy){
 
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         Locale locale = LocaleContextHolder.getLocale();
+        Optional<User> loggedUser = securityService.getCurrentUser();
+        NewsOrder orderByObj = NewsOrder.getByValue(orderBy);
 
-        Page<Comment> comments = newsService.getComments(newsId,page);
+        Page<Comment> comments = newsService.getComments(newsId, page, orderByObj);
+        Map<Long, Rating> commentRatings = newsService.getCommentsRating(comments.getContent(), loggedUser);
 
         MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
@@ -112,9 +120,12 @@ public class NewsController extends BaseController {
                 .withObject("commentNewsForm", commentNewsFrom)
                 .withObject("hasErrors", hasErrors)
                 .withObject("locale", locale)
-                .withObject("commentsPage", newsService.getComments(newsId,page));
+                .withObject("orders", NewsOrder.values())
+                .withObject("orderBy", orderBy)
+                .withObject("commentRatings", commentRatings)
+                .withObject("commentsPage", newsService.getComments(newsId,page, orderByObj));
 
-        Optional<User> loggedUser = securityService.getCurrentUser();
+
 
         Map<Long, Boolean> hasReportedComment;
         if (loggedUser.isPresent()) {
@@ -182,7 +193,29 @@ public class NewsController extends BaseController {
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
-        final News news = newsService.create(newsBuilder, createNewsFrom.getCategories());
+        final News news = newsService.create(newsBuilder, Arrays.stream(createNewsFrom.getCategories()).map(Category::getByCode).collect(Collectors.toList()));
         return new ModelAndView("redirect:/news/" + news.getNewsId());
+    }
+
+    private ResponseEntity<UpvoteActionResponse> toggleHandler(CommentUpvoteAction payload, Rating action) {
+        final Long commentId = payload.getCommentId();
+        final boolean isActive = payload.isActive();
+
+        Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
+        newsService.setCommentRating(comment, isActive ? action : Rating.NO_RATING);
+
+        return new ResponseEntity<>(new UpvoteActionResponse(comment.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/change-comment-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<UpvoteActionResponse>  toggleUpvote(@RequestBody CommentUpvoteAction payload){
+        return toggleHandler(payload, Rating.UPVOTE);
+    }
+
+    @RequestMapping(value = "/change-comment-downvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
+    @ResponseBody
+    public ResponseEntity<UpvoteActionResponse>  toggleDownvote(@RequestBody CommentUpvoteAction payload){
+        return toggleHandler(payload, Rating.DOWNVOTE);
     }
 }

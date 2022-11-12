@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.functional.GetNewsProfileFunction;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import javax.xml.soap.Text;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,26 +47,35 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public Page<News> getNews(int page, String query, NewsOrder ns, Long loggedUser) {
-
-        page = Math.max(page, 1);
-        int totalPages = getTotalPagesAllNews(query);
-        page = Math.min(page, totalPages);
-
-        Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query ORDER BY " + ns.getQueryPaged())
+    public List<News> getNewNews(int page, String query, Long loggedUser) {
+        Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query ORDER BY " + NewsOrder.NEW.getQueryPaged())
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%");
 
         List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
-        return new Page<>(news, page, totalPages);
+        return news;
+    }
+
+    @Override
+    public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint, Long loggedUser) {
+        Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query AND creation_date >= "+timeConstraint.getMinimumDateQuery() + " ORDER BY " + NewsOrder.TOP.getQueryPaged())
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%");
+
+        List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
+        if (loggedUser != null)
+            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
+        return news;
     }
 
 
-    private int getTotalPagesAllNews(String query) {
-        long elemCount = entityManager.createQuery("SELECT count(f) from News f WHERE LOWER(f.title) LIKE :query",Long.class)
-                .setParameter("query", '%' + JpaUtils.escapeSqlLike(query.toLowerCase()) + '%').getSingleResult();
+    @Override
+    public int getTotalPagesAllNews(String query, TimeConstraint timeConstraint) {
+        long elemCount = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query AND creation_date >= " +timeConstraint.getMinimumDateQuery())
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%")
+                .getFirstResult();
 
         return Page.getPageCount(elemCount, PAGE_SIZE);
     }
@@ -86,14 +92,10 @@ public class NewsJpaDao implements NewsDao {
     }
 
 
+
     @Override
-    public Page<News> getNewsByCategory(int page, Category category, NewsOrder ns, Long loggedUser) {
-
-        page = Math.max(page, 1);
-        int totalPages = getTotalPagesCategory(category);
-        page = Math.min(page, totalPages);
-
-        Query query = entityManager.createNativeQuery("SELECT news_id FROM news f NATURAL JOIN news_category WHERE category_id = :category ORDER BY " +ns.getQueryPaged())
+    public List<News> getNewsByCategoryNew(int page, Category category, Long loggedUser) {
+        Query query = entityManager.createNativeQuery("SELECT news_id FROM news f NATURAL JOIN news_category WHERE category_id = :category ORDER BY " + NewsOrder.NEW.getQueryPaged())
                 .setParameter("category", category.getId());
 
 
@@ -101,7 +103,21 @@ public class NewsJpaDao implements NewsDao {
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
-        return new Page<>(news, page, totalPages);
+        return news;
+    }
+
+    @Override
+    public List<News> getNewsByCategoryTop(int page, Category category, Long loggedUser, TimeConstraint timeConstraint) {
+        Query query = entityManager.createNativeQuery("SELECT news_id FROM news f NATURAL JOIN news_category WHERE " +
+                        " category_id = :category AND creation_date >= " + timeConstraint.getMinimumDateQuery()+ "ORDER BY " + NewsOrder.TOP.getQueryPaged())
+                .setParameter("category", category.getId());
+
+
+        List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
+        if (loggedUser != null)
+            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
+        return news;
     }
 
     @Override
@@ -110,7 +126,9 @@ public class NewsJpaDao implements NewsDao {
         entityManager.remove(news);
     }
 
-    private int getTotalPagesCategory(Category category) {
+
+    @Override
+    public int getTotalPagesCategoryNew(Category category) {
         long elemCount = entityManager.createQuery("SELECT count(f) from News f WHERE :category MEMBER OF f.categories",Long.class)
                 .setParameter("category", category).getSingleResult();
 
@@ -118,15 +136,12 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    @Transactional
-    public void setRating(News news, User user, Rating rating) {
-        Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
-        if (rating.equals(Rating.NO_RATING)) {
-            upvoteMap.remove(user.getId());
-            return;
-        }
+    public int getTotalPagesCategoryTop(Category category, TimeConstraint timeConstraint) {
+        long elemCount = entityManager.createNativeQuery("SELECT count(*) from news NATURAL JOIN news_category f WHERE category = :category AND" +
+                        " creation_date >= " + timeConstraint.getMinimumDateQuery())
+                .setParameter("category", category).getFirstResult();
 
-        upvoteMap.put(user.getId(), new Upvote(news, user.getId(), rating.equals(Rating.UPVOTE)));
+        return Page.getPageCount(elemCount, PAGE_SIZE);
     }
 
     @Override
@@ -135,7 +150,7 @@ public class NewsJpaDao implements NewsDao {
     }
 
 
-    private List<News> getNewsOfPage(Query query,int page, int pageSize) {
+    private List<News> getNewsOfPage(Query query, int page, int pageSize) {
         @SuppressWarnings("unchecked")
         List<Long> ids = JpaUtils.getIdsOfPage(query, page, pageSize);
 
@@ -157,7 +172,6 @@ public class NewsJpaDao implements NewsDao {
     }
 
 
-
     @Override
     public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Long loggedUser, ProfileCategory profileCategory) {
         page = Math.max(page, 1);
@@ -171,14 +185,7 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public Page<News> getRecommendation(int page, User user, NewsOrder newsOrder) {
-
-        page = Math.max(page, 1);
-        int totalPages = getTodayNewsPageCount(user);
-        page = Math.min(page, totalPages);
-
-
-//       return getNews(page, "",newsOrder, user.getId()); // TODO implement
+    public List<News> getRecommendationNew(int page, User user) {
         Query query = entityManager.createNativeQuery("SELECT news_id FROM\n" +
                                 "((SELECT news_id, 1 as priority, accesses, creation_date FROM news f JOIN follows\n" +
                                 "                        ON (:userId = follows.user_id AND follows.follows=f.creator )\n" +
@@ -193,15 +200,69 @@ public class NewsJpaDao implements NewsDao {
                                 "                       creator NOT IN (SELECT creator FROM news f NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)\n" +
                                 "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
                                 "                        ORDER BY creation_date DESC LIMIT :limit)\n" +
-                                "ORDER BY priority, " + newsOrder.getQueryPaged() + "  ) AS news"
-//                        +  + ") AS news"
+                                "ORDER BY priority, " + NewsOrder.NEW.getQueryPaged() + "  ) AS news"
                 ).setParameter("userId", user.getId())
                 .setParameter("limit", 5);
 
-        return new Page<>(getNewsOfPage(query, page, PAGE_SIZE), page, totalPages);
+        return getNewsOfPage(query, page, PAGE_SIZE);
     }
 
-    private int getTodayNewsPageCount(User user) {
+    @Override
+    public List<News> getRecommendationTop(int page, User user, TimeConstraint timeConstraint) {
+        Query query = entityManager.createNativeQuery("SELECT news_id FROM\n" +
+                        "((SELECT news_id, 1 as priority, accesses, creation_date FROM news f JOIN follows\n" +
+                        "                        ON (:userId = follows.user_id AND follows.follows=f.creator )\n" +
+                         "WHERE creation_date >= " + timeConstraint.getMinimumDateQuery() +
+                        "                        ORDER BY creation_date DESC LIMIT :limit)\n" +
+                        "UNION\n" +
+                        "(SELECT news_id, 2 as priority, accesses, creation_date FROM news f WHERE\n" +
+                        "                        creator IN (SELECT creator FROM news f NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)\n" +
+                        "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
+                        "AND creation_date >= " + timeConstraint.getMinimumDateQuery() +
+                        "                        ORDER BY creation_date DESC LIMIT :limit)\n" +
+                        "UNION\n" +
+                        "(SELECT news_id, 3 as priority, accesses, creation_date FROM news f WHERE\n" +
+                        "                       creator NOT IN (SELECT creator FROM news f NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)\n" +
+                        "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
+                        "AND creation_date >= " + timeConstraint.getMinimumDateQuery() +
+
+                        "                        ORDER BY creation_date DESC LIMIT :limit)\n" +
+                        "ORDER BY priority, " + NewsOrder.TOP.getQueryPaged() + "  ) AS news"
+                ).setParameter("userId", user.getId())
+                .setParameter("limit", 5);
+
+        return getNewsOfPage(query, page, PAGE_SIZE);
+    }
+
+    @Override
+    public int getRecommendationNewsPageCountTop(User user, TimeConstraint timeConstraint) {
+
+        long elemCount =   ((Number)entityManager.createNativeQuery("SELECT count(*) FROM ((SELECT news_id FROM news JOIN follows\n" +
+                        "                        ON (:userId = follows.user_id AND follows.follows=news.creator )\n" +
+                        "AND creation_date >= " + timeConstraint.getMinimumDateQuery() +
+                        "                    ORDER BY creation_date DESC LIMIT :limit)\n" +
+                        "\n" +
+                        "                    UNION\n" +
+                        "                        (SELECT news_id FROM news f WHERE\n" +
+                        "                        creator IN (SELECT creator FROM news f NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)\n" +
+                        "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
+                        "AND creation_date >= " + timeConstraint.getMinimumDateQuery() +
+                        "                         ORDER BY creation_date DESC LIMIT :limit\n" +
+                        "                        )\n" +
+                        "                        UNION\n" +
+                        "                        (SELECT news_id FROM news f WHERE\n" +
+                        "                        creator NOT IN (SELECT creator FROM news f NATURAL JOIN upvotes WHERE upvote=true AND user_id=:userId)\n" +
+                        "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
+                        "AND creation_date >= " + timeConstraint.getMinimumDateQuery() +
+                        "                         ORDER BY creation_date DESC LIMIT :limit\n" +
+                        "                        )) AS ids"
+                     ).setParameter("userId", user.getId())
+                .setParameter("limit", 5).getSingleResult()).longValue();
+        return Page.getPageCount(elemCount, PAGE_SIZE);
+    }
+
+    @Override
+    public int getRecommendationNewsPageCountNew(User user) {
 
         long elemCount =   ((Number)entityManager.createNativeQuery("SELECT count(*) FROM ((SELECT news_id FROM news JOIN follows\n" +
                         "                        ON (:userId = follows.user_id AND follows.follows=news.creator )\n" +
@@ -219,7 +280,7 @@ public class NewsJpaDao implements NewsDao {
                         "                        AND creator NOT IN(SELECT follows FROM follows WHERE user_id=:userId)\n" +
                         "                         ORDER BY creation_date DESC LIMIT :limit\n" +
                         "                        )) AS ids"
-                     ).setParameter("userId", user.getId())
+                ).setParameter("userId", user.getId())
                 .setParameter("limit", 5).getSingleResult()).longValue();
         return Page.getPageCount(elemCount, PAGE_SIZE);
     }

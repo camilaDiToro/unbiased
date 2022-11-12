@@ -102,6 +102,69 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Async
+    @Override
+    public void sendNewFollowerEmail(User user, User follower, Locale locale) {
+        final String to = user.getEmail();
+        final String subject = messageSource.getMessage("email.newFollower.subject",null,locale);
+        final String url = getUrl("create_article");
+        Map<String, Object> data = new HashMap<>();
+        data.put("urlToCreateArticle",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-follower.html",data,locale);
+            LOGGER.info("New follower email sent to {}", user.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("New follower could not be sent to {}",user.getEmail());
+        }
+    }
+
+    @Override
+    public void sendNewCommentEmail(User newsOwner, News commentedNews, Locale locale) {
+        final String to = newsOwner.getEmail();
+        final String subject = messageSource.getMessage("email.newComment.subject",null,locale);
+        final String url = getUrl("news/"+commentedNews.getNewsId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("urlToCommentedNews",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-comment.html",data,locale);
+            LOGGER.info("New comment email sent to {}", newsOwner.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("New comment could not be sent to {}",newsOwner.getEmail());
+        }
+    }
+
+    @Override
+    public void sendNewsPositivityChanged(User newsOwner, News news, Locale locale) {
+        final String to = newsOwner.getEmail();
+        final String subject = messageSource.getMessage("email.newPositivity.subject",null,locale);
+        final String url = getUrl("news/"+news.getNewsId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("urlToArticle",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-status-positivity.html",data,locale);
+            LOGGER.info("News positivity changed email sent to {}", newsOwner.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("News positivity changed email could not be sent to {}",newsOwner.getEmail());
+        }
+    }
+
+    @Override
+    public void sendNewPublishedNewsByFollowing(User user, News publishedNews, Locale locale) {
+        final String to = user.getEmail();
+        Object[] args
+                = { publishedNews.getCreator().toString() };
+        final String subject = messageSource.getMessage("email.newsAddedByfollowing.subject",args,locale);
+        final String url = getUrl("news/"+ publishedNews.getNewsId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("urlToCreatedArticle",url);
+        try {
+            sendMessageUsingThymeleafTemplate(to,subject,"new-article.html",data,locale);
+            LOGGER.info("New comment email sent to {}", user.getEmail());
+        } catch (MessagingException e) {
+            LOGGER.warn("New comment could not be sent to {}",user.getEmail());
+        }
+    }
+
     /* https://www.baeldung.com/spring-email-templates */
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();

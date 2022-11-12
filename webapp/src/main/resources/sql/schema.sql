@@ -18,11 +18,6 @@ CREATE TABLE IF NOT EXISTS users(
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS description TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS pinged_news INTEGER;
--- ALTER TABLE users DROP CONSTRAINT IF EXISTS fk_column;
--- ALTER TABLE users ADD CONSTRAINT  fk_column
---      FOREIGN KEY (pinged_news)
---      REFERENCES news (news_id)
---      ON DELETE SET NULL;
 
 CREATE TABLE IF NOT EXISTS news (
     news_id           SERIAL          PRIMARY KEY,
@@ -76,6 +71,18 @@ ALTER TABLE upvotes DROP CONSTRAINT IF EXISTS upvotes_unique  CASCADE;
 ALTER TABLE upvotes ADD CONSTRAINT upvotes_unique UNIQUE(news_id, user_id);
 ALTER TABLE upvotes DROP CONSTRAINT IF EXISTS upvotes_pkey CASCADE;
 ALTER TABLE upvotes ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
+
+CREATE TABLE IF NOT EXISTS comment_upvotes (
+   comment_id           INTEGER         NOT NULL,
+   user_id           INTEGER         NOT NULL,
+   upvote            BOOLEAN         NOT NULL,
+   interaction_date  TIMESTAMP       NOT NULL,
+   id SERIAL        PRIMARY KEY,
+
+   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE,
+    UNIQUE (comment_id, user_id)
+    );
 
 
 CREATE TABLE IF NOT EXISTS saved_news (
@@ -136,14 +143,22 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 
 ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_unique CASCADE;
-ALTER TABLE comments ADD CONSTRAINT comments_unique UNIQUE(news_id, user_id, comment);
 ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_pkey CASCADE;
 ALTER TABLE comments ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
 
 ALTER TABLE comments ADD COLUMN IF NOT EXISTS deleted BOOLEAN;
 UPDATE comments set deleted = FALSE WHERE deleted IS NULL;
 
+CREATE TABLE IF NOT EXISTS email_settings (
+    id                SERIAL          PRIMARY KEY,
+    user_id           INTEGER         UNIQUE NOT NULL,
+    follow            BOOLEAN         NOT NULL,
+    comment           BOOLEAN         NOT NULL,
+    following_published BOOLEAN         NOT NULL,
+    positivity_change   BOOLEAN         NOT NULL,
 
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
 
 
 

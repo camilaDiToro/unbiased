@@ -48,9 +48,26 @@
                     </c:url>"><spring:message code="${order.interCode}"/></a>
                         </li>
                     </c:forEach>
-
-
+                    <c:if test="${orderBy.text == 'TOP'}">
+                        <spring:message var="selected" code="${selectedTimeConstraint.interCode}" />
+                    <div class="btn-group ">
+                        <a class="btn dropdown-toggle text-white" data-toggle="dropdown" href="#">
+                            ${selected} <span class="caret"></span>
+                        </a>
+                            <ul class="dropdown-menu">
+                                <c:forEach var="timeConstraint" items="${timeConstraints}">
+                                    <li><a href="<c:url value="/TOP">
+                            <c:param name = "query" value = "${param.query}"/>
+                            <c:param name = "category" value = "${param.category}"/>
+                            <c:param name = "type" value = "${param.type}"/>
+                            <c:param name = "time" value = "${timeConstraint.text}"/>
+                            </c:url>"><spring:message code="${timeConstraint.interCode}" /></a></li>
+                                </c:forEach>
+                            </ul>
+                    </div>
+                    </c:if >
                 </ul>
+
                 <c:if test="${query != ''}">
                     <div class="m-3 ">
                         <a class="link" href="<c:url value="/${orderBy}"/>"><div class="link-text"><spring:message code="search.filter" arguments="${query}"/></div></a>
@@ -117,9 +134,9 @@
                                                     <c:set var="rating" value="${rating}"/>
 
                                                      <c:if test="${loggedUser != null}">
-                                                         <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                         <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                          <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                         <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                         <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                      </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <a data-toggle="modal" data-target="#cardModal">
@@ -180,11 +197,11 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <c:if test="${article.hasImage()}">
+                                        <c:set var="maybeImage" value="${article.getImageId()}"/>
+                                        <c:if test="${maybeImage.isPresent()}">
 
                                         <div class="position-relative w-40 custom-rounded-corners ml-2">
-                                                <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
+                                                <img src="<c:url value="/news/${maybeImage.get()}/image"/>" class="object-fit-cover" alt="...">
                                         </div>
                                         </c:if>
 

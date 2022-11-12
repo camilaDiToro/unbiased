@@ -59,7 +59,7 @@
 
             <%--CARDS--%>
             <div class="tab">
-                <c:if test="${empty news}" >
+                <c:if test="${empty news and empty pingedNews}" >
                     <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
                         <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
                         <p class="lead">
@@ -69,7 +69,7 @@
                     </div>
                 </c:if>
 
-                <c:if test="${!empty news}">
+                <c:if test="${not empty news or not empty pingedNews}">
 
                     <div class="container-fluid">
                         <div class="row row-cols-1">
@@ -133,9 +133,9 @@
                                                         <c:set var="rating" value="${loggedParams != null ? loggedParams.personalRating : ''}"/>
 
                                                         <c:if test="${loggedUser != null}">
-                                                            <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                            <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                             <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                            <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                            <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                         </c:if>
                                                         <c:if test="${loggedUser == null}">
                                                             <a href="<c:url value = "/create"/>">
@@ -184,7 +184,7 @@
                                                                 <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="icon-profile" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
                                                             </button>
                                                             <div data-toggle="modal" data-target="#pingModalPinged" class="svg-btn hover-hand">
-                                                                <img onclick="handleBookmarkClick(this)" class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin${pinned ? '-clicked' : ''}.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.unpin"/>">
+                                                                <img class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin-clicked.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.unpin"/>">
                                                             </div>
 
 
@@ -199,12 +199,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <c:if test="${article.hasImage()}">
+                                            <c:if test="${maybeImage.isPresent()}">
 
                                                 <div class="bg-secondary position-relative w-40 border-15px">
 
 
-                                                    <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
+                                                    <img src="<c:url value="/news/${maybeImage.get()}/image"/>" class="object-fit-cover" alt="...">
 
                                                 </div>
                                             </c:if>
@@ -273,9 +273,9 @@
                                                     <c:set var="rating" value="${loggedParams != null ? loggedParams.personalRating : ''}"/>
 
                                                     <c:if test="${loggedUser != null}">
-                                                        <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                        <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                         <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                        <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                        <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                     </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <a href="<c:url value = "/create"/>">
@@ -324,7 +324,7 @@
                                                             </button>
 
                                                         <div data-toggle="modal" data-target="#pingModal${newsId}" class="svg-btn hover-hand">
-                                                            <img onclick="handleBookmarkClick(this)" class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.pin"/>">
+                                                            <img class="icon-profile svg-btn svg-bookmark" src="<c:url value="/resources/images/pin.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.pin"/>">
                                                         </div>
 
 
@@ -339,12 +339,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <c:if test="${article.hasImage()}">
+                                        <c:set var="maybeImage" value="${article.getImageId()}"/>
+                                        <c:if test="${maybeImage.isPresent()}">
 
                                         <div class="bg-secondary position-relative w-40 border-15px">
 
 
-                                                <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
+                                                <img src="<c:url value="/news/${maybeImage.get()}/image"/>" class="object-fit-cover" alt="...">
 
                                         </div>
                                         </c:if>
@@ -450,6 +451,18 @@
                     </c:if>
                 </div>
 
+                <div class="d-flex flex-row align-items-center justify-content-center">
+                    <div class="d-flex flex-row mr-5">
+                        <p class="font-weight-bold">${followers}</p>
+                        <p class="custom-follow-text"><spring:message code="profile.followers"/></p>
+                    </div>
+
+                    <div class="d-flex flex-row">
+                        <p class="font-weight-bold">${following}</p>
+                        <p class="custom-follow-text"><spring:message code="profile.following"/></p>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-center align-items-center">
                     <c:if test="${isJournalist}">
                         <div class="text-center font-weight-light m-1 overflow-wrap w-85"><c:out value="${profileUser.description}"/></div>
@@ -461,7 +474,18 @@
 
         <div class="profile">
             <c:if test="${profileUser.hasImage()}">
-                <img src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+
+                <c:if test="${followers >= 0 && followers < 1}">
+                    <img id="default-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+                </c:if>
+
+                <c:if test="${followers >=1 && followers < 2}">
+                    <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+                </c:if>
+
+                <c:if test="${followers >=2}">
+                    <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+                </c:if>
             </c:if>
             <c:if test="${!profileUser.hasImage()}">
                 <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle" width="80">

@@ -1,7 +1,8 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.old;
 
 
 import ar.edu.itba.paw.model.Image;
+import ar.edu.itba.paw.persistence.ImageDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/*
 @Repository
 public class ImageJdbcDao implements ImageDao {
 
@@ -53,3 +55,4 @@ public class ImageJdbcDao implements ImageDao {
         jdbcTemplate.update("DELETE FROM image WHERE image_id = ?",id);
     }
 }
+*/

@@ -29,4 +29,5 @@ public abstract class BaseController {
         model.addAttribute("isLoggedIn", user != null);
         model.addAttribute("isAdmin", userService.isUserAdmin(user));
     }
+
 }
