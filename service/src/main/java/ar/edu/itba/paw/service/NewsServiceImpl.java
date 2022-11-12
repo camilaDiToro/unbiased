@@ -248,9 +248,9 @@ public class NewsServiceImpl implements NewsService {
         News news = getById(newsId).orElseThrow(NewsNotFoundException::new);
         commentDao.addComment(user, news, comment);
         User newsOwner = news.getCreator();
-        if(newsOwner.getEmailSettings()!=null && newsOwner.getEmailSettings().isComment()){
-            Locale locale = LocaleContextHolder.getLocale();
-            emailService.sendNewCommentEmail(newsOwner,news,locale);
+        EmailSettings emailSettings = newsOwner.getEmailSettings();
+        if(emailSettings!=null && emailSettings.isComment()){
+            emailService.sendNewCommentEmail(newsOwner,news,emailSettings.getLocale());
         }
     }
 

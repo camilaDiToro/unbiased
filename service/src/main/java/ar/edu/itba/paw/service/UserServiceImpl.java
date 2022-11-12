@@ -151,10 +151,9 @@ public class UserServiceImpl implements UserService {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         userDao.addFollow(myUser.getId(), userId);
-
-        if(following.getEmailSettings()!= null && following.getEmailSettings().isFollow()){
-            Locale locale = LocaleContextHolder.getLocale();
-            emailService.sendNewFollowerEmail(following,myUser,locale);
+        EmailSettings emailSettings = following.getEmailSettings();
+        if(emailSettings!= null && emailSettings.isFollow()){
+            emailService.sendNewFollowerEmail(following,myUser,emailSettings.getLocale());
         }
     }
 
