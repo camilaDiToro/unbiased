@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.persistence;
+package ar.edu.itba.paw.persistence.old;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.news.*;
