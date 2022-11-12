@@ -220,16 +220,25 @@
                 <div class="w-fit d-flex flex-row align-items-center p-2 gap-1">
 
                     <div class="img-container-article">
-                        <c:if test="${user.hasImage()}">
-                            <img class="rounded-circle object-fit-cover mr-1"
-                                 src="<c:url value="/profile/${user.userId}/image"/>" alt="">
+                        <div class="frame-navbar">
+                            <c:if test="${user.hasImage()}">
 
-                        </c:if>
-                        <c:if test="${!user.hasImage()}">
-                            <img class="rounded-circle object-fit-cover mr-1"
-                                 src="<c:url value="/resources/images/profile-image.png"/>" alt="">
+                                <c:if test="${followers >= 0 && followers < 1}">
+                                    <img id="default-frame-color" src="<c:url value="/profile/${user.id}/image"/>" class="rounded-circle object-fit-cover mr-1" >
+                                </c:if>
 
-                        </c:if>
+                                <c:if test="${followers >=1 && followers < 2}">
+                                    <img id="gold-frame-color" src="<c:url value="/profile/${user.id}/image"/>" class="rounded-circle object-fit-cover mr-1" >
+                                </c:if>
+
+                                <c:if test="${followers >=2}">
+                                    <img id="platinum-frame-color" src="<c:url value="/profile/${user.id}/image"/>" class="rounded-circle object-fit-cover">
+                                </c:if>
+                            </c:if>
+                            <c:if test="${!user.hasImage()}">
+                                <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle">
+                            </c:if>
+                        </div>
                     </div>
                     <b id="profile_name_card_show_news"><c:out value="${user.username != null ? user.username : user.email}"/></b>
                 </div>
