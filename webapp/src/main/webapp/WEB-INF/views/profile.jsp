@@ -133,9 +133,9 @@
                                                         <c:set var="rating" value="${loggedParams != null ? loggedParams.personalRating : ''}"/>
 
                                                         <c:if test="${loggedUser != null}">
-                                                            <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                            <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                             <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                            <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                            <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                         </c:if>
                                                         <c:if test="${loggedUser == null}">
                                                             <a href="<c:url value = "/create"/>">
@@ -199,12 +199,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <c:if test="${article.hasImage()}">
+                                            <c:if test="${maybeImage.isPresent()}">
 
                                                 <div class="bg-secondary position-relative w-40 border-15px">
 
 
-                                                    <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
+                                                    <img src="<c:url value="/news/${maybeImage.get()}/image"/>" class="object-fit-cover" alt="...">
 
                                                 </div>
                                             </c:if>
@@ -273,9 +273,9 @@
                                                     <c:set var="rating" value="${loggedParams != null ? loggedParams.personalRating : ''}"/>
 
                                                     <c:if test="${loggedUser != null}">
-                                                        <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
+                                                        <img id="upvote"  url="<c:url value = "/change-upvote"/>"  onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/upvote${rating.toString() == 'upvoted'? '-clicked' : ''}.svg"/>"/>
                                                         <div id="rating" class="${rating.toString()}"><c:out value="${positivityStats.getNetUpvotes()}"/></div>
-                                                        <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this)" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
+                                                        <img id="downvote"  url="<c:url value = "/change-downvote"/>" onclick="handleClick(this, 'news-id')" class="svg-btn hover-hand" src="<c:url value="/resources/images/downvote${rating.toString() == 'downvoted' ? '-clicked' : ''}.svg"/>"/>
                                                     </c:if>
                                                     <c:if test="${loggedUser == null}">
                                                         <a href="<c:url value = "/create"/>">
@@ -339,12 +339,13 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <c:if test="${article.hasImage()}">
+                                        <c:set var="maybeImage" value="${article.getImageId()}"/>
+                                        <c:if test="${maybeImage.isPresent()}">
 
                                         <div class="bg-secondary position-relative w-40 border-15px">
 
 
-                                                <img src="<c:url value="/news/${article.imageId}/image"/>" class="object-fit-cover" alt="...">
+                                                <img src="<c:url value="/news/${maybeImage.get()}/image"/>" class="object-fit-cover" alt="...">
 
                                         </div>
                                         </c:if>

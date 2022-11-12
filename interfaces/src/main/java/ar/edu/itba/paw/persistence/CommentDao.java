@@ -11,5 +11,6 @@ public interface CommentDao {
     Optional<Comment> getCommentById(long id);
     void addComment(User user, News news, String comment);
     void deleteComment(long commentId);
-    Page<Comment> getComments(long newsId, int page);
+    Page<Comment> getTopComments(long newsId, int page);
+    Page<Comment> getNewComments(long newsId, int page);
 }

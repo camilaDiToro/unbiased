@@ -39,11 +39,25 @@ public class CommentJpaDao implements CommentDao{
     }
 
     @Override
-    public Page<Comment> getComments(long newsId, int page) {
+    public Page<Comment> getNewComments(long newsId, int page) {
         int totalPages = getTotalPagesComments(newsId);
         page = Math.min(page, totalPages);
 
         Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId ORDER BY commented_date DESC LIMIT :pageSize OFFSET :offset")
+                .setParameter("newsId", newsId);
+        List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
+
+        return new Page<>(comments, page, totalPages);
+    }
+
+    @Override
+    public Page<Comment> getTopComments(long newsId, int page) {
+        int totalPages = getTotalPagesComments(newsId);
+        page = Math.min(page, totalPages);
+
+        Query query = entityManager.createNativeQuery("WITH net_upvotes_by_comment as (SELECT comments.id, SUM( CASE WHEN upvote IS NULL THEN 0\n" +
+                        "WHEN upvote THEN 1 ELSE -1 END) upvotes FROM comment_upvotes RIGHT JOIN comments ON comments.id = comment_id AND news_id = :newsId \n" +
+                        "GROUP BY comments.id) SELECT id from net_upvotes_by_comment ORDER BY upvotes DESC LIMIT :pageSize OFFSET :offset")
                 .setParameter("newsId", newsId);
         List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
 

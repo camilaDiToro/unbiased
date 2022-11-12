@@ -72,6 +72,18 @@ ALTER TABLE upvotes ADD CONSTRAINT upvotes_unique UNIQUE(news_id, user_id);
 ALTER TABLE upvotes DROP CONSTRAINT IF EXISTS upvotes_pkey CASCADE;
 ALTER TABLE upvotes ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
 
+CREATE TABLE IF NOT EXISTS comment_upvotes (
+   comment_id           INTEGER         NOT NULL,
+   user_id           INTEGER         NOT NULL,
+   upvote            BOOLEAN         NOT NULL,
+   interaction_date  TIMESTAMP       NOT NULL,
+   id SERIAL        PRIMARY KEY,
+
+   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE,
+    UNIQUE (comment_id, user_id)
+    );
+
 
 CREATE TABLE IF NOT EXISTS saved_news (
     news_id           INTEGER         NOT NULL,
@@ -131,7 +143,6 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 
 ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_unique CASCADE;
-ALTER TABLE comments ADD CONSTRAINT comments_unique UNIQUE(news_id, user_id, comment);
 ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_pkey CASCADE;
 ALTER TABLE comments ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
 

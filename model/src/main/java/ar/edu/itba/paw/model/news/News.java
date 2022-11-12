@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.model.news;
 
-import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.user.*;
@@ -26,6 +25,10 @@ public class News {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public boolean hasImage() {
+        return getImageId().isPresent();
     }
 
     @Column(name = "body")
@@ -163,6 +166,7 @@ public class News {
         this.subtitle = builder.subtitle;
         this.creationDate = builder.creationDate;
         this.date = Timestamp.valueOf(creationDate);
+        this.categories = builder.getCategories();
     }
 
     public TimeUtils.Amount getAmountAgo() {
@@ -177,8 +181,8 @@ public class News {
         return creator.getId();
     }
 
-    public Long getImageId() {
-        return imageId;
+    public Optional<Long> getImageId() {
+        return Optional.ofNullable(imageId);
     }
 
     public String getBody() {
@@ -222,9 +226,6 @@ public class News {
         return Objects.hashCode(newsId);
     }
 
-    public boolean hasImage(){
-        return imageId!=null ;
-    }
 
     public int getReadTime() {
         return readTime;

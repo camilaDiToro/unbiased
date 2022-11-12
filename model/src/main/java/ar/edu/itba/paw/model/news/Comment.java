@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.model.news;
 
 import ar.edu.itba.paw.model.admin.ReportedComment;
+import ar.edu.itba.paw.model.user.CommentUpvote;
+import ar.edu.itba.paw.model.user.PositivityStats;
+import ar.edu.itba.paw.model.user.Upvote;
 import ar.edu.itba.paw.model.user.User;
 
 import javax.persistence.*;
@@ -8,8 +11,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Entity
 @Table(name = "comments")
@@ -30,6 +35,20 @@ public class Comment {
 
     public void setCommentedDate(Timestamp commentedDate) {
         this.commentedDate = commentedDate;
+    }
+
+    @OneToMany(mappedBy="comment",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @MapKey(name = "userId")
+    private Map<Long, CommentUpvote> upvoteMap;
+
+    public PositivityStats getPositivityStats() {
+        Collection<CommentUpvote> set = upvoteMap.values();
+        int total = set.size();
+        int upvotes =
+                set.stream().map(u -> u.isValue() ? 1 : 0)
+                        .reduce(0, Integer::sum);
+        int downvotes = total - upvotes;
+        return new PositivityStats(upvotes, downvotes);
     }
 
     @Id
@@ -145,5 +164,9 @@ public class Comment {
 
     public TimeUtils.Amount getAmountAgo() {
         return TimeUtils.calculateTimeAgoWithPeriodAndDuration(date);
+    }
+
+    public Map<Long, CommentUpvote> getUpvoteMap() {
+        return upvoteMap;
     }
 }

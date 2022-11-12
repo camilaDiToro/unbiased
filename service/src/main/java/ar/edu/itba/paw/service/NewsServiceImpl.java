@@ -8,6 +8,7 @@ import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.CommentDao;
+import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.NewsDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,15 +72,46 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<News> getNews(int page, Category category, NewsOrder newsOrder, String query) {
+    public Page<News> getNews(int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query) {
+        int totalPages;
+        page = page <= 0 ? 1 : page;
+
         Long loggedUser = getLoggedUserId();
+
+        List<News> ln;
+
         if (category.equals(Category.ALL)) {
-            return newsDao.getNews(page, query, newsOrder, loggedUser);
+            if (newsOrder.equals(NewsOrder.NEW)) {
+                totalPages = newsDao.getTotalPagesAllNews(query,timeConstraint);
+                ln = newsDao.getNewNews(page, query, loggedUser);
+            } else {
+                totalPages = newsDao.getTotalPagesAllNews(query, timeConstraint);
+                ln = newsDao.getTopNews(page, query, timeConstraint, loggedUser);
+            }
         } else if (category.equals(Category.FOR_ME)) {
-            return newsDao.getRecommendation(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new), newsOrder);
+            if(newsOrder.equals(NewsOrder.NEW)) {
+                totalPages = newsDao.getRecommendationNewsPageCountNew(getLoggedUser());
+                ln = newsDao.getRecommendationNew(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new));
+            } else {
+                totalPages = newsDao.getRecommendationNewsPageCountTop(getLoggedUser(), timeConstraint);
+                ln = newsDao.getRecommendationTop(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new), timeConstraint);
+
+            }
         }
-        return newsDao.getNewsByCategory(page, category, newsOrder, loggedUser);
+        else {
+            if (category.equals(NewsOrder.NEW)) {
+                totalPages = newsDao.getTotalPagesCategoryNew(category);
+                ln = newsDao.getNewsByCategoryNew(page, category, loggedUser);
+            } else {
+                totalPages = newsDao.getTotalPagesCategoryTop(category, timeConstraint);
+                ln = newsDao.getNewsByCategoryTop(page, category,loggedUser, timeConstraint);
+            }
+        }
+
+        page = Math.min(page, totalPages);
+        return new Page<>(ln, page, totalPages);
     }
+
 
 
 
@@ -96,8 +128,20 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public void setRating(News news, Rating rating) {
         User user  = getLoggedUser();
+
         PositivityStats.Positivity oldp = news.getPositivityStats().getPositivity();
-        newsDao.setRating(news, user, rating);
+//        newsDao.setRating(news, user, Rating.NO_RATING);
+        Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
+        if (rating.equals(Rating.NO_RATING)) {
+            upvoteMap.remove(user.getId());
+            return;
+        }
+        long userId = user.getId();
+
+        upvoteMap.putIfAbsent(userId, new Upvote(news, user.getId()));
+        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
+
+        //newsDao.setRating(news, user, rating);
         PositivityStats.Positivity newp = news.getPositivityStats().getPositivity();
         if(oldp != newp){
             User creator = news.getCreator();
@@ -105,6 +149,21 @@ public class NewsServiceImpl implements NewsService {
                 emailService.sendNewsPositivityChanged(creator, news, creator.getEmailSettings().getLocale());
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public void setCommentRating(Comment comment, Rating rating) {
+        User user  = getLoggedUser();
+        Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
+        if (rating.equals(Rating.NO_RATING)) {
+            upvoteMap.remove(user.getId());
+            return;
+        }
+        long userId = user.getId();
+
+        upvoteMap.putIfAbsent(userId, new CommentUpvote(comment, user.getId()));
+        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
     }
 
     @Override
@@ -165,6 +224,24 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public Map<Long, Rating> getCommentsRating(List<Comment> comments, Optional<User> maybeLoggedUser) {
+        return comments.stream().collect(Collectors.toMap(Comment::getId, comment -> {
+            if (!maybeLoggedUser.isPresent())
+                return Rating.NO_RATING;
+
+            User user = maybeLoggedUser.get();
+
+            Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
+
+            if (!upvoteMap.containsKey(user.getId()))
+                return Rating.NO_RATING;
+
+            return comment.getUpvoteMap().get(user.getId()).isValue() ? Rating.UPVOTE : Rating.DOWNVOTE;
+
+        }));
+    }
+
+    @Override
     @Transactional
     public void addComment(long newsId, String comment) {
         User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
@@ -178,8 +255,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public Page<Comment> getComments(long newsId, int page) {
-        return commentDao.getComments(newsId, page);
+    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj) {
+        if (orderByObj.equals(NewsOrder.NEW)) {
+            return commentDao.getNewComments(newsId, page);
+        }
+        return commentDao.getTopComments(newsId, page);
     }
 
     @Override
