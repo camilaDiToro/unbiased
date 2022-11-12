@@ -68,7 +68,7 @@ public class UserController {
     @RequestMapping(value = "/profile/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}", method = RequestMethod.POST)
     public ModelAndView pingNews(@PathVariable("userId") final long userId,@PathVariable("newsId") final long newsId) {
         User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-        userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        userService.pingNewsToggle(currentUser, newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new));
 
         return new ModelAndView("redirect:/profile/" + userId);
     }
@@ -107,7 +107,7 @@ public class UserController {
 
         CategoryStatistics categoryStatistics = newsService.getCategoryStatistics(userId);
 
-        Iterable<ProfileCategory> profileCategoryList = newsService.getProfileCategories(profileUser);
+        Iterable<ProfileCategory> profileCategoryList = newsService.getProfileCategories(user, profileUser);
         ProfileCategory catObject;
         if (category.equals("")){
             catObject = profileCategoryList.iterator().next();
@@ -118,7 +118,7 @@ public class UserController {
 
 //        userService.updateEmailSettings(user.get(),true, false, true, true);
 
-        Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject);
+        Page<News> fullNews = newsService.getNewsForUserProfile(user, page, NewsOrder.getByValue(newsOrder), profileUser, catObject);
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
         MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("profile", "pageTitle.profile", TextType.INTERCODE)

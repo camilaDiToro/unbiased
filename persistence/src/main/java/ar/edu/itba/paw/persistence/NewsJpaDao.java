@@ -4,13 +4,11 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
-import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.functional.GetNewsProfileFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,25 +53,40 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public List<News> getNewNews(int page, String query, Long loggedUser) {
+        List<News> newsList = getNewNews(page, query);
+
+        newsList.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
+
+        return newsList;
+    }
+
+    @Override
+    public List<News> getNewNews(int page, String query) {
         Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query ORDER BY " + NewsOrder.NEW.getQueryPaged())
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%");
 
         List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
         return news;
     }
 
     @Override
     public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint, Long loggedUser) {
-        Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query AND creation_date >= "
-                        +timeConstraint.getMinimumDateQuery() + " ORDER BY " + NewsOrder.TOP.getQueryPaged())
+        List<News> newsList = getTopNews(page, query, timeConstraint);
+
+        newsList.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
+        return newsList;
+    }
+
+    @Override
+    public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint) {
+        Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query AND creation_date >= "+timeConstraint.getMinimumDateQuery() + " ORDER BY " + NewsOrder.TOP.getQueryPaged())
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%");
 
         List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
         return news;
     }
 
@@ -89,10 +102,19 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public Optional<News> getById(long id, Long loggedUser) {
+        Optional<News> news = getById(id);
+
+        news.ifPresent(n -> n.setUserSpecificVariables(loggedUser));
+
+        return news;
+
+    }
+
+    @Override
+    public Optional<News> getById(long id) {
         final TypedQuery<News> typedQuery = entityManager.createQuery("SELECT f from News f WHERE f.newsId = :newsId ",News.class).setParameter("newsId", id);
         Optional<News> news = typedQuery.getResultList().stream().findFirst();
-        if (loggedUser != null && news.isPresent())
-            news.get().setUserSpecificVariables(loggedUser);
+
 
         return news;
 
@@ -102,11 +124,9 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public List<News> getNewsByCategoryNew(int page, Category category, Long loggedUser) {
-        Query query = entityManager.createNativeQuery("SELECT news_id FROM news f NATURAL JOIN news_category WHERE category_id = :category ORDER BY " + NewsOrder.NEW.getQueryPaged())
-                .setParameter("category", category.getId());
 
+        List<News> news = getNewsByCategoryNew(page, category);
 
-        List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
@@ -114,15 +134,34 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
+    public List<News> getNewsByCategoryNew(int page, Category category) {
+        Query query = entityManager.createNativeQuery("SELECT news_id FROM news f NATURAL JOIN news_category WHERE category_id = :category ORDER BY " + NewsOrder.NEW.getQueryPaged())
+                .setParameter("category", category.getId());
+
+
+        List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
+
+        return news;
+    }
+
+    @Override
     public List<News> getNewsByCategoryTop(int page, Category category, Long loggedUser, TimeConstraint timeConstraint) {
+
+        List<News> news = getNewsByCategoryTop(page, category, timeConstraint);
+        if (loggedUser != null)
+            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
+        return news;
+    }
+
+    @Override
+    public List<News> getNewsByCategoryTop(int page, Category category, TimeConstraint timeConstraint) {
         Query query = entityManager.createNativeQuery("SELECT news_id FROM news f NATURAL JOIN news_category WHERE " +
                         " category_id = :category AND creation_date >= " + timeConstraint.getMinimumDateQuery()+ "ORDER BY " + NewsOrder.TOP.getQueryPaged())
                 .setParameter("category", category.getId());
 
 
         List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
         return news;
     }
@@ -180,9 +219,9 @@ public class NewsJpaDao implements NewsDao {
 
 
     @Override
-    public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Long loggedUser, ProfileCategory profileCategory) {
+    public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Optional<User> loggedUser, ProfileCategory profileCategory) {
         page = Math.max(page, 1);
-        return profileFunctions.get(profileCategory).getNews(page, user, ns, loggedUser);
+        return profileFunctions.get(profileCategory).getNews(page, user, ns, loggedUser.map(User::getUserId).orElse(null));
     }
 
     @Override
