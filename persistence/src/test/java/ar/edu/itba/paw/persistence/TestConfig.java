@@ -1,16 +1,22 @@
 package ar.edu.itba.paw.persistence;
 
+import org.hibernate.cfg.Environment;
 import org.hsqldb.jdbc.JDBCDriver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -20,6 +26,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+@ComponentScan({
+        "ar.edu.itba.paw.persistence",
+})
 @Configuration
 @EnableTransactionManagement
 public class TestConfig {
@@ -40,11 +49,12 @@ public class TestConfig {
         return ds;
     }
 
-    /*@Bean
-    public DataSourceInitializer dataSourceInitializer() {
-        DataSourceInitializer dsi = new DataSourceInitializer();
-        dsi.setDataSource(dataSource());
+    @Bean
+    public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
+        final DataSourceInitializer dsi = new DataSourceInitializer();
+        dsi.setDataSource(ds);
         dsi.setDatabasePopulator(databasePopulator());
+
         return dsi;
     }
 
@@ -54,10 +64,12 @@ public class TestConfig {
         populator.addScript(schemaSql);
         return populator;
     }
-    @Bean
+
+    /*@Bean
     public PlatformTransactionManager transactionManager(final DataSource ds) {
         return new DataSourceTransactionManager(ds);
     }*/
+
 
     @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
@@ -70,7 +82,8 @@ public class TestConfig {
         factoryBean.setPackagesToScan("ar.edu.itba.paw.model");
         factoryBean.setDataSource(dataSource());
 
-        final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        final JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        //final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         factoryBean.setJpaVendorAdapter(vendorAdapter);
 
         final Properties properties = new Properties();

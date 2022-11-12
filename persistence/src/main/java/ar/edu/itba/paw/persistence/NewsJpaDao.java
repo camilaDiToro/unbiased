@@ -14,6 +14,7 @@ import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Primary
 @Repository
 public class NewsJpaDao implements NewsDao {
 

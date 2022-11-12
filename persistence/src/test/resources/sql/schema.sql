@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS user_role (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     );
 CREATE TABLE IF NOT EXISTS upvotes (
+                                       id                SERIAL          PRIMARY KEY,
                                        news_id           INTEGER         NOT NULL,
                                        user_id           INTEGER         NOT NULL,
                                        upvote            BOOLEAN         NOT NULL,
@@ -59,32 +60,23 @@ CREATE TABLE IF NOT EXISTS upvotes (
 
                                        FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
-    PRIMARY KEY (news_id, user_id)
+    UNIQUE (news_id, user_id) 
 
     );
 
-ALTER TABLE upvotes DROP CONSTRAINT IF EXISTS upvotes_unique  CASCADE;
-ALTER TABLE upvotes ADD CONSTRAINT upvotes_unique UNIQUE(news_id, user_id);
-ALTER TABLE upvotes DROP CONSTRAINT IF EXISTS upvotes_pkey CASCADE;
-ALTER TABLE upvotes ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
-
-
 CREATE TABLE IF NOT EXISTS saved_news (
+                                          id                SERIAL          PRIMARY KEY,
                                           news_id           INTEGER         NOT NULL,
                                           user_id           INTEGER         NOT NULL,
                                           saved_date        TIMESTAMP       NOT NULL,
 
                                           FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
-    PRIMARY KEY (news_id, user_id)
+    UNIQUE (news_id, user_id)
     );
 
-ALTER TABLE saved_news DROP CONSTRAINT IF EXISTS saved_unique CASCADE;
-ALTER TABLE saved_news ADD CONSTRAINT saved_unique UNIQUE(news_id, user_id);
-ALTER TABLE saved_news DROP CONSTRAINT IF EXISTS saved_news_pkey CASCADE;
-ALTER TABLE saved_news ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
-
 CREATE TABLE IF NOT EXISTS report (
+                                      id                SERIAL          PRIMARY KEY,
                                       news_id           INTEGER         NOT NULL,
                                       user_id           INTEGER         NOT NULL,
                                       report_date       TIMESTAMP       NOT NULL,
@@ -92,45 +84,30 @@ CREATE TABLE IF NOT EXISTS report (
 
                                       FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
-    PRIMARY KEY (news_id, user_id)
+    UNIQUE (news_id, user_id)
     );
 
-ALTER TABLE report DROP CONSTRAINT IF EXISTS report_unique CASCADE;
-ALTER TABLE report ADD CONSTRAINT report_unique UNIQUE(news_id, user_id);
-ALTER TABLE report DROP CONSTRAINT IF EXISTS report_pkey CASCADE;
-ALTER table report ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
-
 CREATE TABLE IF NOT EXISTS follows(
+                                      id                SERIAL      PRIMARY KEY,
                                       user_id           INTEGER     NOT NULL,
                                       follows            INTEGER     NOT NULL,
 
                                       FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (follows) REFERENCES users(user_id) ON DELETE CASCADE,
-    PRIMARY KEY (follows, user_id)
+    UNIQUE (follows, user_id)
     );
 
-ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_unique CASCADE;
-ALTER TABLE follows ADD CONSTRAINT follows_unique UNIQUE(user_id, follows);
-ALTER TABLE follows DROP CONSTRAINT IF EXISTS follows_pkey CASCADE;
-ALTER TABLE follows ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
-
-
 CREATE TABLE IF NOT EXISTS comments (
+                                        id               SERIAL           PRIMARY KEY,
                                         news_id           INTEGER         NOT NULL,
                                         user_id           INTEGER         NOT NULL,
                                         commented_date        TIMESTAMP       NOT NULL,
                                         comment        TEXT       NOT NULL,
+                                        deleted         BOOLEAN  ,
 
                                         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
-    PRIMARY KEY (news_id, user_id, commented_date)
+    UNIQUE (news_id, user_id, commented_date)
     );
 
-ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_unique CASCADE;
-ALTER TABLE comments ADD CONSTRAINT comments_unique UNIQUE(news_id, user_id, comment);
-ALTER TABLE comments DROP CONSTRAINT IF EXISTS comments_pkey CASCADE;
-ALTER TABLE comments ADD COLUMN IF NOT EXISTS id SERIAL PRIMARY KEY;
-
-ALTER TABLE comments ADD COLUMN IF NOT EXISTS deleted BOOLEAN;
-UPDATE comments set deleted = FALSE WHERE deleted IS NULL;
 
