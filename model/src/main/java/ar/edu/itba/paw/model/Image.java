@@ -22,13 +22,13 @@ public class Image {
         // Just for hibernate
     }
 
-    public Image(Long imageId, byte[] bytes, String dataType) {
+    public Image(Long imageId,final byte[] bytes, String dataType) {
         this.imageId = imageId;
         this.bytes = bytes;
         this.dataType = dataType;
     }
 
-    public Image(byte[] bytes, String dataType) {
+    public Image(final byte[] bytes, String dataType) {
         this.bytes = bytes;
         this.dataType = dataType;
     }

@@ -7,9 +7,9 @@ public final class TimeUtils {
     private TimeUtils() {
     }
 
-    static Amount calculateTimeAgoWithPeriodAndDuration(LocalDateTime pastTime) {
-        Period period = Period.between(pastTime.toLocalDate(), LocalDate.from(LocalDateTime.now()));
-        Duration duration = Duration.between(pastTime, LocalDateTime.now());
+    static Amount calculateTimeAgoWithPeriodAndDuration(final LocalDateTime pastTime) {
+        final Period period = Period.between(pastTime.toLocalDate(), LocalDate.from(LocalDateTime.now()));
+        final Duration duration = Duration.between(pastTime, LocalDateTime.now());
         long qty;
         if ((qty = period.getYears()) != 0) {
             return new Amount(Unit.YEARS, qty);
@@ -32,7 +32,7 @@ public final class TimeUtils {
         private final Unit unit;
         private final Long qty;
 
-        private Amount(Unit unit, long qty) {
+        private Amount(final Unit unit, long qty) {
             this.unit = unit;
             this.qty = qty;
         }
@@ -59,7 +59,7 @@ public final class TimeUtils {
         SECONDS("unit.seconds"),
         ;
 
-        private String interCode;
+        private final String interCode;
 
         Unit(String interCode) {
             this.interCode = interCode;

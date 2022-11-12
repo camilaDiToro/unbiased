@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 public class LocalDateTimeConverter implements
         AttributeConverter<LocalDateTime, Timestamp> {
     @Override
-    public Timestamp convertToDatabaseColumn(LocalDateTime attribute) {
+    public Timestamp convertToDatabaseColumn(final LocalDateTime attribute) {
         return attribute == null ? null : Timestamp.valueOf(attribute);
     }
 
     @Override
-    public LocalDateTime convertToEntityAttribute(Timestamp dbData) {
+    public LocalDateTime convertToEntityAttribute(final Timestamp dbData) {
         return dbData == null ? null : dbData.toLocalDateTime();
     }
 }

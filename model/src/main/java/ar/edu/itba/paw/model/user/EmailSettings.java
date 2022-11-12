@@ -36,7 +36,7 @@ public class EmailSettings {
         //Just for hibernate
     }
 
-    public EmailSettings(boolean follow, boolean comment, boolean followingPublished, boolean positivityChange, Locale locale, User user) {
+    public EmailSettings(boolean follow, boolean comment, boolean followingPublished, boolean positivityChange, Locale locale, final User user) {
         this.follow = follow;
         this.comment = comment;
         this.followingPublished = followingPublished;
@@ -73,7 +73,7 @@ public class EmailSettings {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = user;
     }
 

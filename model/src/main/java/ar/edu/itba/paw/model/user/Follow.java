@@ -59,12 +59,12 @@ public class Follow {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this)
             return true;
         if (!(obj instanceof Follow))
             return false;
-        Follow aux = (Follow) obj;
+        final Follow aux = (Follow) obj;
         return aux.follows == follows && aux.userId == userId;
     }
 }

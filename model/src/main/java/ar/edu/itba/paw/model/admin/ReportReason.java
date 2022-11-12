@@ -9,7 +9,7 @@ public enum ReportReason {
     private final String description;
     private final String interCode;
 
-    ReportReason(String description, String interCode) {
+    ReportReason(final String description, final String interCode) {
         this.description = description;
         this.interCode = interCode;
     }

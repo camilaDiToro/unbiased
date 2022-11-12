@@ -42,7 +42,7 @@ public class ReportDetail {
         // Just for hibernate
     }
 
-    public ReportDetail(News news, User reporter, LocalDateTime creationDate, ReportReason reason) {
+    public ReportDetail(final News news, final User reporter, final LocalDateTime creationDate, final ReportReason reason) {
         this.news = news;
         this.reporter = reporter;
         this.creationDate = creationDate;
@@ -61,7 +61,7 @@ public class ReportDetail {
         return reason;
     }
 
-    public String getFormattedDate(Locale locale) {
+    public String getFormattedDate(final Locale locale) {
         return creationDate
                 .format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
                         .withLocale( locale));
@@ -75,7 +75,7 @@ public class ReportDetail {
         this.id = id;
     }
 
-    public void setReporter(User reporter) {
+    public void setReporter(final User reporter) {
         this.reporter = reporter;
     }
 
@@ -91,7 +91,7 @@ public class ReportDetail {
         this.creationDate = creationDate;
     }
 
-    public void setReason(ReportReason reason) {
+    public void setReason(final ReportReason reason) {
         this.reason = reason;
     }
 
@@ -99,7 +99,7 @@ public class ReportDetail {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReportDetail that = (ReportDetail) o;
+        final ReportDetail that = (ReportDetail) o;
         return id == that.id && reporter.equals(that.reporter) && news.equals(that.news) && reason == that.reason;
     }
 

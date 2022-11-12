@@ -13,7 +13,7 @@ public enum ReportOrder {
     private final String query;
     private final String interCode;
 
-    ReportOrder(String description, String query, String interCode){
+    ReportOrder(final String description, final String query,final String interCode){
         this.description = description;
         this.query = query;
         this.interCode = interCode;
@@ -31,7 +31,7 @@ public enum ReportOrder {
         return interCode;
     }
 
-    public static ReportOrder getByValue(String value){
+    public static ReportOrder getByValue(final String value){
         try{
             return ReportOrder.valueOf(value);
         }catch (IllegalArgumentException e){
