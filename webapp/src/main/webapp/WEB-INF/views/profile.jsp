@@ -39,7 +39,7 @@
 <div class="d-flex flex-column h-100">
     <div class="flex-grow-1 d-flex flex-row">
         <%--LEFT SIDE--%>
-        <div class="d-flex flex-column w-70">
+        <div class="d-flex flex-column w-70 align-items-start">
 
             <%--TAB (top, new)--%>
             <div class="tab">
@@ -362,8 +362,37 @@
 
         </div>
         <%--RIGHT SIDE--%>
-        <div class="d-flex w-30 justify-content-center pr-5">
+        <div class="d-flex flex-column w-30 justify-content-start pr-5">
         <div class="card right-card" id="right-card">
+            <div class="profile">
+                <c:if test="${isMyProfile}">
+
+                        <span data-toggle="modal" data-target="#profileModal" class="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center" id="pencil_button">
+                        <div class="position-relative img-container-profile mr-1">
+                            <img class="position-relative object-fit-contain" src="<c:url value="/resources/images/pencil-edit.png"/>" alt="...">
+                        </div>
+                        <spring:message code="profile.edit"/>
+                        </span>
+
+                </c:if>
+                <c:if test="${profileUser.hasImage()}">
+
+                    <c:if test="${followers >= 0 && followers < 1}">
+                        <img id="default-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
+                    </c:if>
+
+                    <c:if test="${followers >=1 && followers < 2}">
+                        <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
+                    </c:if>
+
+                    <c:if test="${followers >=2}">
+                        <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
+                    </c:if>
+                </c:if>
+                <c:if test="${!profileUser.hasImage()}">
+                    <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle object-fit-cover img-div" width="80">
+                </c:if>
+            </div>
             <c:if test="${profileUser.hasPositivityStats()}">
                 <c:set var="profilePositivityStats" value="${profileUser.getPositivityStats()}"/>
 
@@ -471,38 +500,30 @@
             </div>
 
         </div>
+            <c:if test="${isJournalist}">
+            <div class="card right-card" >
 
-        <div class="profile">
-            <c:if test="${profileUser.hasImage()}">
+                <div class="card-body">
+                    <c:forEach var="cat" items="${newsCategories}">
+                        <c:set var="statistic" value="${statisticsMap[cat]}"/>
+                        <spring:message var="orderName" code="${cat.interCode}"/>
+                        <div>
+                                ${orderName}
+                        </div>
+                        <div class="progress m-2">
+                            <div class="progress-bar" role="progressbar" style="width: ${statistic.percentage}%" aria-valuenow="${statistic.percentage}" aria-valuemin="0" aria-valuemax="100">${statistic.percentage}%</div>
+                        </div>
+                    </c:forEach>
 
-                <c:if test="${followers >= 0 && followers < 1}">
-                    <img id="default-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover" width="80">
-                </c:if>
-
-                <c:if test="${followers >=1 && followers < 2}">
-                    <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover" width="80">
-                </c:if>
-
-                <c:if test="${followers >=2}">
-                    <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover" width="80">
-                </c:if>
+                </div>
             </c:if>
-            <c:if test="${!profileUser.hasImage()}">
-                <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle" width="80">
-            </c:if>
-        </div>
 
-
-        <c:if test="${isMyProfile}">
-            <div class="pencil-edit">
-                <button class="border-0 bg-transparent outline-none btn-outline-focus-none" data-toggle="modal" data-target="#profileModal">
-                <span class="badge badge-pill badge-info" id="pencil_button">
-                   <img src="<c:url value="/resources/images/pencil-edit.png"/>" alt="...">
-                    <spring:message code="profile.edit"/>
-                </span>
-                </button>
             </div>
-        </c:if>
+
+
+
+
+
 
 
             <!-- Modal edit profile-->

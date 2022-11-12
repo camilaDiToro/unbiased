@@ -70,6 +70,10 @@
     width: 50px; /*any size*/
     height: 50px; /*any size*/
 }
+.img-container-profile {
+    width: 10px; /*any size*/
+    height: 10px; /*any size*/
+}
 .img-container-navbar {
     width: 40px; /*any size*/
     height: 40px; /*any size*/
@@ -85,6 +89,13 @@
     object-fit: cover; /*magic*/
 }
 
+.object-fit-contain {
+    border-radius: 0 0.5rem 0.5rem 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /*magic*/
+}
+
 .custom-rounded-corners{
     border-radius: 0 0.5rem 0.5rem 0;
 }
@@ -95,6 +106,10 @@
 
 .gap-2 {
     gap: 10px;
+}
+
+.unset {
+    background-color: transparent;
 }
 
 .article-body img {
@@ -676,6 +691,10 @@ body{
 
 #pencil_button:hover{
     color: white;
+}
+
+#pencil_button {
+    font-size: 12px;
 }
 
 .nav-link.active.rounded-pill {

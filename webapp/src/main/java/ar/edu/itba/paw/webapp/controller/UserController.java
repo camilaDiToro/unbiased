@@ -2,9 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
-import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
@@ -108,6 +106,8 @@ public class UserController {
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
 
+        CategoryStatistics categoryStatistics = newsService.getCategoryStatistics(userId);
+
         Iterable<ProfileCategory> profileCategoryList = newsService.getProfileCategories(profileUser);
         ProfileCategory catObject;
         if (category.equals("")){
@@ -117,7 +117,7 @@ public class UserController {
             catObject = userService.getProfileCategory(category, profileUser);
         }
 
-        userService.updateEmailSettings(user.get(),true, false, true, true);
+//        userService.updateEmailSettings(user.get(),true, false, true, true);
 
         Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject);
         boolean isMyProfile = profileUser.equals(user.orElse(null));
@@ -127,9 +127,11 @@ public class UserController {
                 .withObject("orderBy", newsOrder)
                 .withObject("categories", profileCategoryList)
                 .withObject("newsPage", fullNews)
+                .withObject("statisticsMap", categoryStatistics.getStatiscticsMap())
                 .withObject("pingedNews", profileUser.getPingedNews())
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
+                .withObject("newsCategories", Category.getTrueCategories())
                 .withObject("userId", userId)
                 .withObject("hasErrors", hasErrors)
                 .withObject("following", userService.getFollowingCount(userId))
