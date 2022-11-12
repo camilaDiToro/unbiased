@@ -30,15 +30,17 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Controller
-public class UserController extends BaseController{
+public class UserController {
 
     private final UserService userService;
     private final NewsService newsService;
     private final OwnerCheck ownerCheck;
 
+    private final SecurityService securityService;
+
     @Autowired
     public UserController(UserService userService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
-        super(securityService);
+        this.securityService = securityService;
         this.userService = userService;
         this.newsService = newsService;
         this.ownerCheck = ownerCheck;

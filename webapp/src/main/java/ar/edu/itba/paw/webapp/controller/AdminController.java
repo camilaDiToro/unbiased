@@ -20,15 +20,17 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
-public class AdminController extends BaseController{
+public class AdminController {
 
     private final AdminService adminService;
     private final NewsService newsService;
     private final UserService userService;
 
+    private final SecurityService securityService;
+
     @Autowired
     public AdminController(AdminService adminService, NewsService newsService, UserService userService, SecurityService ss) {
-        super(ss);
+        this.securityService = ss;
         this.adminService = adminService;
         this.newsService = newsService;
         this.userService = userService;

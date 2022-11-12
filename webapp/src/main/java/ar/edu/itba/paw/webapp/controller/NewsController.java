@@ -32,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
-public class NewsController extends BaseController {
+public class NewsController{
 
     private final NewsService newsService;
     private final ImageService imageService;
@@ -41,10 +41,12 @@ public class NewsController extends BaseController {
     private final UserService userService;
     private final OwnerCheck ownerCheck;
 
+    private final SecurityService securityService;
+
 
     @Autowired
     public NewsController(AdminService adminService, UserService userService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
-        super(ss);
+        this.securityService = ss;
         this.newsService = newsService;
         this.imageService = imageService;
         this.adminService = adminService;

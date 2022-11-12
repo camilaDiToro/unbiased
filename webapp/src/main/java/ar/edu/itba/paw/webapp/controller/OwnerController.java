@@ -14,15 +14,17 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 
 @Controller
-public class OwnerController extends BaseController{
+public class OwnerController {
 
     private final OwnerService ownerService;
     private final UserService userService;
 
+    private final SecurityService securityService;
+
 
     @Autowired
-    public OwnerController(SecurityService securityService, OwnerService ownerService, UserService userService) {
-        super(securityService);
+    public OwnerController(OwnerService ownerService, UserService userService, SecurityService securityService) {
+        this.securityService = securityService;
         this.ownerService = ownerService;
         this.userService = userService;
     }

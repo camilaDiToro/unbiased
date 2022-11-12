@@ -476,15 +476,15 @@
             <c:if test="${profileUser.hasImage()}">
 
                 <c:if test="${followers >= 0 && followers < 1}">
-                    <img id="default-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+                    <img id="default-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover" width="80">
                 </c:if>
 
                 <c:if test="${followers >=1 && followers < 2}">
-                    <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+                    <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover" width="80">
                 </c:if>
 
                 <c:if test="${followers >=2}">
-                    <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle" width="80">
+                    <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover" width="80">
                 </c:if>
             </c:if>
             <c:if test="${!profileUser.hasImage()}">
@@ -525,7 +525,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">@</span>
                                         </div>
-                                        <form:input type="text" path="username" cssClass="form-control" id="username-input" placeholder="${changeUsername}"/>
+                                        <form:input type="text" path="username" cssClass="form-control" id="username-input" placeholder="${changeUsername}" value="${profileUser.username}"/>
                                         <div class="w-100">
                                             <form:errors cssClass="text-danger" path="username" element="p"/>
 
@@ -558,7 +558,7 @@
                                     <spring:message code="profile.modal.description" var="descriptionText"/>
                                     <form:label path="description"><spring:message code="profile.modal.changeDescription"/> </form:label>
                                     <div class="input-group mb-3">
-                                        <form:input type="text" path="description" cssClass="form-control"  id="description-input" placeholder="${descriptionText}"/>
+                                        <form:input type="text" path="description" cssClass="form-control"  id="description-input" placeholder="${descriptionText}" value="${profileUser.description}"/>
                                         <div class="w-100">
                                             <form:errors cssClass="text-danger" path="description" element="p"/>
 
