@@ -19,6 +19,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -72,12 +74,11 @@ public class NewsJpaDaoTest {
         Map<String, Object> newsValues = new HashMap<>();
         newsValues.put("news_id", NEWS_ID);
         newsValues.put("accesses", ACCESSES);
-        newsValues.put("creator", CREATOR);
         newsValues.put("body", BODY);
         newsValues.put("creation_date", CREATION_DATE);
         newsValues.put("title", TITLE);
+        newsValues.put("creator", CREATOR_ID);
         newsValues.put("subtitle", SUBTITLE);
-        newsValues.put("creator", CREATOR);
         jdbcNewsInsert.execute(newsValues);
     }
 
@@ -102,14 +103,14 @@ public class NewsJpaDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
-    /*@Test
+    @Test
     public void testGetNewsById() {
         addCreatorToTable();
         addTheNewsToTable();
-        Optional <News> optionalNews = newsDao.getById(NEWS_ID, CREATOR_ID);
+        Optional<News> optionalNews = newsJpaDao.getById(NEWS_ID, CREATOR_ID);
 
         assertEquals(NEWS_ID, optionalNews.get().getNewsId());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
-*/
+
 }
