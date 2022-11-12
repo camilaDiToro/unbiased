@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -259,6 +260,31 @@ public class NewsJpaDao implements NewsDao {
                      ).setParameter("userId", user.getId())
                 .setParameter("limit", 5).getSingleResult()).longValue();
         return Page.getPageCount(elemCount, PAGE_SIZE);
+    }
+
+    @Override
+    public CategoryStatistics getCategoryStatistics(final long userId) {
+        Object[] results = (Object[]) entityManager.createNativeQuery("SELECT  sum( case when category_id = :tourismCat then 1 else 0 end) as tourism, " +
+                "                                                           sum( case when category_id = :showCat then 1 else 0 end) as show, " +
+                "                                                           sum( case when category_id = :politicsCat then 1 else 0 end) as politics, " +
+                "                                                           sum( case when category_id = :economicsCat then 1 else 0 end) as economics, " +
+                "                                                           sum( case when category_id = :sportCat then 1 else 0 end) as sport, " +
+                "                                                           sum( case when category_id = :techCat then 1 else 0 end) as tech, " +
+                "                                                           count(*) as all, " +
+                "                                                           sum( case when category_id is null then 1 else 0 end) " +
+                "from ( select * from news where creator = :userId ) as n natural left join news_category ")
+                .setParameter("userId", userId)
+                .setParameter("tourismCat", Category.TOURISM.ordinal())
+                .setParameter("showCat", Category.SHOW.ordinal())
+                .setParameter("politicsCat", Category.POLITICS.ordinal())
+                .setParameter("economicsCat", Category.ECONOMICS.ordinal())
+                .setParameter("sportCat", Category.SPORTS.ordinal())
+                .setParameter("techCat", Category.TECHNOLOGY.ordinal())
+                .getSingleResult();
+
+        return new CategoryStatistics(((BigInteger) results[0]).longValue(), ((BigInteger) results[1]).longValue(),((BigInteger) results[2]).longValue(),
+                ((BigInteger) results[3]).longValue(),((BigInteger) results[4]).longValue(),((BigInteger) results[5]).longValue(),((BigInteger) results[6]).longValue(),
+                (((BigInteger) results[7]).longValue()));
     }
 
     @Override
