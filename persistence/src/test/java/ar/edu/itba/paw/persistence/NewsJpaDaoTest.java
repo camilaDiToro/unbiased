@@ -59,7 +59,7 @@ public class NewsJpaDaoTest {
     private static final String UPVOTES_TABLE = "upvotes";
 
     @Autowired
-    private UserJpaDao userDao;
+    private NewsJpaDao newsDao;
     @Autowired
     private DataSource ds;
     private JdbcTemplate jdbcTemplate;
@@ -95,7 +95,7 @@ public class NewsJpaDaoTest {
         jdbcNewsInsert = new SimpleJdbcInsert(ds).withTableName(NEWS_TABLE);
     }
 
-    /*@Test
+    @Test
     public void testCreateNews() {
         addCreatorToTable();
         News optionalNews = newsDao.create(newsBuilder);
@@ -106,7 +106,7 @@ public class NewsJpaDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
-    @Test
+    /*@Test
     public void testGetNewsById() {
         addCreatorToTable();
         addTheNewsToTable();
@@ -114,7 +114,7 @@ public class NewsJpaDaoTest {
 
         assertEquals(NEWS_ID, optionalNews.get().getNewsId());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
-    }*/
+    }
     private static final User.UserBuilder usBuilder = new User.UserBuilder(EMAIL).pass(PASS);
 
     @Test
@@ -122,5 +122,5 @@ public class NewsJpaDaoTest {
         User user = userDao.create(usBuilder);
 
         assertNotNull(user);
-    }
+    }*/
 }
