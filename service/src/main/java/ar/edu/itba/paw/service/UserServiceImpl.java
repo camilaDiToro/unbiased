@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
+import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
@@ -179,6 +179,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public void updateEmailSettings(User currentUser, Collection<MailOption> options) {
+        Locale locale = LocaleContextHolder.getLocale();
+        if(currentUser.getEmailSettings() == null){
+            currentUser.setEmailSettings(new EmailSettings(options,locale, currentUser));
+            return;
+        }
+        currentUser.getEmailSettings().setSettings(options);
+    }
+
+    @Override
     public boolean isFollowing(long userId) {
         User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         return userDao.isFollowing(myUser.getId(), userId);
@@ -204,6 +215,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public void pingNewsToggle(News news) {
         Optional<User> maybeUser = securityService.getCurrentUser();
         if (!maybeUser.isPresent() || maybeUser.get().getUserId() != news.getCreatorId()) {

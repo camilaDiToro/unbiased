@@ -9,6 +9,13 @@
 <c:set var="pageTitle" scope="request" value="${pageTitle}"/>
 <%@ include file="../../resources/jsp/head.jsp" %>
 <script src="<c:url value="/resources/js/upvote-script.js"/>"></script>
+<c:if test="${hasErrors}">
+    <script>
+        $(document).ready(function(){
+            $("#addAdminModal").modal('show');
+        });
+    </script>
+</c:if>
 <body>
 <c:set var="reports" value="${reportedNewsPage.content}"/>
 <div class="d-flex h-100 flex-column">
@@ -52,17 +59,18 @@
                                         <form:form modelAttribute="createAdminForm" action="${postUrl}" method="POST" cssClass="d-flex flex-column align-items-center">
                                             <%--<form:label cssClass="font-weight-bold mb-0" path="email"><spring:message code="moderation.makeUserAdmin"/> </form:label>--%>
 
-                                            <div class="d-flex mb-3">
-                                                <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/profile-svgrepo-com.svg"/>" alt="..."/>
-                                                <label for="email-input" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
-                                                <form:input path="email" cssClass="form-control text-white w-100" id="email-input" placeholder="${mailAddressMsg}"/>
-                                                <form:errors cssClass="text-danger mt-4" path="email" element="small"/>
-                                                <c:if test="${addedAdmin}">
-                                                    <small class="text-success mt-4">
-                                                        <spring:message code="moderation.admin.succesfull"/>
-                                                    </small>
-                                                </c:if>
+
+                                                <div class="d-flex align-items-center">
+                                                    <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/profile-svgrepo-com.svg"/>" alt="..."/>
+                                                    <label for="email-input" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
+                                                    <form:input path="email" cssClass="form-control text-white w-100" id="email-input" placeholder="${mailAddressMsg}"/>
+
+                                                </div>
+                                            <div class="my-1">
+                                                <form:errors cssClass="text-danger" path="email" element="small"/>
                                             </div>
+
+
 
                                             <button class="btn btn-info" type="submit"><spring:message code="moderation.add"/> </button>
                                         </form:form>

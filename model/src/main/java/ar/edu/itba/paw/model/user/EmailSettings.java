@@ -1,7 +1,10 @@
 package ar.edu.itba.paw.model.user;
 
 import javax.persistence.*;
-import java.util.Locale;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name="email_settings")
@@ -36,13 +39,34 @@ public class EmailSettings {
         //Just for hibernate
     }
 
-    public EmailSettings(boolean follow, boolean comment, boolean followingPublished, boolean positivityChange, Locale locale, final User user) {
+    @Transient
+    private final Map<MailOption, Consumer<Boolean>> setterByEnum = new EnumMap<>(MailOption.class);
+    {
+        setterByEnum.put(MailOption.COMMENT, this::setComment);
+        setterByEnum.put(MailOption.FOLLOW, this::setFollow);
+        setterByEnum.put(MailOption.FOLLOWING_PUBLISHED, this::setFollowingPublished);
+        setterByEnum.put(MailOption.POSITIVITY_CHANGED, this::setPositivityChange);
+    }
+
+    public EmailSettings(boolean follow, boolean comment, boolean followingPublished, boolean positivityChange, Locale locale, User user) {
         this.follow = follow;
         this.comment = comment;
         this.followingPublished = followingPublished;
         this.positivityChange = positivityChange;
         this.user = user;
         this.locale=locale;
+    }
+
+    public EmailSettings(Collection<MailOption> options, Locale locale, User user) {
+        setSettings(options);
+        this.user = user;
+        this.locale=locale;
+    }
+
+    public void setSettings(Collection<MailOption> options) {
+        for (MailOption option : MailOption.values())
+            setterByEnum.get(option).accept(false);
+        options.forEach(o -> setterByEnum.get(o).accept(true));
     }
 
     public Long getId() {
@@ -73,7 +97,7 @@ public class EmailSettings {
         return user;
     }
 
-    public void setUser(final User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -99,5 +123,14 @@ public class EmailSettings {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public Map<MailOption, Boolean> getValueByEnum() {
+        Map<MailOption, Boolean> getterByEnum = new EnumMap<>(MailOption.class);
+        getterByEnum.put(MailOption.COMMENT, comment);
+        getterByEnum.put(MailOption.FOLLOW, follow);
+        getterByEnum.put(MailOption.FOLLOWING_PUBLISHED, followingPublished);
+        getterByEnum.put(MailOption.POSITIVITY_CHANGED, positivityChange);
+        return getterByEnum;
     }
 }

@@ -14,13 +14,14 @@
 
 
         <div class="d-flex h-75 gap-2 align-items-center">
-<c:if test="${loggedUser != null}">
+<c:if test="${loggedUser != null && !adminPage}">
     <a href="<c:url value="/create_article"/>">
         <button type="button" class="btn btn-sm rounded-pill btn-info create_article_navbar_btn" >
             <spring:message code="home.createArticle.button"/>
         </button></a>
 </c:if>
 
+            <c:if test="${!adminPage}">
             <form id="search-form" class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP">
             </c:url>">
                 <div>
@@ -35,13 +36,16 @@
 
                 </script>
             </form>
+            </c:if>
+
             <c:if test="${loggedUser != null}">
                 <div class="dropdown dropdown-p">
                     <button class="btn btn-primary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <div class="w-fit d-flex flex-row align-items-center gap-1 border-info justify-content-center min-w-150px" >
 
                                                         <div class="img-container-navbar">
-                                                            <c:if test="${loggedUser.hasImage()}">
+
+                                                            <%--<c:if test="${loggedUser.hasImage()}">
                                                                 <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/profile/${loggedUser.userId}/image"/>" alt="">
 
                                                             </c:if>
@@ -49,8 +53,29 @@
                                                             <c:if test="${!loggedUser.hasImage()}">
                                                                 <img class="rounded-circle object-fit-cover mr-1" src="<c:url value="/resources/images/profile-image.png"/>" alt="">
 
-                                                            </c:if>
+                                                            </c:if>--%>
+                                                                <div class="frame-navbar">
+                                                                    <c:if test="${loggedUser.hasImage()}">
+
+                                                                        <c:if test="${followers >= 0 && followers < 1}">
+                                                                            <img id="default-frame-color" src="<c:url value="/profile/${loggedUser.id}/image"/>" class="rounded-circle object-fit-cover mr-1" >
+                                                                        </c:if>
+
+                                                                        <c:if test="${followers >=1 && followers < 2}">
+                                                                            <img id="gold-frame-color" src="<c:url value="/profile/${loggedUser.id}/image"/>" class="rounded-circle object-fit-cover mr-1" >
+                                                                        </c:if>
+
+                                                                        <c:if test="${followers >=2}">
+                                                                            <img id="platinum-frame-color" src="<c:url value="/profile/${loggedUser.id}/image"/>" class="rounded-circle object-fit-cover">
+                                                                        </c:if>
+                                                                    </c:if>
+                                                                    <c:if test="${!loggedUser.hasImage()}">
+                                                                        <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle">
+                                                                    </c:if>
+                                                                </div>
                                                         </div>
+
+
 
                                                             <b class="text-white"><c:out value="${loggedUser}"/></b>
 

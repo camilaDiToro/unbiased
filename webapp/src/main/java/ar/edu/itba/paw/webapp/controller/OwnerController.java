@@ -14,20 +14,24 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 
 @Controller
-public class OwnerController extends BaseController{
+public class OwnerController {
 
     private final OwnerService ownerService;
+    private final UserService userService;
+    private final SecurityService securityService;
+
 
     @Autowired
-    public OwnerController(SecurityService securityService, OwnerService ownerService, UserService userService) {
-        super(securityService, userService);
+    public OwnerController(OwnerService ownerService, UserService userService, SecurityService securityService) {
+        this.securityService = securityService;
         this.ownerService = ownerService;
+        this.userService = userService;
     }
 
     @RequestMapping(value = "/owner/add_admin", method = RequestMethod.POST)
     public ModelAndView addAdmin(@Valid @ModelAttribute("createAdminForm") CreateAdminForm form, final BindingResult errors) {
         if (errors.hasErrors()){
-            return addAdminPanel(form, 1, "");
+            return addAdminPanelBase(form, 1, "", true);
         }
 
         ownerService.makeUserAdmin(form.getEmail());
@@ -42,14 +46,21 @@ public class OwnerController extends BaseController{
 
     }
 
-    @RequestMapping(value = "/owner/add_admin_page", method = RequestMethod.GET)
-    public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form, @RequestParam(name = "page", defaultValue = "1") int page,
-                                      @RequestParam(name = "query", defaultValue = "") final String query) {
+    public ModelAndView addAdminPanelBase(CreateAdminForm form,  int page,
+                                      final String query, boolean hasErrors) {
 
         return new MyModelAndView.Builder("moderation_panel_add_admin", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("isOwner", securityService.getCurrentUser().get().getRoles().contains(Role.ROLE_OWNER))
                 .withObject("usersPage", ownerService.getAdmins(page, query))
                 .withObject("item", "manageAdmins")
+                .withObject("hasErrors", hasErrors)
                 .build();
+    }
+
+    @RequestMapping(value = "/owner/add_admin_page", method = RequestMethod.GET)
+    public ModelAndView addAdminPanel(@ModelAttribute("createAdminForm") CreateAdminForm form, @RequestParam(name = "page", defaultValue = "1") int page,
+                                      @RequestParam(name = "query", defaultValue = "") final String query) {
+
+        return addAdminPanelBase(form, page, query, false);
     }
 }

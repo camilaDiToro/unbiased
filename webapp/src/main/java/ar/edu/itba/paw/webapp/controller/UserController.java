@@ -2,13 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
-import ar.edu.itba.paw.model.news.TextType;
-import ar.edu.itba.paw.model.user.ProfileCategory;
-import ar.edu.itba.paw.model.user.Role;
-import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.user.VerificationToken;
+import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.auth.OwnerCheck;
@@ -30,14 +25,18 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Controller
-public class UserController extends BaseController{
+public class UserController {
 
+    private final UserService userService;
     private final NewsService newsService;
     private final OwnerCheck ownerCheck;
 
+    private final SecurityService securityService;
+
     @Autowired
     public UserController(UserService userService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
-        super(securityService, userService);
+        this.securityService = securityService;
+        this.userService = userService;
         this.newsService = newsService;
         this.ownerCheck = ownerCheck;
     }
@@ -104,6 +103,8 @@ public class UserController extends BaseController{
         Optional<User> user =  securityService.getCurrentUser();
         User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
 
+        CategoryStatistics categoryStatistics = newsService.getCategoryStatistics(userId);
+
         Iterable<ProfileCategory> profileCategoryList = newsService.getProfileCategories(profileUser);
         ProfileCategory catObject;
         if (category.equals("")){
@@ -113,9 +114,9 @@ public class UserController extends BaseController{
             catObject = userService.getProfileCategory(category, profileUser);
         }
 
-        userService.updateEmailSettings(user.get(),true, false, true, true);
+//        userService.updateEmailSettings(user.get(),true, false, true, true);
 
-        Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject.name());
+        Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject);
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
         MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("profile", "pageTitle.profile", TextType.INTERCODE)
@@ -123,17 +124,22 @@ public class UserController extends BaseController{
                 .withObject("orderBy", newsOrder)
                 .withObject("categories", profileCategoryList)
                 .withObject("newsPage", fullNews)
+                .withObject("statisticsMap", categoryStatistics.getStatiscticsMap())
                 .withObject("pingedNews", profileUser.getPingedNews())
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
+                .withObject("newsCategories", Category.getTrueCategories())
                 .withObject("userId", userId)
+                .withObject("mailOptions", MailOption.values())
                 .withObject("hasErrors", hasErrors)
                 .withObject("following", userService.getFollowingCount(userId))
                 .withObject("followers", userService.getFollowersCount(userId))
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
-        if(securityService.getCurrentUser().isPresent()) {
+        if(user.isPresent() && isMyProfile) {
+            User loggedUser = user.get();
             mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
+            mavBuilder.withObject("getMailOptionByEnum", loggedUser.getEmailSettings().getValueByEnum());
         }
 
         mavBuilder.withObject("category", catObject);
@@ -142,14 +148,18 @@ public class UserController extends BaseController{
 
     }
 
-    @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
-    public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
+    @RequestMapping(value = "/profile", method = RequestMethod.POST)
+    public ModelAndView profilePicture(@Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
+        User user = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        long userId = user.getId();
         if (errors.hasErrors()) {
             return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
+
         userService.updateProfile(userId, userProfileForm.getUsername(),
                 userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
-        return new ModelAndView("redirect:/profile/" + userId);
+        userService.updateEmailSettings(user, MailOption.getEnumCollection(userProfileForm.getMailOptions()));
+        return new ModelAndView("redirect:/profile/" + user.getUserId());
     }
 
     @RequestMapping("/verify_email")

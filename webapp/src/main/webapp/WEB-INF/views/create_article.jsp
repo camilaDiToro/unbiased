@@ -93,6 +93,7 @@
                     </label>
                 </div>
             </c:forEach>
+            <form:errors path="categories" element="p" cssClass="invalid-feedback"/>
         </div>
     </div>
 
@@ -128,10 +129,9 @@
                     <spring:message code="createArticle.modal.msg"/>
                 </div>
                 <div class="modal-footer">
-                    <a href="./TOP">
+                    <a href="<c:url value="/"/>">
                         <button type="button" class="btn btn-primary"><spring:message code="createArticle.modal.accept"/></button>
                     </a>
-
                 </div>
             </div>
         </div>
