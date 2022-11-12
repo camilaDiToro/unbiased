@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.CommentUpvote;
 import ar.edu.itba.paw.model.user.SavedResult;
@@ -154,8 +155,8 @@ public class NewsController{
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
     public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
-
-        userService.pingNewsToggle(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
 
         return new ModelAndView("redirect:/news/" + newsId);
     }

@@ -19,7 +19,7 @@ public class OwnerServiceImpl implements OwnerService{
     private final EmailService emailService;
 
     @Autowired
-    public OwnerServiceImpl(UserDao userDao, EmailService emailService) {
+    public OwnerServiceImpl(final UserDao userDao,final EmailService emailService) {
         this.userDao = userDao;
         this.emailService = emailService;
     }
@@ -27,11 +27,10 @@ public class OwnerServiceImpl implements OwnerService{
     @Override
     @Transactional
     public void makeUserAdmin(String email) {
-        User user = userDao.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        final User user = userDao.findByEmail(email).orElseThrow(UserNotFoundException::new);
         if(!user.getRoles().contains(Role.ROLE_ADMIN)){
             user.addRole(Role.ROLE_ADMIN);
-            Locale locale = LocaleContextHolder.getLocale();
-            LocaleContextHolder.setLocale(locale, true);
+            Locale locale = user.getEmailSettings() != null ? user.getEmailSettings().getLocale() : LocaleContextHolder.getLocale();
             emailService.sendAdminEmail(user, locale);
         }
     }
@@ -39,7 +38,7 @@ public class OwnerServiceImpl implements OwnerService{
     @Override
     @Transactional
     public void deleteUserAdmin(long userId) {
-        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         user.removeAdminRole();
     }
 

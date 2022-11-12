@@ -14,7 +14,7 @@ public class ImageServiceImpl implements ImageService{
     private final ImageDao imageDao;
 
     @Autowired
-    public ImageServiceImpl(ImageDao imageDao) {
+    public ImageServiceImpl(final ImageDao imageDao) {
         this.imageDao = imageDao;
     }
 
@@ -25,7 +25,7 @@ public class ImageServiceImpl implements ImageService{
 
     @Override
     @Transactional
-    public long uploadImage(byte[] bytes, String dataType) {
+    public long uploadImage(final byte[] bytes, String dataType) {
         return imageDao.uploadImage(bytes, dataType).getImageId();
     }
 
