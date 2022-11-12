@@ -32,6 +32,7 @@ import static org.junit.Assert.*;
 @Transactional
 
 public class CommentJpaDaoTest {
+    private static final String date = "2022-11-12 20:45:00";
     //USER DATA
     private static final String EMAIL = "user@gmail.com";
     private static final String PASS = "pass";
@@ -43,19 +44,19 @@ public class CommentJpaDaoTest {
     private static final String SUBTITLE = "subtitulo";
     private static final String BODY = "cuerpo";
     private static final int PAGE_SIZE = 1;
-    private static final Timestamp CREATION_DATE = Timestamp.valueOf(LocalDateTime.now());
+    private static final Timestamp CREATION_DATE = Timestamp.valueOf(date);
     private static final long ACCESSES = 0;
     private static final User CREATOR = new User.UserBuilder(EMAIL).pass(PASS).build();
     private static final News NEWS = new News.NewsBuilder(CREATOR,BODY,TITLE,SUBTITLE).creationDate(CREATION_DATE.toLocalDateTime()).newsId(NEWS_ID).build();
     //COMMENT DATA
     private static final long COMMENT_ID = 1;
     private static final String COMMENT = "Comment";
-    private static final Timestamp COMMENT_DATE = Timestamp.valueOf(LocalDateTime.now());
+    private static final Timestamp COMMENT_DATE = Timestamp.valueOf(date);
     private static final boolean DELETED= false;
     //REPORT DATA
     private static final long REPORT_ID = 1;
     private static final ReportReason REPORT_REASON = ReportReason.LIE;
-    private static final Timestamp REPORT_DATE = Timestamp.valueOf(LocalDateTime.now());
+    private static final Timestamp REPORT_DATE = Timestamp.valueOf(date);
 
 
     //TABLES
@@ -112,15 +113,7 @@ public class CommentJpaDaoTest {
         jdbcCommentInsert.execute(commentValues);
     }
 
-    private void addReportToTable() {
-        Map<String, Object> reportValues = new HashMap<>();
-        reportValues.put("id", REPORT_ID);
-        reportValues.put("news_id", NEWS_ID);
-        reportValues.put("user_id", CREATOR_ID);
-        reportValues.put("report_reason", REPORT_REASON.getDescription());
-        reportValues.put("report_date", REPORT_DATE);
-        jdbcCommentInsert.execute(reportValues);
-    }
+
 
     @Before
     public void setUp() {
@@ -144,7 +137,27 @@ public class CommentJpaDaoTest {
     }
 
     @Test
-    public void testGetComments(){
+    public void testFindCommentById(){
+        addCreatorToTable();
+        addTheNewsToTable();
+        addCommentFromCreatorToTheNews();
+
+        Comment comment = commentDao.getCommentById(COMMENT_ID).get();
+
+        assertEquals(comment.getComment(), COMMENT);
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, COMMENT_TABLE,  "news_id = " + NEWS_ID));
+    }
+
+    @Test
+    public void testFailFindCommentById(){
+        Optional<Comment> comment = commentDao.getCommentById(2L);
+
+        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
+    }
+
+    @Test
+    public void testGetCommentsFromNews(){
         addCreatorToTable();
         addTheNewsToTable();
         addCommentFromCreatorToTheNews();
@@ -163,15 +176,23 @@ public class CommentJpaDaoTest {
         addCreatorToTable();
         addTheNewsToTable();
         addCommentFromCreatorToTheNews();
-        addReportToTable();
 
-        Comment comment = commentDao.getNewComments(NEWS_ID, PAGE_SIZE).getContent().get(0);
+        Comment comment = commentDao.getCommentById(COMMENT_ID).get();
         commentDao.reportComment(comment, CREATOR, REPORT_REASON);
 
-
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE,  "news_id = " + NEWS_ID));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, COMMENT_TABLE,  "news_id = " + NEWS_ID));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
+    }
+    @Test
+    public void testGetDeletedComments() {
+        addCreatorToTable();
+        addTheNewsToTable();
+        addCommentFromCreatorToTheNews();
+
+        Comment comment = commentDao.getCommentById(COMMENT_ID).get();
+        commentDao.deleteComment(comment.getId());
+
+        assertEquals(comment.getDeleted(), true);
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
     }
 }

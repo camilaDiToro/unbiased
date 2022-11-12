@@ -37,7 +37,6 @@ public class VerificationTokenJpaDaoTest {
     private static final String USERS_TABLE = "users";
     private static final String TOKEN_TABLE = "email_verification_token";
     private static final int TOKEN_ID = 1;
-
     private static final Timestamp EXPIRATION_DATE = Timestamp.valueOf(LocalDateTime.now());
     //USER DATA
     private static final String USERNAME = "username";

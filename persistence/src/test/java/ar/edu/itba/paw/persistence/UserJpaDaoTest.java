@@ -43,7 +43,6 @@ public class UserJpaDaoTest {
     private static final String USERS_TABLE = "users";
     protected static final String FOLLOWS_TABLE = "follows";
 
-
     @Autowired
     private DataSource ds;
     @Autowired
@@ -132,9 +131,12 @@ public class UserJpaDaoTest {
     public void testAddFollow(){
         addUsertoTable();
         addTheFollowToTable();
-        userDao.addFollow(USER_ID, F_ID);
+
+        User follow = userDao.getUserById(F_ID).get();
+        userDao.addFollow(USER_ID, follow.getUserId());
 
         assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, FOLLOWS_TABLE));
     }
 
 }
