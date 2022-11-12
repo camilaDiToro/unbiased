@@ -10,11 +10,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +27,7 @@ import java.util.Optional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
+@Rollback
 public class UserJpaDaoTest {
     //USER DATA
     private static final String USERNAME = "username";
@@ -48,6 +52,10 @@ public class UserJpaDaoTest {
     private DataSource ds;
     @Autowired
     private UserJpaDao userDao;
+
+    @PersistenceContext
+    EntityManager entityManager;
+
     private SimpleJdbcInsert jdbcUserInsert;
     private JdbcTemplate jdbcTemplate;
 
@@ -142,8 +150,9 @@ public class UserJpaDaoTest {
         User follow = userDao.getUserById(F_ID).get();
         userDao.addFollow(USER_ID, follow.getUserId());
 
+        entityManager.flush();
         assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
-        //assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, FOLLOWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, FOLLOWS_TABLE));
     }
 
 }
