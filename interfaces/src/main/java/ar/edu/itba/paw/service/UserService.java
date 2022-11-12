@@ -1,12 +1,14 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,13 +24,16 @@ public interface UserService {
     void addRole(long userId, Role role);
     void updateProfile(long userId, String username, byte[] bytes, String dataType, String description);
     Optional<User> findByUsername(String username);
-    boolean isFollowing(long userId);
-    void followUser(long userId);
-    void unfollowUser(long userId);
+
+    void updateEmailSettings(User currentUser, Collection<MailOption> options);
+
+    boolean isFollowing(User currentUser, long userId);
+    void followUser(User currentUser, long userId);
+    void unfollowUser(User currentUser, long userId);
     void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange);
     Page<User> searchUsers(int page, String search);
-    void pingNewsToggle(News news);
-    ProfileCategory getProfileCategory(String category, User profile);
+    void pingNewsToggle(User currentUser, News news);
+    ProfileCategory getProfileCategory(Optional<User> maybeCurrentUser, String category, User profile);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);
     boolean isUserAdmin(User user);

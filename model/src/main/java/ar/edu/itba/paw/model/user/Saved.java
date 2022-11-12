@@ -15,7 +15,7 @@ public class Saved {
 
     }
 
-    public Saved(News news, long userId) {
+    public Saved(final News news, long userId) {
         this.news = news;
         this.userId = userId;
         this.date = Timestamp.valueOf(LocalDateTime.now());
@@ -28,12 +28,12 @@ public class Saved {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this)
             return true;
         if (!(obj instanceof Saved))
             return false;
-        Saved aux = (Saved) obj;
+        final Saved aux = (Saved) obj;
         return aux.news.equals(news) && aux.userId == userId;
     }
 
@@ -74,7 +74,7 @@ public class Saved {
         return date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(final Timestamp date) {
         this.date = date;
     }
 

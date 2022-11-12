@@ -3,9 +3,9 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
+import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.*;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.slf4j.Logger;
@@ -22,25 +22,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final VerificationTokenService verificationTokenService;
-    private final SecurityService securityService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder, EmailService emailService,
-                           VerificationTokenService verificationTokenService, SecurityService securityService) {
+    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder,final EmailService emailService,
+                           final VerificationTokenService verificationTokenService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
-        this.securityService = securityService;
     }
 
 
@@ -60,11 +57,11 @@ public class UserServiceImpl implements UserService {
         if(userBuilder.getPass() != null){
             userBuilder.pass(passwordEncoder.encode(userBuilder.getPass()));
         }
-        User user = userDao.create(userBuilder);
+        final User user = userDao.create(userBuilder);
         final VerificationToken token = verificationTokenService.newToken(user.getId());
         Locale locale = LocaleContextHolder.getLocale();
         emailService.sendVerificationEmail(user, token, locale);
-        EmailSettings emailSettings = new EmailSettings(true,true,false,true,locale, user);
+        final EmailSettings emailSettings = new EmailSettings(true,true,false,true,locale, user);
         user.setEmailSettings(emailSettings);
         return user;
     }
@@ -125,8 +122,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateProfile(long userId, String username, byte[] bytes, String dataType, String description) {
-        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+    public void updateProfile(long userId, String username, final byte[] bytes, String dataType, String description) {
+        final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
@@ -147,21 +144,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void followUser(long userId) {
-        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+    public void followUser(final User currentUser, long userId) {
         User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        userDao.addFollow(myUser.getId(), userId);
+        userDao.addFollow(currentUser.getId(), userId);
         EmailSettings emailSettings = following.getEmailSettings();
         if(emailSettings!= null && emailSettings.isFollow()){
-            emailService.sendNewFollowerEmail(following,myUser,emailSettings.getLocale());
+            emailService.sendNewFollowerEmail(following,currentUser,emailSettings.getLocale());
         }
     }
 
     @Override
     @Transactional
-    public void unfollowUser(long userId) {
-        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        userDao.unfollow(myUser.getId(), userId);
+    public void unfollowUser(User currentUser, long userId) {
+        userDao.unfollow(currentUser.getId(), userId);
     }
 
     @Override
@@ -179,15 +174,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isFollowing(long userId) {
-        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        return userDao.isFollowing(myUser.getId(), userId);
+    @Transactional
+    public void updateEmailSettings(User currentUser, Collection<MailOption> options) {
+        Locale locale = LocaleContextHolder.getLocale();
+        if(currentUser.getEmailSettings() == null){
+            currentUser.setEmailSettings(new EmailSettings(options,locale, currentUser));
+            return;
+        }
+        currentUser.getEmailSettings().setSettings(options);
+    }
+
+    @Override
+    public boolean isFollowing(User currentUser, long userId) {
+        return userDao.isFollowing(currentUser.getId(), userId);
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
     private void login(long userId) {
-        User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
+        final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
         LOGGER.debug("User {} has loged in automatically", user);
     }
@@ -204,17 +209,14 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void pingNewsToggle(News news) {
-        Optional<User> maybeUser = securityService.getCurrentUser();
-        if (!maybeUser.isPresent() || maybeUser.get().getUserId() != news.getCreatorId()) {
-            throw new UserNotAuthorized();
-        }
-        userDao.pingNewsToggle(maybeUser.get(), news);
+    @Transactional
+    public void pingNewsToggle(final User currentUser,final News news) {
+        userDao.pingNewsToggle(currentUser, news);
     }
 
 
     @Override
-    public ProfileCategory getProfileCategory(String category, User profile) {
+    public ProfileCategory getProfileCategory(final Optional<User> maybeCurrentUser, String category,final User profile) {
         ProfileCategory cat;
         try {
             cat = ProfileCategory.valueOf(category);
@@ -226,8 +228,8 @@ public class UserServiceImpl implements UserService {
         }
 
         if (cat.equals(ProfileCategory.SAVED) &&
-                !(securityService.getCurrentUser().isPresent() &&
-                securityService.getCurrentUser().get().equals(profile))){
+                !(maybeCurrentUser.isPresent() &&
+                maybeCurrentUser.get().equals(profile))){
             throw new InvalidFilterException();
         }
 
@@ -245,11 +247,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUserAdmin(User user) {
+    public boolean isUserAdmin(final User user) {
         if(user == null)
             return false;
-        Collection<Role> roles = user.getRoles();
-
+        final Collection<Role> roles = user.getRoles();
         return roles.contains(Role.ROLE_ADMIN) || roles.contains(Role.ROLE_OWNER);
     }
 }

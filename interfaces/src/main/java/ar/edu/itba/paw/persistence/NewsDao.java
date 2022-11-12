@@ -33,6 +33,6 @@ public interface NewsDao {
 
     void reportNews(News news, User reporter, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
-    Page<ReportDetail> getReportedNewsDetail(int page, News news);
+    Page<ReportDetail> getReportedNewsDetail(int page, long newsId);
     boolean hasReported(long newsId, Long loggedUser);
 }

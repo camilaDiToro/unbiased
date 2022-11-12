@@ -34,12 +34,12 @@ public class CommentUpvote {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this)
             return true;
         if (!(obj instanceof CommentUpvote))
             return false;
-        CommentUpvote aux = (CommentUpvote) obj;
+        final CommentUpvote aux = (CommentUpvote) obj;
         return aux.comment.equals(comment) && aux.userId == userId;
     }
 
@@ -81,7 +81,7 @@ public class CommentUpvote {
         return comment;
     }
 
-    public void setComment(Comment comment) {
+    public void setComment(final Comment comment) {
         this.comment = comment;
     }
 
@@ -97,7 +97,7 @@ public class CommentUpvote {
         return date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(final Timestamp date) {
         this.date = date;
     }
 

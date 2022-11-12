@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,15 +20,16 @@ public class SecurityServiceImpl implements SecurityService {
     @Autowired
     private UserDao userDao;
 
+
     @Override
     public Optional<String> getCurrentUserEmail() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
         if (securityContext != null && securityContext.getAuthentication() != null) {
              return Optional.of(securityContext.getAuthentication().getName());
         }
         return Optional.empty();
     }
-
+    @Cacheable
     @Override
     public Optional<User> getCurrentUser() {
         Optional<String> mayBeEmail = getCurrentUserEmail();
@@ -46,8 +48,7 @@ public class SecurityServiceImpl implements SecurityService {
             return false;
         }
 
-        Collection<Role> roles = mayBeUser.get().getRoles();
-
+        final Collection<Role> roles = mayBeUser.get().getRoles();
         return roles.contains(Role.ROLE_ADMIN) || roles.contains(Role.ROLE_OWNER);
     }
 }

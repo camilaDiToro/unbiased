@@ -31,12 +31,12 @@
     position: absolute;
     height: 90px;
     width: 90px;
-    margin-right: 150px;
-    border-radius: 50%;
+    left: 15px;
+    top: -25px;
 
 }
 
-.profile img{
+.profile .img-div{
     height: 80px;
     width: 80px;
     margin-top:65px;
@@ -61,11 +61,10 @@
 
 .pencil-edit{
     position: absolute;
-    margin-top:100px;
-    margin-left: 200px;
+    top:120%;
+    right: -10px;
+    height: 20px;
+    width: fit-content;
 }
 
-.pencil-edit img{
-    height: 10px;
-    width: 10px
-}
+

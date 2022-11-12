@@ -18,13 +18,17 @@ import java.util.Optional;
 
 
 @Controller
-public class HomeController extends BaseController{
+public class HomeController{
 
+    private final UserService userService;
     private final NewsService newsService;
+
+    private final SecurityService securityService;
 
     @Autowired
     public HomeController(final UserService userService, final NewsService newsService, SecurityService securityService){
-        super(securityService, userService);
+        this.securityService = securityService;
+        this.userService = userService;
         this.newsService = newsService;
     }
 

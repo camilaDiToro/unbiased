@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.constraints.FileSize;
+import ar.edu.itba.paw.webapp.constraints.NotExistingMailOption;
+import ar.edu.itba.paw.webapp.constraints.NotExistingReportReason;
 import ar.edu.itba.paw.webapp.constraints.NotExistingUsername;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 public class UserProfileForm {
@@ -11,12 +13,24 @@ public class UserProfileForm {
     private MultipartFile image;
 
     @NotExistingUsername
+    @Length(max=50)
     private String username;
 
 
     private String description;
 
-    //@FileSize Esto por q estaba aca ?????
+    @NotExistingMailOption
+    private String[] mailOptions;
+
+
+    public String[] getMailOptions() {
+        return mailOptions;
+    }
+
+    public void setMailOptions(String[] mailOptions) {
+        this.mailOptions = mailOptions;
+    }
+
     public MultipartFile getImage() {
         return image;
     }

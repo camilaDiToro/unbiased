@@ -13,24 +13,30 @@ import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
-public class AdminController extends BaseController{
+public class AdminController {
 
     private final AdminService adminService;
-    private final NewsService newsService;
+
+
+    private final SecurityService securityService;
 
     @Autowired
-    public AdminController(AdminService adminService, NewsService newsService, UserService userService, SecurityService ss) {
-        super(ss, userService);
+    public AdminController(AdminService adminService, SecurityService ss) {
+        this.securityService = ss;
         this.adminService = adminService;
-        this.newsService = newsService;
+
     }
 
-
+    @ModelAttribute
+    public void addAdminAttributes(Model model) {
+        model.addAttribute("adminPage", true);
+    }
 
     @RequestMapping(value = "/admin/reported_news/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,

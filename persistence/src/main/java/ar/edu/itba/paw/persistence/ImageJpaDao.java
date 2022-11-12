@@ -30,12 +30,7 @@ public class ImageJpaDao implements ImageDao {
     @Transactional
     public Image uploadImage(byte[] bytes, String dataType) {
         Image image = new Image(bytes, dataType);
-//        final Map<String, Object> imageData = new HashMap<>();
-//        imageData.put("bytes", bytes);
-//        imageData.put("data_type", dataType);
-//        long id = jdbcInsert.executeAndReturnKey(imageData).longValue();
         entityManager.persist(image);
-//        LOGGER.debug("Uploaded image with id {}", id);
         return image;
     }
 

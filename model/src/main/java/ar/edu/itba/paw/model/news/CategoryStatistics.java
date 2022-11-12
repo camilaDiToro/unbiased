@@ -1,5 +1,8 @@
 package ar.edu.itba.paw.model.news;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CategoryStatistics {
 
     private final long tourismCount;
@@ -52,5 +55,36 @@ public class CategoryStatistics {
 
     public long getNoCategoryCount() {
         return noCategoryCount;
+    }
+
+    public Map<Category, Statistic> getStatiscticsMap() {
+        Map<Category, Statistic> statisticsMap = new HashMap<>();
+        statisticsMap.put(Category.ECONOMICS, new Statistic(economicsCount, allCount));
+        statisticsMap.put(Category.SHOW, new Statistic(showCount, allCount));
+        statisticsMap.put(Category.POLITICS, new Statistic(politicsCount, allCount));
+        statisticsMap.put(Category.SPORTS, new Statistic(sportsCount, allCount));
+        statisticsMap.put(Category.TECHNOLOGY, new Statistic(techCount, allCount));
+        statisticsMap.put(Category.TOURISM, new Statistic(tourismCount, allCount));
+        return statisticsMap;
+    }
+
+    public static class Statistic {
+        private long qty;
+
+        public long getQty() {
+            return qty;
+        }
+
+        public int getPercentage() {
+            return percentage;
+        }
+
+        private int percentage;
+        private Statistic(long qty, long total) {
+            this.qty = qty;
+            double hola = ((double) qty) /total;
+            this.percentage = (int) Math.round((((double) qty) /total)*100);
+//            this.percentage = 20;
+        }
     }
 }

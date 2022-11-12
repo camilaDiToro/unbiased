@@ -5,17 +5,20 @@ import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.Optional;
 
-public abstract class BaseController {
+@ControllerAdvice
+public class ModelInjectionControllerAdvice {
 
     protected final SecurityService securityService;
-    protected final UserService userService;
+    private final UserService userService;
+
 
     @Autowired
-    public BaseController(SecurityService ss, UserService userService) {
+    public ModelInjectionControllerAdvice(SecurityService ss, UserService userService) {
         this.securityService = ss;
         this.userService = userService;
     }
@@ -26,8 +29,9 @@ public abstract class BaseController {
         User user = maybeUser.orElse(null);
 
         model.addAttribute("loggedUser", user);
+        if(user != null)
+            model.addAttribute("followers", userService.getFollowersCount(user.getUserId()));
         model.addAttribute("isLoggedIn", user != null);
         model.addAttribute("isAdmin", userService.isUserAdmin(user));
     }
-
 }

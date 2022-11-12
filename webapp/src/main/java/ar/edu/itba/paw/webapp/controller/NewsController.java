@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.CommentUpvote;
 import ar.edu.itba.paw.model.user.SavedResult;
@@ -32,20 +33,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
-public class NewsController extends BaseController {
+public class NewsController{
 
     private final NewsService newsService;
     private final ImageService imageService;
     private final AdminService adminService;
+    private final UserService userService;
     private final OwnerCheck ownerCheck;
+
+    private final SecurityService securityService;
 
 
     @Autowired
     public NewsController(AdminService adminService, UserService userService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
-        super(ss, userService);
+        this.securityService = ss;
         this.newsService = newsService;
         this.imageService = imageService;
         this.adminService = adminService;
+        this.userService = userService;
         this.ownerCheck = ownerCheck;
     }
 
@@ -150,8 +155,8 @@ public class NewsController extends BaseController {
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
     public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
-
-        userService.pingNewsToggle(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
 
         return new ModelAndView("redirect:/news/" + newsId);
     }

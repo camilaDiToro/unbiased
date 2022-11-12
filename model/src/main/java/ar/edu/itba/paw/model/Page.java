@@ -10,14 +10,12 @@ public class Page<T>{
 
     public static int getPageCount(long elemCount, int pageSize) {
         double result = elemCount / (double) pageSize;
-
         int pageQty = (int) Math.ceil(result);
-
         return pageQty == 0 ? 1 : pageQty;
     }
 
 
-    public Page(List<T> content, int currentPage, int totalPages) {
+    public Page(final List<T> content, int currentPage, int totalPages) {
         this.content = content;
         this.currentPage = currentPage;
         this.totalPages = totalPages;

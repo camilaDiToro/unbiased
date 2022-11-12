@@ -8,20 +8,9 @@ import java.util.Iterator;
 public class PositivityStats {
 
     private Positivity positivity;
-
     private int upvotes;
-
     private int downvotes;
-
-
     private final int interactions = upvotes + downvotes;
-
-//    @OneToOne
-//    @MapsId
-//    @JoinColumn(name = "user_id")
-//    private User user;
-
-
 
     public PositivityStats(int upvotes, int downvotes) {
         this.upvotes = upvotes;
@@ -70,7 +59,7 @@ public class PositivityStats {
             return interCode;
         }
         public static Positivity getPositivity(double positivity) {
-            Iterator<Positivity> it = Arrays.stream(Positivity.values()).iterator();
+            final Iterator<Positivity> it = Arrays.stream(Positivity.values()).iterator();
             while (it.hasNext()) {
                 Positivity pos = it.next();
                 if (positivity >= pos.value || !it.hasNext())

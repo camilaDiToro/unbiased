@@ -52,9 +52,7 @@ public class CommentJpaDao implements CommentDao{
 
         Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId ORDER BY commented_date DESC LIMIT :pageSize OFFSET :offset")
                 .setParameter("newsId", newsId);
-        List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
-
-        return new Page<>(comments, page, totalPages);
+        return getCommentsOfPage(query, page, COMMENT_PAGE_SIZE, totalPages);
     }
 
     @Override
@@ -66,9 +64,7 @@ public class CommentJpaDao implements CommentDao{
                         "WHEN upvote THEN 1 ELSE -1 END) upvotes FROM comment_upvotes RIGHT JOIN comments ON comments.id = comment_id AND news_id = :newsId \n" +
                         "GROUP BY comments.id) SELECT id from net_upvotes_by_comment ORDER BY upvotes DESC LIMIT :pageSize OFFSET :offset")
                 .setParameter("newsId", newsId);
-        List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
-
-        return new Page<>(comments, page, totalPages);
+        return getCommentsOfPage(query, page, COMMENT_PAGE_SIZE, totalPages);
     }
 
     private int getTotalPagesComments(long newsId) {
@@ -77,27 +73,13 @@ public class CommentJpaDao implements CommentDao{
         return Page.getPageCount(count, COMMENT_PAGE_SIZE);
     }
 
-    private List<Comment> getCommentsOfPage(Query query,int page, int pageSize) {
-        @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
-                .setParameter("offset", pageSize*(page-1))
-                .getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+    private Page<Comment> getCommentsOfPage(Query query,int page, int pageSize, int totalPages) {
+        query =  query.setParameter("pageSize", pageSize)
+                .setParameter("offset", pageSize*(page-1));
 
-        if (ids.isEmpty())
-            return new ArrayList<>();
+        TypedQuery<Comment> typedQuery = entityManager.createQuery("SELECT f from Comment f WHERE f.id IN :ids",Comment.class);
 
-        final TypedQuery<Comment> typedQuery = entityManager.createQuery("SELECT f from Comment f WHERE f.id IN :ids",Comment.class)
-                .setParameter("ids", ids);
-
-        List<Comment> comments = typedQuery.getResultList();
-        Map<Long, Comment> map = new HashMap<>();
-
-        for (Comment comment1 : comments) {
-            map.put(comment1.getId(), comment1);
-        }
-        comments = ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
-
-        return comments;
+        return JpaUtils.getPage(page, totalPages, query, typedQuery, Comment::getId);
     }
 
     @Override
@@ -107,51 +89,49 @@ public class CommentJpaDao implements CommentDao{
         LOGGER.debug("Comment from {} with id {} reported. The reason is {}", comment.getUser(), comment.getId(), reportReason.getDescription());
     }
 
-
-
     @Override
     public Page<Comment> getReportedComment(int page, ReportOrder reportOrder) {
-        Query query = entityManager.createNativeQuery(
+        page = Math.min(page,1);
+        int totalPages = getReportedCommentPageCount();
+        page = Math.min(page, totalPages);
+
+        Query idsQuery = entityManager.createNativeQuery(
                         "SELECT comment_id FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false GROUP BY comment_id ORDER BY "
-                                + reportOrder.getQuery() +" LIMIT :limit OFFSET :offset")
-                .setParameter("limit",PAGE_SIZE)
-                .setParameter("offset",(page-1)*PAGE_SIZE);
+                                + reportOrder.getQuery() +" LIMIT :pageSize OFFSET :offset");
 
-        @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) query.getResultList().stream()
-                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
-
-        if(ids.isEmpty()){
-            return new Page<>(new ArrayList<>(),page,1);
-        }
-
-        List<Comment> reportedComments = entityManager.createQuery("SELECT n from Comment n WHERE n.id IN :ids " , Comment.class)
-                .setParameter("ids", ids).getResultList();
-
-        Map<Long, Comment> map = new HashMap<>();
-        for (Comment reportedComment : reportedComments) {
-            map.put(reportedComment.getId(), reportedComment);
-        }
-        // map id -> news
-        reportedComments =  ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
-
-        return new Page<>(reportedComments,page,Page.getPageCount(getReportedCommentTotal(), PAGE_SIZE));
+       return getCommentsOfPage(idsQuery, page, PAGE_SIZE, totalPages);
     }
 
-    private int getReportedCommentTotal() {
-        int total =  ((Number) entityManager.createNativeQuery(
-                "SELECT count(comment_id) FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false").getSingleResult()).intValue();
-        return total;
+    private int getReportedCommentPageCount() {
+        int count =  ((Number) entityManager.createNativeQuery(
+                "SELECT count(distinct comment_id) FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false").getSingleResult()).intValue();
+        return Page.getPageCount(count, PAGE_SIZE);
     }
 
+    private int getReportedCommentDetailPageCount(long commentId) {
+        int count =  ((Number) entityManager.createNativeQuery(
+                "SELECT count(distinct comment_id) FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false and comment_report.comment_id = :id")
+                .setParameter("id",commentId)
+                .getSingleResult()).intValue();
+        return Page.getPageCount(count, PAGE_SIZE);
+    }
 
 
     @Override
-    public Page<ReportedComment> getReportedCommentDetail(int page, Comment comment) {
-        List<ReportedComment> rd = comment.getReports();
-        int totalPages = Page.getPageCount(rd.size(), PAGE_SIZE);
-        page = Math.min(Math.max(page, 1), totalPages);
-        return new Page<>(rd.subList((page-1)*PAGE_SIZE, Math.min(rd.size(), page*PAGE_SIZE)), page, totalPages);
+    public Page<ReportedComment> getReportedCommentDetail(int page, long commentId) {
+        page = Math.min(page,1);
+        int totalPages = getReportedCommentDetailPageCount(commentId);
+        page = Math.min(page, totalPages);
+        Query idsQuery = entityManager.createNativeQuery(
+                        "SELECT comment_report.id FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false and comment_report.comment_id=:id" +
+                                " LIMIT :pageSize OFFSET :offset")
+                .setParameter("pageSize", PAGE_SIZE)
+                .setParameter("offset", PAGE_SIZE*(page-1))
+                .setParameter("id",commentId);
+
+        TypedQuery<ReportedComment> objectQuery = entityManager.createQuery("SELECT n from ReportedComment n WHERE n.id IN :ids " , ReportedComment.class);
+
+        return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, ReportedComment::getId);
     }
 
 }

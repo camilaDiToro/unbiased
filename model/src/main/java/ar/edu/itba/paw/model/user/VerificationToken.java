@@ -29,7 +29,7 @@ public class VerificationToken {
         // Just for hibernate
     }
 
-    public VerificationToken(String token, long userId, LocalDateTime expiryDate) {
+    public VerificationToken(String token, long userId,final LocalDateTime expiryDate) {
         this.token = token;
         this.userId = userId;
         this.expiryDate = expiryDate;
@@ -67,7 +67,7 @@ public class VerificationToken {
         this.userId = userId;
     }
 
-    public void setExpiryDate(LocalDateTime expiryDate) {
+    public void setExpiryDate(final LocalDateTime expiryDate) {
         this.expiryDate = expiryDate;
     }
 

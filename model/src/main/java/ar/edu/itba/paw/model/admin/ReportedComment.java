@@ -26,7 +26,7 @@ public class ReportedComment {
         return comment;
     }
 
-    public void setComment(Comment comment) {
+    public void setComment(final Comment comment) {
         this.comment = comment;
     }
 
@@ -34,7 +34,7 @@ public class ReportedComment {
         return reporter;
     }
 
-    public void setReporter(User reporter) {
+    public void setReporter(final User reporter) {
         this.reporter = reporter;
     }
 
@@ -42,7 +42,7 @@ public class ReportedComment {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(final LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -50,7 +50,7 @@ public class ReportedComment {
         return reason;
     }
 
-    public void setReason(ReportReason reason) {
+    public void setReason(final ReportReason reason) {
         this.reason = reason;
     }
 
@@ -66,16 +66,18 @@ public class ReportedComment {
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime creationDate;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "reason")
     private ReportReason reason;
 
-    public ReportedComment(Comment comment, User reporter, ReportReason reason) {
+    public ReportedComment(final Comment comment, final User reporter, final ReportReason reason) {
         this.comment = comment;
         this.creationDate = LocalDateTime.now();
         this.reporter = reporter;
         this.reason = reason;
     }
 
-    public String getFormattedDate(Locale locale) {
+    public String getFormattedDate(final Locale locale) {
         return creationDate
                 .format(DateTimeFormatter.ofLocalizedDate( FormatStyle.FULL )
                         .withLocale( locale));
@@ -83,5 +85,9 @@ public class ReportedComment {
 
     ReportedComment() {
         // hibernate
+    }
+
+    public long getId() {
+        return id;
     }
 }

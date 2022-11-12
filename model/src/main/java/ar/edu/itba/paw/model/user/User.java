@@ -23,7 +23,7 @@ public class User {
         return pingedNews;
     }
 
-    public void setPingedNews(News pingedNews) {
+    public void setPingedNews(final News pingedNews) {
         this.pingedNews = pingedNews;
     }
 
@@ -77,7 +77,7 @@ public class User {
         return reports;
     }
 
-    public void setReports(Collection<Comment> reports) {
+    public void setReports(final Collection<Comment> reports) {
         this.reports = reports;
     }
 
@@ -107,31 +107,28 @@ public class User {
 
     @PostLoad
     private void setPositivity() {
-        int upvotes = upvoteSet
+        final int upvotes = upvoteSet
                 .stream().map(upvote -> upvote.isValue() ? 1 : 0)
                 .reduce(0, Integer::sum);
-        int downvotes = upvoteSet
+        final int downvotes = upvoteSet
                 .stream().map(upvote -> upvote.isValue() ? 0 : 1)
                 .reduce(0, Integer::sum);
         positivityStats = new PositivityStats(upvotes, downvotes);
     }
 
     public void removeAdminRole(){
-        roles.forEach(System.out::println);
-        System.out.println("Aaaaaaaaaaaaaaaaaaaaaaaaaa");
         roles.remove(Role.ROLE_ADMIN);
-        roles.forEach(System.out::println);
     }
 
     public Set<Upvote> getUpvoteSet() {
         return upvoteSet;
     }
 
-    public void setUpvoteSet(Set<Upvote> upvoteSet) {
+    public void setUpvoteSet(final Set<Upvote> upvoteSet) {
         this.upvoteSet = upvoteSet;
     }
 
-    public boolean hasReportedComment(Comment comment) {
+    public boolean hasReportedComment(final Comment comment) {
         return reports.contains(comment);
     }
 
@@ -186,14 +183,14 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o)
             return true;
 
         if (!(o instanceof User))
             return false;
 
-        User aux = (User) o;
+        final User aux = (User) o;
 
         return aux.userId == userId;
     }
@@ -206,7 +203,7 @@ public class User {
         this.userId = userId;
     }
 
-    public void setFollowing(Set<Follow> following) {
+    public void setFollowing(final Set<Follow> following) {
         this.following = following;
     }
 
@@ -218,7 +215,7 @@ public class User {
         this.pass = pass;
     }
 
-    public void setPositivityStats(PositivityStats positivityStats) {
+    public void setPositivityStats(final PositivityStats positivityStats) {
         this.positivityStats = positivityStats;
     }
 
@@ -226,7 +223,7 @@ public class User {
         return savedNews;
     }
 
-    public void setSavedNews(Set<Saved> savedNews) {
+    public void setSavedNews(final Set<Saved> savedNews) {
         this.savedNews = savedNews;
     }
 
@@ -240,7 +237,7 @@ public class User {
         }
     }
 
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(final Collection<Role> roles) {
         this.roles = roles;
     }
 
@@ -248,7 +245,7 @@ public class User {
         return image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(final Image image) {
         this.image = image;
     }
 
@@ -264,7 +261,7 @@ public class User {
         return emailSettings;
     }
 
-    public void setEmailSettings(EmailSettings emailSettings) {
+    public void setEmailSettings(final EmailSettings emailSettings) {
         this.emailSettings = emailSettings;
     }
 
@@ -300,7 +297,7 @@ public class User {
             return this;
         }
 
-        public UserBuilder positivity(PositivityStats positivity){
+        public UserBuilder positivity(final PositivityStats positivity){
             this.positivity = positivity;
             return this;
         }
