@@ -24,7 +24,7 @@ public interface NewsService {
     void deleteNews(News news);
     Iterable<ProfileCategory> getProfileCategories(User user);
     Iterable<Category> getHomeCategories();
-    Page<News> getNewsForUserProfile(int page, NewsOrder newsOrder, User user, String pc);
+    Page<News> getNewsForUserProfile(int page, NewsOrder newsOrder, User user, ProfileCategory pc);
 
     Map<Long, Rating> getCommentsRating(List<Comment> comments, Optional<User> maybeLoggedUser);
 

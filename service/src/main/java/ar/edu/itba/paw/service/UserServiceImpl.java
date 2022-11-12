@@ -203,6 +203,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public void pingNewsToggle(News news) {
         Optional<User> maybeUser = securityService.getCurrentUser();
         if (!maybeUser.isPresent() || maybeUser.get().getUserId() != news.getCreatorId()) {

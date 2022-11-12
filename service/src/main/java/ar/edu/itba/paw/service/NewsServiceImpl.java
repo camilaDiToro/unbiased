@@ -12,7 +12,6 @@ import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.NewsDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,10 +115,9 @@ public class NewsServiceImpl implements NewsService {
 
 
     @Override
-    public Page<News> getNewsForUserProfile(int page, NewsOrder newsOrder, User user, String profileCategory) {
+    public Page<News> getNewsForUserProfile(int page, NewsOrder newsOrder, User user, ProfileCategory profileCategory) {
         Optional<User> maybeLoggedUser = securityService.getCurrentUser();
-        ProfileCategory pc = ProfileCategory.getByValue(profileCategory);
-        Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrder, maybeLoggedUser.map(User::getId).orElse(null), pc);
+        Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrder, maybeLoggedUser.map(User::getId).orElse(null), profileCategory);
         maybeLoggedUser.ifPresent(value -> pageObj.getContent().remove(value.getPingedNews()));
         return pageObj;
     }

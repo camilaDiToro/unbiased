@@ -14,13 +14,14 @@
 
 
         <div class="d-flex h-75 gap-2 align-items-center">
-<c:if test="${loggedUser != null}">
+<c:if test="${loggedUser != null && !adminPage}">
     <a href="<c:url value="/create_article"/>">
         <button type="button" class="btn btn-sm rounded-pill btn-info create_article_navbar_btn" >
             <spring:message code="home.createArticle.button"/>
         </button></a>
 </c:if>
 
+            <c:if test="${!adminPage}">
             <form id="search-form" class="form-inline my-2 my-lg-0" method="GET" action="<c:url value="/TOP">
             </c:url>">
                 <div>
@@ -35,6 +36,8 @@
 
                 </script>
             </form>
+            </c:if>
+
             <c:if test="${loggedUser != null}">
                 <div class="dropdown dropdown-p">
                     <button class="btn btn-primary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

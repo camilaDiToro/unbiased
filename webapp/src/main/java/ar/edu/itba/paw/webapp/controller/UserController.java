@@ -119,7 +119,7 @@ public class UserController {
 
         userService.updateEmailSettings(user.get(),true, false, true, true);
 
-        Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject.name());
+        Page<News> fullNews = newsService.getNewsForUserProfile(page, NewsOrder.getByValue(newsOrder), profileUser, catObject);
         boolean isMyProfile = profileUser.equals(user.orElse(null));
 
         MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("profile", "pageTitle.profile", TextType.INTERCODE)
