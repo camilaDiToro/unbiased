@@ -66,6 +66,8 @@ public class ReportedComment {
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime creationDate;
 
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "reason")
     private ReportReason reason;
 
     public ReportedComment(Comment comment, User reporter, ReportReason reason) {

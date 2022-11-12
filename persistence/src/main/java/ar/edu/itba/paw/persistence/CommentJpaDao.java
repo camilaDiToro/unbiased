@@ -123,7 +123,7 @@ public class CommentJpaDao implements CommentDao{
         int totalPages = getReportedCommentDetailPageCount(commentId);
         page = Math.min(page, totalPages);
         Query idsQuery = entityManager.createNativeQuery(
-                        "SELECT distinct comment_id FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false and comment_report.comment_id=:id" +
+                        "SELECT comment_report.id FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false and comment_report.comment_id=:id" +
                                 " LIMIT :pageSize OFFSET :offset")
                 .setParameter("pageSize", PAGE_SIZE)
                 .setParameter("offset", PAGE_SIZE*(page-1))
