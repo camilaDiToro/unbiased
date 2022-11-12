@@ -3,10 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.ProfileCategory;
-import ar.edu.itba.paw.model.user.Role;
-import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.user.VerificationToken;
+import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.webapp.auth.OwnerCheck;
@@ -133,13 +130,16 @@ public class UserController {
                 .withObject("profileUser", profileUser)
                 .withObject("newsCategories", Category.getTrueCategories())
                 .withObject("userId", userId)
+                .withObject("mailOptions", MailOption.values())
                 .withObject("hasErrors", hasErrors)
                 .withObject("following", userService.getFollowingCount(userId))
                 .withObject("followers", userService.getFollowersCount(userId))
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
-        if(securityService.getCurrentUser().isPresent()) {
+        if(user.isPresent() && isMyProfile) {
+            User loggedUser = user.get();
             mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
+            mavBuilder.withObject("getMailOptionByEnum", loggedUser.getEmailSettings().getValueByEnum());
         }
 
         mavBuilder.withObject("category", catObject);
@@ -148,14 +148,18 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.POST)
-    public ModelAndView profilePicture(@PathVariable("userId") long userId, @Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
+    @RequestMapping(value = "/profile", method = RequestMethod.POST)
+    public ModelAndView profilePicture(@Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
+        User user = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        long userId = user.getId();
         if (errors.hasErrors()) {
             return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
+
         userService.updateProfile(userId, userProfileForm.getUsername(),
                 userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
-        return new ModelAndView("redirect:/profile/" + userId);
+        userService.updateEmailSettings(user, MailOption.getEnumCollection(userProfileForm.getMailOptions()));
+        return new ModelAndView("redirect:/profile/" + user.getUserId());
     }
 
     @RequestMapping("/verify_email")

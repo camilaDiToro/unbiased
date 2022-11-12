@@ -536,7 +536,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <c:url value="/profile/${profileUser.id}" var="postUrl"/>
+                        <c:url value="/profile" var="postUrl"/>
                         <form:form modelAttribute="userProfileForm" enctype="multipart/form-data" action="${postUrl}" method="post">
                             <div class="modal-body">
 
@@ -575,6 +575,8 @@
                                         </script>
                                     </div>
 
+
+
                                 <c:if test="${isJournalist}">
                                     <spring:message code="profile.modal.description" var="descriptionText"/>
                                     <form:label path="description"><spring:message code="profile.modal.changeDescription"/> </form:label>
@@ -586,6 +588,24 @@
                                         </div>
                                     </div>
                                 </c:if>
+
+                                <div class="input-group mb-3">
+                                    <form:label path="mailOptions"><spring:message code="profile.modal.changeMailOptions"/> </form:label>
+                                    <c:forEach var="option" items="${mailOptions}">
+                                        <div class="form-check  w-100">
+                                            <form:checkbox path="mailOptions" value="${option.interCode}" checked="${getMailOptionByEnum[option] ? 'true' : ''}"/>
+                                            <label class="form-check-label" for="${option.interCode}">
+                                                <spring:message code="${option.interCode}"/>
+                                            </label>
+                                        </div>
+                                    </c:forEach>
+                                    <div class="w-100">
+                                        <form:errors cssClass="text-danger" path="mailOptions" element="p"/>
+
+                                    </div>
+                                </div>
+
+
                             </div>
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-primary h-40"><spring:message code="profile.modal.save"/></button>

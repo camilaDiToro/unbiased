@@ -1,12 +1,14 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.VerificationToken;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +24,9 @@ public interface UserService {
     void addRole(long userId, Role role);
     void updateProfile(long userId, String username, byte[] bytes, String dataType, String description);
     Optional<User> findByUsername(String username);
+
+    void updateEmailSettings(User currentUser, Collection<MailOption> options);
+
     boolean isFollowing(long userId);
     void followUser(long userId);
     void unfollowUser(long userId);

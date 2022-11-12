@@ -93,6 +93,7 @@
                     </label>
                 </div>
             </c:forEach>
+            <form:errors path="categories" element="p" cssClass="invalid-feedback"/>
         </div>
     </div>
 

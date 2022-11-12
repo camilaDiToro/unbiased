@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
+import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
@@ -175,6 +176,17 @@ public class UserServiceImpl implements UserService {
         currentUser.getEmailSettings().setFollow(follow);
         currentUser.getEmailSettings().setFollowingPublished(followingPublished);
         currentUser.getEmailSettings().setPositivityChange(positivityChange);
+    }
+
+    @Override
+    @Transactional
+    public void updateEmailSettings(User currentUser, Collection<MailOption> options) {
+        Locale locale = LocaleContextHolder.getLocale();
+        if(currentUser.getEmailSettings() == null){
+            currentUser.setEmailSettings(new EmailSettings(options,locale, currentUser));
+            return;
+        }
+        currentUser.getEmailSettings().setSettings(options);
     }
 
     @Override
