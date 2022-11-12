@@ -6,7 +6,6 @@ import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.*;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final VerificationTokenService verificationTokenService;
-    private final SecurityService securityService;
+//    private final SecurityService securityService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -40,7 +39,7 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
-        this.securityService = securityService;
+//        this.securityService = securityService;
     }
 
 
@@ -147,21 +146,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void followUser(long userId) {
-        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+    public void followUser(User currentUser, long userId) {
+//        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        userDao.addFollow(myUser.getId(), userId);
+        userDao.addFollow(currentUser.getId(), userId);
         EmailSettings emailSettings = following.getEmailSettings();
         if(emailSettings!= null && emailSettings.isFollow()){
-            emailService.sendNewFollowerEmail(following,myUser,emailSettings.getLocale());
+            emailService.sendNewFollowerEmail(following,currentUser,emailSettings.getLocale());
         }
     }
 
     @Override
     @Transactional
-    public void unfollowUser(long userId) {
-        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        userDao.unfollow(myUser.getId(), userId);
+    public void unfollowUser(User currentUser, long userId) {
+//        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        userDao.unfollow(currentUser.getId(), userId);
     }
 
     @Override
@@ -190,9 +189,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isFollowing(long userId) {
-        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        return userDao.isFollowing(myUser.getId(), userId);
+    public boolean isFollowing(User currentUser, long userId) {
+//        User myUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        return userDao.isFollowing(currentUser.getId(), userId);
     }
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
@@ -216,17 +215,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void pingNewsToggle(News news) {
-        Optional<User> maybeUser = securityService.getCurrentUser();
-        if (!maybeUser.isPresent() || maybeUser.get().getUserId() != news.getCreatorId()) {
-            throw new UserNotAuthorized();
-        }
-        userDao.pingNewsToggle(maybeUser.get(), news);
+    public void pingNewsToggle(User currentUser, News news) {
+//        Optional<User> maybeUser = securityService.getCurrentUser();
+//        if (!maybeUser.isPresent() || maybeUser.get().getUserId() != news.getCreatorId()) {
+//            throw new UserNotAuthorized();
+//        }
+        userDao.pingNewsToggle(currentUser, news);
     }
 
 
     @Override
-    public ProfileCategory getProfileCategory(String category, User profile) {
+    public ProfileCategory getProfileCategory(Optional<User> maybeCurrentUser, String category, User profile) {
         ProfileCategory cat;
         try {
             cat = ProfileCategory.valueOf(category);
@@ -238,8 +237,8 @@ public class UserServiceImpl implements UserService {
         }
 
         if (cat.equals(ProfileCategory.SAVED) &&
-                !(securityService.getCurrentUser().isPresent() &&
-                securityService.getCurrentUser().get().equals(profile))){
+                !(maybeCurrentUser.isPresent() &&
+                maybeCurrentUser.get().equals(profile))){
             throw new InvalidFilterException();
         }
 
