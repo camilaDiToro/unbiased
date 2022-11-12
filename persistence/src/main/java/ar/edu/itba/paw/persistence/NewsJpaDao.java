@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.functional.GetNewsProfileFunction;
@@ -348,7 +349,6 @@ public class NewsJpaDao implements NewsDao {
 
 
     private Page<News> getNewsWithRatingFromUser(int page, User user, NewsOrder ns, Long loggedUser, boolean upvote) {
-
         int totalPages = getTotalPagesNewsFromUserRating(user.getId(), upvote);
         page = Math.min(page, totalPages);
 
@@ -399,39 +399,46 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public Page<News> getReportedNews(int page, ReportOrder reportOrder) {
-        Query query = entityManager.createNativeQuery(
+
+        page = Math.min(page,1);
+        int totalPages = getTotalReportedNews();
+        page = Math.min(page, totalPages);
+
+        Query idsQuery = entityManager.createNativeQuery(
                         "SELECT news_id FROM report n NATURAL JOIN news GROUP BY news_id ORDER BY "
                                 + reportOrder.getQuery() +" LIMIT :limit OFFSET :offset")
                 .setParameter("limit",PAGE_SIZE)
                 .setParameter("offset",(page-1)*PAGE_SIZE);
 
-        @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) query.getResultList().stream()
-                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+        TypedQuery<News> objectQuery = entityManager.createQuery("SELECT n from News n WHERE n.newsId IN :ids ", News.class);
 
-        if(ids.isEmpty()){
-            return new Page<>(new ArrayList<>(),page,getTotalReportedNews());
-        }
-
-        List<News> news = entityManager.createQuery("SELECT n from News n WHERE n.newsId IN :ids " , News.class)
-                .setParameter("ids", ids).getResultList();
-
-        Map<Long, News> map = new HashMap<>();
-        for (News news1 : news) {
-            map.put(news1.getNewsId(), news1);
-        }
-        // map id -> news
-        news =  ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
-
-        return new Page<>(news,page,getTotalReportedNews());
+       return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, News::getNewsId);
     }
 
     @Override
-    public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
-        List<ReportDetail> rd = news.getReports();
-        int totalPages = Page.getPageCount(rd.size(), PAGE_SIZE);
-        page = Math.min(Math.max(page, 1), totalPages);
-        return new Page<>(rd.subList((page-1)*PAGE_SIZE, Math.min(rd.size(), page*PAGE_SIZE)), page, totalPages);
+    public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
+        page = Math.min(page,1);
+        int totalPages =getTotalReportsFromNews(newsId);
+        page = Math.min(page, totalPages);
+
+        Query idsQuery = entityManager.createNativeQuery(
+                        "SELECT id FROM report where news_id = :newsId" +
+                                " LIMIT :limit OFFSET :offset")
+                .setParameter("newsId", newsId)
+                .setParameter("limit",PAGE_SIZE)
+                .setParameter("offset",(page-1)*PAGE_SIZE);
+
+        TypedQuery<ReportDetail> objectQuery = entityManager.createQuery(
+                "SELECT n from ReportDetail n WHERE n.id IN :ids " , ReportDetail.class);
+
+        return JpaUtils.getPage(page, totalPages , idsQuery, objectQuery, ReportDetail::getId);
+    }
+
+    private int getTotalReportsFromNews(long newsId) {
+        long count = entityManager.createQuery("SELECT COUNT(distinct r.id) FROM ReportDetail r WHERE r.news.id = :newsId", Long.class)
+                .setParameter("newsId", newsId)
+                .getSingleResult();
+        return Page.getPageCount(count, PAGE_SIZE);
     }
 
 

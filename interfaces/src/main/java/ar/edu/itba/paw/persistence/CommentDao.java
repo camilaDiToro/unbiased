@@ -18,5 +18,5 @@ public interface CommentDao {
     Page<Comment> getNewComments(long newsId, int page);
     void reportComment(Comment comment, User reporter, ReportReason reportReason);
     Page<Comment> getReportedComment(int page, ReportOrder reportOrder);
-    Page<ReportedComment> getReportedCommentDetail(int page, Comment comment);
+    Page<ReportedComment> getReportedCommentDetail(int page, long commentId);
 }
