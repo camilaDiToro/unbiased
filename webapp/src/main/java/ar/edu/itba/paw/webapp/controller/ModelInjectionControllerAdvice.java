@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.SecurityService;
+import ar.edu.itba.paw.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,11 +14,13 @@ import java.util.Optional;
 public class ModelInjectionControllerAdvice {
 
     protected final SecurityService securityService;
+    private final UserService userService;
 
 
     @Autowired
-    public ModelInjectionControllerAdvice(SecurityService ss) {
+    public ModelInjectionControllerAdvice(SecurityService ss, UserService userService) {
         this.securityService = ss;
+        this.userService = userService;
     }
 
     @ModelAttribute
@@ -27,6 +30,6 @@ public class ModelInjectionControllerAdvice {
 
         model.addAttribute("loggedUser", user);
         model.addAttribute("isLoggedIn", user != null);
-        model.addAttribute("isAdmin", securityService.isCurrentUserAdmin());
+        model.addAttribute("isAdmin", userService.isUserAdmin(user));
     }
 }

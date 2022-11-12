@@ -37,7 +37,6 @@ public class NewsController{
     private final NewsService newsService;
     private final ImageService imageService;
     private final AdminService adminService;
-
     private final UserService userService;
     private final OwnerCheck ownerCheck;
 
@@ -194,11 +193,11 @@ public class NewsController{
         final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, TextUtils.convertMarkdownToHTML(createNewsFrom.getBody()), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
 
-        if(!createNewsFrom.getImage().isEmpty()){
+        if(!createNewsFrom.getImage().isEmpty() && 0 != createNewsFrom.getImage().getBytes().length){
             newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
         }
 
-        final News news = newsService.create(newsBuilder, createNewsFrom.getCategories());
+        final News news = newsService.create(newsBuilder, Arrays.stream(createNewsFrom.getCategories()).map(Category::getByCode).collect(Collectors.toList()));
         return new ModelAndView("redirect:/news/" + news.getNewsId());
     }
 

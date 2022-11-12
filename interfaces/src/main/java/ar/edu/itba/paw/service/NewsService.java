@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface NewsService {
-    News create(News.NewsBuilder newsBuilder, String[] categories);
+    News create(News.NewsBuilder newsBuilder, List<Category> categories);
     Optional<News> getById(long id);
     Optional<Comment> getCommentById(long id);
     Page<News> getNews(int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query);

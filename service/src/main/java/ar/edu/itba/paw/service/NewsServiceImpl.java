@@ -3,9 +3,16 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.*;
 import ar.edu.itba.paw.model.exeptions.*;
 import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.user.PositivityStats;
+import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.Role;
+import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.persistence.CommentDao;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.NewsDao;
+import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,30 +26,41 @@ public class NewsServiceImpl implements NewsService {
     private final NewsDao newsDao;
     private final SecurityService securityService;
     private final UserService userService;
+    private final EmailService emailService;
+    private final UserDao userDao;
+    private final CommentDao commentDao;
 
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService) {
+    public NewsServiceImpl(NewsDao newsDao, SecurityService securityService, UserService userService, EmailService emailService, UserDao userDao, CommentDao commentDao) {
         this.newsDao = newsDao;
         this.userService = userService;
         this.securityService = securityService;
+        this.emailService = emailService;
+        this.userDao = userDao;
+        this.commentDao = commentDao;
     }
 
     @Override
     @Transactional
-    public News create(News.NewsBuilder newsBuilder, String[] categories) {
+    public News create(News.NewsBuilder newsBuilder, List<Category> categories) {
         if(!newsBuilder.getCreator().getRoles().contains(Role.ROLE_JOURNALIST)){
             userService.addRole(newsBuilder.getCreator().getId(),Role.ROLE_JOURNALIST);
         }
 
-        for(String category : categories){
-            Category c = Category.getByCode(category);
+        for(Category c : categories){
             if(c == null || !c.isTrueCategory()){
                 throw new InvalidCategoryException();
             }
             newsBuilder.addCategory(c);
         }
 
-        return this.newsDao.create(newsBuilder);
+        News createdNews = newsDao.create(newsBuilder);
+        List<User> userList = userDao.getFollowersWithEmailPublishNewsActive(createdNews.getCreator());
+
+        for(User u : userList){
+            emailService.sendNewPublishedNewsByFollowing(u,createdNews,u.getEmailSettings().getLocale());
+        }
+        return createdNews;
     }
 
     private User getLoggedUser() {
@@ -64,7 +82,7 @@ public class NewsServiceImpl implements NewsService {
 
         if (category.equals(Category.ALL)) {
             if (newsOrder.equals(NewsOrder.NEW)) {
-                totalPages = newsDao.getTotalPagesAllNews(query);
+                totalPages = newsDao.getTotalPagesAllNews(query,timeConstraint);
                 ln = newsDao.getNewNews(page, query, loggedUser);
             } else {
                 totalPages = newsDao.getTotalPagesAllNews(query, timeConstraint);
@@ -79,7 +97,7 @@ public class NewsServiceImpl implements NewsService {
                 ln = newsDao.getRecommendationTop(page, securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new), timeConstraint);
 
             }
-           }
+        }
         else {
             if (category.equals(NewsOrder.NEW)) {
                 totalPages = newsDao.getTotalPagesCategoryNew(category);
@@ -91,10 +109,9 @@ public class NewsServiceImpl implements NewsService {
         }
 
         page = Math.min(page, totalPages);
-
-
         return new Page<>(ln, page, totalPages);
     }
+
 
 
 
@@ -111,6 +128,8 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public void setRating(News news, Rating rating) {
         User user  = getLoggedUser();
+
+        PositivityStats.Positivity oldp = news.getPositivityStats().getPositivity();
 //        newsDao.setRating(news, user, Rating.NO_RATING);
         Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
         if (rating.equals(Rating.NO_RATING)) {
@@ -121,6 +140,15 @@ public class NewsServiceImpl implements NewsService {
 
         upvoteMap.putIfAbsent(userId, new Upvote(news, user.getId()));
         upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
+
+        //newsDao.setRating(news, user, rating);
+        PositivityStats.Positivity newp = news.getPositivityStats().getPositivity();
+        if(oldp != newp){
+            User creator = news.getCreator();
+            if(creator.getEmailSettings() != null && creator.getEmailSettings().isPositivityChange()){
+                emailService.sendNewsPositivityChanged(creator, news, creator.getEmailSettings().getLocale());
+            }
+        }
     }
 
     @Override
@@ -192,7 +220,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public Optional<Comment> getCommentById(long id) {
-        return newsDao.getCommentById(id);
+        return commentDao.getCommentById(id);
     }
 
     @Override
@@ -218,21 +246,26 @@ public class NewsServiceImpl implements NewsService {
     public void addComment(long newsId, String comment) {
         User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         News news = getById(newsId).orElseThrow(NewsNotFoundException::new);
-        newsDao.addComment(user, news, comment);
+        commentDao.addComment(user, news, comment);
+        User newsOwner = news.getCreator();
+        EmailSettings emailSettings = newsOwner.getEmailSettings();
+        if(emailSettings!=null && emailSettings.isComment()){
+            emailService.sendNewCommentEmail(newsOwner,news,emailSettings.getLocale());
+        }
     }
 
     @Override
     public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj) {
         if (orderByObj.equals(NewsOrder.NEW)) {
-            return newsDao.getNewComments(newsId, page);
+            return commentDao.getNewComments(newsId, page);
         }
-        return newsDao.getTopComments(newsId, page);
+        return commentDao.getTopComments(newsId, page);
     }
 
     @Override
     @Transactional
     public void deleteComment(long commentId) {
-        newsDao.deleteComment(commentId);
+        commentDao.deleteComment(commentId);
     }
 
 }

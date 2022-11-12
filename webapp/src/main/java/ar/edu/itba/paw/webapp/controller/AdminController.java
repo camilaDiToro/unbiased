@@ -4,8 +4,6 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportedComment;
-import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.TextType;

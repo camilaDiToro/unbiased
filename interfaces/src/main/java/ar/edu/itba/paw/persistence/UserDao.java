@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.User;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Optional;
 
 public interface UserDao {
     Optional<User> getUserById(long id);
+    Optional<User> getRegisteredUserById(long id);
     User create(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
@@ -24,4 +26,5 @@ public interface UserDao {
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);
     void pingNewsToggle(User user, News news);
+    List<User> getFollowersWithEmailPublishNewsActive(User user);
 }

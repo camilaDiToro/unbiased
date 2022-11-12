@@ -18,7 +18,6 @@ public class OwnerController {
 
     private final OwnerService ownerService;
     private final UserService userService;
-
     private final SecurityService securityService;
 
 

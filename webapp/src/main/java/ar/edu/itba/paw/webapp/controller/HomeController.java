@@ -46,7 +46,6 @@ public class HomeController{
             @RequestParam(name="type", defaultValue="article") String type,
             @RequestParam(name="time", defaultValue="WEEK") String time){
 
-
         TimeConstraint timeConstraint = TimeConstraint.getByValue(time);
         NewsOrder newsOrder = NewsOrder.getByValue(orderBy);
         Page<News> newsPage = newsService.getNews(page,Category.getByValue(category),newsOrder, timeConstraint, query);

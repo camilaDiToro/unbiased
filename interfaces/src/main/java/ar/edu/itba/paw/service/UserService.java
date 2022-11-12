@@ -25,9 +25,11 @@ public interface UserService {
     boolean isFollowing(long userId);
     void followUser(long userId);
     void unfollowUser(long userId);
+    void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange);
     Page<User> searchUsers(int page, String search);
     void pingNewsToggle(News news);
     ProfileCategory getProfileCategory(String category, User profile);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);
+    boolean isUserAdmin(User user);
 }

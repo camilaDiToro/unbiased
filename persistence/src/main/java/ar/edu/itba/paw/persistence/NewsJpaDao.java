@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
-@Primary
 public class NewsJpaDao implements NewsDao {
 
     @PersistenceContext
@@ -23,7 +22,6 @@ public class NewsJpaDao implements NewsDao {
 
     private static final int SEARCH_PAGE_SIZE = 10;
     private static final int PAGE_SIZE = 10;
-    private static final int COMMENT_PAGE_SIZE = 5;
     private static final int PROFILE_PAGE_SIZE = 5;
     private static final int RECOMMENDATION_PAGE_SIZE = 10;
 
@@ -31,9 +29,8 @@ public class NewsJpaDao implements NewsDao {
 
     private final Map<ProfileCategory, GetNewsProfileFunction> profileFunctions;
 
-
     public NewsJpaDao() {
-        profileFunctions = new HashMap<>();
+        profileFunctions = new EnumMap<>(ProfileCategory.class);
         profileFunctions.put(ProfileCategory.DOWNVOTED, this::getNewsDownvotedByUser);
         profileFunctions.put(ProfileCategory.UPVOTED, this::getNewsUpvotedByUser);
         profileFunctions.put(ProfileCategory.SAVED, this::getSavedNews);
@@ -52,7 +49,7 @@ public class NewsJpaDao implements NewsDao {
     @Override
     public List<News> getNewNews(int page, String query, Long loggedUser) {
         Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query ORDER BY " + NewsOrder.NEW.getQueryPaged())
-                .setParameter("query", "%" + TextUtils.escapeSqlLike(query.toLowerCase()) + "%");
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%");
 
         List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
         if (loggedUser != null)
@@ -64,7 +61,7 @@ public class NewsJpaDao implements NewsDao {
     @Override
     public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint, Long loggedUser) {
         Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query AND creation_date >= "+timeConstraint.getMinimumDateQuery() + " ORDER BY " + NewsOrder.TOP.getQueryPaged())
-                .setParameter("query", "%" + TextUtils.escapeSqlLike(query.toLowerCase()) + "%");
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%");
 
         List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
         if (loggedUser != null)
@@ -73,18 +70,11 @@ public class NewsJpaDao implements NewsDao {
         return news;
     }
 
-    @Override
-    public int getTotalPagesAllNews(String query) {
-        long elemCount = entityManager.createQuery("SELECT count(f) from News f WHERE LOWER(f.title) LIKE :query",Long.class)
-                .setParameter("query", '%' + TextUtils.escapeSqlLike(query.toLowerCase()) + '%').getSingleResult();
-
-        return Page.getPageCount(elemCount, PAGE_SIZE);
-    }
 
     @Override
     public int getTotalPagesAllNews(String query, TimeConstraint timeConstraint) {
         long elemCount = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query AND creation_date >= " +timeConstraint.getMinimumDateQuery())
-                .setParameter("query", "%" + TextUtils.escapeSqlLike(query.toLowerCase()) + "%")
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%")
                 .getFirstResult();
 
         return Page.getPageCount(elemCount, PAGE_SIZE);
@@ -101,10 +91,6 @@ public class NewsJpaDao implements NewsDao {
 
     }
 
-    @Override
-    public Optional<Comment> getCommentById(long id) {
-        return Optional.ofNullable(entityManager.find(Comment.class, id));
-    }
 
 
     @Override
@@ -140,6 +126,7 @@ public class NewsJpaDao implements NewsDao {
         entityManager.remove(news);
     }
 
+
     @Override
     public int getTotalPagesCategoryNew(Category category) {
         long elemCount = entityManager.createQuery("SELECT count(f) from News f WHERE :category MEMBER OF f.categories",Long.class)
@@ -157,64 +144,11 @@ public class NewsJpaDao implements NewsDao {
         return Page.getPageCount(elemCount, PAGE_SIZE);
     }
 
-//    @Override
-//    public void setRating(News news, User user, Rating rating) {
-//        Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
-//        if (rating.equals(Rating.NO_RATING)) {
-//            upvoteMap.remove(user.getId());
-//            return;
-//        }
-//        long userId = user.getId();
-//
-//        upvoteMap.putIfAbsent(userId, new Upvote(news, user.getId()));
-//        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
-//    }
-
     @Override
     public void saveNews(News news, User user) {
         user.getSavedNews().add(new Saved(news, user.getId()));
     }
 
-    private int getTotalPagesComments(long newsId) {
-        long count = entityManager.createQuery("SELECT COUNT(c) from Comment c WHERE c.news.newsId = :newsId", Long.class)
-                .setParameter("newsId", newsId).getSingleResult();
-        return Page.getPageCount(count, COMMENT_PAGE_SIZE);
-    }
-
-    @Override
-    public void addComment(User user, News news, String comment) {
-        Comment commentObj = new Comment(user, comment, news);
-        entityManager.persist(commentObj);
-    }
-
-    @Override
-    public void deleteComment(long commentId) {
-        Optional<Comment> mayBeComment = entityManager.createQuery("FROM Comment c WHERE c.id = :id", Comment.class).setParameter("id", commentId).getResultList().stream().findFirst();
-        mayBeComment.ifPresent(Comment::delete);
-    }
-
-    private List<Comment> getCommentsOfPage(Query query,int page, int pageSize) {
-        @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
-                .setParameter("offset", pageSize*(page-1))
-                .getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
-
-        if (ids.isEmpty())
-            return new ArrayList<>();
-
-        final TypedQuery<Comment> typedQuery = entityManager.createQuery("SELECT f from Comment f WHERE f.id IN :ids",Comment.class)
-                .setParameter("ids", ids);
-
-        List<Comment> comments = typedQuery.getResultList();
-        Map<Long, Comment> map = new HashMap<>();
-
-        for (Comment comment1 : comments) {
-            map.put(comment1.getId(), comment1);
-        }
-        comments = ids.stream().map(id -> map.get(id)).collect(Collectors.toList());
-
-        return comments;
-    }
 
     private List<News> getNewsOfPage(Query query, int page, int pageSize) {
         @SuppressWarnings("unchecked")
@@ -237,31 +171,6 @@ public class NewsJpaDao implements NewsDao {
         return news;
     }
 
-    @Override
-    public Page<Comment> getNewComments(long newsId, int page) {
-        int totalPages = getTotalPagesComments(newsId);
-        page = Math.min(page, totalPages);
-
-        Query query = entityManager.createNativeQuery("SELECT f.id from comments AS f WHERE news_id = :newsId ORDER BY commented_date DESC LIMIT :pageSize OFFSET :offset")
-                .setParameter("newsId", newsId);
-        List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
-
-        return new Page<>(comments, page, totalPages);
-    }
-
-    @Override
-    public Page<Comment> getTopComments(long newsId, int page) {
-        int totalPages = getTotalPagesComments(newsId);
-        page = Math.min(page, totalPages);
-
-        Query query = entityManager.createNativeQuery("WITH net_upvotes_by_comment as (SELECT comments.id, SUM( CASE WHEN upvote IS NULL THEN 0\n" +
-                        "WHEN upvote THEN 1 ELSE -1 END) upvotes FROM comment_upvotes RIGHT JOIN comments ON comments.id = comment_id AND news_id = :newsId \n" +
-                        "GROUP BY comments.id) SELECT id from net_upvotes_by_comment ORDER BY upvotes DESC LIMIT :pageSize OFFSET :offset")
-                .setParameter("newsId", newsId);
-        List<Comment> comments = getCommentsOfPage(query, page, COMMENT_PAGE_SIZE);
-
-        return new Page<>(comments, page, totalPages);
-    }
 
     @Override
     public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Long loggedUser, ProfileCategory profileCategory) {
