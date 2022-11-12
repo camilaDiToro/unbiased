@@ -58,23 +58,16 @@ public class CommentJpaDaoTest {
     private static final ReportReason REPORT_REASON = ReportReason.LIE;
     private static final Timestamp REPORT_DATE = Timestamp.valueOf(date);
 
-
     //TABLES
     private static final String NEWS_TABLE = "news";
     private static final String USER_TABLE = "users";
     private static final String COMMENT_TABLE = "comments";
     private static final String REPORT_TABLE = "report";
 
-
     @Autowired
     private CommentJpaDao commentDao;
     @Autowired
     private DataSource ds;
-
-    @Mock
-    private NewsJpaDao newsDao;
-    @Mock
-    private UserJpaDao userDao;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcUserInsert;
     private SimpleJdbcInsert jdbcNewsInsert;
@@ -112,7 +105,6 @@ public class CommentJpaDaoTest {
         commentValues.put("deleted", DELETED);
         jdbcCommentInsert.execute(commentValues);
     }
-
 
 
     @Before
@@ -157,7 +149,7 @@ public class CommentJpaDaoTest {
     }
 
     @Test
-    public void testGetCommentsFromNews(){
+    public void testGetNewComments(){
         addCreatorToTable();
         addTheNewsToTable();
         addCommentFromCreatorToTheNews();
