@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.functional.GetNewsProfileFunction;
@@ -427,11 +428,44 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public Page<ReportDetail> getReportedNewsDetail(int page, News news) {
-        List<ReportDetail> rd = news.getReports();
-        int totalPages = Page.getPageCount(rd.size(), PAGE_SIZE);
-        page = Math.min(Math.max(page, 1), totalPages);
-        return new Page<>(rd.subList((page-1)*PAGE_SIZE, Math.min(rd.size(), page*PAGE_SIZE)), page, totalPages);
+    public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
+        page = Math.min(page,1);
+        int totalPages = Page.getPageCount(getTotalReportsFromNews(newsId), PAGE_SIZE);
+        page = Math.min(page, totalPages);
+
+        Query query = entityManager.createNativeQuery(
+                        "SELECT id FROM report where news_id = :newsId" +
+                                " LIMIT :limit OFFSET :offset")
+                .setParameter("newsId", newsId)
+                .setParameter("limit",PAGE_SIZE)
+                .setParameter("offset",(page-1)*PAGE_SIZE);
+
+        @SuppressWarnings("unchecked")
+        List<Long> ids = (List<Long>) query.getResultList().stream()
+                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+
+        if(ids.isEmpty()){
+            return new Page<>(Collections.emptyList(),page,1);
+        }
+
+        List<ReportDetail> reportedComments = entityManager.createQuery("SELECT n from ReportDetail n WHERE n.id IN :ids " , ReportDetail.class)
+                .setParameter("ids", ids).getResultList();
+
+        Map<Long, ReportDetail> reportDetailMap = new HashMap<>();
+        for (ReportDetail reportedComment : reportedComments) {
+            reportDetailMap.put(reportedComment.getId(), reportedComment);
+        }
+        // map id -> ReportDetail
+        reportedComments =  ids.stream().map(reportDetailMap::get).collect(Collectors.toList());
+
+        return new Page<>(reportedComments,page,totalPages);
+    }
+
+    private int getTotalReportsFromNews(long newsId) {
+        long count = entityManager.createQuery("SELECT COUNT(distinct r.id) FROM ReportDetail r WHERE r.news.id = :newsId", Long.class)
+                .setParameter("newsId", newsId)
+                .getSingleResult();
+        return Page.getPageCount(count, PAGE_SIZE);
     }
 
 

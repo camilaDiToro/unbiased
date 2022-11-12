@@ -68,7 +68,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
-        return newsDao.getReportedNewsDetail(page, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        return newsDao.getReportedNewsDetail(page, newsId);
     }
 
     @Override
