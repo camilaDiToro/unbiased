@@ -15,9 +15,9 @@ public final class TextUtils {
     }
 
     public static String convertMarkdownToHTML(String markdown) {
-        Parser parser = Parser.builder().build();
-        Node document = parser.parse(StringEscapeUtils.escapeHtml4(markdown));
-        HtmlRenderer htmlRenderer = HtmlRenderer.builder().build();
+        final Parser parser = Parser.builder().build();
+        final Node document = parser.parse(StringEscapeUtils.escapeHtml4(markdown));
+        final HtmlRenderer htmlRenderer = HtmlRenderer.builder().build();
         return htmlRenderer.render(document);
     }
 

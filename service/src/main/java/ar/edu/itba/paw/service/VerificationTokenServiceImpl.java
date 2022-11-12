@@ -19,7 +19,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService{
     private final VerificationTokenDao verificationTokenDao;
 
     @Autowired
-    public VerificationTokenServiceImpl(VerificationTokenDao verificationTokenDao) {
+    public VerificationTokenServiceImpl(final VerificationTokenDao verificationTokenDao) {
         this.verificationTokenDao = verificationTokenDao;
     }
 

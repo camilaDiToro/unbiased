@@ -28,7 +28,7 @@ public class AdminServiceImpl implements AdminService{
     private final NewsDao newsDao;
 
     @Autowired
-    public AdminServiceImpl(CommentDao commentDao, NewsService newsService, EmailService emailService, NewsDao newsDao) {
+    public AdminServiceImpl(final CommentDao commentDao, final NewsService newsService, final SecurityService securityService, final EmailService emailService, final NewsDao newsDao) {
         this.commentDao = commentDao;
         this.newsService = newsService;
         this.emailService = emailService;
@@ -37,8 +37,8 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     @Transactional
-    public void reportNews(User currentUser, long newsId, ReportReason reportReason) {
-        News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
+    public void reportNews(final User currentUser, long newsId, ReportReason reportReason) {
+        final News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
         newsDao.reportNews(news,currentUser,reportReason);
     }
 
@@ -49,8 +49,8 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     @Transactional
-    public void reportComment(User currentUser, long commentId, ReportReason reportReason) {
-        Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
+    public void reportComment(final User currentUser, long commentId, ReportReason reportReason) {
+        final Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
         commentDao.reportComment(comment,currentUser,reportReason);
     }
 
@@ -75,10 +75,9 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public void deleteNews(User currentUser, long newsId) {
-        Locale locale = LocaleContextHolder.getLocale();
-        LocaleContextHolder.setLocale(locale, true);
-        News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
+    public void deleteNews(final User currentUser, long newsId) {
+        Locale locale = currentUser.getEmailSettings() != null ? currentUser.getEmailSettings().getLocale() :  LocaleContextHolder.getLocale();
+        final News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
         emailService.sendNewsDeletedEmail(news.getCreator(), news, locale);
         newsService.deleteNews(news);
     }

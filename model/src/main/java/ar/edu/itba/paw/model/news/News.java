@@ -119,7 +119,7 @@ public class News {
         return upvoteMap;
     }
 
-    public void setUpvoteMap(Map<Long, Upvote> upvoteMap) {
+    public void setUpvoteMap(final Map<Long, Upvote> upvoteMap) {
         this.upvoteMap = upvoteMap;
     }
 
@@ -132,7 +132,7 @@ public class News {
         return creator;
     }
 
-    public void setCreator(User creator) {
+    public void setCreator(final User creator) {
         this.creator = creator;
     }
 
@@ -249,7 +249,7 @@ public class News {
         return reports;
     }
 
-    public void setReports(List<ReportDetail> reports) {
+    public void setReports(final List<ReportDetail> reports) {
         this.reports = reports;
     }
 
@@ -264,7 +264,7 @@ public class News {
         private Collection<Category> categories;
 
 
-        public NewsBuilder(User creator, String body, String title, String subtitle) {
+        public NewsBuilder(final User creator, String body, String title, String subtitle) {
             this.creator = creator;
             this.body = body;
             this.title = title;
@@ -287,7 +287,7 @@ public class News {
             return this;
         }
 
-        public NewsBuilder creationDate(LocalDateTime creationDate){
+        public NewsBuilder creationDate(final LocalDateTime creationDate){
             this.creationDate = creationDate;
             return this;
         }

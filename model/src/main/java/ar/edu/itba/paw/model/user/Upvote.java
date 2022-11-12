@@ -15,14 +15,14 @@ public class Upvote {
 
     }
 
-    public Upvote(News news, long userId) {
+    public Upvote(final News news, long userId) {
         this.news = news;
         this.userId = userId;
         this.date = Timestamp.valueOf(LocalDateTime.now());
 
     }
 
-    public Upvote(News news, long userId, boolean value) {
+    public Upvote(final News news, long userId, boolean value) {
         this(news , userId);
         this.value = value;
     }
@@ -33,12 +33,12 @@ public class Upvote {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this)
             return true;
         if (!(obj instanceof Upvote))
             return false;
-        Upvote aux = (Upvote) obj;
+        final Upvote aux = (Upvote) obj;
         return aux.news.equals(news) && aux.userId == userId;
     }
 
@@ -80,7 +80,7 @@ public class Upvote {
         return news;
     }
 
-    public void setNews(News news) {
+    public void setNews(final News news) {
         this.news = news;
     }
 
@@ -96,7 +96,7 @@ public class Upvote {
         return date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(final Timestamp date) {
         this.date = date;
     }
 

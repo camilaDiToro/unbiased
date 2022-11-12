@@ -23,7 +23,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public Optional<String> getCurrentUserEmail() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
         if (securityContext != null && securityContext.getAuthentication() != null) {
              return Optional.of(securityContext.getAuthentication().getName());
         }
@@ -48,8 +48,7 @@ public class SecurityServiceImpl implements SecurityService {
             return false;
         }
 
-        Collection<Role> roles = mayBeUser.get().getRoles();
-
+        final Collection<Role> roles = mayBeUser.get().getRoles();
         return roles.contains(Role.ROLE_ADMIN) || roles.contains(Role.ROLE_OWNER);
     }
 }

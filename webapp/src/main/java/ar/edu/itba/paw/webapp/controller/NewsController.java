@@ -161,7 +161,6 @@ public class NewsController{
     @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
     public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
         User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-
         userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
 
         return new ModelAndView("redirect:/news/" + newsId);

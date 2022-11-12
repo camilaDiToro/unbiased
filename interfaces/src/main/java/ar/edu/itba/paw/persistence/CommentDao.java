@@ -12,11 +12,11 @@ import java.util.Optional;
 
 public interface CommentDao {
     Optional<Comment> getCommentById(long id);
-    void addComment(User user, News news, String comment);
+    void addComment(final User user,final News news, String comment);
     void deleteComment(long commentId);
     Page<Comment> getTopComments(long newsId, int page);
     Page<Comment> getNewComments(long newsId, int page);
-    void reportComment(Comment comment, User reporter, ReportReason reportReason);
+    void reportComment(final Comment comment,final User reporter, ReportReason reportReason);
     Page<Comment> getReportedComment(int page, ReportOrder reportOrder);
     Page<ReportedComment> getReportedCommentDetail(int page, long commentId);
 }

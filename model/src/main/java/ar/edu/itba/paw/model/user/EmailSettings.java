@@ -41,17 +41,11 @@ public class EmailSettings {
 
     @Transient
     private final Map<MailOption, Consumer<Boolean>> setterByEnum = new EnumMap<>(MailOption.class);
-
-
-
     {
-
         setterByEnum.put(MailOption.COMMENT, this::setComment);
         setterByEnum.put(MailOption.FOLLOW, this::setFollow);
         setterByEnum.put(MailOption.FOLLOWING_PUBLISHED, this::setFollowingPublished);
         setterByEnum.put(MailOption.POSITIVITY_CHANGED, this::setPositivityChange);
-
-
     }
 
     public EmailSettings(boolean follow, boolean comment, boolean followingPublished, boolean positivityChange, Locale locale, User user) {

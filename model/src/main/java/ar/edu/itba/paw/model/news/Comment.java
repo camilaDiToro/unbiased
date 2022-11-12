@@ -20,36 +20,9 @@ import java.util.Map;
 @Table(name = "comments")
 public class Comment {
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Timestamp getCommentedDate() {
-        return commentedDate;
-    }
-
-    public void setCommentedDate(Timestamp commentedDate) {
-        this.commentedDate = commentedDate;
-    }
-
     @OneToMany(mappedBy="comment",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapKey(name = "userId")
     private Map<Long, CommentUpvote> upvoteMap;
-
-    public PositivityStats getPositivityStats() {
-        Collection<CommentUpvote> set = upvoteMap.values();
-        int total = set.size();
-        int upvotes =
-                set.stream().map(u -> u.isValue() ? 1 : 0)
-                        .reduce(0, Integer::sum);
-        int downvotes = total - upvotes;
-        return new PositivityStats(upvotes, downvotes);
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_seq")
@@ -65,14 +38,6 @@ public class Comment {
     @Column(name = "commented_date")
     private Timestamp commentedDate;
 
-    public List<ReportedComment> getReports() {
-        return reports;
-    }
-
-    public void setReports(List<ReportedComment> reports) {
-        this.reports = reports;
-    }
-
     @OneToMany(mappedBy = "comment")
     private List<ReportedComment> reports;
 
@@ -85,7 +50,7 @@ public class Comment {
         return news;
     }
 
-    public void setNews(News news) {
+    public void setNews(final News news) {
         this.news = news;
     }
 
@@ -97,7 +62,7 @@ public class Comment {
 
     }
 
-    public Comment(User user, String comment, News news) {
+    public Comment(final User user, String comment, final News news) {
         this.user = user;
         this.comment = comment;
         this.date = LocalDateTime.now();
@@ -105,14 +70,32 @@ public class Comment {
         this.commentedDate = Timestamp.valueOf(date);
     }
 
-    public Comment(User user, String comment, News news, LocalDateTime date) {
+    public Comment(final User user, String comment,final  News news,final  LocalDateTime date) {
         this(user, comment, news);
         this.date = date;
         this.commentedDate = Timestamp.valueOf(date);
     }
 
+    public List<ReportedComment> getReports() {
+        return reports;
+    }
+
+    public void setReports(final List<ReportedComment> reports) {
+        this.reports = reports;
+    }
+
+    public PositivityStats getPositivityStats() {
+        Collection<CommentUpvote> set = upvoteMap.values();
+        final int total = set.size();
+        final int upvotes =
+                set.stream().map(u -> u.isValue() ? 1 : 0)
+                        .reduce(0, Integer::sum);
+        final int downvotes = total - upvotes;
+        return new PositivityStats(upvotes, downvotes);
+    }
+
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof Comment))
             return false;
         return id.equals(((Comment) obj).id);
@@ -136,7 +119,7 @@ public class Comment {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = user;
     }
 
@@ -152,7 +135,7 @@ public class Comment {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(final LocalDateTime date) {
         this.date = date;
     }
 
@@ -168,5 +151,22 @@ public class Comment {
 
     public Map<Long, CommentUpvote> getUpvoteMap() {
         return upvoteMap;
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Timestamp getCommentedDate() {
+        return commentedDate;
+    }
+
+    public void setCommentedDate(final Timestamp commentedDate) {
+        this.commentedDate = commentedDate;
     }
 }
