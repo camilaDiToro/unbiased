@@ -27,13 +27,13 @@ public interface UserService {
 
     void updateEmailSettings(User currentUser, Collection<MailOption> options);
 
-    boolean isFollowing(long userId);
-    void followUser(long userId);
-    void unfollowUser(long userId);
+    boolean isFollowing(User currentUser, long userId);
+    void followUser(User currentUser, long userId);
+    void unfollowUser(User currentUser, long userId);
     void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange);
     Page<User> searchUsers(int page, String search);
-    void pingNewsToggle(News news);
-    ProfileCategory getProfileCategory(String category, User profile);
+    void pingNewsToggle(User currentUser, News news);
+    ProfileCategory getProfileCategory(Optional<User> maybeCurrentUser, String category, User profile);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);
     boolean isUserAdmin(User user);

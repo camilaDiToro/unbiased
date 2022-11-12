@@ -67,8 +67,8 @@ public class UserController {
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}", method = RequestMethod.POST)
     public ModelAndView pingNews(@PathVariable("userId") final long userId,@PathVariable("newsId") final long newsId) {
-
-        userService.pingNewsToggle(newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
 
         return new ModelAndView("redirect:/profile/" + userId);
     }
@@ -80,13 +80,15 @@ public class UserController {
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
     public ModelAndView profileFollow(@PathVariable("userId") long userId) {
-        userService.followUser(userId);
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        userService.followUser(currentUser, userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
     public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
-        userService.unfollowUser(userId);
+        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        userService.unfollowUser(currentUser, userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
@@ -111,7 +113,7 @@ public class UserController {
             catObject = profileCategoryList.iterator().next();
         }
         else {
-            catObject = userService.getProfileCategory(category, profileUser);
+            catObject = userService.getProfileCategory(user, category, profileUser);
         }
 
 //        userService.updateEmailSettings(user.get(),true, false, true, true);
@@ -138,7 +140,7 @@ public class UserController {
                 .withStringParam(profileUser.toString());
         if(user.isPresent() && isMyProfile) {
             User loggedUser = user.get();
-            mavBuilder.withObject("isFollowing", userService.isFollowing(userId));
+            mavBuilder.withObject("isFollowing", userService.isFollowing(loggedUser, userId));
             mavBuilder.withObject("getMailOptionByEnum", loggedUser.getEmailSettings().getValueByEnum());
         }
 
