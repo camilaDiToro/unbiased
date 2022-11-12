@@ -456,9 +456,10 @@ input:-webkit-autofill:focus {
 }
 
 .right-card {
-    width: 18rem;
+    /*width: 18rem;*/
     height: fit-content;
-    margin-top: 4%
+    margin-top: 4%;
+    max-width: 100%
 }
 
 .w-30 {

@@ -22,17 +22,15 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminController {
 
     private final AdminService adminService;
-    private final NewsService newsService;
-    private final UserService userService;
+
 
     private final SecurityService securityService;
 
     @Autowired
-    public AdminController(AdminService adminService, NewsService newsService, UserService userService, SecurityService ss) {
+    public AdminController(AdminService adminService, SecurityService ss) {
         this.securityService = ss;
         this.adminService = adminService;
-        this.newsService = newsService;
-        this.userService = userService;
+
     }
 
     @ModelAttribute

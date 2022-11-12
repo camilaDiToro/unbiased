@@ -362,7 +362,7 @@
 
         </div>
         <%--RIGHT SIDE--%>
-        <div class="d-flex w-30 justify-content-center">
+        <div class="d-flex w-30 justify-content-center pr-5">
         <div class="card right-card" id="right-card">
             <c:if test="${profileUser.hasPositivityStats()}">
                 <c:set var="profilePositivityStats" value="${profileUser.getPositivityStats()}"/>
@@ -437,8 +437,8 @@
 
             <div class="card-body">
                 <h4 class="mb-0 card-title text-center"><c:out value="${profileUser.username}"/> </h4>
-                <div class="d-flex flex-row align-items-center justify-content-center">
-                    <span class="card-text text-muted d-block mb-2 text- mr-3"><c:out value="${profileUser.email}"/> </span>
+                <div class="d-flex flex-row align-items-center justify-content-center m-2 gap-2">
+                    <span class="card-text text-muted d-block"><c:out value="${profileUser.email}"/> </span>
                     <c:if test="${loggedUser != null && !isMyProfile}">
                         <c:if test="${!isFollowing}">
                             <a class="btn d-flex btn-info btn-sm text-white align-items-center justify-content-center custom-btn-follow" href="<c:url value="/profile/${userId}/follow"/>"><spring:message code="profile.follow"/></a>
