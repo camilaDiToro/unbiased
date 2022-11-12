@@ -4,11 +4,7 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
-<<<<<<< HEAD
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
-=======
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
->>>>>>> jpa
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;

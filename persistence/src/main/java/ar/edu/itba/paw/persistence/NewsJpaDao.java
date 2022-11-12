@@ -72,15 +72,6 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint, Long loggedUser) {
-<<<<<<< HEAD
-        Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query AND creation_date >= "
-                        +timeConstraint.getMinimumDateQuery() + " ORDER BY " + NewsOrder.TOP.getQueryPaged())
-                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%");
-
-        List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
-=======
         List<News> newsList = getTopNews(page, query, timeConstraint);
 
         newsList.forEach(n -> n.setUserSpecificVariables(loggedUser));
@@ -95,7 +86,6 @@ public class NewsJpaDao implements NewsDao {
 
         List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
 
->>>>>>> jpa
         return news;
     }
 
