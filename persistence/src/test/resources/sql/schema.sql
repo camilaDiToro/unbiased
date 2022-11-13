@@ -1,7 +1,6 @@
-
 CREATE TABLE IF NOT EXISTS image(
                                     image_id        SERIAL          PRIMARY KEY,
-                                    bytes           VARBINARY(100)  NOT NULL,
+                                    bytes           VARBINARY(100)          NOT NULL,
                                     data_type       VARCHAR(50)     NOT NULL
     );
 
@@ -12,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users(
     pass           VARCHAR(200)   ,
     status         TEXT           NOT NULL,
     image_id       INTEGER        ,
+
     FOREIGN KEY (image_id) REFERENCES image (image_id) ON DELETE SET NULL
     );
 
@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS email_verification_token (
                                                         user_id INT NOT NULL,
                                                         token TEXT NOT NULL,
                                                         expiration_date TIMESTAMP NOT NULL,
+
                                                         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     );
 
@@ -50,8 +51,8 @@ CREATE TABLE IF NOT EXISTS user_role (
     PRIMARY KEY (user_id, user_role),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     );
-
 CREATE TABLE IF NOT EXISTS upvotes (
+                                       id                SERIAL          PRIMARY KEY,
                                        news_id           INTEGER         NOT NULL,
                                        user_id           INTEGER         NOT NULL,
                                        upvote            BOOLEAN         NOT NULL,
@@ -59,22 +60,23 @@ CREATE TABLE IF NOT EXISTS upvotes (
 
                                        FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
-    PRIMARY KEY (news_id, user_id)
+    UNIQUE (news_id, user_id) 
 
     );
 
 CREATE TABLE IF NOT EXISTS saved_news (
+                                          id                SERIAL          PRIMARY KEY,
                                           news_id           INTEGER         NOT NULL,
                                           user_id           INTEGER         NOT NULL,
                                           saved_date        TIMESTAMP       NOT NULL,
 
                                           FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
-    PRIMARY KEY (news_id, user_id)
-
+    UNIQUE (news_id, user_id)
     );
 
 CREATE TABLE IF NOT EXISTS report (
+                                      id                SERIAL          PRIMARY KEY,
                                       news_id           INTEGER         NOT NULL,
                                       user_id           INTEGER         NOT NULL,
                                       report_date       TIMESTAMP       NOT NULL,
@@ -82,55 +84,30 @@ CREATE TABLE IF NOT EXISTS report (
 
                                       FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
-    PRIMARY KEY (news_id, user_id)
+    UNIQUE (news_id, user_id)
     );
 
-DROP VIEW IF EXISTS full_news_with_logged_params;
-
-DROP VIEW IF EXISTS full_news;
-
-DROP VIEW IF EXISTS news_stats;
-
-DROP VIEW IF EXISTS user_positivity;
-
-DROP VIEW IF EXISTS is_journalist;
-
-CREATE VIEW news_stats AS
-SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, news_id FROM upvotes GROUP BY news_id;
-
-CREATE VIEW logged_news_parameters AS
-SELECT user_id AS logged_user, news_id, upvote, saved_date
-FROM upvotes NATURAL FULL JOIN
-     saved_news;
-
-CREATE VIEW full_news AS
-SELECT  news.*, upvotes, downvotes, email, username, pass, status, users.image_id as user_image_id FROM news LEFT JOIN news_stats ON news_stats.news_id = news.news_id JOIN users ON creator = user_id;
-
-CREATE VIEW full_news_with_logged_params AS
-SELECT upvote, saved_date, logged_news_parameters.logged_user, full_news.news_id, body, title, subtitle, creator, creation_date, accesses, image_id, upvotes, downvotes, email, username, pass, status, user_image_id  FROM logged_news_parameters RIGHT JOIN full_news ON full_news.news_id = logged_news_parameters.news_id;
-
-CREATE VIEW user_positivity AS
-SELECT sum(case when upvote=true then 1 else 0 end) AS upvotes, sum(case when upvote=true then 0 else 1 end) AS downvotes, creator AS user_id FROM upvotes NATURAL JOIN news GROUP BY creator;
-
-CREATE VIEW is_journalist AS
-SELECT user_id, true as is_journalist FROM user_role where user_role = 'ROLE_JOURNALIST';
-
-
 CREATE TABLE IF NOT EXISTS follows(
+                                      id                SERIAL      PRIMARY KEY,
                                       user_id           INTEGER     NOT NULL,
                                       follows            INTEGER     NOT NULL,
+
                                       FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (follows) REFERENCES users(user_id) ON DELETE CASCADE,
-    PRIMARY KEY (follows, user_id)
+    UNIQUE (follows, user_id)
     );
 
 CREATE TABLE IF NOT EXISTS comments (
+                                        id               SERIAL           PRIMARY KEY,
                                         news_id           INTEGER         NOT NULL,
                                         user_id           INTEGER         NOT NULL,
                                         commented_date        TIMESTAMP       NOT NULL,
                                         comment        TEXT       NOT NULL,
+                                        deleted         BOOLEAN  ,
 
                                         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (news_id) REFERENCES news(news_id) ON DELETE CASCADE,
-    PRIMARY KEY (news_id, user_id, commented_date)
+    UNIQUE (news_id, user_id, commented_date)
     );
+
+
