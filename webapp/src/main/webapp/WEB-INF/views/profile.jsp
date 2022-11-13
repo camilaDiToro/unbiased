@@ -401,8 +401,9 @@
 
             </c:if>
 
-            <button data-toggle="modal" data-target="#infoModal" class="info-profile-btn bg-transparent border-0" style="background-image: url('<c:url value="/resources/images/info-svgrepo-com.svg"/>')"></button>
-
+            <span data-toggle="tooltip" data-placement="top" title="<spring:message code="tooltip.info"/> " class="info-profile-btn bg-transparent">
+                <button data-toggle="modal" data-target="#infoModal" class="info-profile-btn bg-transparent border-0" style="background-image: url('<c:url value="/resources/images/info-svgrepo-com.svg"/>')"></button>
+            </span>
             <!-- Modal -->
             <div class="modal fade" id="infomodal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
