@@ -70,7 +70,7 @@
                                                                         </c:if>
                                                                     </c:if>
                                                                     <c:if test="${!loggedUser.hasImage()}">
-                                                                        <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle">
+                                                                        <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle object-fit-cover mr-1">
                                                                     </c:if>
                                                                 </div>
                                                         </div>
