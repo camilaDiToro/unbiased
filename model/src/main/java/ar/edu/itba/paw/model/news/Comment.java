@@ -46,8 +46,6 @@ public class Comment {
 
     private boolean deleted;
 
-    private boolean deleted;
-
     public News getNews() {
         return news;
     }

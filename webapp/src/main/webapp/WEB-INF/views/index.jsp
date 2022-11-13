@@ -54,9 +54,9 @@
                         <a class="btn dropdown-toggle text-white" data-toggle="dropdown" href="#">
                             ${selected} <span class="caret"></span>
                         </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu bg-dropdown">
                                 <c:forEach var="timeConstraint" items="${timeConstraints}">
-                                    <li><a href="<c:url value="/TOP">
+                                    <li><a class="dropdown-items" href="<c:url value="/TOP">
                             <c:param name = "query" value = "${param.query}"/>
                             <c:param name = "category" value = "${param.category}"/>
                             <c:param name = "type" value = "${param.type}"/>
