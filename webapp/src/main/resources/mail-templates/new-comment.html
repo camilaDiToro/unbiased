@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org ">
 <head>
     <meta name="x-apple-disable-message-reformatting">
     <meta charset="UTF-8">
-    <title>New follower</title>
+    <title>New comment</title>
     <style>
         .bg {
             background-color: #1e1e2d;
@@ -64,14 +65,19 @@
     </div>
 </div>
 
-<div style="align-items: center;justify-content: center; display: flex" >
-    <img class="img-contenedor" src="https://i.imgur.com/dMtrQKo.png"  style="float:left;"
-         alt="comment_logo" data-image-whitelisted="">
-    <div>
-        <p class="h-color" th:href="${username}"></p>
-        <p class="p-color" th:text="#{email.comment.subtitle}"></p>
-    </div>
-</div>
+
+<table style="margin:auto; text-align: center">
+    <tr>
+        <td><div>
+                <img class="img-contenedor" src="https://i.imgur.com/dMtrQKo.png" style="float:left;"
+                     alt="comment_logo" data-image-whitelisted="">
+                <div>
+                    <p class="h-color" th:href="${username}"></p>
+                    <p class="p-color" th:text="#{email.comment.subtitle}"></p>
+                </div>
+        </div></td>
+    </tr>
+</table>
 
 <br/>
 

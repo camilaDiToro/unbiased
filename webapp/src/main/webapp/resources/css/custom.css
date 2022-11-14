@@ -1053,3 +1053,19 @@ input:checked + .slider:before {
     linear-gradient(to right, #e80033, #fdbb30, #ed8b00, #f15d22, #bf0d3e, #910048) border-box;
     border: 2px solid transparent;
 }
+
+.index-dropdown{
+    background:  #1e1e2d;
+    margin-left: 1px;
+}
+
+.dropdown-items{
+    color: white;
+    padding:3px;
+}
+
+.dropdown-items:hover {
+    color: #68717A;
+    background-color: transparent;
+    text-decoration: none;
+}
