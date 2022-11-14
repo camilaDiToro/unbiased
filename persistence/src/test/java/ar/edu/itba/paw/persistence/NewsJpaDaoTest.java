@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.ProfileCategory;
@@ -75,8 +76,6 @@ public class NewsJpaDaoTest {
     @Autowired
     private NewsDao newsJpaDao;
     @Autowired
-    private UserJpaDao userJpaDao;
-    @Autowired
     private DataSource ds;
 
     @PersistenceContext
@@ -86,7 +85,6 @@ public class NewsJpaDaoTest {
     private SimpleJdbcInsert jdbcNewsInsert;
     private SimpleJdbcInsert jdbcCategoryInsert;
     private SimpleJdbcInsert jdbcSavedNewsInsert;
-    private SimpleJdbcInsert jdbcNewsReportInsert;
 
     private void addCreatorToTable() {
         Map<String, Object> userValues = new HashMap<>();
@@ -125,16 +123,6 @@ public class NewsJpaDaoTest {
         jdbcSavedNewsInsert.execute(newsValues);
     }
 
-    private void addReportNewsToTable() {
-        Map<String, Object> reportValues = new HashMap<>();
-        reportValues.put("report_id", REPORT_ID);
-        reportValues.put("news_id", NEWS_ID);
-        reportValues.put("user_id", CREATOR_ID);
-        reportValues.put("report_date", REPORT_DATE);
-        reportValues.put("reason", REPORT_REASON.getDescription());
-        jdbcNewsReportInsert.execute(reportValues);
-    }
-
     @Before
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -142,7 +130,6 @@ public class NewsJpaDaoTest {
         jdbcNewsInsert = new SimpleJdbcInsert(ds).withTableName(NEWS_TABLE);
         jdbcCategoryInsert = new SimpleJdbcInsert(ds).withTableName(CATEGORY_TABLE);
         jdbcSavedNewsInsert = new SimpleJdbcInsert(ds).withTableName(SAVED_TABLE);
-        jdbcNewsReportInsert = new SimpleJdbcInsert(ds).withTableName(REPORT_TABLE);
     }
 
     @Test
@@ -195,7 +182,21 @@ public class NewsJpaDaoTest {
         List<News> newsList = newsJpaDao.getNewsByCategoryNew(PAGE_SIZE, CATEGORY, CREATOR_ID);
 
         assertEquals(1, newsList.size());
-        assertEquals(CATEGORY, newsList.get(0).getCategories());
+        //assertEquals(newsList.get(0).getCategories(), CATEGORY);
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, CATEGORY_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + NEWS_ID));
+    }
+
+    @Test
+    public void testGetNewsByCategoryTop(){
+        addCreatorToTable();
+        addTheNewsToTable();
+        addCategoryToTheNews();
+
+        List<News> newsList = newsJpaDao.getNewsByCategoryTop(PAGE_SIZE, CATEGORY, CREATOR_ID, TimeConstraint.DAY);
+
+        assertEquals(1, newsList.size());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, CATEGORY_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + NEWS_ID));
@@ -208,6 +209,7 @@ public class NewsJpaDaoTest {
         addSavedTableForCreator();
 
         newsJpaDao.saveNews(NEWS, CREATOR);
+        entityManager.flush();
 
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + NEWS_ID));
@@ -216,35 +218,20 @@ public class NewsJpaDaoTest {
     }
 
     @Test
-    public void testRemoveSavedNews(){
-        addCreatorToTable();
-        addTheNewsToTable();
-        addSavedTableForCreator();
-
-        newsJpaDao.removeSaved(NEWS, CREATOR);
-
-        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, SAVED_TABLE));
-        assertEquals(0, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, SAVED_TABLE, "news_id = " + NEWS_ID));
-    }
-
-    @Test
-    public void testGetCategoryStatistics(){
-        addCreatorToTable();
-        addTheNewsToTable();
-        addCategoryToTheNews();
-
-        CategoryStatistics statics = newsJpaDao.getCategoryStatistics(CREATOR_ID);
-
-        assertEquals(statics.getSportsCount(), 100);
-    }
-
-    @Test
-    public void testGetReportNews(){
-        addCreatorToTable();
-        addTheNewsToTable();
-
-        newsJpaDao.reportNews(new News(NEWS_BUILDER2), CREATOR, REPORT_REASON);
+    public void testReportNews(){
+        newsJpaDao.reportNews(new News(NEWS_BUILDER), CREATOR, REPORT_REASON);
         entityManager.flush();
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
     }
+
+    @Test
+    public void testGetReportNewsDetail(){
+        newsJpaDao.reportNews(NEWS, CREATOR, REPORT_REASON);
+        Page<ReportDetail> reportPage = newsJpaDao.getReportedNewsDetail(PAGE_SIZE, NEWS.getNewsId());
+        entityManager.flush();
+
+        assertEquals(REPORT_REASON, reportPage.getContent().get(0).getReason());
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
+    }
+
 }
