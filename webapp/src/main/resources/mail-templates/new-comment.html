@@ -65,14 +65,19 @@
     </div>
 </div>
 
-<div style="align-items: center;justify-content: center; display: flex" >
-    <img class="img-contenedor" src="https://i.imgur.com/dMtrQKo.png"  style="float:left;"
-         alt="comment_logo" data-image-whitelisted="">
-    <div>
-        <p class="h-color" th:href="${username}"></p>
-        <p class="p-color" th:text="#{email.comment.subtitle}"></p>
-    </div>
-</div>
+
+<table style="margin:auto; text-align: center">
+    <tr>
+        <td><div>
+                <img class="img-contenedor" src="https://i.imgur.com/dMtrQKo.png" style="float:left;"
+                     alt="comment_logo" data-image-whitelisted="">
+                <div>
+                    <p class="h-color" th:href="${username}"></p>
+                    <p class="p-color" th:text="#{email.comment.subtitle}"></p>
+                </div>
+        </div></td>
+    </tr>
+</table>
 
 <br/>
 

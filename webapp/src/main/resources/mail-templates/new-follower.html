@@ -64,15 +64,18 @@
   </div>
 </div>
 
-<div style="align-items: center;justify-content: center; display: flex" >
-  <img class="img-contenedor" src="https://imgur.com/1PT60Sp.png"  style="float:left;"
-       alt="follow_logo" data-image-whitelisted="">
-  <div>
-    <a class="h-color" th:href="${username}"></a>
-    <p class="p-color" th:text="#{email.follow.subtitle}"></p>
-  </div>
-</div>
-
+<table style="margin:auto; text-align: center">
+  <tr>
+    <td><div>
+      <img class="img-contenedor" src="https://imgur.com/1PT60Sp.png"  style="float:left;"
+           alt="follow_logo" data-image-whitelisted="">
+      <div>
+        <a class="h-color" th:href="${username}"></a>
+        <p class="p-color" th:text="#{email.follow.subtitle}"></p>
+      </div>
+    </div></td>
+  </tr>
+</table>
 <br/>
 
 <div style="text-align: center">
