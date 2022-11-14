@@ -85,7 +85,7 @@ public class Comment {
     }
 
     public PositivityStats getPositivityStats() {
-        Collection<CommentUpvote> set = upvoteMap.values();
+        final Collection<CommentUpvote> set = upvoteMap.values();
         final int total = set.size();
         final int upvotes =
                 set.stream().map(u -> u.isValue() ? 1 : 0)

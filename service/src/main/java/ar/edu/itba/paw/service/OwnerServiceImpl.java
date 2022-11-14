@@ -30,7 +30,7 @@ public class OwnerServiceImpl implements OwnerService{
         final User user = userDao.findByEmail(email).orElseThrow(UserNotFoundException::new);
         if(!user.getRoles().contains(Role.ROLE_ADMIN)){
             user.addRole(Role.ROLE_ADMIN);
-            Locale locale = user.getEmailSettings() != null ? user.getEmailSettings().getLocale() : LocaleContextHolder.getLocale();
+            final Locale locale = user.getEmailSettings() != null ? user.getEmailSettings().getLocale() : LocaleContextHolder.getLocale();
             emailService.sendAdminEmail(user, locale);
         }
     }

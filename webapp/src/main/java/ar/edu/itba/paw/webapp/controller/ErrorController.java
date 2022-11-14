@@ -14,7 +14,7 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @RequestMapping("/400")
     public ModelAndView error400() {
-        ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
+        final ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","400");
         return mav;
     }
@@ -40,7 +40,7 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @RequestMapping("/401")
     public ModelAndView error401() {
-        ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
+        final ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","401");
         return mav;
     }
@@ -48,7 +48,7 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @RequestMapping( "/403")
     public ModelAndView error403() {
-        ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
+        final ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","403");
         return mav;
     }
@@ -56,7 +56,7 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @RequestMapping( "/404")
     public ModelAndView error404() {
-        ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
+        final ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","404");
         return mav;
     }
@@ -64,7 +64,7 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @RequestMapping( "/405")
     public ModelAndView error405() {
-        ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
+        final ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","405");
         return mav;
     }
@@ -72,7 +72,7 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @RequestMapping( "/500")
     public ModelAndView error500() {
-        ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
+        final ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
         mav.addObject("errorCode","500");
         return mav;
     }

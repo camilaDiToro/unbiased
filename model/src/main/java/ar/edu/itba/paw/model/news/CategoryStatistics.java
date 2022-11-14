@@ -58,7 +58,7 @@ public class CategoryStatistics {
     }
 
     public Map<Category, Statistic> getStatiscticsMap() {
-        Map<Category, Statistic> statisticsMap = new HashMap<>();
+        final Map<Category, Statistic> statisticsMap = new HashMap<>();
         statisticsMap.put(Category.ECONOMICS, new Statistic(economicsCount, allCount));
         statisticsMap.put(Category.SHOW, new Statistic(showCount, allCount));
         statisticsMap.put(Category.POLITICS, new Statistic(politicsCount, allCount));
@@ -69,9 +69,9 @@ public class CategoryStatistics {
     }
 
     public static class Statistic {
-        private long qty;
+        private final long qty;
 
-        public long getQty() {
+        public final long getQty() {
             return qty;
         }
 
@@ -79,12 +79,11 @@ public class CategoryStatistics {
             return percentage;
         }
 
-        private int percentage;
+        private final int percentage;
         private Statistic(long qty, long total) {
             this.qty = qty;
             double hola = ((double) qty) /total;
             this.percentage = (int) Math.round((((double) qty) /total)*100);
-//            this.percentage = 20;
         }
     }
 }

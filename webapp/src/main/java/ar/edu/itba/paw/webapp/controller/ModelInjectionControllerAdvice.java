@@ -25,8 +25,8 @@ public class ModelInjectionControllerAdvice {
 
     @ModelAttribute
     public void addAttributes(Model model) {
-        Optional<User> maybeUser = securityService.getCurrentUser();
-        User user = maybeUser.orElse(null);
+        final Optional<User> maybeUser = securityService.getCurrentUser();
+        final User user = maybeUser.orElse(null);
 
         model.addAttribute("loggedUser", user);
         if(user != null)

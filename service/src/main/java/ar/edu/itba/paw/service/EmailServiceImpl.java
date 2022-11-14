@@ -59,7 +59,7 @@ public class EmailServiceImpl implements EmailService {
         final String to = user.getEmail();
         final String url = getUrl("verify_email?token=" + token.getToken());
         final String subject = messageSource.getMessage("email.verification.subject",null,locale);
-        Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("verificationUrl",url);
         try {
             sendMessageUsingThymeleafTemplate(to,subject,"verify-email.html",data,locale);
@@ -74,7 +74,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendAdminEmail(User user, Locale locale) {
         final String to = user.getEmail();
         final String subject = messageSource.getMessage("email.admin.subject",null,locale);
-        Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         final String url = getUrl("admin/reported_news/REP_COUNT_DESC");
         data.put("username", user.getUsername());
         data.put("urlToAdminPanel",url);
@@ -92,7 +92,7 @@ public class EmailServiceImpl implements EmailService {
         final String to = user.getEmail();
         final String subject = messageSource.getMessage("email.newsDeleted.subject",null,locale);
         final String url = getUrl("create_article");
-        Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("urlToCreateArticle",url);
         try {
             sendMessageUsingThymeleafTemplate(to,subject,"news-deleted.html",data,locale);
@@ -108,7 +108,7 @@ public class EmailServiceImpl implements EmailService {
         final String to = user.getEmail();
         final String subject = messageSource.getMessage("email.newFollower.subject",null,locale);
         final String url = getUrl("create_article");
-        Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("urlToCreateArticle",url);
         try {
             sendMessageUsingThymeleafTemplate(to,subject,"new-follower.html",data,locale);
@@ -124,7 +124,7 @@ public class EmailServiceImpl implements EmailService {
         final String to = newsOwner.getEmail();
         final String subject = messageSource.getMessage("email.newComment.subject",null,locale);
         final String url = getUrl("news/"+commentedNews.getNewsId());
-        Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("urlToCommentedNews",url);
         try {
             sendMessageUsingThymeleafTemplate(to,subject,"new-comment.html",data,locale);
@@ -140,7 +140,7 @@ public class EmailServiceImpl implements EmailService {
         final String to = newsOwner.getEmail();
         final String subject = messageSource.getMessage("email.newPositivity.subject",null,locale);
         final String url = getUrl("news/"+news.getNewsId());
-        Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("urlToArticle",url);
         try {
             sendMessageUsingThymeleafTemplate(to,subject,"new-status-positivity.html",data,locale);
@@ -154,11 +154,11 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendNewPublishedNewsByFollowing(User user, News publishedNews, Locale locale) {
         final String to = user.getEmail();
-        Object[] args
+        final Object[] args
                 = { publishedNews.getCreator().toString() };
         final String subject = messageSource.getMessage("email.newsAddedByfollowing.subject",args,locale);
         final String url = getUrl("news/"+ publishedNews.getNewsId());
-        Map<String, Object> data = new HashMap<>();
+        final Map<String, Object> data = new HashMap<>();
         data.put("urlToCreatedArticle",url);
         try {
             sendMessageUsingThymeleafTemplate(to,subject,"new-article.html",data,locale);
@@ -170,8 +170,8 @@ public class EmailServiceImpl implements EmailService {
 
     /* https://www.baeldung.com/spring-email-templates */
     private void sendHtmlMessage(String to, String subject, String htmlBody) throws MessagingException {
-        MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        final MimeMessage message = emailSender.createMimeMessage();
+        final MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlBody, true);
@@ -179,9 +179,9 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private void sendMessageUsingThymeleafTemplate(String to, String subject, String template, Map<String, Object> templateModel, Locale locale) throws MessagingException {
-        Context thymeleafContext = new Context(locale);
+        final Context thymeleafContext = new Context(locale);
         thymeleafContext.setVariables(templateModel);
-        String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
+        final String htmlBody = thymeleafTemplateEngine.process(template, thymeleafContext);
         sendHtmlMessage(to, subject, htmlBody);
     }
 }

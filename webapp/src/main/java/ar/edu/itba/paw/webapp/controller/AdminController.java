@@ -41,7 +41,7 @@ public class AdminController {
     @RequestMapping(value = "/admin/reported_news/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView reportedNews(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("newsOrder") String newsOrder) {
-        ReportOrder order = ReportOrder.getByValue(newsOrder);
+        final ReportOrder order = ReportOrder.getByValue(newsOrder);
 
         final Page<News> reportedNewsPage = adminService.getReportedNews(page, order);
         return new MyModelAndView.Builder("moderation_panel_reported_news", "pageTitle.moderationPanel", TextType.INTERCODE)
@@ -55,7 +55,7 @@ public class AdminController {
     @RequestMapping(value = "/admin/reported_comments/{commentOrder}", method = RequestMethod.GET)
     public ModelAndView reportedComments(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("commentOrder") String commentOrder) {
-        ReportOrder order = ReportOrder.getByValue(commentOrder);
+        final ReportOrder order = ReportOrder.getByValue(commentOrder);
         final Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, order);
         return new MyModelAndView.Builder("moderation_panel_reported_comments", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("commentsPage", reportedCommentsPage)

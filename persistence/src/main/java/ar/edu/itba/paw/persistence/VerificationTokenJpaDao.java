@@ -21,7 +21,7 @@ public class VerificationTokenJpaDao implements VerificationTokenDao{
 
     @Override
     public VerificationToken createEmailToken(long userId, String token, LocalDateTime expiryDate) {
-        VerificationToken verificationToken = new VerificationToken(token, userId, expiryDate);
+        final VerificationToken verificationToken = new VerificationToken(token, userId, expiryDate);
         entityManager.persist(verificationToken);
         LOGGER.debug("Verification token {} with id {} created for user with id {}", verificationToken.getToken(), verificationToken.getId(), verificationToken.getUserId());
         return verificationToken;

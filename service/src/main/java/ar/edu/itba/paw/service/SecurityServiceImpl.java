@@ -32,7 +32,7 @@ public class SecurityServiceImpl implements SecurityService {
     @Cacheable
     @Override
     public Optional<User> getCurrentUser() {
-        Optional<String> mayBeEmail = getCurrentUserEmail();
+        final Optional<String> mayBeEmail = getCurrentUserEmail();
 
         if (!mayBeEmail.isPresent()){
             return Optional.empty();
@@ -43,7 +43,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public boolean isCurrentUserAdmin() {
-        Optional<User> mayBeUser = getCurrentUser();
+        final Optional<User> mayBeUser = getCurrentUser();
         if(!mayBeUser.isPresent()){
             return false;
         }

@@ -29,16 +29,16 @@ public class UserController {
 
     private final UserService userService;
     private final NewsService newsService;
-    private final OwnerCheck ownerCheck;
+
 
     private final SecurityService securityService;
 
     @Autowired
-    public UserController(UserService userService, SecurityService securityService, NewsService newsService, OwnerCheck ownerCheck) {
+    public UserController(UserService userService, SecurityService securityService, NewsService newsService) {
         this.securityService = securityService;
         this.userService = userService;
         this.newsService = newsService;
-        this.ownerCheck = ownerCheck;
+
     }
 
     @RequestMapping("/login")
@@ -59,7 +59,7 @@ public class UserController {
             return createForm(userForm);
         }
 
-        User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
+        final User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
 
         userService.create(userBuilder);
         return new ModelAndView("email_verification_pending");
@@ -67,7 +67,7 @@ public class UserController {
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}", method = RequestMethod.POST)
     public ModelAndView pingNews(@PathVariable("userId") final long userId,@PathVariable("newsId") final long newsId) {
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
         userService.pingNewsToggle(currentUser, newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new));
 
         return new ModelAndView("redirect:/profile/" + userId);
@@ -80,14 +80,14 @@ public class UserController {
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
     public ModelAndView profileFollow(@PathVariable("userId") long userId) {
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
         userService.followUser(currentUser, userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
     public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
         userService.unfollowUser(currentUser, userId);
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
@@ -102,13 +102,13 @@ public class UserController {
                                 @RequestParam(name = "page", defaultValue = "1") int page,
                                 @RequestParam(name = "category", defaultValue = "") String category,
                                 @RequestParam(name = "hasErrors", defaultValue = "false") boolean hasErrors) {
-        Optional<User> user =  securityService.getCurrentUser();
-        User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
+        final Optional<User> user =  securityService.getCurrentUser();
+        final User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
 
-        CategoryStatistics categoryStatistics = newsService.getCategoryStatistics(userId);
+        final CategoryStatistics categoryStatistics = newsService.getCategoryStatistics(userId);
 
-        Iterable<ProfileCategory> profileCategoryList = newsService.getProfileCategories(user, profileUser);
-        ProfileCategory catObject;
+        final Iterable<ProfileCategory> profileCategoryList = newsService.getProfileCategories(user, profileUser);
+        final ProfileCategory catObject;
         if (category.equals("")){
             catObject = profileCategoryList.iterator().next();
         }
@@ -116,10 +116,8 @@ public class UserController {
             catObject = userService.getProfileCategory(user, category, profileUser);
         }
 
-//        userService.updateEmailSettings(user.get(),true, false, true, true);
-
-        Page<News> fullNews = newsService.getNewsForUserProfile(user, page, NewsOrder.getByValue(newsOrder), profileUser, catObject);
-        boolean isMyProfile = profileUser.equals(user.orElse(null));
+        final Page<News> fullNews = newsService.getNewsForUserProfile(user, page, NewsOrder.getByValue(newsOrder), profileUser, catObject);
+        final boolean isMyProfile = profileUser.equals(user.orElse(null));
 
         MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("profile", "pageTitle.profile", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
@@ -139,7 +137,7 @@ public class UserController {
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
         if(user.isPresent() && isMyProfile) {
-            User loggedUser = user.get();
+            final User loggedUser = user.get();
             mavBuilder.withObject("isFollowing", userService.isFollowing(loggedUser, userId));
             mavBuilder.withObject("getMailOptionByEnum", loggedUser.getEmailSettings().getValueByEnum());
         }
@@ -152,8 +150,8 @@ public class UserController {
 
     @RequestMapping(value = "/profile", method = RequestMethod.POST)
     public ModelAndView profilePicture(@Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
-        User user = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-        long userId = user.getId();
+        final User user = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        final long userId = user.getId();
         if (errors.hasErrors()) {
             return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
         }
@@ -166,8 +164,8 @@ public class UserController {
 
     @RequestMapping("/verify_email")
     public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
-        VerificationToken.Status status = userService.verifyUserEmail(token);
-        ModelAndView mav;
+        final VerificationToken.Status status = userService.verifyUserEmail(token);
+        final ModelAndView mav;
         if(status.equals(VerificationToken.Status.SUCCESFFULLY_VERIFIED)){
             mav = new MyModelAndView.Builder("email_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                     .build();
@@ -180,7 +178,7 @@ public class UserController {
     @RequestMapping(value = "/email_not_verified/{status:expired|not_exists}", method = RequestMethod.GET)
     public ModelAndView resendVerificationEmail(@ModelAttribute("resendEmailForm") final ResendVerificationEmail userForm, @PathVariable("status") String status) {
 
-        MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("email_not_verified", "pageTitle.emailVerified", TextType.INTERCODE)
+        final MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("email_not_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                 .withObject("status",status);
 
         if(status.equals("expired")){
@@ -197,7 +195,7 @@ public class UserController {
             return resendVerificationEmail(userForm, status);
         }
 
-        VerificationToken.Status s = userService.resendEmailVerification(userForm.getEmail());
+        final VerificationToken.Status s = userService.resendEmailVerification(userForm.getEmail());
         if(s.equals(VerificationToken.Status.ALREADY_VERIFIED)){
             return new ModelAndView("email_already_verified");
         }

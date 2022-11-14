@@ -143,8 +143,8 @@ public class News {
     }
 
     public void setUserSpecificVariables(long userId) {
-        Upvote upvote = upvoteMap.get(userId); // TODO fix
-        Rating rating = upvote != null ? (upvote.isValue() ? Rating.UPVOTE : Rating.DOWNVOTE) : Rating.NO_RATING;
+        final Upvote upvote = upvoteMap.get(userId); // TODO fix
+        final Rating rating = upvote != null ? (upvote.isValue() ? Rating.UPVOTE : Rating.DOWNVOTE) : Rating.NO_RATING;
         loggedUserParameters = new LoggedUserParameters(rating, usersSaved.containsKey(userId));
     }
 
@@ -236,8 +236,8 @@ public class News {
     }
 
     public PositivityStats getPositivityStats() {
-        Collection<Upvote> set = upvoteMap.values();
-        int total = set.size();
+        final Collection<Upvote> set = upvoteMap.values();
+        final int total = set.size();
         upvotes =
                 set.stream().map(u -> u.isValue() ? 1 : 0)
                         .reduce(0, Integer::sum);

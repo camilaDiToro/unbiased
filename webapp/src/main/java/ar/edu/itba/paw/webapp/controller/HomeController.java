@@ -22,7 +22,6 @@ public class HomeController{
 
     private final UserService userService;
     private final NewsService newsService;
-
     private final SecurityService securityService;
 
     @Autowired
@@ -45,14 +44,14 @@ public class HomeController{
             @RequestParam(name = "category", defaultValue = "ALL") final String category,
             @RequestParam(name="type", defaultValue="article") String type,
             @RequestParam(name="time", defaultValue="WEEK") String time){
-        Optional<User> maybeUser = securityService.getCurrentUser();
+        final Optional<User> maybeUser = securityService.getCurrentUser();
 
 
-        TimeConstraint timeConstraint = TimeConstraint.getByValue(time);
-        NewsOrder newsOrder = NewsOrder.getByValue(orderBy);
-        Page<News> newsPage = newsService.getNews(maybeUser, page, Category.getByValue(category), newsOrder, timeConstraint, query);
+        final TimeConstraint timeConstraint = TimeConstraint.getByValue(time);
+        final NewsOrder newsOrder = NewsOrder.getByValue(orderBy);
+        final Page<News> newsPage = newsService.getNews(maybeUser, page, Category.getByValue(category), newsOrder, timeConstraint, query);
 
-        MyModelAndView.Builder builder= new MyModelAndView.Builder("index", "pageTitle.home", TextType.INTERCODE)
+        final MyModelAndView.Builder builder= new MyModelAndView.Builder("index", "pageTitle.home", TextType.INTERCODE)
                 .withObject("orders", NewsOrder.values())
                 .withObject("orderBy", newsOrder)
                 .withObject("query", query)
@@ -74,11 +73,11 @@ public class HomeController{
     }
 
     private ResponseEntity<UpvoteActionResponse> toggleHandler(UpvoteAction payload, Rating action) {
-        final Long newsId = payload.getNewsId();
+        final long newsId = payload.getNewsId();
         final boolean isActive = payload.isActive();
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
 
-        News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
+        final News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
         newsService.setRating(currentUser, news, isActive ? action : Rating.NO_RATING);
 
         return new ResponseEntity<>(new UpvoteActionResponse(news.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);

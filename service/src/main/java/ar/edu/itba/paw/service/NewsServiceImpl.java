@@ -51,8 +51,8 @@ public class NewsServiceImpl implements NewsService {
             newsBuilder.addCategory(c);
         }
 
-        News createdNews = newsDao.create(newsBuilder);
-        List<User> userList = userDao.getFollowersWithEmailPublishNewsActive(createdNews.getCreator());
+        final News createdNews = newsDao.create(newsBuilder);
+        final List<User> userList = userDao.getFollowersWithEmailPublishNewsActive(createdNews.getCreator());
 
         for(User u : userList){
             emailService.sendNewPublishedNewsByFollowing(u,createdNews,u.getEmailSettings().getLocale());
@@ -60,22 +60,14 @@ public class NewsServiceImpl implements NewsService {
         return createdNews;
     }
 
-//    private User getLoggedUser() {
-//        return securityService.getCurrentUser().orElse(null);
-//    }
-
-//    private Long getLoggedUserId() {
-//        return securityService.getCurrentUser().map(User::getId).orElse(null);
-//    }
-
     @Override
     public Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query) {
-        int totalPages;
-        boolean isPresent = maybeCurrentUser.isPresent();
+        final int totalPages;
+        final boolean isPresent = maybeCurrentUser.isPresent();
 
         page = page <= 0 ? 1 : page;
 
-        List<News> ln;
+        final List<News> ln;
 
         if (category.equals(Category.ALL)) {
             if (newsOrder.equals(NewsOrder.NEW)) {
@@ -88,7 +80,7 @@ public class NewsServiceImpl implements NewsService {
         } else if (category.equals(Category.FOR_ME)) {
             if (!isPresent)
                 throw new UserNotAuthorized();
-            User currentUser = maybeCurrentUser.get();
+            final User currentUser = maybeCurrentUser.get();
             if(newsOrder.equals(NewsOrder.NEW)) {
                 totalPages = newsDao.getRecommendationNewsPageCountNew(currentUser);
                 ln = newsDao.getRecommendationNew(page, maybeCurrentUser.get());
@@ -117,7 +109,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Page<News> getNewsForUserProfile(Optional<User> maybeCurrentUser, int page, NewsOrder newsOrder, User user, ProfileCategory profileCategory) {
 
-        Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrder, maybeCurrentUser, profileCategory);
+        final Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrder, maybeCurrentUser, profileCategory);
         maybeCurrentUser.ifPresent(value -> pageObj.getContent().remove(value.getPingedNews()));
         return pageObj;
     }
@@ -126,22 +118,20 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public void setRating(User currentUser, News news, Rating rating) {
 
-        PositivityStats.Positivity oldp = news.getPositivityStats().getPositivity();
-//        newsDao.setRating(news, user, Rating.NO_RATING);
-        Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
+        final PositivityStats.Positivity oldp = news.getPositivityStats().getPositivity();
+        final Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
         if (rating.equals(Rating.NO_RATING)) {
             upvoteMap.remove(currentUser.getId());
             return;
         }
-        long userId = currentUser.getId();
+        final long userId = currentUser.getId();
 
         upvoteMap.putIfAbsent(userId, new Upvote(news, currentUser.getId()));
         upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
 
-        //newsDao.setRating(news, user, rating);
-        PositivityStats.Positivity newp = news.getPositivityStats().getPositivity();
+        final PositivityStats.Positivity newp = news.getPositivityStats().getPositivity();
         if(oldp != newp){
-            User creator = news.getCreator();
+            final User creator = news.getCreator();
             if(creator.getEmailSettings() != null && creator.getEmailSettings().isPositivityChange()){
                 emailService.sendNewsPositivityChanged(creator, news, creator.getEmailSettings().getLocale());
             }
@@ -156,7 +146,7 @@ public class NewsServiceImpl implements NewsService {
             upvoteMap.remove(currentUser.getId());
             return;
         }
-        long userId = currentUser.getId();
+        final long userId = currentUser.getId();
 
         upvoteMap.putIfAbsent(userId, new CommentUpvote(comment, currentUser.getId()));
         upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
@@ -165,11 +155,10 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public boolean toggleSaveNews(User currentUser, long newsId) {
-//        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
 
-        News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(NewsNotFoundException::new);
+        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(NewsNotFoundException::new);
 
-        boolean returnValue;
+        final boolean returnValue;
         if (news.getLoggedUserParameters().isSaved()) {
             newsDao.removeSaved(news, currentUser);
             returnValue =  false;
@@ -192,7 +181,7 @@ public class NewsServiceImpl implements NewsService {
     public Iterable<ProfileCategory> getProfileCategories(Optional<User> maybeCurrentUser, User user) {
 
 //        Optional<String> email = securityService.getCurrentUserEmail();
-        boolean isMyProfile =  maybeCurrentUser.isPresent() && maybeCurrentUser.get().equals(user);
+        final boolean isMyProfile =  maybeCurrentUser.isPresent() && maybeCurrentUser.get().equals(user);
         return Arrays.stream(ProfileCategory.values()).filter(c -> {
             if (!isMyProfile && c.equals(ProfileCategory.SAVED)) {
                 return false;
@@ -232,9 +221,9 @@ public class NewsServiceImpl implements NewsService {
             if (!maybeLoggedUser.isPresent())
                 return Rating.NO_RATING;
 
-            User user = maybeLoggedUser.get();
+            final User user = maybeLoggedUser.get();
 
-            Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
+            final Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
 
             if (!upvoteMap.containsKey(user.getId()))
                 return Rating.NO_RATING;
@@ -247,11 +236,10 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public void addComment(User currentUser, long newsId, String comment) {
-//        User user = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        News news = getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
+        final News news = getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
         commentDao.addComment(currentUser, news, comment);
-        User newsOwner = news.getCreator();
-        EmailSettings emailSettings = newsOwner.getEmailSettings();
+        final User newsOwner = news.getCreator();
+        final EmailSettings emailSettings = newsOwner.getEmailSettings();
         if(emailSettings!=null && emailSettings.isComment()){
             emailService.sendNewCommentEmail(newsOwner,news,emailSettings.getLocale());
         }

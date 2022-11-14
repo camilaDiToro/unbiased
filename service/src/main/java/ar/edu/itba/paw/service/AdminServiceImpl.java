@@ -76,7 +76,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public void deleteNews(final User currentUser, long newsId) {
-        Locale locale = currentUser.getEmailSettings() != null ? currentUser.getEmailSettings().getLocale() :  LocaleContextHolder.getLocale();
+        final Locale locale = currentUser.getEmailSettings() != null ? currentUser.getEmailSettings().getLocale() :  LocaleContextHolder.getLocale();
         final News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
         emailService.sendNewsDeletedEmail(news.getCreator(), news, locale);
         newsService.deleteNews(news);

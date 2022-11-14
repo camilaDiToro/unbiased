@@ -29,7 +29,7 @@ public class ImageJpaDao implements ImageDao {
     @Override
     @Transactional
     public Image uploadImage(byte[] bytes, String dataType) {
-        Image image = new Image(bytes, dataType);
+        final Image image = new Image(bytes, dataType);
         entityManager.persist(image);
         return image;
     }

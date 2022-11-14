@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         }
         final User user = userDao.create(userBuilder);
         final VerificationToken token = verificationTokenService.newToken(user.getId());
-        Locale locale = LocaleContextHolder.getLocale();
+        final Locale locale = LocaleContextHolder.getLocale();
         emailService.sendVerificationEmail(user, token, locale);
         final EmailSettings emailSettings = new EmailSettings(true,true,false,true,locale, user);
         user.setEmailSettings(emailSettings);
@@ -74,12 +74,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public VerificationToken.Status verifyUserEmail(String token) {
-        Optional<VerificationToken> mayBeVt = verificationTokenService.getToken(token);
+        final Optional<VerificationToken> mayBeVt = verificationTokenService.getToken(token);
         if(!mayBeVt.isPresent()){
             LOGGER.info("Trying to validate token {}, but it does not exist", token);
             return VerificationToken.Status.NOT_EXISTS;
         }
-        VerificationToken vt = mayBeVt.get();
+        final VerificationToken vt = mayBeVt.get();
 
         if(!vt.isValidToken()){
             LOGGER.info("Trying to validate token {}, but it has expired", token);
@@ -95,13 +95,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public VerificationToken.Status resendEmailVerification(String email) {
 
-        Optional<User> mayBeUser = userDao.findByEmail(email);
+        final Optional<User> mayBeUser = userDao.findByEmail(email);
         if(!mayBeUser.isPresent()){
             LOGGER.info("Trying to resend verification email to {}, but this email does not exist", email);
             return VerificationToken.Status.NOT_EXISTS;
         }
 
-        User user = mayBeUser.get();
+        final User user = mayBeUser.get();
         if(!user.getStatus().equals(UserStatus.UNABLE)){
             LOGGER.info("Trying to resend verification email to {}, but this email is already registered", email);
             return VerificationToken.Status.ALREADY_VERIFIED;
@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
 
         verificationTokenService.deleteEmailToken(user.getId());
         final VerificationToken token = verificationTokenService.newToken(user.getId());
-        Locale locale = LocaleContextHolder.getLocale();
+        final Locale locale = LocaleContextHolder.getLocale();
         emailService.sendVerificationEmail(user, token, locale);
         return VerificationToken.Status.SUCCESSFULLY_RESENDED;
     }
@@ -145,9 +145,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void followUser(final User currentUser, long userId) {
-        User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         userDao.addFollow(currentUser.getId(), userId);
-        EmailSettings emailSettings = following.getEmailSettings();
+        final EmailSettings emailSettings = following.getEmailSettings();
         if(emailSettings!= null && emailSettings.isFollow()){
             emailService.sendNewFollowerEmail(following,currentUser,emailSettings.getLocale());
         }
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange) {
-        Locale locale = LocaleContextHolder.getLocale();
+        final Locale locale = LocaleContextHolder.getLocale();
         if(currentUser.getEmailSettings() == null){
             currentUser.setEmailSettings(new EmailSettings(follow,comment,followingPublished,positivityChange,locale, currentUser));
             return;
@@ -176,7 +176,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateEmailSettings(User currentUser, Collection<MailOption> options) {
-        Locale locale = LocaleContextHolder.getLocale();
+        final Locale locale = LocaleContextHolder.getLocale();
         if(currentUser.getEmailSettings() == null){
             currentUser.setEmailSettings(new EmailSettings(options,locale, currentUser));
             return;
@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileCategory getProfileCategory(final Optional<User> maybeCurrentUser, String category,final User profile) {
-        ProfileCategory cat;
+        final ProfileCategory cat;
         try {
             cat = ProfileCategory.valueOf(category);
         } catch(IllegalArgumentException e) {

@@ -25,6 +25,7 @@ public class CreateNewsForm {
     @Length(max=10000000)
     private String body;
 
+    @FileSize
     private CommonsMultipartFile image;
     @NotExistingNewsCategory
     private String[] categories;
@@ -63,7 +64,7 @@ public class CreateNewsForm {
         this.body = body;
     }
 
-    @FileSize
+
     public MultipartFile getImage() {
         return image;
     }

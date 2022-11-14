@@ -58,7 +58,7 @@ public class NewsController{
     @PreAuthorize("@ownerCheck.checkNewsOwnership(#newsId)")
     @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        final News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         newsService.deleteNews(news);
         return new ModelAndView("redirect:/profile/" + news.getCreatorId());
     }
@@ -66,7 +66,7 @@ public class NewsController{
     @RequestMapping(value = "/news/{newsId:[0-9]+}/report", method = RequestMethod.POST)
     public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                    final BindingResult errors) {
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         if (errors.hasErrors()) {
             return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
         }
@@ -77,7 +77,7 @@ public class NewsController{
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
     public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
                                       final BindingResult errors, @PathVariable("newsId") long newsId){
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
 
         if (errors.hasErrors()) {
             return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
@@ -91,11 +91,11 @@ public class NewsController{
     public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm")
                                             final CommentNewsForm commentNewsForm, final BindingResult errors,
                                     @RequestParam(name = "order") final String order) {
-        NewsOrder newsOrder = NewsOrder.getByValue(order);
+        final NewsOrder newsOrder = NewsOrder.getByValue(order);
         if (errors.hasErrors()) {
             return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1, "TOP");
         }
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         newsService.addComment(currentUser, newsId, commentNewsForm.getComment());
         return new ModelAndView("redirect:/news/" + newsId + "?order=" + newsOrder.name());
     }
@@ -113,20 +113,20 @@ public class NewsController{
                                  @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors,
     @RequestParam(name="page", defaultValue="1") int page,
                                  @RequestParam(name="order", defaultValue="TOP") String orderBy){
-        Optional<User> loggedUser = securityService.getCurrentUser();
+        final Optional<User> loggedUser = securityService.getCurrentUser();
 
-        News news = newsService.getById(loggedUser,newsId).orElseThrow(NewsNotFoundException::new);
-        Locale locale = LocaleContextHolder.getLocale();
-        NewsOrder orderByObj = NewsOrder.getByValue(orderBy);
-        long followers = userService.getFollowersCount(news.getCreatorId());
+        final News news = newsService.getById(loggedUser,newsId).orElseThrow(NewsNotFoundException::new);
+        final Locale locale = LocaleContextHolder.getLocale();
+        final NewsOrder orderByObj = NewsOrder.getByValue(orderBy);
+        final long followers = userService.getFollowersCount(news.getCreatorId());
 
-        Page<Comment> comments = newsService.getComments(newsId, page, orderByObj);
-        Map<Long, Rating> commentRatings = newsService.getCommentsRating(comments.getContent(), loggedUser);
-        Map<Long, Long> commentCreatorsFollowers = comments.getContent().stream()
+        final Page<Comment> comments = newsService.getComments(newsId, page, orderByObj);
+        final Map<Long, Rating> commentRatings = newsService.getCommentsRating(comments.getContent(), loggedUser);
+        final Map<Long, Long> commentCreatorsFollowers = comments.getContent().stream()
                 .collect(Collectors.toMap(comment -> comment.getUser().getUserId(),
                         comment -> userService.getFollowersCount(comment.getUser().getUserId())));
 
-        MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
+        final MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
                 .withObject("fullNews", news)
                 .withObject("reportReasons", ReportReason.values())
@@ -143,10 +143,10 @@ public class NewsController{
 
 
 
-        Map<Long, Boolean> hasReportedComment;
+        final Map<Long, Boolean> hasReportedComment;
         if (loggedUser.isPresent()) {
             hasReportedComment = new HashMap<>();
-            User user = loggedUser.get();
+            final User user = loggedUser.get();
             comments.getContent().forEach(c -> hasReportedComment.put(c.getId(), user.hasReportedComment(c)));
             builder.withObject("hasReportedCommentMap", hasReportedComment)
                     .withObject("myNews", news.getCreator().equals(user))
@@ -167,7 +167,7 @@ public class NewsController{
 
     @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
     public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
 
         return new ModelAndView("redirect:/news/" + newsId);
@@ -184,8 +184,8 @@ public class NewsController{
     @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<SavedResult> saveNews(@PathVariable("newsId") long newsId){
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(currentUser, newsId));
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(currentUser, newsId));
         return new ResponseEntity<>(savedResult, HttpStatus.OK);
     }
 
@@ -216,10 +216,10 @@ public class NewsController{
     }
 
     private ResponseEntity<UpvoteActionResponse> toggleHandler(CommentUpvoteAction payload, Rating action) {
-        final Long commentId = payload.getCommentId();
+        final long commentId = payload.getCommentId();
         final boolean isActive = payload.isActive();
-        User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
         newsService.setCommentRating(currentUser, comment, isActive ? action : Rating.NO_RATING);
 
         return new ResponseEntity<>(new UpvoteActionResponse(comment.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);

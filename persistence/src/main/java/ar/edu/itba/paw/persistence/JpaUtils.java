@@ -22,7 +22,7 @@ public class JpaUtils {
 
     public static List<Long> getIdsOfPage(Query query, int page, int pageSize) {
         @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
+        final List<Long> ids = (List<Long>) query.setParameter("pageSize", pageSize)
                 .setParameter("offset", pageSize*(page-1))
                 .getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
 
@@ -36,22 +36,23 @@ public class JpaUtils {
     public static <T> Page<T> getPage(int page, int totalPages, Query idsQuery, TypedQuery<T> objectQuery, Function<T, Long> idGetter){
 
         @SuppressWarnings("unchecked")
-        List<Long> ids = (List<Long>) idsQuery.getResultList().stream()
+        final List<Long> ids = (List<Long>) idsQuery.getResultList().stream()
                 .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
 
         if(ids.isEmpty()){
             return new Page<>(Collections.emptyList(),page,1);
         }
 
-        List<T> reportedComments = objectQuery.setParameter("ids", ids).getResultList();
+        List<T> unorderedElementList = objectQuery.setParameter("ids", ids).getResultList();
 
-        Map<Long, T> reportDetailMap = new HashMap<>();
-        for (T reportedComment : reportedComments) {
-            reportDetailMap.put(idGetter.apply(reportedComment), reportedComment);
+        final Map<Long, T> elementsMapById = new HashMap<>();
+        for (T reportedComment : unorderedElementList) {
+            elementsMapById.put(idGetter.apply(reportedComment), reportedComment);
         }
-        // map id -> ReportDetail
-        reportedComments =  ids.stream().map(reportDetailMap::get).collect(Collectors.toList());
 
-        return new Page<>(reportedComments,page,totalPages);
+        // ordenamos la lista de elementos haciendo un mapeo de id a elemento a traves de elementsMapById
+        List<T> orderedElementList = ids.stream().map(elementsMapById::get).collect(Collectors.toList());
+
+        return new Page<>(orderedElementList,page,totalPages);
     }
 }

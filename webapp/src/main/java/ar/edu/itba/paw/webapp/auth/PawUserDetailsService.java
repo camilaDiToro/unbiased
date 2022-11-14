@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Component
 public class PawUserDetailsService implements UserDetailsService {
 
-    private UserService us;
+    private final UserService us;
 
     @Autowired
     public PawUserDetailsService(UserService us) {
