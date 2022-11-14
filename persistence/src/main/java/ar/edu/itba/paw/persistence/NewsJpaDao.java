@@ -4,18 +4,32 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
-import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.*;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.CategoryStatistics;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.TimeConstraint;
+import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.Saved;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.functional.GetNewsProfileFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository

@@ -57,9 +57,6 @@
                                     <c:url value="/owner/add_admin" var="postUrl"/>
                                     <div id="form-login-index">
                                         <form:form modelAttribute="createAdminForm" action="${postUrl}" method="POST" cssClass="d-flex flex-column align-items-center">
-                                            <%--<form:label cssClass="font-weight-bold mb-0" path="email"><spring:message code="moderation.makeUserAdmin"/> </form:label>--%>
-
-
                                                 <div class="d-flex align-items-center">
                                                     <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/profile-svgrepo-com.svg"/>" alt="..."/>
                                                     <label for="email-input" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>

@@ -3,8 +3,9 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.TextUtils;
-import ar.edu.itba.paw.model.user.*;
+import ar.edu.itba.paw.model.user.Follow;
+import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.UserStatus;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Primary
@@ -203,7 +209,7 @@ public class UserJpaDao implements UserDao{
     }
 
     private int getTotalPagesSearchUsers(String search){
-        final long count = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) and u.status != 'UNABLE'", Long.class)
+        final long count = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) and u.status <> 'UNABLE'", Long.class)
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%").getSingleResult();
         return Page.getPageCount(count, SEARCH_PAGE_SIZE);
     }

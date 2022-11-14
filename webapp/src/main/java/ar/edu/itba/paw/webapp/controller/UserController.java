@@ -1,12 +1,21 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.*;
+import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.*;
-import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
-import ar.edu.itba.paw.webapp.auth.OwnerCheck;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.CategoryStatistics;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.user.MailOption;
+import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.Role;
+import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.VerificationToken;
+import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.SecurityService;
+import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.form.ResendVerificationEmail;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
@@ -16,7 +25,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -66,7 +80,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/profile/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}", method = RequestMethod.POST)
-    public ModelAndView pingNews(@PathVariable("userId") final long userId,@PathVariable("newsId") final long newsId) {
+    public ModelAndView pingNews(@PathVariable("userId") final long userId, @PathVariable("newsId") final long newsId) {
         final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
         userService.pingNewsToggle(currentUser, newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new));
 
@@ -94,6 +108,8 @@ public class UserController {
 
 
 
+
+
     @PreAuthorize("@ownerCheck.checkSavedNewsAccess(#category, #userId)")
     @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder}", method = RequestMethod.GET)
     public ModelAndView profile(@PathVariable("userId") long userId,
@@ -113,7 +129,7 @@ public class UserController {
             catObject = profileCategoryList.iterator().next();
         }
         else {
-            catObject = userService.getProfileCategory(user, category, profileUser);
+            catObject = userService.getProfileCategory(user, ProfileCategory.getByValue(category), profileUser);
         }
 
         final Page<News> fullNews = newsService.getNewsForUserProfile(user, page, NewsOrder.getByValue(newsOrder), profileUser, catObject);

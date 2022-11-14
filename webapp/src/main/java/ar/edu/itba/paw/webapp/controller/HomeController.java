@@ -1,17 +1,32 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.*;
+
+import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.news.TimeConstraint;
+import ar.edu.itba.paw.model.news.UpvoteAction;
+import ar.edu.itba.paw.model.news.UpvoteActionResponse;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.service.*;
+import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.SecurityService;
+import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;

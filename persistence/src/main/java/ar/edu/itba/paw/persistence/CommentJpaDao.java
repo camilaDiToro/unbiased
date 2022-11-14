@@ -15,8 +15,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Optional;
+
 
 @Repository
 public class CommentJpaDao implements CommentDao{

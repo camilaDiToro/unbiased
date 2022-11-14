@@ -1,19 +1,28 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.Comment;
+import ar.edu.itba.paw.model.news.CommentUpvoteAction;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.news.TextUtils;
+import ar.edu.itba.paw.model.news.UpvoteActionResponse;
 import ar.edu.itba.paw.model.user.SavedResult;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.webapp.auth.OwnerCheck;
+import ar.edu.itba.paw.service.AdminService;
+import ar.edu.itba.paw.service.ImageService;
+import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.SecurityService;
+import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
-import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
@@ -25,11 +34,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -39,19 +58,17 @@ public class NewsController{
     private final ImageService imageService;
     private final AdminService adminService;
     private final UserService userService;
-    private final OwnerCheck ownerCheck;
 
     private final SecurityService securityService;
 
 
     @Autowired
-    public NewsController(AdminService adminService, UserService userService, NewsService newsService, ImageService imageService, SecurityService ss, OwnerCheck ownerCheck){
+    public NewsController(AdminService adminService, UserService userService, NewsService newsService, ImageService imageService, SecurityService ss){
         this.securityService = ss;
         this.newsService = newsService;
         this.imageService = imageService;
         this.adminService = adminService;
         this.userService = userService;
-        this.ownerCheck = ownerCheck;
     }
 
 

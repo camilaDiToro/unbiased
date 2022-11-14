@@ -1,14 +1,24 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.*;
-import ar.edu.itba.paw.model.exeptions.*;
-import ar.edu.itba.paw.model.news.*;
+import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.CategoryStatistics;
+import ar.edu.itba.paw.model.news.Comment;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.TimeConstraint;
+import ar.edu.itba.paw.model.user.CommentUpvote;
+import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
+import ar.edu.itba.paw.model.user.Upvote;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.CommentDao;
-import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.persistence.NewsDao;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -180,7 +193,6 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Iterable<ProfileCategory> getProfileCategories(Optional<User> maybeCurrentUser, User user) {
 
-//        Optional<String> email = securityService.getCurrentUserEmail();
         final boolean isMyProfile =  maybeCurrentUser.isPresent() && maybeCurrentUser.get().equals(user);
         return Arrays.stream(ProfileCategory.values()).filter(c -> {
             if (!isMyProfile && c.equals(ProfileCategory.SAVED)) {

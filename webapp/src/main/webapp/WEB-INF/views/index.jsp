@@ -18,7 +18,6 @@
 
 
 <div class="d-flex h-100 flex-column">
-<%--    <c:set var="loggedUser" scope="request" value="${user}"/>--%>
     <%@ include file="../../resources/jsp/navbar.jsp" %>
     <div class="container-xxl container-fluid flex-grow-1">
         <c:set var = "activeClasses" scope = "session" value = "bg-info active"/>
@@ -151,7 +150,6 @@
 
                                                 </div>
                                                 <div class="card-body-home">
-<%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                     <a  class="link title-principal-card"  href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis-3"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="card-subtitle py-1 text-ellipsis-2 text-white"><c:out value="${article.subtitle}"/></h6>
                                                     <span class="font-weight-light"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
@@ -216,7 +214,6 @@
                 <c:if test="${type=='creator'  && empty usersPage.content}" >
                     <div class="h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
                         <h2 class="fw-normal"><spring:message code="home.emptyCategory.sorry"/></h2>
-                            <%--                    <p class="fs-1"> <span class="text-info font-weight-bold">Oops!</span> </p>--%>
                         <p class="lead">
                             <c:if test="${ query != ''}">
                                 <spring:message code="search.notFound" arguments="${query}"/>

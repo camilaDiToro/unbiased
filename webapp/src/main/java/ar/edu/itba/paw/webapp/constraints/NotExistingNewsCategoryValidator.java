@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.constraints;
 
 import ar.edu.itba.paw.model.news.Category;
-import ar.edu.itba.paw.model.user.MailOption;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

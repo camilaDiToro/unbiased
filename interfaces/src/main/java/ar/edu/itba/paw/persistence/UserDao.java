@@ -3,9 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.User;
-
 import java.util.List;
 import java.util.Optional;
 

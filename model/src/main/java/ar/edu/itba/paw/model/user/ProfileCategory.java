@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.model.user;
 
-import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
+import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
 
 public enum ProfileCategory {
 
@@ -30,7 +30,7 @@ public enum ProfileCategory {
         try{
             return ProfileCategory.valueOf(value);
         }catch (IllegalArgumentException e){
-            throw new InvalidCategoryException();
+            throw new InvalidFilterException(e);
         }
     }
 

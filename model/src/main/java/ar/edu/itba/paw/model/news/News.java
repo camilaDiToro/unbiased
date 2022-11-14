@@ -2,14 +2,45 @@ package ar.edu.itba.paw.model.news;
 
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportDetail;
-import ar.edu.itba.paw.model.user.*;
+import ar.edu.itba.paw.model.user.LoggedUserParameters;
+import ar.edu.itba.paw.model.user.PositivityStats;
+import ar.edu.itba.paw.model.user.Upvote;
+import ar.edu.itba.paw.model.user.User;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.PostLoad;
+import javax.persistence.PreRemove;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 @Entity
 @Table(name = "news")
 public class News {
@@ -81,7 +112,7 @@ public class News {
 
     @OneToMany(mappedBy="news",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapKey(name = "userId")
-    private Map<Long,Upvote> upvoteMap;
+    private Map<Long, Upvote> upvoteMap;
 
     @ManyToMany
     @JoinTable(name = "saved_news",

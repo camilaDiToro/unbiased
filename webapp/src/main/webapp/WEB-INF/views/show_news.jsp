@@ -100,7 +100,6 @@
                                         <img  class="icon-news svg-bookmark" src="<c:url value="/resources/images/pin.svg"/>" alt="" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.pin"/>">
                                     </c:otherwise>
                             </c:choose>
-                                <%--                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>--%>
                             </div>
                             <div class="modal fade" id="pingModal${newsId}"  aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -345,7 +344,6 @@
                                     </div>
                                     <a class="link" href="<c:url value="/profile/${user.id}"/>"><h5 class="mb-0 link-text"><c:out value="${user}"/></h5></a>
                                 </div>
-                                    <%--                            <span class="font-weight-light">${comment.getFormattedDate(locale)}</span>--%>
                                 <c:set var="timeAmount" value="${comment.getAmountAgo()}"/>
                                 <span class="font-weight-light mt-1 mb-2"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
 
@@ -353,7 +351,6 @@
 
                             <div class="d-flex flex-column justify-content-between p-2 w-100">
                                 <div class="d-flex align-items-center w-auto gap-1">
-<%--                                    ${comment.deleted}--%>
                                     <c:choose>
                                         <c:when test="${comment.deleted}">
                                             <p name="comment-${comment.id}" id="comment-${comment.id}" class="comment-text font-italic"><spring:message code="showNews.deletedComment"/></p>
@@ -421,8 +418,6 @@
                                                 <c:when test = "${hasReportedComment}">
                                                     <div class=" d-flex justify-content-center align-items-center h-fit" >
                                                         <img src="<c:url value="/resources/images/flag-clicked.svg"/>" alt="..." class="icon-comment svg-bookmark" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>"/>
-
-                                                            <%--                                                    <img  class="icon-comment" src="<c:url value="/resources/images/flag-clicked.svg"/>" alt="..." data-toggle=tooltip" data-placement="bottom" title="<spring:message code="tooltip.commentReported"/>">--%>
                                                     </div>
                                                 </c:when>
 

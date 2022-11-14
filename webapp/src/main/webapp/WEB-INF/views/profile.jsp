@@ -73,7 +73,6 @@
 
                     <div class="container-fluid">
                         <div class="row row-cols-1">
-<%--                            pinged news    --%>
                             <c:if test="${not empty pingedNews}">
                                     <c:set var="article" value="${pingedNews}"/>
 
@@ -148,7 +147,6 @@
                                                         </c:if>
                                                     </div>
                                                     <div class="card-body-home">
-                                                            <%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                         <a class="link max-h-10"  href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                         <h6 class="  card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
                                                         <c:set var="timeAmount" value="${article.getAmountAgo()}"/>
@@ -288,7 +286,6 @@
                                                     </c:if>
                                                 </div>
                                                 <div class="card-body-home">
-<%--                                                    <span class="badge badge-pill badge-primary m-1">Messi</span> <span class="badge badge-pill badge-primary">Messi</span>--%>
                                                     <a class="link max-h-10"  href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                     <h6 class="  card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
     <c:set var="timeAmount" value="${article.getAmountAgo()}"/>
@@ -569,9 +566,7 @@
 
                                         <script>
                                             $('#fileInput').on('change',function(){
-                                                //get the file name
                                                 var fileName = $(this).val();
-                                                //replace the "Choose a file" label
                                                 $(this).next('.custom-file-label').html(fileName);
                                             })
                                         </script>

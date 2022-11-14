@@ -143,28 +143,6 @@
 
 
     </div>
-    <%--
-            <c:if test="${not empty commentsList}">
-                <nav class="d-flex justify-content-center align-items-center">
-                    <ul class="pagination">
-                        <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_comments/${newsOrder}">
-                            <c:param name = "page" value = "1"/>
-                            </c:url>"><spring:message code="home.pagination.first"/></a></li>
-
-
-                        <c:forEach var = "i" begin = "${commentsPage.minPage}" end = "${commentsPage.maxPage}">
-                            <li class="page-item"><a class="page-link ${i == commentsPage.currentPage ? 'font-weight-bold' : ''}" href="<c:url value = "/admin/reported_news/${newsOrder}">
-                            <c:param name = "page" value = "${i}"/>
-                            </c:url>"><c:out value="${i}"/></a></li>
-                        </c:forEach>
-
-                        <li class="page-item"><a class="page-link" href="<c:url value = "/admin/reported_news/${newsOrder}">
-                            <c:param name = "page" value = "${commentsPage.totalPages}"/>
-                            </c:url>"><spring:message code="home.pagination.last"/></a></li>
-                    </ul>
-                </nav>
-            </c:if>
-    --%>
 
   </div>
 </div>

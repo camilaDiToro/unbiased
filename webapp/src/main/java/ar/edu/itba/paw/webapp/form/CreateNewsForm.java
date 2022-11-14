@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
 import ar.edu.itba.paw.webapp.constraints.FileSize;
-import ar.edu.itba.paw.webapp.constraints.NotExistingMailOption;
 import ar.edu.itba.paw.webapp.constraints.NotExistingNewsCategory;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;

@@ -3,10 +3,15 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
+import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.user.*;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.Role;
+import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.UserStatus;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.persistence.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +24,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -214,27 +224,22 @@ public class UserServiceImpl implements UserService {
         userDao.pingNewsToggle(currentUser, news);
     }
 
-
     @Override
-    public ProfileCategory getProfileCategory(final Optional<User> maybeCurrentUser, String category,final User profile) {
-        final ProfileCategory cat;
-        try {
-            cat = ProfileCategory.valueOf(category);
-        } catch(IllegalArgumentException e) {
-            throw new InvalidFilterException(e);
-        }
-        if (!profile.getRoles().contains(Role.ROLE_JOURNALIST) && cat.equals(ProfileCategory.MY_POSTS)){
+    public ProfileCategory getProfileCategory(final Optional<User> maybeCurrentUser, ProfileCategory category, final User profile) {
+
+
+        if (!profile.getRoles().contains(Role.ROLE_JOURNALIST) && category.equals(ProfileCategory.MY_POSTS)){
             throw new InvalidFilterException();
         }
 
-        if (cat.equals(ProfileCategory.SAVED) &&
-                !(maybeCurrentUser.isPresent() &&
-                maybeCurrentUser.get().equals(profile))){
+        if (category.equals(ProfileCategory.SAVED) &&
+                !(maybeCurrentUser.isPresent() && maybeCurrentUser.get().equals(profile))){
             throw new InvalidFilterException();
         }
 
-        return cat;
+        return category;
     }
+
 
     @Override
     public long getFollowingCount(long userId) {

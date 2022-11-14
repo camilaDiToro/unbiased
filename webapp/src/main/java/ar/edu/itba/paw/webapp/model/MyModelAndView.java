@@ -1,11 +1,8 @@
 package ar.edu.itba.paw.webapp.model;
 
 import ar.edu.itba.paw.model.news.TextType;
-import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.service.SecurityService;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Optional;
 
 public class MyModelAndView extends ModelAndView {
 
