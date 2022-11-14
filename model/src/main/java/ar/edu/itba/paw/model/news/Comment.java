@@ -29,7 +29,7 @@ public class Comment {
     @SequenceGenerator(name="comment_seq", sequenceName = "comment_seq", allocationSize = 1)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="user_id", nullable=false)
     private User user;
     @Column(name = "comment")
@@ -54,7 +54,7 @@ public class Comment {
         this.news = news;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="news_id", nullable=false)
     private News news;
 

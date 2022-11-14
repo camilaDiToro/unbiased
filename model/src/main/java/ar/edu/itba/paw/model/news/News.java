@@ -66,7 +66,7 @@ public class News {
     @Transient
     private int readTime;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "creator", referencedColumnName = "user_id")
     private User creator;
 

@@ -9,11 +9,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -26,6 +29,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
+@Rollback
 public class NewsJpaDaoTest {
     //USERS DATA
     private static final String EMAIL = "user@gmail.com";
@@ -43,6 +47,7 @@ public class NewsJpaDaoTest {
     private static final long ACCESSES = 0;
     private static final User CREATOR = new User.UserBuilder(EMAIL).pass(PASS).build();
     private static final News NEWS = new News.NewsBuilder(CREATOR,BODY,TITLE,SUBTITLE).creationDate(CREATION_DATE.toLocalDateTime()).newsId(NEWS_ID).build();
+    private static final News.NewsBuilder NEWS_BUILDER = new News.NewsBuilder(CREATOR,BODY,TITLE,SUBTITLE).creationDate(CREATION_DATE.toLocalDateTime()).newsId(NEWS_ID);
 
     //TABLES
     private static final String NEWS_TABLE = "news";
@@ -52,14 +57,18 @@ public class NewsJpaDaoTest {
     private static final String UPVOTES_TABLE = "upvotes";
 
     @Autowired
-    private NewsJpaDao newsJpaDao;
+    private NewsDao newsJpaDao;
     @Autowired
     private UserJpaDao userJpaDao;
     @Autowired
     private DataSource ds;
+
+    @PersistenceContext
+    EntityManager entityManager;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcUserInsert;
     private SimpleJdbcInsert jdbcNewsInsert;
+
 
     private void addCreatorToTable() {
         Map<String, Object> userValues = new HashMap<>();
@@ -91,13 +100,9 @@ public class NewsJpaDaoTest {
 
     @Test
     public void testCreateNews() {
-        addCreatorToTable();
-        User user = userJpaDao.getUserById(CREATOR_ID).get();
-        News.NewsBuilder newsBuilder = new News.NewsBuilder(user,BODY,TITLE,SUBTITLE).creationDate(CREATION_DATE.toLocalDateTime()).newsId(NEWS_ID);
+        News optionalNews = newsJpaDao.create(NEWS_BUILDER);
 
-        News optionalNews = newsJpaDao.create(newsBuilder);
-
-
+        entityManager.flush();
         assertEquals(TITLE, optionalNews.getTitle());
         assertEquals(CREATOR_ID, optionalNews.getCreatorId());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
@@ -112,5 +117,4 @@ public class NewsJpaDaoTest {
         assertEquals(NEWS_ID, optionalNews.get().getNewsId());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
-
 }

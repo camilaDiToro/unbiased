@@ -13,11 +13,15 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -30,11 +34,12 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @Transactional
-
+@Rollback
 public class CommentJpaDaoTest {
     private static final String date = "2022-11-12 20:45:00";
     //USER DATA
     private static final String EMAIL = "user@gmail.com";
+    private static final String EMAIL2 = "user@gmail.com";
     private static final String PASS = "pass";
     private static final long CREATOR_ID = 1;
     private static final UserStatus CREATOR_STATUS = UserStatus.REGISTERED;
@@ -47,7 +52,9 @@ public class CommentJpaDaoTest {
     private static final Timestamp CREATION_DATE = Timestamp.valueOf(date);
     private static final long ACCESSES = 0;
     private static final User CREATOR = new User.UserBuilder(EMAIL).pass(PASS).build();
+    private static final User CREATOR2 = new User.UserBuilder(EMAIL2).pass(PASS).build();
     private static final News NEWS = new News.NewsBuilder(CREATOR,BODY,TITLE,SUBTITLE).creationDate(CREATION_DATE.toLocalDateTime()).newsId(NEWS_ID).build();
+    private static final News NEWS2 = new News.NewsBuilder(CREATOR2,BODY,TITLE,SUBTITLE).creationDate(CREATION_DATE.toLocalDateTime()).newsId(2).build();
     //COMMENT DATA
     private static final long COMMENT_ID = 1;
     private static final String COMMENT = "Comment";
@@ -62,12 +69,15 @@ public class CommentJpaDaoTest {
     private static final String NEWS_TABLE = "news";
     private static final String USER_TABLE = "users";
     private static final String COMMENT_TABLE = "comments";
-    private static final String REPORT_TABLE = "report";
+    private static final String REPORT_TABLE = "comment_report";
 
     @Autowired
     private CommentJpaDao commentDao;
     @Autowired
     private DataSource ds;
+
+    @PersistenceContext
+    EntityManager entityManager;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcUserInsert;
     private SimpleJdbcInsert jdbcNewsInsert;
@@ -118,13 +128,15 @@ public class CommentJpaDaoTest {
 
     @Test
     public void testAddComment() {
-        addCreatorToTable();
-        addTheNewsToTable();
-        addCommentFromCreatorToTheNews();
+        //addCreatorToTable();
+        //addTheNewsToTable();
+        //addCommentFromCreatorToTheNews();
         //User user = userDao.getUserById(CREATOR_ID).get();
         //News news = newsDao.getById(NEWS_ID, CREATOR_ID).get();
-        commentDao.addComment(CREATOR, NEWS, COMMENT);
 
+        commentDao.addComment(CREATOR2, NEWS2, COMMENT);
+
+        entityManager.flush();
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
     }
 
@@ -165,14 +177,11 @@ public class CommentJpaDaoTest {
 
     @Test
     public void testReportComment(){
-        addCreatorToTable();
-        addTheNewsToTable();
-        addCommentFromCreatorToTheNews();
-
-        Comment comment = commentDao.getCommentById(COMMENT_ID).get();
-        commentDao.reportComment(comment, CREATOR, REPORT_REASON);
-
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
+        //addCreatorToTable();
+        //addTheNewsToTable();
+        //addCommentFromCreatorToTheNews();
+        commentDao.reportComment(new Comment(CREATOR,COMMENT,NEWS), CREATOR, REPORT_REASON);
+        entityManager.flush();
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
     }
     @Test

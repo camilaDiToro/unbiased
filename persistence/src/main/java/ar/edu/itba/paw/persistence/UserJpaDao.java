@@ -16,7 +16,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Primary
+
 @Repository
 public class UserJpaDao implements UserDao{
 
