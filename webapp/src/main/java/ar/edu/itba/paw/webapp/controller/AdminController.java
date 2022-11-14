@@ -4,10 +4,12 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportedComment;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.TextType;
 import ar.edu.itba.paw.model.user.Role;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.*;
 import ar.edu.itba.paw.webapp.model.MyModelAndView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +24,17 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminController {
 
     private final AdminService adminService;
-
-
     private final SecurityService securityService;
 
     @Autowired
-    public AdminController(AdminService adminService, SecurityService ss) {
+    public AdminController(final AdminService adminService,final SecurityService ss) {
         this.securityService = ss;
         this.adminService = adminService;
 
     }
 
     @ModelAttribute
-    public void addAdminAttributes(Model model) {
+    public void addAdminAttributes(final Model model) {
         model.addAttribute("adminPage", true);
     }
 
@@ -43,7 +43,7 @@ public class AdminController {
                                      @PathVariable("newsOrder") String newsOrder) {
         ReportOrder order = ReportOrder.getByValue(newsOrder);
 
-        Page<News> reportedNewsPage = adminService.getReportedNews(page, order);
+        final Page<News> reportedNewsPage = adminService.getReportedNews(page, order);
         return new MyModelAndView.Builder("moderation_panel_reported_news", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("newsPage", reportedNewsPage)
                 .withObject("orders", ReportOrder.values())
@@ -56,9 +56,7 @@ public class AdminController {
     public ModelAndView reportedComments(@RequestParam(name = "page", defaultValue = "1") int page,
                                      @PathVariable("commentOrder") String commentOrder) {
         ReportOrder order = ReportOrder.getByValue(commentOrder);
-
-
-        Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, order);
+        final Page<Comment> reportedCommentsPage = adminService.getReportedComments(page, order);
         return new MyModelAndView.Builder("moderation_panel_reported_comments", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("commentsPage", reportedCommentsPage)
                 .withObject("orders", ReportOrder.values())
@@ -81,7 +79,7 @@ public class AdminController {
     @RequestMapping("/admin/reported_news_detail/{newsId:[0-9]+}")
     public ModelAndView reportedNewsDetail(@PathVariable("newsId") long newsId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
-        Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsId);
+        final Page<ReportDetail> reportedNewsPage = adminService.getReportedNewsDetail(page,newsId);
         return new MyModelAndView.Builder("moderation_panel_reported_news_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedNewsPage", reportedNewsPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
@@ -94,7 +92,7 @@ public class AdminController {
     @RequestMapping("/admin/reported_comment_detail/{commentId:[0-9]+}")
     public ModelAndView reportedCommentDetail(@PathVariable("commentId") long commentId,
                                            @RequestParam(name = "page", defaultValue = "1") int page) {
-        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page,commentId);
+        final Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page,commentId);
         return new MyModelAndView.Builder("moderation_panel_reported_comment_detail", "pageTitle.moderationPanel", TextType.INTERCODE)
                 .withObject("reportedCommentPage", reportedCommentPage)
                 .withObject("locale", LocaleContextHolder.getLocale())
@@ -106,7 +104,8 @@ public class AdminController {
 
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        adminService.deleteNews(newsId);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        adminService.deleteNews(currentUser, newsId);
         return new ModelAndView("redirect:/admin/reported_news");
     }
 

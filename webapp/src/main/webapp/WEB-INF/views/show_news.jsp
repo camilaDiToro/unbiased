@@ -236,7 +236,7 @@
                                 </c:if>
                             </c:if>
                             <c:if test="${!user.hasImage()}">
-                                <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle">
+                                <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle object-fit-cover ">
                             </c:if>
                         </div>
                     </div>
@@ -290,14 +290,6 @@
                 </c:if>
 
                 <div class="d-flex flex-column w-100 " id="comment-section">
-                    <c:if test="${loggedUser == null && empty commentsPage.content}">
-                        <c:url var="login" value="/login"/>
-                        <c:url var="signup" value="/create"/>
-                        <h6 class="m-2 align-self-center"><spring:message code="showNews.emptyComments" arguments="${login},${signup}"/></h6>
-                    </c:if>
-                    <c:if test="${loggedUser != null && empty commentsPage.content}">
-                        <h6 class="m-2 align-self-center"><spring:message code="showNews.emptyCommentsLogged"/></h6>
-                    </c:if>
                     <c:set var = "activeClasses" scope = "session" value = "bg-info active"/>
                     <c:set var = "inactiveClasses" scope = "session" value = "text-secondary"/>
                     <ul class="my-4 mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex">
@@ -311,6 +303,14 @@
                         </li>
                     </c:forEach>
                     </ul>
+                    <c:if test="${loggedUser == null && empty commentsPage.content}">
+                        <c:url var="login" value="/login"/>
+                        <c:url var="signup" value="/create"/>
+                        <h6 class="m-2 align-self-center"><spring:message code="showNews.emptyComments" arguments="${login},${signup}"/></h6>
+                    </c:if>
+                    <c:if test="${loggedUser != null && empty commentsPage.content}">
+                        <h6 class="m-2 align-self-center"><spring:message code="showNews.emptyCommentsLogged"/></h6>
+                    </c:if>
                         <c:forEach var="comment" items="${commentsPage.content}">
 
                         <c:set var="user" value="${comment.user}"/>
@@ -345,7 +345,7 @@
                                                     </c:if>
                                                 </c:if>
                                                 <c:if test="${!user.hasImage()}">
-                                                    <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle">
+                                                    <img src="<c:url value="/resources/images/profile-image.png"/>" class="rounded-circle object-fit-cover ">
                                                 </c:if>
                                             </div>
                                     </div>
