@@ -51,7 +51,7 @@ public class Comment {
     @Column(name = "commented_date")
     private Timestamp commentedDate;
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.MERGE)
     private List<ReportedComment> reports;
 
     @Transient

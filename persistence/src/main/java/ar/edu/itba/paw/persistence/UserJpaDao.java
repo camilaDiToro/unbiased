@@ -132,7 +132,7 @@ public class UserJpaDao implements UserDao{
         final int totalPages = getTotalPagesSearchUsers(search);
         page = Math.min(page, totalPages);
 
-        final Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) and u.status != 'UNABLE' LIMIT :pageSize OFFSET :offset")
+        final Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u WHERE (LOWER(u.username) LIKE :query escape '\\'  or LOWER(u.email) LIKE :query escape '\\' ) and u.status != 'UNABLE' LIMIT :pageSize OFFSET :offset")
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%");
 
         final List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
@@ -148,7 +148,7 @@ public class UserJpaDao implements UserDao{
         final int totalPages = getTotalPagesGetAdmins(search);
         page = Math.min(page, totalPages);
 
-        final Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) " +
+        final Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query escape '\\'  or LOWER(u.email) LIKE :query escape '\\' ) " +
                 "and u.status != 'UNABLE' and user_role.user_role = 'ROLE_ADMIN' LIMIT :pageSize OFFSET :offset").setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%");
 
         final List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
@@ -209,13 +209,13 @@ public class UserJpaDao implements UserDao{
     }
 
     private int getTotalPagesSearchUsers(String search){
-        final long count = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) and u.status <> 'UNABLE'", Long.class)
+        final long count = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE (LOWER(u.username) LIKE :query  escape '' or LOWER(u.email) LIKE :query  escape '\\') and u.status <> 'UNABLE'", Long.class)
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%").getSingleResult();
         return Page.getPageCount(count, SEARCH_PAGE_SIZE);
     }
 
     private int getTotalPagesGetAdmins(String search){
-        final BigInteger count = (BigInteger) entityManager.createNativeQuery("SELECT count(distinct user_id) FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query or LOWER(u.email) LIKE :query) " +
+        final BigInteger count = (BigInteger) entityManager.createNativeQuery("SELECT count(distinct user_id) FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query escape '\\'  or LOWER(u.email) LIKE :query  escape '\\') " +
                         "and u.status != 'UNABLE' and user_role.user_role = 'ROLE_ADMIN'")
                         .setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%").getResultList().get(0);
         return Page.getPageCount(count.longValue(), SEARCH_PAGE_SIZE);

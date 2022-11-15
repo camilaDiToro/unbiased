@@ -117,13 +117,19 @@ public class NewsServiceImpl implements NewsService {
     }
 
 
+    @Override
+    public Optional<News> getPingedNews(Optional<User> maybeCurrentUser, User profileUser) {
+        News pinnedNews = profileUser.getPingedNews();
+        if (pinnedNews == null)
+            return Optional.empty();
+        maybeCurrentUser.ifPresent(user -> pinnedNews.setUserSpecificVariables(user.getUserId()));
 
+        return Optional.of(pinnedNews);
+    }
 
     @Override
     public Page<News> getNewsForUserProfile(Optional<User> maybeCurrentUser, int page, NewsOrder newsOrder, User user, ProfileCategory profileCategory) {
-
         final Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrder, maybeCurrentUser, profileCategory);
-        maybeCurrentUser.ifPresent(value -> pageObj.getContent().remove(value.getPingedNews()));
         return pageObj;
     }
 

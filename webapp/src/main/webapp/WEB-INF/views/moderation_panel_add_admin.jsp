@@ -82,8 +82,14 @@
                     <c:if test="${empty usersPage.content}" >
                         <div class="w-100 h-75 d-flex flex-column justify-content-center align-items-center flex-grow-1 mt-5">
                             <p class="lead">
-
-                                <spring:message code="moderation.emptyAdmins" arguments="${query}"/>
+                                <c:choose >
+                                    <c:when test="${query != ''}">
+                                        <spring:message code="moderation.emptyAdminsSearch" arguments="${query}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <spring:message code="moderation.emptyAdmins" arguments="${query}"/>
+                                    </c:otherwise>
+                                </c:choose>
                             </p>
                         </div>
                     </c:if>

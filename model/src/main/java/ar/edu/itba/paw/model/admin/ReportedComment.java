@@ -68,7 +68,7 @@ public class ReportedComment {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "comment_id", referencedColumnName = "id", nullable = false, unique = false)
     private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)

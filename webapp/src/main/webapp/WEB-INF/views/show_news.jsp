@@ -64,7 +64,7 @@
 
         </div>
         <hr/>
-        <c:set var="maybeImage" value="${article.getImageId()}"/>
+        <c:set var="maybeImage" value="${news.getImageId()}"/>
         <c:if test="${maybeImage.isPresent()}">
             <img src="<c:url value="/news/${maybeImage.get()}/image"/>" class="w-50 m-4 rounded mx-auto d-block img-thumbnail"/>
 

@@ -197,6 +197,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <c:set var="maybeImage" value="${article.getImageId()}"/>
                                             <c:if test="${maybeImage.isPresent()}">
 
                                                 <div class="bg-secondary position-relative w-40 border-15px">

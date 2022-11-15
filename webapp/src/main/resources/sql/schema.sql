@@ -160,6 +160,8 @@ CREATE TABLE IF NOT EXISTS email_settings (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+alter table comment_report DROP constraint IF EXISTS uk_6fqa4f7msp9o6kjnooeedi6f5;
+
 
 
 

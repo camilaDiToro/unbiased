@@ -27,8 +27,9 @@ public class JpaUtils {
     }
 
     public static String escapeSqlLike(String query) {
-        return query.replaceAll("_","[_]").replaceAll("%","[%]"); // TODO encontrar una forma mas oficial (no cubre todos los casos)
+        return query.replaceAll("%","\\\\%").replaceAll("_","\\\\%"); // TODO encontrar una forma mas oficial (no cubre todos los casos)
     }
+
 
     public static <T> Page<T> getPage(int page, int totalPages, Query idsQuery, TypedQuery<T> objectQuery, Function<T, Long> idGetter){
 

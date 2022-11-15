@@ -24,7 +24,7 @@
         <div class="d-flex flex-row pt-2 pl-2 bg-hover">
           <a class="mb-2 nav-link selected pl-0 ${item == 'manageAdmins' ? 'select' : ''}" href="<c:url value="/owner/add_admin_page"/>">
             <img class="mb-2 moderation-img" src="<c:url value="/resources/images/add-user-svgrepo-com.svg"/>" alt="...">
-            <spring:message code="moderation.add"/>
+            <spring:message code="moderation.manage"/>
           </a>
         </div>
       </c:if>

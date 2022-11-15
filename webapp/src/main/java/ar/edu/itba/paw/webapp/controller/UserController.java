@@ -141,7 +141,6 @@ public class UserController {
                 .withObject("categories", profileCategoryList)
                 .withObject("newsPage", fullNews)
                 .withObject("statisticsMap", categoryStatistics.getStatiscticsMap())
-                .withObject("pingedNews", profileUser.getPingedNews())
                 .withObject("isMyProfile", isMyProfile)
                 .withObject("profileUser", profileUser)
                 .withObject("newsCategories", Category.getTrueCategories())
@@ -152,11 +151,15 @@ public class UserController {
                 .withObject("followers", userService.getFollowersCount(userId))
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
-        if(user.isPresent() && isMyProfile) {
+        if (user.isPresent() && isMyProfile) {
             final User loggedUser = user.get();
             mavBuilder.withObject("isFollowing", userService.isFollowing(loggedUser, userId));
             mavBuilder.withObject("getMailOptionByEnum", loggedUser.getEmailSettings().getValueByEnum());
         }
+
+        Optional<News> pingedNews = newsService.getPingedNews(user, profileUser);
+
+        pingedNews.ifPresent(news -> mavBuilder.withObject("pingedNews", news));
 
         mavBuilder.withObject("category", catObject);
 
@@ -182,10 +185,10 @@ public class UserController {
     public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
         final VerificationToken.Status status = userService.verifyUserEmail(token);
         final ModelAndView mav;
-        if(status.equals(VerificationToken.Status.SUCCESFFULLY_VERIFIED)){
+        if (status.equals(VerificationToken.Status.SUCCESFFULLY_VERIFIED)){
             mav = new MyModelAndView.Builder("email_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                     .build();
-        }else{
+        } else {
             mav = new ModelAndView("redirect:/email_not_verified/"+status.getStatus().toLowerCase(Locale.ROOT));
         }
         return mav;
@@ -197,9 +200,9 @@ public class UserController {
         final MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("email_not_verified", "pageTitle.emailVerified", TextType.INTERCODE)
                 .withObject("status",status);
 
-        if(status.equals("expired")){
+        if (status.equals("expired")){
             mavBuilder.withObject("errorMsg",VerificationToken.Status.EXPIRED.getCode());
-        }else{
+        } else {
             mavBuilder.withObject("errorMsg",VerificationToken.Status.NOT_EXISTS.getCode());
         }
         return mavBuilder.build();
@@ -212,7 +215,7 @@ public class UserController {
         }
 
         final VerificationToken.Status s = userService.resendEmailVerification(userForm.getEmail());
-        if(s.equals(VerificationToken.Status.ALREADY_VERIFIED)){
+        if (s.equals(VerificationToken.Status.ALREADY_VERIFIED)){
             return new ModelAndView("email_already_verified");
         }
         return new ModelAndView("email_verification_pending");

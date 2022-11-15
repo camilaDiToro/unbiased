@@ -59,6 +59,7 @@ public class OwnerController {
                 .withObject("usersPage", ownerService.getAdmins(page, query))
                 .withObject("item", "manageAdmins")
                 .withObject("hasErrors", hasErrors)
+                .withObject("query", query)
                 .build();
     }
 

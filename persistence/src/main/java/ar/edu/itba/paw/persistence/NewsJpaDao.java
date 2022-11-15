@@ -76,7 +76,7 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public List<News> getNewNews(int page, String query) {
-        final Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query ORDER BY " + NewsOrder.NEW.getQueryPaged())
+        final Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query escape '\\'  ORDER BY " + NewsOrder.NEW.getQueryPaged())
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%");
 
         final List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
@@ -95,7 +95,7 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint) {
-        final Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query AND creation_date >= "+timeConstraint.getMinimumDateQuery() + " ORDER BY " + NewsOrder.TOP.getQueryPaged())
+        final Query queryObj = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query escape '\\'  AND creation_date >= "+timeConstraint.getMinimumDateQuery() + " ORDER BY " + NewsOrder.TOP.getQueryPaged())
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%");
 
         List<News> news = getNewsOfPage(queryObj, page, SEARCH_PAGE_SIZE);
@@ -106,7 +106,7 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public int getTotalPagesAllNews(String query, TimeConstraint timeConstraint) {
-        final long elemCount = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query AND creation_date >= " +timeConstraint.getMinimumDateQuery())
+        final long elemCount = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query escape '\\'  AND creation_date >= " +timeConstraint.getMinimumDateQuery())
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%")
                 .getFirstResult();
 
@@ -374,7 +374,7 @@ public class NewsJpaDao implements NewsDao {
         final int totalPages = getTotalPagesNewsFromUser(user);
         page = Math.min(page, totalPages);
 
-        final Query query  = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE creator = :userId order by " + ns.getQueryPaged())
+        final Query query  = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE creator = :userId AND news_id <> (SELECT COALESCE(pinged_news, -1) FROM users WHERE user_id = :userId) order by " + ns.getQueryPaged())
                 .setParameter("userId", user.getId());
         final List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
 
@@ -389,9 +389,9 @@ public class NewsJpaDao implements NewsDao {
         final int totalPages = getTotalPagesNewsFromUserSaved(user);
         page = Math.min(page, totalPages);
 
-        final Query query = entityManager.createNativeQuery("SELECT news_id FROM saved_news NATURAL JOIN news f WHERE user_id = :userId order by " + ns.getQueryPaged())
+        final Query query = entityManager.createNativeQuery("SELECT news_id FROM saved_news NATURAL JOIN news f WHERE user_id = :userId AND news_id <> (SELECT COALESCE(pinged_news, -1) FROM users WHERE user_id = :userId) order by " + ns.getQueryPaged())
                 .setParameter("userId", user.getId());
-        final List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
+        final List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
@@ -404,9 +404,9 @@ public class NewsJpaDao implements NewsDao {
         final int totalPages = getTotalPagesNewsFromUserRating(user.getId(), upvote);
         page = Math.min(page, totalPages);
 
-        final Query query = entityManager.createNativeQuery("SELECT news_id FROM upvotes NATURAL JOIN news f WHERE upvote = :value AND user_id = :userId order by " + ns.getQueryPaged())
+        final Query query = entityManager.createNativeQuery("SELECT news_id FROM upvotes NATURAL JOIN news f WHERE upvote = :value AND user_id = :userId AND news_id <> (SELECT COALESCE(pinged_news, -1) FROM users WHERE user_id = :userId) order by " + ns.getQueryPaged())
                 .setParameter("value", upvote).setParameter("userId", user.getId());
-        final List<News> news = getNewsOfPage(query, page, PAGE_SIZE);
+        final List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
         if (loggedUser != null)
             news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
@@ -423,20 +423,21 @@ public class NewsJpaDao implements NewsDao {
     }
 
     int getTotalPagesNewsFromUser(User user) {
-        final long elemCount =  entityManager.createQuery("SELECT count(f) from News f WHERE f.creator = :user",Long.class)
+        final Long elemCount =  entityManager.createQuery("SELECT count(f) from News f WHERE f.creator = :user AND NOT (f IN (SELECT pingedNews FROM User WHERE userId = :user))",Long.class)
                 .setParameter("user", user) .getSingleResult();
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
     }
 
+
     int getTotalPagesNewsFromUserRating(long userId, boolean upvoted) {
-        final long elemCount =  entityManager.createQuery("SELECT count(u) from Upvote u WHERE u.userId = :user AND u.value = :value",Long.class)
+        final Long elemCount =  entityManager.createQuery("SELECT count(u) from Upvote u WHERE u.userId = :user AND u.value = :value AND NOT (u.news IN (SELECT pingedNews FROM User WHERE userId = :user))",Long.class)
                 .setParameter("user", userId)
                 .setParameter("value", upvoted).getSingleResult();
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
     }
 
     int getTotalPagesNewsFromUserSaved(User user) {
-        final long elemCount =  entityManager.createQuery("SELECT u.upvoteSet.size from User u WHERE u.userId = :user",Long.class)
+        final int elemCount =  entityManager.createQuery("SELECT u.savedNews.size - (case when EXISTS (select s FROM Saved s WHERE s.news = u.pingedNews AND s.userId = :user) THEN 1 ELSE 0 END) from User u WHERE u.userId = :user ",Integer.class)
                 .setParameter("user", user.getId())
                 .getSingleResult();
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
