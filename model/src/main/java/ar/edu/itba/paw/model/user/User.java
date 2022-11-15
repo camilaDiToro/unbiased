@@ -32,7 +32,7 @@ public class User {
 
     private News pingedNews;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     private Image image;
 
@@ -54,7 +54,7 @@ public class User {
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
     private Set<Upvote> upvoteSet;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", orphanRemoval = true)
     @PrimaryKeyJoinColumn
     private EmailSettings emailSettings;
 
@@ -83,13 +83,13 @@ public class User {
 
 
 
-    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Saved> savedNews;
 
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Follow> following;
 
 

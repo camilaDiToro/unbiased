@@ -25,7 +25,7 @@ public class ReportDetail {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User reporter;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "news_id", referencedColumnName = "news_id", nullable = false)
     private News news;
 

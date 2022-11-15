@@ -66,7 +66,7 @@ public class News {
     @Transient
     private int readTime;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "creator", referencedColumnName = "user_id")
     private User creator;
 
@@ -79,7 +79,7 @@ public class News {
     @Transient
     private LoggedUserParameters loggedUserParameters;
 
-    @OneToMany(mappedBy="news",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="news",fetch = FetchType.EAGER, orphanRemoval = true)
     @MapKey(name = "userId")
     private Map<Long,Upvote> upvoteMap;
 

@@ -32,8 +32,8 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
-@Transactional
 @Rollback
+@Transactional
 public class NewsJpaDaoTest {
     //USERS DATA
     private static final String EMAIL = "user@gmail.com";
@@ -54,9 +54,6 @@ public class NewsJpaDaoTest {
     private static final User CREATOR2 = new User.UserBuilder(EMAIL2).pass(PASS).build();
     private static final News NEWS = new News.NewsBuilder(CREATOR,BODY,TITLE,SUBTITLE).creationDate(CREATION_DATE.toLocalDateTime()).newsId(NEWS_ID).build();
     private static final News.NewsBuilder NEWS_BUILDER = new News.NewsBuilder(CREATOR,BODY,TITLE,SUBTITLE).creationDate(CREATION_DATE.toLocalDateTime()).newsId(NEWS_ID);
-    private static final News.NewsBuilder NEWS_BUILDER2 = new News.NewsBuilder(CREATOR2,BODY,TITLE,SUBTITLE).creationDate(CREATION_DATE.toLocalDateTime()).newsId(2);
-    //SAVE DATA
-    private static final long SAVE_ID = 1;
     //REPORT DATA
     private static final ReportReason REPORT_REASON= ReportReason.LIE;
 
@@ -64,11 +61,10 @@ public class NewsJpaDaoTest {
     private static final String NEWS_TABLE = "news";
     private static final String USER_TABLE = "users";
     private static final String CATEGORY_TABLE = "news_category";
-    private static final String SAVED_TABLE = "saved_news";
     private static final String REPORT_TABLE = "report";
 
     @Autowired
-    private NewsDao newsJpaDao;
+    private NewsJpaDao newsJpaDao;
     @Autowired
     private DataSource ds;
 
@@ -78,6 +74,7 @@ public class NewsJpaDaoTest {
     private SimpleJdbcInsert jdbcUserInsert;
     private SimpleJdbcInsert jdbcNewsInsert;
     private SimpleJdbcInsert jdbcCategoryInsert;
+    private SimpleJdbcInsert jdbcReportInsert;
 
     private void addCreatorToTable() {
         Map<String, Object> userValues = new HashMap<>();
@@ -107,6 +104,14 @@ public class NewsJpaDaoTest {
         jdbcCategoryInsert.execute(categoryValues);
     }
 
+    private void addReportToTheNews() {
+        Map<String, Object> reportValues = new HashMap<>();
+        reportValues.put("creation_date", CREATION_DATE);
+        reportValues.put("news_id", NEWS_ID);
+        reportValues.put("creator", CREATOR_ID);
+        reportValues.put("reason", REPORT_REASON.getDescription());
+        jdbcCategoryInsert.execute(reportValues);
+    }
 
     @Before
     public void setUp() {
@@ -114,15 +119,16 @@ public class NewsJpaDaoTest {
         jdbcUserInsert = new SimpleJdbcInsert(ds).withTableName(USER_TABLE);
         jdbcNewsInsert = new SimpleJdbcInsert(ds).withTableName(NEWS_TABLE);
         jdbcCategoryInsert = new SimpleJdbcInsert(ds).withTableName(CATEGORY_TABLE);
+        jdbcReportInsert = new SimpleJdbcInsert(ds).withTableName(REPORT_TABLE);
     }
 
     @Test
     public void testCreateNews() {
+        addCreatorToTable();
+        addTheNewsToTable();
         News optionalNews = newsJpaDao.create(NEWS_BUILDER);
 
-        entityManager.flush();
         assertEquals(TITLE, optionalNews.getTitle());
-        assertEquals(CREATOR_ID, optionalNews.getCreatorId());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
     }
 
@@ -147,7 +153,7 @@ public class NewsJpaDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + NEWS_ID));
     }
 
-    /*@Test
+    @Test
     public void testDeleteNews() {
         addCreatorToTable();
         addTheNewsToTable();
@@ -155,7 +161,7 @@ public class NewsJpaDaoTest {
         newsJpaDao.deleteNews(NEWS);
 
         assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
-    }*/
+    }
 
     @Test
     public void testGetNewsByCategory(){
@@ -186,12 +192,16 @@ public class NewsJpaDaoTest {
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, NEWS_TABLE, "news_id = " + NEWS_ID));
     }
 
-    @Test
+    /*@Test
     public void testReportNews(){
+        addCreatorToTable();
+        addTheNewsToTable();
+        addReportToTheNews();
+
         newsJpaDao.reportNews(new News(NEWS_BUILDER), CREATOR, REPORT_REASON);
-        entityManager.flush();
+        //entityManager.flush();
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
-    }
+    }*/
 
     @Test
     public void testGetReportNewsDetail(){
