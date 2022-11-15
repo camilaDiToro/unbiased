@@ -150,7 +150,11 @@
                                                         <a class="link max-h-10"  href="<c:url value="/news/${article.newsId}"/>"><h5 class="link-text text-ellipsis"><c:out value="${article.title}"/></h5></a>
                                                         <h6 class="  card-subtitle py-1 text-ellipsis-2"><c:out value="${article.subtitle}"/></h6>
                                                         <c:set var="timeAmount" value="${article.getAmountAgo()}"/>
-                                                        <span class="font-weight-light"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
+                                                        <div class="d-flex flex-row">
+                                                            <span class="font-weight-light"><spring:message code="${timeAmount.getInterCode()}" arguments="${timeAmount.getQty()}"/></span>
+                                                            <%--<img src="<c:url value="/resources/images/calendar-svgrepo-com.svg"/>" alt="..." class="read-clock"/>--%>
+                                                        </div>
+
 
                                                         <p class="text-sm-left text-secondary mb-0">
                                                             <img src="<c:url value="/resources/images/clock-svgrepo-com.svg"/>" alt="..." class="read-clock"/>
@@ -509,7 +513,7 @@
                                 ${orderName}
                         </div>
                         <div class="progress m-2">
-                            <div class="progress-bar" role="progressbar" style="width: ${statistic.percentage}%" aria-valuenow="${statistic.percentage}" aria-valuemin="0" aria-valuemax="100">${statistic.percentage}%</div>
+                            <div class="progress-bar custom-style-progress-bar" role="progressbar" style="width: ${statistic.percentage}%" aria-valuenow="${statistic.percentage}" aria-valuemin="0" aria-valuemax="100">${statistic.percentage}%</div>
                         </div>
                     </c:forEach>
 
