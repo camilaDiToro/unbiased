@@ -324,17 +324,18 @@
 
                                             <div class="frame-navbar">
                                                 <c:if test="${user.hasImage()}">
-                                                    <c:set var="commenterFollowers" value="${commentCreatorsFollowers[user.id]}"/>
+                                                    <c:set var="userId" value="${user.getUserId()}"/>
+                                                    <c:set var="commenterFollowers" value="${commentCreatorsFollowers[userId]}"/>
                                                     <c:if test="${commenterFollowers >= 0 && commenterFollowers < 1}">
-                                                        <img id="default-frame-color" src="<c:url value="/profile/${user.id}/image"/>" class="rounded-circle object-fit-cover mr-1" >
+                                                        <img id="default-frame-color" src="<c:url value="/profile/${userId}/image"/>" class="rounded-circle object-fit-cover mr-1" >
                                                     </c:if>
 
                                                     <c:if test="${commenterFollowers >=1 && commenterFollowers < 2}">
-                                                        <img id="gold-frame-color" src="<c:url value="/profile/${user.id}/image"/>" class="rounded-circle object-fit-cover mr-1" >
+                                                        <img id="gold-frame-color" src="<c:url value="/profile/${userId}/image"/>" class="rounded-circle object-fit-cover mr-1" >
                                                     </c:if>
 
                                                     <c:if test="${commenterFollowers >=2}">
-                                                        <img id="platinum-frame-color" src="<c:url value="/profile/${user.id}/image"/>" class="rounded-circle object-fit-cover mr-1">
+                                                        <img id="platinum-frame-color" src="<c:url value="/profile/${userId}/image"/>" class="rounded-circle object-fit-cover mr-1">
                                                     </c:if>
                                                 </c:if>
                                                 <c:if test="${!user.hasImage()}">
@@ -473,7 +474,54 @@
                                 </div>
                             </div>
                         </div>
-                    </c:forEach>
+                            <div class="modal fade" id="cardModal" tabindex="-1" aria-labelledby="cardModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="cardModalLabel"><spring:message code="home.modal.signIn"/> </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <c:url value="/login?home=true" var="loginUrl" >
+                                                <c:param name="redirectTo" value="/${orderBy}?category=${category}&query=${query}"/>
+                                            </c:url>
+                                            <form id="form-login-index" class="form-signin-index" action="${loginUrl}" method="post">
+                                                <div class="d-flex">
+                                                    <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/profile-svgrepo-com.svg"/>" alt="..."/>
+                                                    <label for="username" class="sr-only"><spring:message code="login.mail.address" var="mailAddressMsg"/></label>
+                                                    <input type="text" id="username" name="username" class="form-control" placeholder="${mailAddressMsg}" required="" autofocus="">
+
+                                                </div>
+                                                <div class= "d-flex mt-1 " >
+                                                    <img class="size-img-modal-login align-self-center" src="<c:url value="/resources/images/lock-svgrepo-com.svg"/> " alt="..."/>
+                                                    <label for="password" class="sr-only"><spring:message code="login.password" var="passwordMsg"/></label>
+                                                    <input name="password" type="password" id="password" class="form-control" placeholder="${passwordMsg}">
+                                                </div>
+
+                                                <c:if test="${param.error}">
+                                                    <div class="text-danger text-nowrap form-text d-inline-block">
+                                                        <spring:message code="login.error"/>
+                                                    </div>
+                                                </c:if>
+                                                <c:if test="${param.unable}">
+                                                    <div class="text-danger text-nowrap form-text d-inline-block">
+                                                        <spring:message code="login.emailNotVerified"/>
+                                                    </div>
+                                                    <div class="text-danger text-nowrap form-text d-inline-block">
+                                                        <spring:message code="login.emailResended"/>
+                                                    </div>
+                                                </c:if>
+                                                <button class="btn btn-md btn-info btn-block" type="submit"><spring:message code="login.signIn"/></button>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </c:forEach>
 
                 </div>
 

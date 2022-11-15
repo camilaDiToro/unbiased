@@ -27,7 +27,6 @@ import java.util.Locale;
 @Entity
 @Table(name="comment_report",
         uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "comment_id" }) } )
-
 public class ReportedComment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reported_comments_seq")

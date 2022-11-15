@@ -139,9 +139,8 @@ public class NewsController{
 
         final Page<Comment> comments = newsService.getComments(newsId, page, orderByObj);
         final Map<Long, Rating> commentRatings = newsService.getCommentsRating(comments.getContent(), loggedUser);
-        final Map<Long, Long> commentCreatorsFollowers = comments.getContent().stream()
-                .collect(Collectors.toMap(comment -> comment.getUser().getUserId(),
-                        comment -> userService.getFollowersCount(comment.getUser().getUserId())));
+        final Map<Long, Long> commentCreatorsFollowers = new HashMap<>();
+        comments.getContent().forEach(c -> commentCreatorsFollowers.put(c.getUser().getUserId(), userService.getFollowersCount(c.getUser().getUserId())));
 
         final MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
                 .withObject("date", news.getFormattedDate(locale))
