@@ -60,6 +60,7 @@ public class TestConfig {
         return populator;
     }
 
+
     @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);

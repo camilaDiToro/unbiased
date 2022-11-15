@@ -33,7 +33,7 @@ import java.util.Map;
 @Table(name = "comments")
 public class Comment {
 
-    @OneToMany(mappedBy="comment",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="comment",fetch = FetchType.EAGER, orphanRemoval = true)
     @MapKey(name = "userId")
     private Map<Long, CommentUpvote> upvoteMap;
 
@@ -42,7 +42,7 @@ public class Comment {
     @SequenceGenerator(name="comment_seq", sequenceName = "comment_seq", allocationSize = 1)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name="user_id", nullable=false)
     private User user;
     @Column(name = "comment")
@@ -67,7 +67,7 @@ public class Comment {
         this.news = news;
     }
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name="news_id", nullable=false)
     private News news;
 

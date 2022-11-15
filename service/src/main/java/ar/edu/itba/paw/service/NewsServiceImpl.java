@@ -74,6 +74,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query) {
         final int totalPages;
         final boolean isPresent = maybeCurrentUser.isPresent();
@@ -128,6 +129,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public Page<News> getNewsForUserProfile(Optional<User> maybeCurrentUser, int page, NewsOrder newsOrder, User user, ProfileCategory profileCategory) {
         final Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrder, maybeCurrentUser, profileCategory);
         return pageObj;
@@ -197,6 +199,7 @@ public class NewsServiceImpl implements NewsService {
 
 
     @Override
+    @Transactional
     public Iterable<ProfileCategory> getProfileCategories(Optional<User> maybeCurrentUser, User user) {
 
         final boolean isMyProfile =  maybeCurrentUser.isPresent() && maybeCurrentUser.get().equals(user);
@@ -209,31 +212,37 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public Iterable<Category> getHomeCategories(Optional<User> maybeCurrentUser) {
         return Category.categoriesInOrder().stream().filter(c ->  c != Category.FOR_ME || maybeCurrentUser.isPresent()).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public Optional<News> getById(Optional<User> maybeCurrentUser, long id) {
         return maybeCurrentUser.isPresent() ? newsDao.getById(id, maybeCurrentUser.get().getUserId()) : newsDao.getById(id);
     }
 
     @Override
+    @Transactional
     public Optional<News> getById(User currentUser, long id) {
         return newsDao.getById(id, currentUser.getUserId());
     }
 
     @Override
+    @Transactional
     public Optional<News> getById(long id) {
         return newsDao.getById(id);
     }
 
     @Override
+    @Transactional
     public Optional<Comment> getCommentById(long id) {
         return commentDao.getCommentById(id);
     }
 
     @Override
+    @Transactional
     public Map<Long, Rating> getCommentsRating(List<Comment> comments, Optional<User> maybeLoggedUser) {
         return comments.stream().collect(Collectors.toMap(Comment::getId, comment -> {
             if (!maybeLoggedUser.isPresent())
@@ -264,6 +273,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj) {
         if (orderByObj.equals(NewsOrder.NEW)) {
             return commentDao.getNewComments(newsId, page);
@@ -278,6 +288,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
     public CategoryStatistics getCategoryStatistics(long userId) {
         return newsDao.getCategoryStatistics(userId);
     }

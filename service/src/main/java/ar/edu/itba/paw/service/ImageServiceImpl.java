@@ -19,6 +19,7 @@ public class ImageServiceImpl implements ImageService{
     }
 
     @Override
+    @Transactional
     public Optional<Image> getImageById(long id) {
         return imageDao.getImageById(id);
     }

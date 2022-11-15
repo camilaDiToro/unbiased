@@ -16,7 +16,6 @@ import ar.edu.itba.paw.persistence.functional.GetNewsProfileFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -180,7 +179,6 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    @Transactional
     public void deleteNews(News news) {
         entityManager.remove(news);
     }

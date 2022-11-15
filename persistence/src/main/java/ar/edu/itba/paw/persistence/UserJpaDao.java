@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Primary
+
 @Repository
 public class UserJpaDao implements UserDao{
 
