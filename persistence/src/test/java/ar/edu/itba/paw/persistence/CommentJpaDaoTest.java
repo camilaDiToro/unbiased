@@ -120,9 +120,12 @@ public class CommentJpaDaoTest {
 
     @Test
     public void testAddComment() {
-        commentDao.addComment(CREATOR2, NEWS2, COMMENT);
+        addCreatorToTable();
+        addTheNewsToTable();
+        addCommentFromCreatorToTheNews();
 
-        entityManager.flush();
+        commentDao.addComment(CREATOR, NEWS, COMMENT);
+
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
     }
 
