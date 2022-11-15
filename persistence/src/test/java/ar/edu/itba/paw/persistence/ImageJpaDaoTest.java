@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 @Rollback
 public class ImageJpaDaoTest {
     @Autowired
-    private ImageDao imageDao;
+    private ImageJpaDao imageDao;
     @Autowired
     private DataSource ds;
 

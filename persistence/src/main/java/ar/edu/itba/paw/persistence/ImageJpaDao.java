@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,7 +26,6 @@ public class ImageJpaDao implements ImageDao {
     }
 
     @Override
-    @Transactional
     public Image uploadImage(byte[] bytes, String dataType) {
         Image image = new Image(bytes, dataType);
         entityManager.persist(image);
