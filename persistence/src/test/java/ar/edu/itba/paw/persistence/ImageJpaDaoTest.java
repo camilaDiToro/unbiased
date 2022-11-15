@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 @Rollback
 public class ImageJpaDaoTest {
     @Autowired
-    private ImageJpaDao imageDao;
+    private ImageDao imageDao;
     @Autowired
     private DataSource ds;
 
@@ -57,7 +57,6 @@ public class ImageJpaDaoTest {
 
     @Before
     public void setUp() {
-        imageDao = new ImageJpaDao();
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcImageInsert = new SimpleJdbcInsert(ds).withTableName(IMAGE_TABLE);
     }
@@ -77,5 +76,13 @@ public class ImageJpaDaoTest {
 
         assertFalse(optionalImage.isPresent());
         assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, IMAGE_TABLE));
+    }
+
+    @Test
+    public void testUploadImage() {
+        addImageToTable();
+        imageDao.uploadImage(IMAGE_DATA, IMAGE_TYPE);
+
+        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, IMAGE_TABLE));
     }
 }
