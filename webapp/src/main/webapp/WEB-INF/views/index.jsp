@@ -55,7 +55,7 @@
                         </a>
                             <ul class="dropdown-menu bg-dropdown">
                                 <c:forEach var="timeConstraint" items="${timeConstraints}">
-                                    <li><a class="dropdown-items" href="<c:url value="/TOP">
+                                    <li class="mb-1"><a class="dropdown-items" href="<c:url value="/TOP">
                             <c:param name = "query" value = "${param.query}"/>
                             <c:param name = "category" value = "${param.category}"/>
                             <c:param name = "type" value = "${param.type}"/>
