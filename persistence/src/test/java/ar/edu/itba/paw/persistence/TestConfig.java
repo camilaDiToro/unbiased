@@ -60,11 +60,6 @@ public class TestConfig {
         return populator;
     }
 
-    /*@Bean
-    public PlatformTransactionManager transactionManager(final DataSource ds) {
-        return new DataSourceTransactionManager(ds);
-    }*/
-
 
     @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {

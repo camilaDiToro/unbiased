@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.news.*;
 import ar.edu.itba.paw.model.user.User;
@@ -9,13 +8,11 @@ import ar.edu.itba.paw.model.user.UserStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +21,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -61,10 +57,7 @@ public class CommentJpaDaoTest {
     private static final Timestamp COMMENT_DATE = Timestamp.valueOf(date);
     private static final boolean DELETED= false;
     //REPORT DATA
-    private static final long REPORT_ID = 1;
     private static final ReportReason REPORT_REASON = ReportReason.LIE;
-    private static final Timestamp REPORT_DATE = Timestamp.valueOf(date);
-
     //TABLES
     private static final String NEWS_TABLE = "news";
     private static final String USER_TABLE = "users";
@@ -116,7 +109,6 @@ public class CommentJpaDaoTest {
         jdbcCommentInsert.execute(commentValues);
     }
 
-
     @Before
     public void setUp() {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -128,12 +120,6 @@ public class CommentJpaDaoTest {
 
     @Test
     public void testAddComment() {
-        //addCreatorToTable();
-        //addTheNewsToTable();
-        //addCommentFromCreatorToTheNews();
-        //User user = userDao.getUserById(CREATOR_ID).get();
-        //News news = newsDao.getById(NEWS_ID, CREATOR_ID).get();
-
         commentDao.addComment(CREATOR2, NEWS2, COMMENT);
 
         entityManager.flush();
@@ -177,13 +163,11 @@ public class CommentJpaDaoTest {
 
     @Test
     public void testReportComment(){
-        //addCreatorToTable();
-        //addTheNewsToTable();
-        //addCommentFromCreatorToTheNews();
         commentDao.reportComment(new Comment(CREATOR,COMMENT,NEWS), CREATOR, REPORT_REASON);
         entityManager.flush();
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, REPORT_TABLE));
     }
+
     @Test
     public void testGetDeletedComments() {
         addCreatorToTable();

@@ -1,11 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.model.Image;
-import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.admin.ReportReason;
-import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.user.UserStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,11 +14,9 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)

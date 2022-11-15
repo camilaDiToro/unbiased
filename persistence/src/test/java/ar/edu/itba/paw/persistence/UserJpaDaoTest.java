@@ -138,7 +138,6 @@ public class UserJpaDaoTest {
         User user = userDao.getUserById(USER_ID).get();
 
         assertEquals(USER_STATUS.REGISTERED.getStatus(), user.getStatus().getStatus());
-        //assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USERS_TABLE, String.format("user_id = '%s' AND status = '%s'", USER_ID, USER_STATUS.REGISTERED.getStatus())));
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
     }
 
