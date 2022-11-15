@@ -69,12 +69,12 @@ public class ErrorController {
         return mav;
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @RequestMapping( "/500")
-    public ModelAndView error500() {
-        final ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
-        mav.addObject("errorCode","500");
-        return mav;
-    }
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    @RequestMapping( "/500")
+//    public ModelAndView error500() {
+//        final ModelAndView mav = new ModelAndView("errors/generic_numbered_error");
+//        mav.addObject("errorCode","500");
+//        return mav;
+//    }
 
 }
