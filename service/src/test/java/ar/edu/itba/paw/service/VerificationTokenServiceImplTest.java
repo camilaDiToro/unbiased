@@ -22,7 +22,6 @@ public class VerificationTokenServiceImplTest {
     private User mockUser;
     @Mock
     private VerificationToken mockVT;
-    private static final String EMAIL = "user@email.com";
     private static final long ID = 1;
 
     private static final String TOKEN = "token";

@@ -1,20 +1,15 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.persistence.UserDao;
-import ar.edu.itba.paw.persistence.VerificationTokenDao;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -23,12 +18,9 @@ import static org.junit.Assert.*;
 public class UserServiceImplTest {
 
     //User
-    private static final String USERNAME = "username";
     private static final String EMAIL = "user@mail.com";
-    private static final String PASS = "userpass";
     private static final long ID = 1;
     private static final long OTHER_ID = 1;
-
 
     //TOKEN
     private static final String TOKEN = "A1234";
@@ -42,13 +34,8 @@ public class UserServiceImplTest {
     private User.UserBuilder mockUserBuilder;
     @Mock
     private UserDao mockUserDao;
-
-    @Mock
-    private EmailService emailService;
-
     @Mock
     private VerificationTokenService mockVerificationTokenService;
-
 
     @InjectMocks
     private UserServiceImpl userService;
