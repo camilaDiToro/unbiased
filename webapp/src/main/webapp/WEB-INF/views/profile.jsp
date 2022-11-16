@@ -379,16 +379,14 @@
                 </c:if>
                 <c:if test="${profileUser.hasImage()}">
 
-                    <c:if test="${profileFollowers >= 0 && followers < 1}">
-                        <img id="default-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
+                    <c:if test="${profileFollowers >= 0 && profileFollowers < 1}">
+                        <img id="default-frame-color" src="<c:url value="/profile/${profileUser.getUserId()}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
                     </c:if>
-
-                    <c:if test="${profileFollowers >=1 && followers < 2}">
-                        <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
+                    <c:if test="${profileFollowers >=1 && profileFollowers < 2}">
+                        <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.getUserId()}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
                     </c:if>
-
                     <c:if test="${profileFollowers >=2}">
-                        <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
+                        <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.getUserId()}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
                     </c:if>
                 </c:if>
                 <c:if test="${!profileUser.hasImage()}">
