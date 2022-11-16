@@ -17,6 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -35,6 +37,10 @@ public class VerificationTokenJpaDaoTest {
     private VerificationTokenJpaDao verificationTokenDao;
     @Autowired
     private UserJpaDao userDao;
+
+    @PersistenceContext
+    EntityManager entityManager;
+
     private JdbcTemplate jdbcTemplate;
     private static final String USERS_TABLE = "users";
     private static final String TOKEN_TABLE = "email_verification_token";
@@ -59,7 +65,7 @@ public class VerificationTokenJpaDaoTest {
         jdbcVerificationTokenInsert = new SimpleJdbcInsert(ds).withTableName(TOKEN_TABLE);
     }
 
-    private void addUsertoTable() {
+    private User addUsertoTable() {
         Map<String, Object> userValues = new HashMap<>();
         userValues.put("email", EMAIL);
         userValues.put("pass", PASS);
@@ -67,6 +73,7 @@ public class VerificationTokenJpaDaoTest {
         userValues.put("status", USER_STATUS.getStatus());
         userValues.put("user_id", USER_ID);
         jdbcUserInsert.execute(userValues);
+        return entityManager.getReference(User.class, USER_ID);
     }
 
     private void addTokentoTable() {
@@ -80,8 +87,8 @@ public class VerificationTokenJpaDaoTest {
 
     @Test
     public void testCreateVerificationToken() {
-        addUsertoTable();
-        User user = userDao.getUserById(USER_ID).get();
+        User user = addUsertoTable();
+
         VerificationToken token = verificationTokenDao.createEmailToken(user.getId(), TOKEN, EXPIRATION_DATE.toLocalDateTime());
 
         assertEquals(user.getId(), token.getUserId());
@@ -92,6 +99,7 @@ public class VerificationTokenJpaDaoTest {
     @Test
     public void testGetToken(){
         addTokentoTable();
+
         Optional<VerificationToken> token = verificationTokenDao.getEmailToken(TOKEN);
 
         assertEquals(token.get().getUserId(), USER_ID);
@@ -102,7 +110,9 @@ public class VerificationTokenJpaDaoTest {
     @Test
     public void testFindByTokenFailed() {
         addTokentoTable();
+
         Optional<VerificationToken> token= verificationTokenDao.getEmailToken(OTHER_TOKEN);
+
         assertFalse(token.isPresent());
     }
 

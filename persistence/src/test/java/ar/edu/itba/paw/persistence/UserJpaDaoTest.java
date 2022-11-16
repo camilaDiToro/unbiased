@@ -89,57 +89,62 @@ public class UserJpaDaoTest {
 
     @Test
     public void testCreate() {
+
         User user = userDao.create(usBuilder);
+        entityManager.flush();
 
         assertNotNull(user);
-        assertEquals(USER_ID, user.getId());
-        assertEquals(EMAIL, user.getEmail());
-    }
-
-    @Test
-    public void testFindUserById() {
-        addUsertoTable();
-        User user = userDao.getUserById(USER_ID).get();
-
         assertEquals(USER_ID, user.getId());
         assertEquals(EMAIL, user.getEmail());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
     }
 
     @Test
+    public void testFindUserById() {
+        addUsertoTable();
+
+        User user = userDao.getUserById(USER_ID).get();
+
+        assertEquals(USER_ID, user.getId());
+        assertEquals(EMAIL, user.getEmail());
+    }
+
+    @Test
     public void testFailFindUserById() {
         addUsertoTable();
+
         Optional<User> user = userDao.getUserById(DIFFERENT_ID);
+
         assertFalse(user.isPresent());
     }
 
     @Test
     public void testFindByEmail() {
         addUsertoTable();
+
         User user = userDao.findByEmail(EMAIL).get();
 
         assertEquals(USER_ID, user.getId());
         assertEquals(EMAIL, user.getEmail());
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
     }
 
     @Test
     public void testFindUserByUsername() {
         addUsertoTable();
+
         User user = userDao.findByUsername(USERNAME).get();
 
         assertEquals(USER_ID, user.getId());
         assertEquals(USERNAME, user.getUsername());
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
     }
 
     @Test
     public void testVerifyEmail() {
         addUsertoTable();
+
         userDao.verifyEmail(USER_ID);
         entityManager.flush();
 
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
         assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USERS_TABLE, "status = " + "'" + UserStatus.REGISTERED + "'" + " AND user_id = " + USER_ID));
     }
 
@@ -149,9 +154,8 @@ public class UserJpaDaoTest {
         addTheFollowToTable();
 
         userDao.addFollow(USER_ID, F_ID);
-
         entityManager.flush();
-        assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
+
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, FOLLOWS_TABLE));
     }
 
