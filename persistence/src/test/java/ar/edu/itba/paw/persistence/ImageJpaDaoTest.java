@@ -13,6 +13,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,8 @@ public class ImageJpaDaoTest {
     private ImageJpaDao imageDao;
     @Autowired
     private DataSource ds;
+    @PersistenceContext
+    EntityManager entityManager;
 
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcImageInsert;
@@ -73,9 +77,8 @@ public class ImageJpaDaoTest {
 
     @Test
     public void testUploadImage() {
-        addImageToTable();
         imageDao.uploadImage(IMAGE_DATA, IMAGE_TYPE);
-
+        entityManager.flush();
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, IMAGE_TABLE));
     }
 }

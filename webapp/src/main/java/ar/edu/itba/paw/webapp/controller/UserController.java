@@ -93,23 +93,6 @@ public class UserController {
         return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
-    @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
-    public ModelAndView profileFollow(@PathVariable("userId") long userId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-        userService.followUser(currentUser, userId);
-        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
-    }
-
-    @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
-    public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-        userService.unfollowUser(currentUser, userId);
-        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
-    }
-
-
-
-
 
     @PreAuthorize("@ownerCheck.checkSavedNewsAccess(#category, #userId)")
     @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder}", method = RequestMethod.GET)
@@ -170,6 +153,13 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
+    public ModelAndView profileFollow(@PathVariable("userId") long userId) {
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        userService.followUser(currentUser, userId);
+        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
+    }
+
     @RequestMapping(value = "/profile", method = RequestMethod.POST)
     public ModelAndView profilePicture(@Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
         final User user = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
@@ -195,6 +185,13 @@ public class UserController {
             mav = new ModelAndView("redirect:/email_not_verified/"+status.getStatus().toLowerCase(Locale.ROOT));
         }
         return mav;
+    }
+
+    @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
+    public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        userService.unfollowUser(currentUser, userId);
+        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
     }
 
     @RequestMapping(value = "/email_not_verified/{status:expired|not_exists}", method = RequestMethod.GET)

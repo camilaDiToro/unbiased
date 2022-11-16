@@ -47,7 +47,7 @@ public class CommentJpaDaoTest {
     private static final Timestamp CREATION_DATE = Timestamp.valueOf(date);
     private static final long ACCESSES = 0;
     private static final long COMMENT_ID = 1;
-    private static final long OTHER_COMMENT_ID = 2;
+    private static final long OTHER_COMMENT_ID = 5;
 
     private static final String COMMENT = "Comment";
     private static final Timestamp COMMENT_DATE = Timestamp.valueOf(date);
@@ -144,7 +144,6 @@ public class CommentJpaDaoTest {
         addCreatorToTable();
         addTheNewsToTable();
         addCommentFromCreatorToTheNews();
-
         Optional<Comment> comment = commentDao.getCommentById(OTHER_COMMENT_ID);
 
         assertFalse(comment.isPresent());
