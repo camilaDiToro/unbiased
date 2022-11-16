@@ -365,7 +365,7 @@ public class NewsJpaDao implements NewsDao {
     }
 
 
-    Page<News> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
+    private Page<News> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
 
         final int totalPages = getTotalPagesNewsFromUser(user);
         page = Math.min(page, totalPages);
@@ -380,7 +380,7 @@ public class NewsJpaDao implements NewsDao {
         return new Page<>(news, page, totalPages);
     }
 
-    Page<News> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser) {
+    private Page<News> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser) {
 
         final int totalPages = getTotalPagesNewsFromUserSaved(user);
         page = Math.min(page, totalPages);
@@ -409,30 +409,30 @@ public class NewsJpaDao implements NewsDao {
         return new Page<>(news, page, totalPages);
     }
 
-    Page<News> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
+    private Page<News> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
         return getNewsWithRatingFromUser(page, user, ns, loggedUser, true);
     }
 
-    Page<News> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
+    private Page<News> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
         return getNewsWithRatingFromUser(page, user, ns, loggedUser, false);
 
     }
 
-    int getTotalPagesNewsFromUser(User user) {
+    private int getTotalPagesNewsFromUser(User user) {
         final Long elemCount =  entityManager.createQuery("SELECT count(f) from News f WHERE f.creator = :user AND NOT (f IN (SELECT pingedNews FROM User WHERE userId = :user))",Long.class)
                 .setParameter("user", user) .getSingleResult();
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
     }
 
 
-    int getTotalPagesNewsFromUserRating(long userId, boolean upvoted) {
+    private int getTotalPagesNewsFromUserRating(long userId, boolean upvoted) {
         final Long elemCount =  entityManager.createQuery("SELECT count(u) from Upvote u WHERE u.userId = :user AND u.value = :value AND NOT (u.news IN (SELECT pingedNews FROM User WHERE userId = :user))",Long.class)
                 .setParameter("user", userId)
                 .setParameter("value", upvoted).getSingleResult();
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
     }
 
-    int getTotalPagesNewsFromUserSaved(User user) {
+    private int getTotalPagesNewsFromUserSaved(User user) {
         final int elemCount =  entityManager.createQuery("SELECT u.savedNews.size - (case when EXISTS (select s FROM Saved s WHERE s.news = u.pingedNews AND s.userId = :user) THEN 1 ELSE 0 END) from User u WHERE u.userId = :user ",Integer.class)
                 .setParameter("user", user.getId())
                 .getSingleResult();

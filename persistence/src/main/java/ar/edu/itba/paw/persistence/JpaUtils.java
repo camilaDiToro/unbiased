@@ -44,8 +44,8 @@ public class JpaUtils {
         List<T> unorderedElementList = objectQuery.setParameter("ids", ids).getResultList();
 
         final Map<Long, T> elementsMapById = new HashMap<>();
-        for (T reportedComment : unorderedElementList) {
-            elementsMapById.put(idGetter.apply(reportedComment), reportedComment);
+        for (T element : unorderedElementList) {
+            elementsMapById.put(idGetter.apply(element), element);
         }
 
         // ordenamos la lista de elementos haciendo un mapeo de id a elemento a traves de elementsMapById
