@@ -8,7 +8,7 @@
 <c:if test="${hasErrors}">
     <script>
         $(document).ready(function(){
-            $("#reportModal").modal('show');
+            $("#Modal").modal('show');
         });
     </script>
 </c:if>
