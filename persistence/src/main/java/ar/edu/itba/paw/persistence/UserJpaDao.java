@@ -6,7 +6,6 @@ import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.Follow;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
