@@ -117,7 +117,7 @@
                                                     <div class="d-flex align-items-center mr-2" role="group">
 
                                                              <button data-toggle="modal" data-target="#binModal${commentId}" class="btn bin-modal">
-                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="bin-image" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.deleteNews"/> "/>
+                                                                <img src="<c:url value="/resources/images/bin-svgrepo-com.svg" />" alt="..." class="bin-image" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="showNews.deleteComment"/> "/>
                                                             </button>
                                                             <a   class="font-weight-bold hover-hand link" href="<c:url value="/admin/reported_comment_detail/${commentId}"/>">
                                                                 <div class="link-text">
