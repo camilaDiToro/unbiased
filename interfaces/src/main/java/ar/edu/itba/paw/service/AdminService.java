@@ -10,12 +10,12 @@ import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 
 public interface AdminService {
-    void reportNews(User currentUser, long newsId, ReportReason reportReason);
+    void reportNews(final User currentUser, long newsId, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
-    void reportComment(User currentUser, long commentId, ReportReason reportReason);
+    void reportComment(final User currentUser, long commentId, ReportReason reportReason);
     Page<Comment> getReportedComments(int page, ReportOrder reportOrder);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsIs);
-    void deleteNews(User currentUser, long newsId);
+    void deleteNews(long newsId);
     void deleteComment(long commentId);
     Page<ReportedComment> getReportedCommentDetail(int page, long commentId);
     boolean hasReported(long userId, long newsId);

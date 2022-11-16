@@ -52,7 +52,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public News create(News.NewsBuilder newsBuilder, List<Category> categories) {
+    public News create(News.NewsBuilder newsBuilder,final List<Category> categories) {
         if(!newsBuilder.getCreator().getRoles().contains(Role.ROLE_JOURNALIST)){
             userService.addRole(newsBuilder.getCreator().getId(),Role.ROLE_JOURNALIST);
         }
@@ -119,7 +119,7 @@ public class NewsServiceImpl implements NewsService {
 
 
     @Override
-    public Optional<News> getPingedNews(Optional<User> maybeCurrentUser, User profileUser) {
+    public Optional<News> getPingedNews(Optional<User> maybeCurrentUser, final User profileUser) {
         News pinnedNews = profileUser.getPingedNews();
         if (pinnedNews == null)
             return Optional.empty();
@@ -130,14 +130,14 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public Page<News> getNewsForUserProfile(Optional<User> maybeCurrentUser, int page, NewsOrder newsOrder, User user, ProfileCategory profileCategory) {
+    public Page<News> getNewsForUserProfile(Optional<User> maybeCurrentUser, int page, NewsOrder newsOrder, final User user, ProfileCategory profileCategory) {
         final Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrder, maybeCurrentUser, profileCategory);
         return pageObj;
     }
 
     @Override
     @Transactional
-    public void setRating(User currentUser, News news, Rating rating) {
+    public void setRating(final User currentUser, News news, Rating rating) {
 
         final PositivityStats.Positivity oldp = news.getPositivityStats().getPositivity();
         final Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
@@ -161,7 +161,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public void setCommentRating(User currentUser, Comment comment, Rating rating) {
+    public void setCommentRating(final User currentUser, Comment comment, Rating rating) {
         Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
         if (rating.equals(Rating.NO_RATING)) {
             upvoteMap.remove(currentUser.getId());
@@ -175,11 +175,11 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public boolean toggleSaveNews(User currentUser, long newsId) {
+    public boolean toggleSaveNews(final User currentUser, long newsId) {
 
         final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(NewsNotFoundException::new);
 
-        final boolean returnValue;
+        boolean returnValue;
         if (news.getLoggedUserParameters().isSaved()) {
             newsDao.removeSaved(news, currentUser);
             returnValue =  false;
@@ -200,7 +200,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public Iterable<ProfileCategory> getProfileCategories(Optional<User> maybeCurrentUser, User user) {
+    public Iterable<ProfileCategory> getProfileCategories(Optional<User> maybeCurrentUser, final User user) {
 
         final boolean isMyProfile =  maybeCurrentUser.isPresent() && maybeCurrentUser.get().equals(user);
         return Arrays.stream(ProfileCategory.values()).filter(c -> {
@@ -225,7 +225,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public Optional<News> getById(User currentUser, long id) {
+    public Optional<News> getById(final User currentUser, long id) {
         return newsDao.getById(id, currentUser.getUserId());
     }
 
@@ -262,7 +262,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public void addComment(User currentUser, long newsId, String comment) {
+    public void addComment(final User currentUser, long newsId, String comment) {
         final News news = getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
         commentDao.addComment(currentUser, news, comment);
         final User newsOwner = news.getCreator();

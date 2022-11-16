@@ -91,32 +91,6 @@ public class NewsController{
         return new ModelAndView("redirect:/news/" + newsId);
     }
 
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
-    public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
-                                      final BindingResult errors, @PathVariable("newsId") long newsId){
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-
-        if (errors.hasErrors()) {
-            return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
-        }
-
-        adminService.reportComment(currentUser, commentId, ReportReason.valueOf(reportNewsFrom.getReason()));
-        return new ModelAndView("redirect:/news/" + newsId + "#" + "comment-" + commentId);
-    }
-
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
-    public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm")
-                                            final CommentNewsForm commentNewsForm, final BindingResult errors,
-                                    @RequestParam(name = "order") final String order) {
-        final NewsOrder newsOrder = NewsOrder.getByValue(order);
-        if (errors.hasErrors()) {
-            return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1, "TOP");
-        }
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        newsService.addComment(currentUser, newsId, commentNewsForm.getComment());
-        return new ModelAndView("redirect:/news/" + newsId + "?order=" + newsOrder.name());
-    }
-
     @PreAuthorize("@ownerCheck.checkCommentOwnership(#commentId)")
     @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteComment(@PathVariable("newsId") long newsId, @PathVariable("commentId") long commentId) {
@@ -174,19 +148,37 @@ public class NewsController{
 
     }
 
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
+    public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
+                                      final BindingResult errors, @PathVariable("newsId") long newsId){
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+
+        if (errors.hasErrors()) {
+            return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
+        }
+
+        adminService.reportComment(currentUser, commentId, ReportReason.valueOf(reportNewsFrom.getReason()));
+        return new ModelAndView("redirect:/news/" + newsId + "#" + "comment-" + commentId);
+    }
+
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
+    public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm")
+    final CommentNewsForm commentNewsForm, final BindingResult errors,
+                                    @RequestParam(name = "order") final String order) {
+        final NewsOrder newsOrder = NewsOrder.getByValue(order);
+        if (errors.hasErrors()) {
+            return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1, "TOP");
+        }
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        newsService.addComment(currentUser, newsId, commentNewsForm.getComment());
+        return new ModelAndView("redirect:/news/" + newsId + "?order=" + newsOrder.name());
+    }
+
     @RequestMapping( value = "/news/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
             produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     @ResponseBody
     public byte[] newsImage(@PathVariable("imageId") long imageId) {
          return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
-    }
-
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
-    public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
-
-        return new ModelAndView("redirect:/news/" + newsId);
     }
 
     @RequestMapping(value = "/create_article", method = RequestMethod.GET)
@@ -229,6 +221,14 @@ public class NewsController{
 
         final News news = newsService.create(newsBuilder, Arrays.stream(createNewsFrom.getCategories()).map(Category::getByCode).collect(Collectors.toList()));
         return new ModelAndView("redirect:/news/" + news.getNewsId());
+    }
+
+    @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
+    public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
+
+        return new ModelAndView("redirect:/news/" + newsId);
     }
 
     private ResponseEntity<UpvoteActionResponse> toggleHandler(CommentUpvoteAction payload, Rating action) {

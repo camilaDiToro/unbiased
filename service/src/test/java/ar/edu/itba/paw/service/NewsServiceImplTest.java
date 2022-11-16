@@ -24,7 +24,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -49,8 +47,6 @@ public class NewsServiceImplTest {
     private static final int UPPER_PAGE =  15;
 
     private static final String QUERY = "a";
-
-    private static final String OTHER_QUERY = "b";
 
     private static final Optional<User> EMPTY_USER = Optional.empty();
 
@@ -84,9 +80,6 @@ public class NewsServiceImplTest {
 
     @Mock
     private User mockUser;
-
-    @Mock
-    private Page<Comment> COMMENT_PAGE_1;
 
     @Mock
     private Page<Comment> COMMENT_PAGE_2;

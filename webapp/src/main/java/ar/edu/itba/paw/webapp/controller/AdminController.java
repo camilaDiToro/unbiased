@@ -109,8 +109,7 @@ public class AdminController {
 
     @RequestMapping(value = "/admin/reported_news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
     public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        adminService.deleteNews(currentUser, newsId);
+        adminService.deleteNews(newsId);
         return new ModelAndView("redirect:/admin/reported_news");
     }
 
