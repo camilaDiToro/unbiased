@@ -1,6 +1,6 @@
 # Unbiased
 
-### Cuenta admin:
+### Cuenta owner:
 
 **email**: unbiased.paw@gmail.com
 
@@ -12,7 +12,13 @@
 
 **password**: 12345678
 
-### Cuenta de periodista:
+### Cuenta admin:
+
+**email**: dlimachi@itba.edu.ar
+
+**password**: hola1234
+
+### Cuenta periodista:
 
 **email**: acaeiro@itba.edu.ar
 
