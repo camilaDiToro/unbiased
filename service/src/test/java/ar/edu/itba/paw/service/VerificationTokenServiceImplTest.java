@@ -45,7 +45,6 @@ public class VerificationTokenServiceImplTest {
 
         Mockito.when(mockVerificationDao.createEmailToken(Mockito.eq(ID), Mockito.any(), Mockito.any()))
                 .thenReturn(mockVT);
-        //Mockito.when(mockVT.getUserId()).thenReturn(ID);
 
         VerificationToken token = tokenService.newToken(ID);
         Assert.assertEquals(TOKEN, token.getToken());
