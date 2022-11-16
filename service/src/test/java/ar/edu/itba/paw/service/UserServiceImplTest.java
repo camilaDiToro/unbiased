@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
@@ -36,7 +37,7 @@ public class UserServiceImplTest {
     private UserDao mockUserDao;
 
     @Mock
-    private EmailService mockEmailService;
+    private EmailService emailService;
 
     @Mock
     private VerificationTokenService mockVerificationTokenService;
