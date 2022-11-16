@@ -118,7 +118,8 @@ public class UserJpaDao implements UserDao{
 
     @Override
     public void unfollow(long userId, long follows) {
-        entityManager.remove(new Follow(userId, follows));
+        final User user = getUserById(userId).get();
+        user.getFollowing().remove(new Follow(userId, follows));
     }
 
     @Override
