@@ -34,6 +34,10 @@ public class UserServiceImplTest {
     private User.UserBuilder mockUserBuilder;
     @Mock
     private UserDao mockUserDao;
+
+    @Mock
+    private EmailService mockEmailService;
+
     @Mock
     private VerificationTokenService mockVerificationTokenService;
 
