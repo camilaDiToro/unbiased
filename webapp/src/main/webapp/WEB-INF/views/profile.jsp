@@ -379,15 +379,15 @@
                 </c:if>
                 <c:if test="${profileUser.hasImage()}">
 
-                    <c:if test="${followers >= 0 && followers < 1}">
+                    <c:if test="${profileFollowers >= 0 && followers < 1}">
                         <img id="default-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
                     </c:if>
 
-                    <c:if test="${followers >=1 && followers < 2}">
+                    <c:if test="${profileFollowers >=1 && followers < 2}">
                         <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
                     </c:if>
 
-                    <c:if test="${followers >=2}">
+                    <c:if test="${profileFollowers >=2}">
                         <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.id}/image"/>" class="rounded-circle object-fit-cover img-div" width="80">
                     </c:if>
                 </c:if>
@@ -403,9 +403,11 @@
 
             </c:if>
 
-            <span data-toggle="tooltip" data-placement="top" title="<spring:message code="tooltip.info"/> " class="info-profile-btn bg-transparent">
+            <c:if test="${isMyProfile}">
+                <span data-toggle="tooltip" data-placement="top" title="<spring:message code="tooltip.info"/> " class="info-profile-btn bg-transparent">
                 <button data-toggle="modal" data-target="#infoModal" class="info-profile-btn bg-transparent border-0" style="background-image: url('<c:url value="/resources/images/info-svgrepo-com.svg"/>')"></button>
             </span>
+            </c:if>
             <!-- Modal -->
             <div class="modal fade" id="infomodal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -485,12 +487,12 @@
 
                 <div class="d-flex flex-row align-items-center justify-content-center">
                     <div class="d-flex flex-row mr-5">
-                        <p class="font-weight-bold">${followers}</p>
+                        <p class="font-weight-bold">${profileFollowers}</p>
                         <p class="custom-follow-text"><spring:message code="profile.followers"/></p>
                     </div>
 
                     <div class="d-flex flex-row">
-                        <p class="font-weight-bold">${following}</p>
+                        <p class="font-weight-bold">${profileFollowing}</p>
                         <p class="custom-follow-text"><spring:message code="profile.following"/></p>
                     </div>
                 </div>

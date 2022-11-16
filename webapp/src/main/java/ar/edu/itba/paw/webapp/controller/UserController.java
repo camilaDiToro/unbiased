@@ -148,8 +148,8 @@ public class UserController {
                 .withObject("userId", userId)
                 .withObject("mailOptions", MailOption.values())
                 .withObject("hasErrors", hasErrors)
-                .withObject("following", userService.getFollowingCount(userId))
-                .withObject("followers", userService.getFollowersCount(userId))
+                .withObject("profileFollowing", userService.getFollowingCount(userId))
+                .withObject("profileFollowers", userService.getFollowersCount(userId))
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
         if (user.isPresent()) {

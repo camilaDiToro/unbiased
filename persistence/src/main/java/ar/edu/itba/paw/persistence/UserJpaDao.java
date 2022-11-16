@@ -82,16 +82,22 @@ public class UserJpaDao implements UserDao{
                 .setParameter("limit", qty);
 
         @SuppressWarnings("unchecked")
-        final List<Long> ids = (List<Long>) idQuery.getResultList().stream()
+        final List<Long> orderedIds = (List<Long>) idQuery.getResultList().stream()
                 .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
 
-        if(ids.isEmpty())
+        if(orderedIds.isEmpty())
             return new ArrayList<>();
 
-        final List<User> list =  entityManager.createQuery("FROM User WHERE userId IN :ids",
-                User.class).setParameter("ids", ids).getResultList();
+        final List<User> unorderedUserList =  entityManager.createQuery("FROM User WHERE userId IN :ids",
+                User.class).setParameter("ids", orderedIds).getResultList();
 
-        return list;
+        final Map<Long, User> idToUserMap = new HashMap<>();
+
+        unorderedUserList.forEach(u -> idToUserMap.put(u.getId(), u));
+
+        final List<User> orderedList = unorderedUserList.stream().map(idToUserMap::get).collect(Collectors.toList());
+
+        return orderedList;
 
     }
 
