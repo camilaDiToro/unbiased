@@ -47,6 +47,7 @@ public class VerificationTokenJpaDaoTest {
     private static final UserStatus USER_STATUS = UserStatus.UNABLE;
     private static final long USER_ID = 1;
     private static final String TOKEN = "token";
+    private static final String OTHER_TOKEN = "othertoken";
 
     private SimpleJdbcInsert jdbcUserInsert;
     private SimpleJdbcInsert jdbcVerificationTokenInsert;
@@ -100,9 +101,9 @@ public class VerificationTokenJpaDaoTest {
 
     @Test
     public void testFindByTokenFailed() {
-        Optional<VerificationToken> token= verificationTokenDao.getEmailToken("othertoken");
+        addTokentoTable();
+        Optional<VerificationToken> token= verificationTokenDao.getEmailToken(OTHER_TOKEN);
         assertFalse(token.isPresent());
-        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, TOKEN_TABLE));
     }
 
 }

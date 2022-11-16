@@ -36,6 +36,8 @@ public class UserJpaDaoTest {
     private static final UserStatus USER_STATUS = UserStatus.UNABLE;
     private static final PositivityStats USER_POSITIVITY= new PositivityStats(1,1);
     private static final long USER_ID = 1;
+
+    private static final long DIFFERENT_ID = 2;
     private static final User.UserBuilder usBuilder = new User.UserBuilder(EMAIL).pass(PASS).username(USERNAME).status(USER_STATUS.getStatus()).positivity(USER_POSITIVITY);
 
     //Follower DATA
@@ -106,9 +108,9 @@ public class UserJpaDaoTest {
 
     @Test
     public void testFailFindUserById() {
-        Optional<User> user = userDao.getUserById(2L);
-
-        assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
+        addUsertoTable();
+        Optional<User> user = userDao.getUserById(DIFFERENT_ID);
+        assertFalse(user.isPresent());
     }
 
     @Test
@@ -135,10 +137,10 @@ public class UserJpaDaoTest {
     public void testVerifyEmail() {
         addUsertoTable();
         userDao.verifyEmail(USER_ID);
-        User user = userDao.getUserById(USER_ID).get();
+        entityManager.flush();
 
-        assertEquals(USER_STATUS.REGISTERED.getStatus(), user.getStatus().getStatus());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));
+        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, USERS_TABLE, "status = " + "'" + UserStatus.REGISTERED + "'" + " AND user_id = " + USER_ID));
     }
 
     @Test
@@ -146,8 +148,7 @@ public class UserJpaDaoTest {
         addUsertoTable();
         addTheFollowToTable();
 
-        User follow = userDao.getUserById(F_ID).get();
-        userDao.addFollow(USER_ID, follow.getUserId());
+        userDao.addFollow(USER_ID, F_ID);
 
         entityManager.flush();
         assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, USERS_TABLE));

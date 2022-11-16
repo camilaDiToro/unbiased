@@ -24,12 +24,13 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
     @SequenceGenerator(name="users_user_id_seq", sequenceName = "users_user_id_seq", allocationSize = 1)
@@ -49,7 +50,7 @@ public class User {
 
     private News pingedNews;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private Image image;
 
@@ -68,10 +69,10 @@ public class User {
     @Transient
     private PositivityStats positivityStats;
 
-    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Upvote> upvoteSet;
 
-    @OneToOne(mappedBy = "user", orphanRemoval = true)
+    @OneToOne(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private EmailSettings emailSettings;
 
@@ -98,15 +99,13 @@ public class User {
         this.reports = reports;
     }
 
-
-
-    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Saved> savedNews;
 
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Follow> following;
 
 
@@ -297,6 +296,8 @@ public class User {
             this.email = email;
             status = UserStatus.UNREGISTERED;
         }
+
+
 
         public UserBuilder username(String username){
             this.username = username;

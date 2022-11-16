@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.converter.LocalDateTimeConverter;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.user.User;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -66,11 +67,11 @@ public class ReportedComment {
         this.reason = reason;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", referencedColumnName = "id", nullable = false, unique = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "comment_id", referencedColumnName = "id", nullable = false)
     private Comment comment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User reporter;
 

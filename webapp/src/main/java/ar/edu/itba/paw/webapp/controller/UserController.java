@@ -8,6 +8,7 @@ import ar.edu.itba.paw.model.news.CategoryStatistics;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextType;
+import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
@@ -151,10 +152,12 @@ public class UserController {
                 .withObject("followers", userService.getFollowersCount(userId))
                 .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
                 .withStringParam(profileUser.toString());
-        if (user.isPresent() && isMyProfile) {
+        if (user.isPresent()) {
             final User loggedUser = user.get();
             mavBuilder.withObject("isFollowing", userService.isFollowing(loggedUser, userId));
-            mavBuilder.withObject("getMailOptionByEnum", loggedUser.getEmailSettings().getValueByEnum());
+            EmailSettings emailSettings = loggedUser.getEmailSettings();
+            if (emailSettings != null && isMyProfile)
+                mavBuilder.withObject("getMailOptionByEnum", loggedUser.getEmailSettings().getValueByEnum());
         }
 
         Optional<News> pingedNews = newsService.getPingedNews(user, profileUser);

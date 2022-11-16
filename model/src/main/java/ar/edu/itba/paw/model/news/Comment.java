@@ -20,6 +20,7 @@ import javax.persistence.PostLoad;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,9 +32,9 @@ import java.util.Map;
 
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class Comment implements Serializable {
 
-    @OneToMany(mappedBy="comment",fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy="comment",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapKey(name = "userId")
     private Map<Long, CommentUpvote> upvoteMap;
 
@@ -42,7 +43,7 @@ public class Comment {
     @SequenceGenerator(name="comment_seq", sequenceName = "comment_seq", allocationSize = 1)
     private Long id;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="user_id", nullable=false)
     private User user;
     @Column(name = "comment")
@@ -67,7 +68,7 @@ public class Comment {
         this.news = news;
     }
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="news_id", nullable=false)
     private News news;
 

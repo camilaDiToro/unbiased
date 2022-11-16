@@ -29,6 +29,7 @@ import javax.persistence.PreRemove;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -43,7 +44,7 @@ import java.util.Optional;
 
 @Entity
 @Table(name = "news")
-public class News {
+public class News implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "news_news_id_seq")
@@ -97,7 +98,7 @@ public class News {
     @Transient
     private int readTime;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "creator", referencedColumnName = "user_id")
     private User creator;
 
@@ -110,7 +111,7 @@ public class News {
     @Transient
     private LoggedUserParameters loggedUserParameters;
 
-    @OneToMany(mappedBy="news",fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy="news",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapKey(name = "userId")
     private Map<Long, Upvote> upvoteMap;
 
@@ -133,18 +134,6 @@ public class News {
     }
 
 
-    @Override
-    public String toString() {
-        return "News{" +
-                "newsId=" + newsId +
-                ", creatorId=" + creator.getId() +
-                ", imageId=" + imageId +
-                ", body='" + body + '\'' +
-                ", title='" + title + '\'' +
-                ", subtitle='" + subtitle + '\'' +
-                ", creationDate=" + creationDate +
-                '}';
-    }
 
     public Map<Long, Upvote> getUpvoteMap() {
         return upvoteMap;
