@@ -165,7 +165,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void unfollowUser(User currentUser, long userId) {
+    public void unfollowUser(final User currentUser, long userId) {
         userDao.unfollow(currentUser.getId(), userId);
     }
 
@@ -195,7 +195,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isFollowing(User currentUser, long userId) {
+    public boolean isFollowing(final User currentUser, long userId) {
         return userDao.isFollowing(currentUser.getId(), userId);
     }
 

@@ -64,7 +64,7 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public List<News> getNewNews(int page, String query, Long loggedUser) {
+    public List<News> getNewNews(int page, String query, long loggedUser) {
         final List<News> newsList = getNewNews(page, query);
 
         newsList.forEach(n -> n.setUserSpecificVariables(loggedUser));
@@ -84,7 +84,7 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint, Long loggedUser) {
+    public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint, long loggedUser) {
         final List<News> newsList = getTopNews(page, query, timeConstraint);
 
         newsList.forEach(n -> n.setUserSpecificVariables(loggedUser));
@@ -113,7 +113,7 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public Optional<News> getById(long id, Long loggedUser) {
+    public Optional<News> getById(long id, long loggedUser) {
         final Optional<News> news = getById(id);
 
         news.ifPresent(n -> n.setUserSpecificVariables(loggedUser));
@@ -135,12 +135,11 @@ public class NewsJpaDao implements NewsDao {
 
 
     @Override
-    public List<News> getNewsByCategoryNew(int page, Category category, Long loggedUser) {
+    public List<News> getNewsByCategoryNew(int page, Category category, long loggedUser) {
 
         final List<News> news = getNewsByCategoryNew(page, category);
 
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+        news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
         return news;
     }
@@ -157,11 +156,10 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public List<News> getNewsByCategoryTop(int page, Category category, Long loggedUser, TimeConstraint timeConstraint) {
+    public List<News> getNewsByCategoryTop(int page, Category category, long loggedUser, TimeConstraint timeConstraint) {
 
         final List<News> news = getNewsByCategoryTop(page, category, timeConstraint);
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+        news.forEach(n -> n.setUserSpecificVariables(loggedUser));
 
         return news;
     }
@@ -318,7 +316,7 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public CategoryStatistics getCategoryStatistics(final long userId) {
+    public CategoryStatistics getCategoryStatistics(long userId) {
         final Object[] results = (Object[]) entityManager.createNativeQuery("SELECT coalesce(sum( case when category_id = :tourismCat then 1 else 0 end),0) as tourism, " +
                 "                                                           coalesce(sum( case when category_id = :showCat then 1 else 0 end),0) as show, " +
                 "                                                           coalesce(sum( case when category_id = :politicsCat then 1 else 0 end),0) as politics, " +
@@ -500,10 +498,7 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public boolean hasReported(long newsId, Long loggedUser) {
-        if (loggedUser == null){
-            return false;
-        }
+    public boolean hasReported(long newsId, long loggedUser) {
         final long elemCount = entityManager.createQuery("SELECT COUNT(r) FROM ReportDetail r WHERE r.news.newsId = :news_id AND r.reporter.userId = :user_id",Long.class)
                 .setParameter("news_id", newsId)
                 .setParameter("user_id", loggedUser).getSingleResult();

@@ -55,7 +55,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendVerificationEmail(User user, VerificationToken token, Locale locale) {
+    public void sendVerificationEmail(final User user, final VerificationToken token, Locale locale) {
         final String to = user.getEmail();
         final String url = getUrl("verify_email?token=" + token.getToken());
         final String subject = messageSource.getMessage("email.verification.subject",null,locale);
@@ -71,7 +71,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendAdminEmail(User user, Locale locale) {
+    public void sendAdminEmail(final User user, Locale locale) {
         final String to = user.getEmail();
         final String subject = messageSource.getMessage("email.admin.subject",null,locale);
         final Map<String, Object> data = new HashMap<>();
@@ -88,7 +88,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendNewsDeletedEmail(User user, News news, Locale locale) {
+    public void sendNewsDeletedEmail(final User user, final News news, Locale locale) {
         final String to = user.getEmail();
         final String subject = messageSource.getMessage("email.newsDeleted.subject",null,locale);
         final String url = getUrl("create_article");
@@ -104,7 +104,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendNewFollowerEmail(User user, User follower, Locale locale) {
+    public void sendNewFollowerEmail(final User user, final User follower, Locale locale) {
         final String to = user.getEmail();
         final String subject = messageSource.getMessage("email.newFollower.subject",null,locale);
         final String url = getUrl("create_article");
@@ -120,7 +120,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendNewCommentEmail(User newsOwner, News commentedNews, Locale locale) {
+    public void sendNewCommentEmail(final User newsOwner, final News commentedNews, Locale locale) {
         final String to = newsOwner.getEmail();
         final String subject = messageSource.getMessage("email.newComment.subject",null,locale);
         final String url = getUrl("news/"+commentedNews.getNewsId());
@@ -136,7 +136,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendNewsPositivityChanged(User newsOwner, News news, Locale locale) {
+    public void sendNewsPositivityChanged(final User newsOwner, final News news, Locale locale) {
         final String to = newsOwner.getEmail();
         final String subject = messageSource.getMessage("email.newPositivity.subject",null,locale);
         final String url = getUrl("news/"+news.getNewsId());
@@ -152,7 +152,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendNewPublishedNewsByFollowing(User user, News publishedNews, Locale locale) {
+    public void sendNewPublishedNewsByFollowing(final User user, final News publishedNews, Locale locale) {
         final String to = user.getEmail();
         final Object[] args
                 = { publishedNews.getCreator().toString() };
