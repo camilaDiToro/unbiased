@@ -95,7 +95,7 @@ public class UserJpaDao implements UserDao{
 
         unorderedUserList.forEach(u -> idToUserMap.put(u.getId(), u));
 
-        final List<User> orderedList = unorderedUserList.stream().map(idToUserMap::get).collect(Collectors.toList());
+        final List<User> orderedList = orderedIds.stream().map(idToUserMap::get).collect(Collectors.toList());
 
         return orderedList;
 
