@@ -16,6 +16,10 @@ public class PositivityStats {
         this.downvotes = downvotes;
         this.positivity = Positivity.getPositivity(upvotes/(double)(upvotes + downvotes));
     }
+
+    public PositivityStats() {
+    }
+
     public int getInteractions() {
         return upvotes + downvotes;
     }
