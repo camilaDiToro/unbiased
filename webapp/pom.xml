@@ -19,7 +19,7 @@
   <dependencies>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
+      <artifactId>spring-web</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
