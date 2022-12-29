@@ -1,22 +1,19 @@
-// import unbiased_navbar from "public/unbiased_navbar.png"
-// import profile_pic from "public/profile-image.png"
-// import profile_svg from "public/profile-svgrepo-com.svg"
-// import magnifier from "public/loupe-svgrepo-com.svg"
-// import admin_panel from "public/panel-svgrepo-com.svg"
-// import logout_img from "public/log-out-svgrepo-com.svg"
+import Link from "next/link"
 import { useRouter } from "next/router";
-import i18n from "../i18n"
+
+import {useAppContext} from "../context";
 
 export default function Navbar() {
-    const { locale } = useRouter();
+    const router = useRouter();
+    const ctx = useAppContext()
 
     return <nav className="d-flex navbar navbar-dark navbar-expand-sm bg-primary text-white">
         <div className="d-flex container-fluid">
-            <a className="navbar-brand  " href="/">
+            <Link className="navbar-brand" href="/">
                 <img src="/unbiased_navbar.png" height="35" alt=""
                      className="d-inline-block align-middle mr-2"/>
                 <span className="text-info">unbiased</span>
-            </a>
+            </Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
                     aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
@@ -27,7 +24,7 @@ export default function Navbar() {
                 {/*<c:if test="${loggedUser != null && !adminPage}">*/}
                 <a href="">
                     <button type="button" className="btn btn-sm rounded-pill btn-info create_article_navbar_btn">
-                        {i18n[locale]["home.createArticle.button"]}
+                        {ctx.I18n("home.createArticle.button")}
                     </button>
                 </a>
                 {/*</c:if>*/}
@@ -37,9 +34,9 @@ export default function Navbar() {
                         <div>
                             {/*<spring:message code="navbar.search" var="searchPlaceholder"/>*/}
                             <input
-                                style={{'background-image': 'url("/loupe-svgrepo-com.svg")!important;'}}
+                                style={{backgroundImage: 'url("/loupe-svgrepo-com.svg")'}}
                                 className="search-form search form-control text-white"
-                                type="search" placeholder="${searchPlaceholder}" id="query" name="query"
+                                type="search" placeholder="placeholder" id="query" name="query"
                                 />
                         </div>
                         <div className="invisible position-fixed">
