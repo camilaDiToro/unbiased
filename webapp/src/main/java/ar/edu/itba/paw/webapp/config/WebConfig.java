@@ -24,15 +24,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
@@ -45,12 +38,12 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.service", "ar.edu.itba.paw.persistence"})
-@EnableWebMvc
+//@EnableWebMvc
 @EnableTransactionManagement
 @EnableAsync
 @PropertySource("classpath:application.properties")
 @Configuration
-public class WebConfig extends WebMvcConfigurerAdapter {
+public class WebConfig /*extends WebMvcConfigurerAdapter*/ {
 
     @Value("classpath:sql/schema.sql")
     private Resource schemaSql;
@@ -58,10 +51,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private Environment environment;
 
-    @Autowired
-    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
+    /*@Autowired
+    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;*/
 
-    @PostConstruct
+    /*@PostConstruct
     public void init() {
         requestMappingHandlerAdapter.setIgnoreDefaultModelOnRedirect(true);
     }
@@ -70,7 +63,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/").setCacheControl(CacheControl.maxAge(0, TimeUnit.SECONDS) )
                 .resourceChain(false);
-    }
+    }*/
 
     @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
@@ -92,7 +85,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return factoryBean;
     }
 
-    @Bean
+    /*@Bean
     public ViewResolver viewResolver() {
         final InternalResourceViewResolver viewResolver =
                 new InternalResourceViewResolver();
@@ -100,7 +93,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         viewResolver.setPrefix("/WEB-INF/views/");
         viewResolver.setSuffix(".jsp");
         return viewResolver;
-    }
+    }*/
 
     @Bean
     public DataSource dataSource(){

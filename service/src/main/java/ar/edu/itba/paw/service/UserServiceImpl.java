@@ -68,11 +68,11 @@ public class UserServiceImpl implements UserService {
             userBuilder.pass(passwordEncoder.encode(userBuilder.getPass()));
         }
         final User user = userDao.create(userBuilder);
-        final VerificationToken token = verificationTokenService.newToken(user.getId());
+        /*final VerificationToken token = verificationTokenService.newToken(user.getId());
         final Locale locale = LocaleContextHolder.getLocale();
         emailService.sendVerificationEmail(user, token, locale);
         final EmailSettings emailSettings = new EmailSettings(true,true,false,true,locale, user);
-        user.setEmailSettings(emailSettings);
+        user.setEmailSettings(emailSettings);*/
         return user;
     }
 
