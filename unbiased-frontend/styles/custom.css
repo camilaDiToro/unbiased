@@ -8,10 +8,15 @@
 
 #__next {
     position: absolute;
+    background: radial-gradient(#1C1F2C 30%, #0D0E14);
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+.h-75px {
+    height: 75px;
 }
 
 
@@ -613,9 +618,7 @@ input:-webkit-autofill:focus {
     color: white;
 }
 
-body{
-    background: radial-gradient(#1C1F2C 30%, #0D0E14);
-}
+
 
 #bin_button:focus{
     box-shadow: none;
