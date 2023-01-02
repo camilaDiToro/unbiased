@@ -3,8 +3,22 @@ import { useRouter } from "next/router";
 
 import {useAppContext} from "../context";
 
+
+
+
 export default function Navbar() {
     const ctx = useAppContext()
+    const router = useRouter()
+
+    const goToSearchPage = (e) => {
+        if (e.key === 'Enter') {
+            router.push({
+                pathname: '/search',
+                query: {query: e.target.value}
+            })
+        }
+    }
+
 
     return <nav className="d-flex navbar navbar-dark navbar-expand-sm bg-primary text-white h-75px">
         <div className="d-flex container-fluid h-100">
@@ -33,9 +47,10 @@ export default function Navbar() {
                         <div>
                             {/*<spring:message code="navbar.search" var="searchPlaceholder"/>*/}
                             <input
-                                style={{backgroundImage: 'url("/loupe-svgrepo-com.svg")'}}
+                                style={{backgroundImage: 'url("/img/loupe-svgrepo-com.svg")'}}
                                 className="search-form search form-control text-white"
                                 type="search" placeholder="placeholder" id="query" name="query"
+                                onKeyPress={goToSearchPage}
                                 />
                         </div>
                         <div className="invisible position-fixed">

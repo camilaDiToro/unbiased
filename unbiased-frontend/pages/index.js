@@ -1,21 +1,15 @@
 import Head from 'next/head'
 import Tabs from "../components/Tabs";
 import Article from "../components/Article";
-
-function SearchPage() {
-    return <></>
-}
-
-function NormalPage() {
-    return
-}
+import {useAppContext} from "../context";
+import Link from "next/link";
 
 export default function Home() {
     const items = [{text: "Hola", route: "/"}, {text: "Como", route: "/"}, {text: "Va", route: "/"}]
+    const ctx = useAppContext()
     const news = [{id: 1}, {id: 2}]
     const selected = "Como"
-    const query = undefined
-    const type = 'creator'
+    const topCreators = [{name: "Juan"}, {name: "Lucio"}]
 
   return (
     <>
@@ -37,6 +31,29 @@ export default function Home() {
               </div>
           </div>
           <div className="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start" id="none_shadow">
+
+              <h5 style={{backgroundImage: "url('/img/crown-svgrepo-com.svg')"}}
+                  className="card-title top-creators">
+                  {ctx.I18n("home.topCreators")}
+              </h5>
+
+              {topCreators.length === 0 ? <h6 className="text-info m-1">
+                  {ctx.I18n("home.emptyCreators")}
+              </h6> : <></>}
+              {topCreators.map(c => <Link key={c.name} className="m-1 link" href="" >
+                  <div className="card text-white d-flex flex-row p-2 creator-card align-items-center"
+                       id="none_shadow_creator">
+                      <div className="img-container">
+                          <img className="rounded-circle object-fit-cover mr-1"
+                               src="/img/profile-image.png" alt=""/>
+                      </div>
+                      <div className="mx-2 text-ellipsis-1">
+                          {c.name}
+                      </div>
+                  </div>
+              </Link>
+                  )}
+
           </div>
       </div>
     </>

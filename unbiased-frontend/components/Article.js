@@ -24,7 +24,6 @@ export default function Article(props) {
                                      className="svg-btn hover-hand"
                                      src={`/img/downvote${props.rating === 'downvoted' ? '-clicked' : ''}.svg`}/>
                             {/*</c:if>*/}
-
                         </div>
                         <div className="card-body-home">
                             <Link className="link title-principal-card"
