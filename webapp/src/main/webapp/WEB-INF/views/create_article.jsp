@@ -8,126 +8,129 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
-<%@include file="../../resources/navbar.jsp" %>
-<body>
+<style>
+    <c:set var="labelText"><spring:message code="createArticle.label"/></c:set>
+    .custom-file-input~.custom-file-label::after{content:'${labelText}'!important}
+</style>
+<%@include file="../../resources/jsp/head.jsp" %>
+<link rel="stylesheet" href="https://cdn.rawgit.com/xcatliu/simplemde-theme-dark/master/dist/simplemde-theme-dark.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
-<div style="position: absolute ; margin-left: 4%; margin-top: 2%">
-    <a href="./TOP">
-    <input type="image" src="<c:url value="/resources/images/back_to_prev.png"/>" alt="..." style="max-width: 7%; max-height: 7%">
+<body>
+<%@include file="../../resources/jsp/navbar.jsp" %>
+<div class="back-button" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.clickToGoBack"/> ">
+    <a data-toggle="modal" data-target="#exampleModal">
+        <img class="svg-btn hover-hand back-btn" src="<c:url value="/resources/images/back-svgrepo-com.svg"/>" alt="..."/>
     </a>
+
 </div>
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: center" class="h-auto p-5">
+<div class="d-flex flex-col align-items-center justify-content-center p-5">
+
 
     <c:url value="/create_article" var="postUrl"/>
-    <form:form modelAttribute="createNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
+    <form:form id="custom-form-group" modelAttribute="createNewsForm" enctype="multipart/form-data" action="${postUrl}" method="post" cssClass="h-auto w-50">
 
         <div>
-            <form:errors path="title" element="p" cssStyle="color: red"/>
             <form:label path="title"><spring:message code="createArticle.title"/></form:label>
             <div class="form-group">
                 <div class="input-group mb-3">
                     <spring:message code="createArticle.title.placeholder" var="titlePlaceholder" />
-                    <form:input placeholder="${titlePlaceholder}" cssClass="form-control"  type="text" path="title"/>
+                    <form:input placeholder="${titlePlaceholder}" cssClass="form-control ${validate && errors != null && errors.getFieldErrorCount('title') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"  type="text" path="title"/>
+                    <form:errors cssClass="invalid-feedback" path="title" element="p"/>
+
                 </div>
             </div>
         </div>
 
 
         <div>
-            <form:errors path="subtitle" element="p" cssStyle="color: red"/>
             <form:label path="subtitle"><spring:message code="createArticle.description"/></form:label>
             <div class="form-group">
                 <div class="input-group mb-3">
                     <spring:message code="createArticle.description.placeholder"  var="descPlaceholder" />
-                    <form:input type="text" path="subtitle" cssClass="form-control" placeholder="${descPlaceholder}"/>
+                    <form:input type="text" path="subtitle" cssClass="form-control ${validate && errors != null && errors.getFieldErrorCount('subtitle') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}" placeholder="${descPlaceholder}"/>
+                    <form:errors cssClass="invalid-feedback" path="subtitle" element="p"/>
                 </div>
             </div>
         </div>
 
 
         <div>
-            <form:errors path="body" element="p" cssStyle="color: red"/>
             <form:label path="body"><spring:message code="createArticle.body"/></form:label>
             <div class="form-group">
-                <div class="input-group">
-                    <form:textarea type="text" path="body" cssClass="form-control"/>
-                </div>
+                <form:textarea id="body-text" type="text" path="body" cssClass="form-control ${validate && errors != null && errors.getFieldErrorCount('body') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
+                <form:errors path="body" element="p" cssClass="invalid-feedback"/>
+            </div>
+
+        </div>
+
+    <form:label path="image"><spring:message code="createArticle.imageMsg"/> </form:label>
+    <div class="input-group mb-3">
+            <div class="custom-file">
+                <form:input id="fileInput" type="file" path="image" accept="image/png, image/jpeg" cssClass="custom-file-input ${validate && errors != null && errors.getFieldErrorCount('image') > 0 ? 'is-invalid' : validate ? 'is-valid' : ''}"/>
+                <form:label path="image" cssClass="custom-file-label custom-file-input-label" for="inputGroupFile01"><spring:message code="createArticle.selectFile"/></form:label>
             </div>
         </div>
-
-        <div>
-            <form:errors path="creatorEmail" element="p" cssStyle="color: red"/>
-            <form:label path="creatorEmail"><spring:message code="createArticle.email"/></form:label>
-            <div class="form-group">
-                <spring:message code="createArticle.email.placeholder"  var="emailPlaceholder" />
-                <form:input placeholder="${emailPlaceholder}" type="email" cssClass="form-control" path="creatorEmail"/>
-            </div>
+    <form:errors path="image" element="div" cssClass="text-danger mb-3"  />
+    <div class="dropdown" id="categories-dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <spring:message code="createArticle.category.choose"/>
+        </button>
+        <div class="dropdown-menu bg-dropdown" aria-labelledby="dropdownMenuButton">
+            <c:forEach var="category" items="${categories}">
+                <div class="form-check  w-100">
+                    <form:checkbox path="categories" value="${category.interCode}" id="${category.interCode}"/>
+                    <label class="form-check-label" for="${category.interCode}">
+                        <spring:message code="${category.interCode}"/>
+                    </label>
+                </div>
+            </c:forEach>
+            <form:errors path="categories" element="p" cssClass="invalid-feedback"/>
         </div>
+    </div>
+
+    <div class="w-100 d-flex justify-content-end">
+        <button class="btn btn-info" type="submit"><spring:message code="createArticle.save"/></button>
+    </div>
+    </div>
 
 
 
-        <%--<div class="form-group">
-            <label for="FormControlFile">Imagen de la noticia</label>
-            <input type="file" class="form-control-file" id="FormControlFile">
-        </div>--%>
 
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <spring:message code="createArticle.category.choose"/>
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                <div class="form-check">
-                        <%--<input class="form-check-input" type="checkbox" value="" id="checkTourism">--%>
-                    <form:checkbox path="categories" value="categories.tourism" id="checkTourism"/>
-                    <label class="form-check-label" for="checkTourism">
-                        <spring:message code="categories.tourism"/>
-                    </label>
-                </div>
 
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.entertainment" id="checkEntertainment"/>
-                    <label class="form-check-label" for="checkEntertainment">
-                        <spring:message code="categories.entertainment"/>
-                    </label>
-                </div>
+</div>
 
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.politics" id="checkPolitics"/>
-                    <label class="form-check-label" for="checkPolitics">
-                        <spring:message code="categories.politics"/>
-                    </label>
-                </div>
 
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.economics" id="checkEconomy"/>
-                    <label class="form-check-label" for="checkEconomy">
-                        <spring:message code="categories.economics"/>
-                    </label>
-                </div>
 
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.sports" id="checkSports"/>
-                    <label class="form-check-label" for="checkSports">
-                        <spring:message code="categories.sports"/>
-                    </label>
-                </div>
-
-                <div class="form-check">
-                    <form:checkbox path="categories" value="categories.technology" id="checkTecnology"/>
-                    <label class="form-check-label" for="checkTecnology">
-                        <spring:message code="categories.technology"/>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <div style="width: 100%; display: flex; justify-content: end">
-            <button class="btn btn-primary" type="submit"><spring:message code="createArticle.save"/></button>
-        </div>
     </form:form>
+    <script>
+        var simplemde = new SimpleMDE({ element: document.getElementById("body-text") , spellChecker: false});
+    </script>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><spring:message code="createArticle.modal.question"/></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <spring:message code="createArticle.modal.msg"/>
+                </div>
+                <div class="modal-footer">
+                    <a href="<c:url value="/"/>">
+                        <button type="button" class="btn btn-primary"><spring:message code="createArticle.modal.accept"/></button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 

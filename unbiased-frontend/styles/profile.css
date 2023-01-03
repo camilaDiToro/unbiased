@@ -1,0 +1,69 @@
+#right-card .card-title{
+    margin-top: 20px;
+}
+
+#right-card.card{
+    border-radius: 15px;
+}
+
+#right-card .card-img-top{
+    height: 80px;
+    border-radius: 15px 15px 0 0;
+}
+
+#right-card .card-body{
+    margin-top: 10px;
+}
+
+#right-card.card:hover{
+    transform: none;
+    transition: none;
+    box-shadow: none;
+}
+
+#right-card.card{
+    box-shadow: none;
+}
+
+
+.profile{
+
+    position: absolute;
+    height: 90px;
+    width: 90px;
+    left: 15px;
+    top: -25px;
+
+}
+
+.profile .img-div{
+    height: 80px;
+    width: 80px;
+    margin-top:65px;
+}
+
+.profile img#default-frame-color{
+    border:3px solid #8ea7e8;
+}
+
+.profile img#gold-frame-color{
+    background: linear-gradient(white, white) padding-box,
+    linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C) border-box;
+    border: 3px solid transparent;
+}
+
+.profile img#platinum-frame-color{
+    background: linear-gradient(white, white) padding-box,
+    linear-gradient(to right, #e80033, #fdbb30, #ed8b00, #f15d22, #bf0d3e, #910048) border-box;
+    border: 3px solid transparent;
+}
+
+.pencil-edit{
+    position: absolute;
+    top:120%;
+    right: -210px;
+    height: 20px;
+    width: fit-content;
+}
+
+

@@ -13,36 +13,81 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>
       ar.edu.itba.paw.webapp.config.WebConfig,
-      <!--ar.edu.itba.paw.webapp.config.WebAuthConfig,-->
+      ar.edu.itba.paw.webapp.config.WebAuthConfig,
     </param-value>
   </context-param>
   
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
-  
-  <servlet>
-    <servlet-name>dispatcher</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+
+  <filter>
+    <filter-name>jersey</filter-name>
+    <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
     <init-param>
-      <param-name>contextClass</param-name>
-      <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+      <param-name>jersey.config.server.provider.packages</param-name>
+      <param-value>ar.edu.itba.paw.webapp.controller</param-value>
     </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
+    <!-- pass to next filter if Jersey/App returns 404 -->
+    <init-param>
+      <param-name>jersey.config.servlet.filter.forwardOn404</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
 
-  <servlet-mapping>
-    <servlet-name>dispatcher</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>
 
-  <!--<filter>
+  <!--
+
+  <error-page>
+    <error-code>400</error-code>
+    <location>/400</location>
+  </error-page>
+
+  <error-page>
+    <error-code>401</error-code>
+    <location>/401</location>
+  </error-page>
+
+  <error-page>
+    <error-code>403</error-code>
+    <location>/403</location>
+  </error-page>
+
+  <error-page>
+    <error-code>404</error-code>
+    <location>/404</location>
+  </error-page>
+
+  <error-page>
+    <error-code>405</error-code>
+    <location>/405</location>
+  </error-page>
+
+  <error-page>
+    <error-code>500</error-code>
+    <location>/500</location>
+  </error-page>-->
+
+  <filter>
     <filter-name>springSecurityFilterChain</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+
+  <filter>
+    <filter-name>openEntityManagerInView</filter-name>
+    <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
   </filter>
 
   <filter-mapping>
     <filter-name>springSecurityFilterChain</filter-name>
     <url-pattern>/*</url-pattern>
-  </filter-mapping>-->
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>openEntityManagerInView</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>jersey</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>

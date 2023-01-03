@@ -1,38 +1,132 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.User;
+import ar.edu.itba.paw.model.user.EmailSettings;
+import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.UserStatus;
+import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.persistence.UserDao;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
 
-    private static final String USERNAME = "user1";
+    //User
+    private static final String EMAIL = "user@mail.com";
+    private static final long ID = 1;
+    private static final long OTHER_ID = 1;
+
+    //TOKEN
+    private static final String TOKEN = "A1234";
+    @Mock
+    private VerificationToken mockVerificationToken;
+
+    @Mock
+    private User mockUser;
+
+    @Mock
+    private User.UserBuilder mockUserBuilder;
+    @Mock
+    private UserDao mockUserDao;
+
+    @Mock
+    private EmailService emailService;
+
+    @Mock
+    private VerificationTokenService mockVerificationTokenService;
 
     @InjectMocks
     private UserServiceImpl userService;
-    @Mock
-    private UserDao userDao;
 
     @Test
-    public void testCreateUser(){
-        /*User user = new User(1, USERNAME, null);
-        Mockito.when(userDao.create(Mockito.anyString())).thenReturn(user);
+    public void testGetRegisteredUserById(){
+        Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(mockUser));
 
-        try{
-            User u = userService.create(USERNAME);
-        }catch (Exception e){
-            Assert.fail("unexpected error during operation create user");
-        }*/
+        Optional<User> mayBeUser = userService.getUserById(ID);
 
+        assertTrue(mayBeUser.isPresent());
+    }
+
+    @Test
+    public void testGetUserById(){
+        Mockito.when(mockUserDao.getRegisteredUserById(Mockito.eq(ID))).thenReturn(Optional.of(mockUser));
+
+        Optional<User> mayBeUser = userService.getRegisteredUserById(ID);
+
+        assertTrue(mayBeUser.isPresent());
+    }
+
+
+    @Test
+    public void testGetRegisteredUserByIdGetUnregistered(){
+
+        Optional<User> mayBeUser = userService.getRegisteredUserById(OTHER_ID);
+
+        assertFalse(mayBeUser.isPresent());
+    }
+
+    @Test
+    public void testCreate(){
+        Mockito.when(mockUserDao.create(Mockito.eq(mockUserBuilder))).thenReturn(mockUser);
+        Mockito.when(mockUser.getId()).thenReturn(ID);
+
+        User u = userService.create(mockUserBuilder);
+        assertNotNull(u);
+        assertEquals(u.getId(), ID);
+    }
+
+    @Test
+    public void testVerifyUserEmailInvalidToken(){
+        Mockito.when(mockVerificationToken.isValidToken()).thenReturn(false);
+        Mockito.when(mockVerificationTokenService.getToken(Mockito.eq(TOKEN))).thenReturn(Optional.of(mockVerificationToken));
+
+
+        VerificationToken.Status vt = userService.verifyUserEmail(TOKEN);
+
+        assertEquals(VerificationToken.Status.EXPIRED, vt);
+    }
+
+    @Test
+    public void testVerifyUserEmailValidToken(){
+        Mockito.when(mockVerificationToken.isValidToken()).thenReturn(true);
+        Mockito.when(mockVerificationToken.getUserId()).thenReturn(ID);
+        Mockito.when(mockVerificationTokenService.getToken(Mockito.eq(TOKEN))).thenReturn(Optional.of(mockVerificationToken));
+
+        Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(mockUser));
+
+        VerificationToken.Status vt = userService.verifyUserEmail(TOKEN);
+
+        assertEquals(VerificationToken.Status.SUCCESFFULLY_VERIFIED, vt);
+    }
+
+    @Test
+    public void testResendUserVerificationInvalidEmail() {
+        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.empty());
+        assertEquals(VerificationToken.Status.NOT_EXISTS, userService.resendEmailVerification(EMAIL));
+    }
+
+    @Test
+    public void testResendUserVerificationAlreadyVerified() {
+        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(mockUser));
+        Mockito.when(mockUser.getStatus()).thenReturn(UserStatus.REGISTERED);
+
+        assertEquals(VerificationToken.Status.ALREADY_VERIFIED, userService.resendEmailVerification(EMAIL));
+    }
+
+    @Test
+    public void testResendUserVerificationSuccessfullyResended() {
+        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(mockUser));
+        Mockito.when(mockUser.getStatus()).thenReturn(UserStatus.UNABLE);
+
+        assertEquals(VerificationToken.Status.SUCCESSFULLY_RESENDED, userService.resendEmailVerification(EMAIL));
     }
 
 }
+

@@ -5,13 +5,29 @@
   <parent>
     <groupId>ar.edu.itba.paw</groupId>
     <artifactId>paw-webapp</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1</version>
   </parent>
   <groupId>ar.edu.itba.paw</groupId>
   <artifactId>model</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1</version>
   <name>model</name>
   <url>http://maven.apache.org</url>
   <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.commonmark</groupId>
+      <artifactId>commonmark</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate.javax.persistence</groupId>
+      <artifactId>hibernate-jpa-2.1-api</artifactId>
+    </dependency>
   </dependencies>
 </project>
