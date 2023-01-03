@@ -5,7 +5,7 @@ function TabPills(className, items, selected, children) {
     const activeClasses = "bg-info active"
     const inactiveClasses = "text-secondary"
     return <>
-        <ul className={`${className} mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex `}>
+        <ul className={`${className} mb-4 mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex `}>
             {items.map(item => <li className="nav-item" key={item.text}>
                 <Link className={`text-capitalize nav-link fromLeft rounded-pill hover-pill ml-1 ${selected === item.text ? activeClasses : inactiveClasses}`}
                 aria-current="page"

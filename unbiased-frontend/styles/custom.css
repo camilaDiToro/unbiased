@@ -16,6 +16,15 @@
     color: white
 }
 
+.modal .close {
+    color: white
+}
+
+.modal .close:not(:disabled):not(.disabled):focus, .modal .close:not(:disabled):not(.disabled):hover {
+    color: white;
+    opacity: 75%;
+}
+
 .h-75px {
     height: 75px;
 }
