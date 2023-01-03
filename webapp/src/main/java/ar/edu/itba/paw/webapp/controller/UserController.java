@@ -3,9 +3,11 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.dto.UserDto;
+import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
@@ -37,17 +39,19 @@ public class UserController {
             return Response.noContent().build();
         }
 
+        //TODO: improve
         return Response.ok(new GenericEntity<List<UserDto>>(allUsers) {})
-                .link("", "prev")
-                .link("", "next")
-                .link("", "last")
-                .link("", "first")
+                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", page-1).build(), "prev")
+                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", page+1).build(), "next")
+                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", 999).build(), "last")
+                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", 1).build(), "first")
                 .build();
     }
 
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     @POST
-    public Response createUser(@QueryParam("email") final String email, @QueryParam("password") final String password){
-        final User newUser = userService.create(new User.UserBuilder(email).pass(password));
+    public Response createUser(@Valid final UserForm userForm){
+        final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
 
         final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newUser.getId())).build();
         return Response.created(location).build();
