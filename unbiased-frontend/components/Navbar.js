@@ -87,35 +87,35 @@ export default function Navbar() {
                         <div id="navbar-dropdown" className="dropdown-menu bg-dropdown"
                              >
 
-                            <div className="dropdown-item">
-                                <a className="text-decoration-none text-white"
+                            <Link className="dropdown-item" href="/profile">
+                                <div className="text-decoration-none text-white"
                                   >
                                     <img className="profile-img"
                                          src="/img/profile-svgrepo-com.svg"/>
                                         AAAAA
-                                </a>
-                            </div>
+                                </div>
+                            </Link>
 
 
                             {/*<c:if test="${isAdmin}">*/}
-                                <div className="dropdown-item">
-                                    <a className="text-decoration-none text-white"
-                                       href="/admin/reported_news">
+                                <Link className="dropdown-item" href="/admin/reported_news">
+                                    <div className="text-decoration-none text-white"
+                                       >
                                         <img className="moderation-img"
                                              src="/img/panel-svgrepo-com.svg" alt="..."/>
                                             BBBBB
-                                    </a>
-                                </div>
+                                    </div>
+                                </Link>
 
                             {/*</c:if>*/}
 
-                            <div className="dropdown-item ">
-                                <Link className="text-decoration-none text-white" href="/logout">
+                            <Link className="dropdown-item " href="/logout">
+                                <div className="text-decoration-none text-white" >
                                     <img className="moderation-img"
                                          src="/img/log-out-svgrepo-com.svg" alt="..."/>
                                         CCCCC
-                                </Link>
-                            </div>
+                                </div>
+                            </Link>
 
 
                         </div>

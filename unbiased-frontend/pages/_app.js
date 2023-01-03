@@ -1,5 +1,8 @@
+import "../styles/http_cdn.rawgit.com_xcatliu_simplemde-theme-dark_master_dist_simplemde-theme-dark.css"
+
 import '../styles/bootstrap.min.css'
 import '../styles/custom.css'
+// import "@uiw/react-md-editor/markdown-editor.css";
 import Script from "next/script"
 import Navbar from "../components/Navbar";
 import AppWrapper from "../context"
@@ -7,12 +10,11 @@ import AppWrapper from "../context"
 
 function MyApp({ Component, pageProps }) {
   return <div id="__next" className="d-flex h-100 flex-column">
-    <Script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            crossOrigin="anonymous"></Script>
-    <Script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
-            crossOrigin="anonymous"></Script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>
+    <Script src="/js/http_code.jquery.com_jquery-3.5.1.slim.js"
+            strategy="beforeInteractive"></Script>
+    <Script src="/js/http_cdn.jsdelivr.net_npm_bootstrap@4.5.3_dist_js_bootstrap.bundle.js"
+            ></Script>
     <Script defer src="/js/script.js"></Script>
     <AppWrapper>
       <Navbar/>

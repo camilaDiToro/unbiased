@@ -13,6 +13,7 @@
     bottom: 0;
     left: 0;
     right: 0;
+    color: white
 }
 
 .h-75px {
@@ -633,9 +634,9 @@ input:-webkit-autofill:focus {
     max-height: 10%;
 }
 
-* {
-    color: white;
-}
+/** {*/
+/*    color: white;*/
+/*}*/
 
 .op-09 {
     opacity: 0.9;
@@ -836,7 +837,7 @@ input:-webkit-autofill:focus {
     border-color: rgba(58, 60, 74, 0.5);
 }
 
-#custom-form-group .codeMirror{
+#custom-form-group .CodeMirror{
     background: rgba(58, 60, 74, 0.5);
     border-radius: 0.5rem;
     border-color: rgba(58, 60, 74, 0.5);
@@ -861,6 +862,21 @@ input:-webkit-autofill:focus {
 
 .custom-file-input:focus{
     border: none;
+}
+
+.editor-toolbar button {
+    border: 1px solid transparent;
+    border-radius: 3px;
+    color: #777 !important;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 80%;
+    height: 30px;
+    margin: 0;
+    text-align: center;
+    text-decoration: none!important;
+    width: 30px;
+    background-color: transparent;
 }
 
 .back-btn{
