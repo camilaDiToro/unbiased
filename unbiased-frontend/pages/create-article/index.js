@@ -4,8 +4,6 @@ import {useCallback, useMemo, useState} from "react";
 
 import dynamic from "next/dynamic";
 
-// import "@uiw/react-md-editor/markdown-editor.css";
-// import "@uiw/react-md-editor/markdown.css";
 
 const MarkdownEditor = dynamic(
     () => import("react-simplemde-editor").then((mod) => mod.default),

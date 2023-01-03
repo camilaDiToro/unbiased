@@ -1,6 +1,7 @@
 import {useAppContext} from "../context";
 import Link from "next/link";
 import Modal from "./Modal";
+import PositivityIndicator from "./PositivityIndicator";
 
 export default function ProfileArticle(props) {
     const ctx = useAppContext()
@@ -10,13 +11,10 @@ export default function ProfileArticle(props) {
 
         <div className="col mb-4">
             <div className="card h-100 d-flex flex-row max-h-300px">
-                <img src="/img/happy-positivity.svg" alt="..."
-                     className="quality-indicator" data-toggle="tooltip"
-                     data-placement="top" title="home.upvotes + home.interactions"/>
+                <PositivityIndicator positivity="positive" upvoted={0.8} interactions={5}></PositivityIndicator>
                 <div className={`d-flex flex-column justify-content-between ${props.image ? 'w-60' : 'w-100'}`}>
                     <div className="d-flex w-100">
                         <div className="upvote-div-profile d-flex flex-column align-items-center m-3">
-
                             <img id="upvote"
                                  className="svg-btn hover-hand"
                                  src={`/img/upvote${props.upvoted ? '-clicked' : ''}.svg`}/>

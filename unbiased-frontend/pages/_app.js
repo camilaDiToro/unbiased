@@ -10,12 +10,14 @@ import AppWrapper from "../context"
 
 function MyApp({ Component, pageProps }) {
   return <div id="__next" className="d-flex h-100 flex-column">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>
-    <Script src="/js/http_code.jquery.com_jquery-3.5.1.slim.js"
-            strategy="beforeInteractive"></Script>
-    <Script src="/js/http_cdn.jsdelivr.net_npm_bootstrap@4.5.3_dist_js_bootstrap.bundle.js"
+    {/*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>*/}
+    <Script strategy="beforeInteractive" id="1" src="/js/http_code.jquery.com_jquery-3.5.1.slim.js"
             ></Script>
-    <Script defer src="/js/script.js"></Script>
+    <Script strategy="afterInteractive" id="2"  src="/js/http_cdn.jsdelivr.net_npm_bootstrap@4.5.3_dist_js_bootstrap.bundle.js"
+            ></Script>
+    <Script strategy="afterInteractive" id="3" order={3} src="/js/script.js"></Script>
+
+
     <AppWrapper>
       <Navbar/>
       <div className="container-xxl container-fluid flex-grow-1">

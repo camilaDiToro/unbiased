@@ -8,7 +8,7 @@ const nextConfig = {
     locales: ["en-US","es-ES"],
     defaultLocale: "en-US",
   },
-  esmExternals: true
+  // esmExternals: true
 }
 
 module.exports = removeImports(nextConfig)
