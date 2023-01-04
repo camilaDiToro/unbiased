@@ -20,6 +20,10 @@ const strings = {
     "categories.technology": "Technology",
     "categories.all": "All",
     "categories.forMe": "For me",
+    "moderation.panel": "Moderation Panel",
+    "moderation.reportedArticles": "Reported articles",
+    "moderation.reportedComments": "Reported comments",
+    "moderation.manage": "manage admins",
   },
   "es-ES": { "home.createArticle.button": "Create cuio" },
 };

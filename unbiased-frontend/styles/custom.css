@@ -1055,3 +1055,7 @@ input:checked + .slider:before {
     background-color: transparent;
     text-decoration: none;
 }
+
+li{
+    list-style: none;
+}
