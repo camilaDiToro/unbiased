@@ -57,6 +57,23 @@ const strings = {
     "profile.unpin.question": "Are you sure you want to unpin the article?",
     "profile.unpin.body": "Unpinning this article it will appear on top of the rest of the news. Are you sure you would like to continue?",
     "profile.followers": "Followers",
+
+    //Error
+    "error.articlNotFound": "The news article you're looking for doesn't exist.",
+    "error.commentNotFound": "The comment you're looking for doesn't exist.",
+    "error.userNotFound": "The user you're looking for doesn't exist.",
+    "error.invalidCategory": "Invalid category.",
+    "error.userNotAuthorized": "User not authorized.",
+    "error.invalidOrder": "Invalid order path.",
+    "error.invalidFilter": "Invalid filter.",
+    "genericError.ops": "Oops!",
+    "genericError.message.400": "Bad request.",
+    "genericError.message.401": "Unauthorized session.",
+    "genericError.message.403": "You don't have authorization to enter the specified URL.",
+    "genericError.message.404": "Page not found.",
+    "genericError.message.405": "Method not allowed.",
+    "genericError.message.500": "There was a problem on our side.",
+    "genericError.button.goHome": "Go Home",
   },
   "es-ES": {
     //NavBar
@@ -114,6 +131,25 @@ const strings = {
     "profile.unpin.question": "¿EstÃ¡s seguro de que quieres desfijar esta noticia?",
     "profile.unpin.body": "Al desfijar esta noticia no podrás visualizarla sobre las demas noticias. ¿Estás seguro de que deseas continuar?",
     "profile.followers": "Seguidores",
+
+    //Error
+    "error.articlNotFound": "El artículo buscado no existe.",
+    "error.commentNotFound": "El comentario buscado no existe.",
+    "error.userNotFound": "El usuario buscado no existe.",
+    "error.invalidCategory": "Categoría inválida.",
+    "error.userNotAuthorized": "Usuario no autorizado.",
+    "error.invalidOrder": "Parámetro de orden inválido.",
+    "error.invalidFilter": "Filtro inválido.",
+    "genericError.ops": "Upss!",
+    "genericError.message.400": "Solicitud incorrecta.",
+    "genericError.message.401": "Sesión no autorizada.",
+    "genericError.message.403": "No tienes permisos para acceder a esta URL.",
+    "genericError.message.404": "Página no encontrada.",
+    "genericError.message.405": "Método no permitido.",
+    "genericError.message.500": "Hubo un problema de nuestro lado.",
+    "genericError.button.goHome": "Volver al inicio",
+
+    //Create article
   },
 };
 
