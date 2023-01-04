@@ -92,7 +92,7 @@ export default function Navbar() {
                                   >
                                     <img className="profile-img"
                                          src="/img/profile-svgrepo-com.svg"/>
-                                        AAAAA
+                                        {ctx.I18n("navbar.myProfile")}
                                 </div>
                             </Link>
 
@@ -103,7 +103,7 @@ export default function Navbar() {
                                        >
                                         <img className="moderation-img"
                                              src="/img/panel-svgrepo-com.svg" alt="..."/>
-                                            BBBBB
+                                            {ctx.I18n("navbar.adminPanel")}
                                     </div>
                                 </Link>
 
@@ -113,7 +113,7 @@ export default function Navbar() {
                                 <div className="text-decoration-none text-white" >
                                     <img className="moderation-img"
                                          src="/img/log-out-svgrepo-com.svg" alt="..."/>
-                                        CCCCC
+                                        {ctx.I18n("navbar.logout")}
                                 </div>
                             </Link>
 
