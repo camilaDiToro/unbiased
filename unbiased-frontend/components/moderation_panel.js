@@ -11,7 +11,7 @@ export default function ModerationPanel(){
             <h3 className="text-white">{ctx.I18n("moderation.panel")}</h3>
             <li className="nav-item li-no-dots">
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
-                    <Link className="mb-2 nav-link selected pl-0" href="/">
+                    <Link className="mb-2 nav-link selected pl-0" href="/admin/reported_news">
                         <img className="mb-2 moderation-img" src="/img/warning-svgrepo-com.svg" alt="..."/>
                         {ctx.I18n("moderation.reportedArticles")}
                     </Link>
@@ -20,7 +20,7 @@ export default function ModerationPanel(){
 
             <li className="nav-item li-no-dots">
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
-                    <Link className="mb-2 nav-link selected pl-0" href="/">
+                    <Link className="mb-2 nav-link selected pl-0" href="/admin/reported_comments">
                         <img className="mb-2 moderation-img" src="/img/cancel-comment.svg" alt="..."/>
                         {ctx.I18n("moderation.reportedComments")}
                     </Link>
@@ -30,7 +30,7 @@ export default function ModerationPanel(){
             {/*TODO: agregar if is owner*/}
             <li className="nav-item li-no-dots">
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
-                    <Link className="mb-2 nav-link selected pl-0" href="/">
+                    <Link className="mb-2 nav-link selected pl-0" href="/admin/add_admin">
                         <img className="mb-2 moderation-img" src="/img/add-user-svgrepo-com.svg" alt="..."/>
                         {ctx.I18n("moderation.reportedComments")}
                     </Link>
