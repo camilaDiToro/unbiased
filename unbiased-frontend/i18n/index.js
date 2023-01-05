@@ -157,6 +157,7 @@ const strings = {
     "tooltip.pin": "Pin article",
     "tooltip.unpin": "Unpin article",
     "tooltip.infoDisabled": "To enable this option you need to create your first article",
+
   },
   "es-ES": {
     //NavBar
