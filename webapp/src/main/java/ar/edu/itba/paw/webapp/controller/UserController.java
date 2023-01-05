@@ -1,16 +1,22 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +38,7 @@ public class UserController {
     }
 
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON, })
+    @Produces(value = { MediaType.APPLICATION_JSON})
     public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search) {
         final Page<User> userPage = userService.searchUsers(page, search);
 
@@ -57,7 +63,7 @@ public class UserController {
         return responseBuilder.build();
     }
 
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
+    @Consumes({MediaType.APPLICATION_JSON})
     @POST
     public Response createUser(@Valid final UserForm userForm){
         final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
@@ -68,13 +74,50 @@ public class UserController {
 
     @GET
     @Path("/{id}")
+    @Produces(value = { MediaType.APPLICATION_JSON})
     public Response getUser(@PathParam("id") final long userId){
-        Optional<UserDto> mayBeUser = userService.getUserById(userId).map(u -> UserDto.fromUser(uriInfo, u));
+        Optional<User> mayBeUser = userService.getUserById(userId);
 
         if(!mayBeUser.isPresent()){
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        return Response.ok(mayBeUser.get()).build();
+        UserDto userDto = UserDto.fromUser(uriInfo, mayBeUser.get(), userService.getFollowersCount(userId), userService.getFollowingCount(userId));
+
+        return Response.ok(userDto).build();
     }
+
+    //TODO: CHECK THAT THE USER THAT IS BEING UPDATED IS THE ONE THAT IS LOGGED IN.
+    @PUT
+    @Path("/{id}")
+    @Produces(value = { MediaType.APPLICATION_JSON})
+    public Response editUser(@PathParam("id") final long userId, @Valid final UserProfileForm userProfileForm) throws IOException {
+        Optional<User> mayBeUser = userService.getUserById(userId);
+
+        if(!mayBeUser.isPresent()){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        userService.updateProfile(userId, userProfileForm.getUsername(),
+                userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
+        userService.updateEmailSettings(mayBeUser.get(), MailOption.getEnumCollection(userProfileForm.getMailOptions()));
+
+        return Response.ok(UserDto.fromUser(uriInfo, mayBeUser.get())).build();
+    }
+
+    @GET
+    @Path("/{id}/image")
+    public Response profileImage(@PathParam("id") final long userId) {
+        final Image image = userService.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage();
+
+        if (image.getBytes().length == 0)
+            return Response.noContent().build();
+
+        return Response
+                .ok(new ByteArrayInputStream(image.getBytes()))
+                .type(image.getDataType())
+                .build();
+    }
+
 }
+

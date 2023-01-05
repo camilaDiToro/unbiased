@@ -1,0 +1,18 @@
+package ar.edu.itba.paw.webapp.mappers;
+
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+
+public class UserNotFoundExceptionMapper implements ExceptionMapper<UserNotFoundException> {
+
+    private static final String MESSAGE = "An user with id '%d' was not found";
+
+    @Override
+    public Response toResponse(UserNotFoundException e) {
+        SimpleMessageDto dto = SimpleMessageDto.fromString(String.format(MESSAGE, 5));
+        return Response.status(Response.Status.NOT_FOUND).entity(dto).build();
+    }
+}
