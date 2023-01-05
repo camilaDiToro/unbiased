@@ -8,7 +8,7 @@ export default function Home() {
     const items = [{text: "Hola", route: "/"}, {text: "Como", route: "/"}, {text: "Va", route: "/"}]
     const ctx = useAppContext()
     const news = [{id: 1}, {id: 2}]
-    const selected = "Como"
+    const selected = "Hola"
     const topCreators = [{name: "Juan"}, {name: "Lucio"}]
 
   return (

@@ -1055,7 +1055,7 @@ input:checked + .slider:before {
     padding-left:1rem;
 }
 
-.dropdown-items {
+.dropdown-items:hover{
     color: #8ea7e8;
     background-color: transparent;
     text-decoration: none;

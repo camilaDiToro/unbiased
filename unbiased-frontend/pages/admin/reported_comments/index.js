@@ -1,4 +1,4 @@
-import Moderation_panel from "../../../components/moderation_panel";
+import Moderation_panel from "../../../components/Moderation_panel";
 
 export default function Reported_comments(){
 

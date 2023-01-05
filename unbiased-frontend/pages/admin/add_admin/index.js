@@ -1,4 +1,4 @@
-import Moderation_panel from "../../../components/moderation_panel";
+import Moderation_panel from "../../../components/Moderation_panel";
 
 export default function Add_admin(){
 
@@ -6,7 +6,6 @@ export default function Add_admin(){
         <div className="d-flex h-100 flex-column">
             <div className="flex-grow-1 d-flex flex-row">
                 <Moderation_panel/>
-                hola soy add admin
             </div>
         </div>
     )
