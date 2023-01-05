@@ -74,6 +74,40 @@ const strings = {
     "genericError.message.405": "Method not allowed.",
     "genericError.message.500": "There was a problem on our side.",
     "genericError.button.goHome": "Go Home",
+
+    //Create article
+    "createArticle.title": "Title",
+    "createArticle.title.placeholder": "This is a title example",
+    "createArticle.description": "Description",
+    "createArticle.description.placeholder": "This is a description example",
+    "createArticle.body": "Body",
+    "createArticle.category.choose": "Choose a category",
+    "createArticle.save": "Save",
+    "createArticle.label": "Browse",
+    "createArticle.modal.question": "Discard the changes?",
+    "createArticle.modal.msg": "Navigating away from this page will lose all the progress and your changes will not be saved. Are you sure you would like to continue?",
+    "createArticle.modal.accept": "Confirm",
+    "createArticle.modal.cancel": "Cancel",
+    "createArticle.selectFile": "Choose file",
+    "createArticle.imageMsg": "Image of the notice",
+
+    //Register
+    "register.mail.address": "Email address",
+    "register.password": "Password",
+    "register.signUp": "Sign Up",
+    "register.alreadyMemberQuestion": "Already a member?",
+
+    //Show news
+    "showNews.reportNewsQuestion": "Are you sure you want to report this article?",
+    "showNews.comments": "Comments",
+    "showNews.comment.submit": "Comment",
+    "showNews.categories": "Categories:",
+    "showNews.emptyCommentsLogged": "There are no comments.",
+    "showNews.deleteComment": "Delete comment",
+    "showNews.deleteCommentQuestion": "Are you sure you want to delete the comment?",
+    "showNews.deleteCommentBody": "Accepting this you will lose the comment, so you will not be able to recover it again. Are you sure you would like to continue?",
+    "showNews.deletedComment": "The comment has been deleted.",
+    "showNews.reportCommentQuestion": "Are you sure you want to report the comment?",
   },
   "es-ES": {
     //NavBar
@@ -150,6 +184,38 @@ const strings = {
     "genericError.button.goHome": "Volver al inicio",
 
     //Create article
+    "createArticle.title": "Título",
+    "createArticle.title.placeholder": "Ejemplo de título",
+    "createArticle.description": "Descripción",
+    "createArticle.description.placeholder": "Ejemplo de descrpición",
+    "createArticle.body": "Cuerpo de la noticia",
+    "createArticle.category.choose": "Elegir categoría",
+    "createArticle.save": "Guardar",
+    "createArticle.label": "Navegar",
+    "createArticle.modal.question": "¿Estás seguro de que quieres descartar esta noticia?",
+    "createArticle.modal.msg": "Al salir de esta página, se perderá todo el progreso y los cambios no serán guardados. ¿Estás seguro de que deseas continuar?",
+    "createArticle.modal.accept": "Confirmar",
+    "createArticle.modal.cancel": "Cancelar",
+    "createArticle.selectFile": "Elija el archivo",
+    "createArticle.imageMsg": "Imágen de la noticia",
+
+    //Register
+    "register.mail.address": "Dirección de mail",
+    "register.password": "Contraseña",
+    "register.signUp": "Registrarse",
+    "register.alreadyMemberQuestion": "¿Ya eres miembro?",
+
+    //Show news
+    "showNews.reportNewsQuestion": "¿Estás seguro de que quieres reportar esta noticia?",
+    "showNews.comments": "Comentarios",
+    "showNews.comment.submit": "Comentar",
+    "showNews.categories": "Categorías:",
+    "showNews.emptyCommentsLogged": "No hay comentarios.",
+    "showNews.deleteComment": "Borrar comentario",
+    "showNews.deleteCommentQuestion": "¿Estás seguro de que quieres eliminar este comentario?",
+    "showNews.deleteCommentBody": "Al eliminar este comentario, no podrás volver a recuperarlo. ¿Estás seguro de que deseas continuar?",
+    "showNews.deletedComment": "El comentario ha sido eliminado.",
+    "showNews.reportCommentQuestion": "¿Estás seguro de que quieres reportar este comentario?",
   },
 };
 
