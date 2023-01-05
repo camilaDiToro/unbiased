@@ -5,10 +5,10 @@ import Tabs from "../../../components/Tabs";
 export default function Reported_comments(){
 
     const ctx = useAppContext()
-    const items = [{text: ctx.I18n("reportOrder.reportCountDesc"), route: "/admin/reported_news"},
-        {text: ctx.I18n("reportOrder.reportCountAsc"), route: "/admin/reported_news"},
-        {text: ctx.I18n("reportOrder.reportDateDesc"), route: "/admin/reported_news"},
-        {text: ctx.I18n("reportOrder.reportDateAsc"), route: "/admin/reported_news"}]
+    const items = [{text: ctx.I18n("reportOrder.reportCountDesc"), route: "/admin/reported_comments"},
+        {text: ctx.I18n("reportOrder.reportCountAsc"), route: "/admin/reported_comments"},
+        {text: ctx.I18n("reportOrder.reportDateDesc"), route: "/admin/reported_comments"},
+        {text: ctx.I18n("reportOrder.reportDateAsc"), route: "/admin/reported_comments"}]
 
     return (
         <div className="d-flex h-100 flex-column">

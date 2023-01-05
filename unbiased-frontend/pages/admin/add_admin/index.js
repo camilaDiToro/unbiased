@@ -5,10 +5,10 @@ import Tabs from "../../../components/Tabs";
 export default function Add_admin(){
 
     const ctx = useAppContext()
-    const items = [{text: ctx.I18n("reportOrder.reportCountDesc"), route: "/admin/reported_news"},
-        {text: ctx.I18n("reportOrder.reportCountAsc"), route: "/admin/reported_news"},
-        {text: ctx.I18n("reportOrder.reportDateDesc"), route: "/admin/reported_news"},
-        {text: ctx.I18n("reportOrder.reportDateAsc"), route: "/admin/reported_news"}]
+    const items = [{text: ctx.I18n("reportOrder.reportCountDesc"), route: "/admin/add_admin"},
+        {text: ctx.I18n("reportOrder.reportCountAsc"), route: "/admin/add_admin"},
+        {text: ctx.I18n("reportOrder.reportDateDesc"), route: "/admin/add_admin"},
+        {text: ctx.I18n("reportOrder.reportDateAsc"), route: "/admin/add_admin"}]
 
     return (
         <div className="d-flex h-100 flex-column">
