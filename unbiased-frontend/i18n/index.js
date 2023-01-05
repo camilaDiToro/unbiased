@@ -97,6 +97,41 @@ const strings = {
     "register.signUp": "Sign Up",
     "register.alreadyMemberQuestion": "Already a member?",
 
+    //Verify email
+    "verifyEmail.goHome": "Go home",
+    "verifyEmail.login": "Go to login",
+
+    //Login
+    "login.error": "There was an error with the inputted values",
+    "login.mail.address": "Email address",
+    "login.password": "Password",
+    "login.rememberMe": "Remember me",
+    "login.signIn": "Sign in",
+    "login.emailNotVerified": "The email is not verified.",
+    "login.emailResended": "The confirmation link has been resended.",
+    "login.resendVerificationEmail.button": "Resend verification email",
+
+    //Moderation panel
+    "moderation.emptyArticles": "There are no reported articles yet.",
+    "moderation.reportedComments": "Reported comments",
+    "moderation.emptyComments": "There are no reported comments yet.",
+    "moderation.emptyAdmins": "There are no admins yet.",
+    "moderation.emptyAdminsSearch": (params) =>
+        `No admins match \"${params[0]}\"`,
+    "moderation.details": "View details",
+    "moderation.reportedArticles": "Reported articles",
+    "moderation.delete": "Delete article",
+    "moderation.deleteComment": "Delete comment",
+    "moderation.user": "User",
+    "moderation.reason": "Reason",
+    "moderation.date": "Date",
+    "moderation.reportsNum": "Number of reports",
+    "moderation.makeUserAdmin": "Make user admin",
+    "moderation.admin.succesfull": "Admin added successfully!",
+    "moderation.add": "Add admins",
+    "moderation.manage": "Manage admins",
+    "moderation.searchAdmin": "Search in admin panel",
+
     //Show news
     "showNews.reportNewsQuestion": "Are you sure you want to report this article?",
     "showNews.comments": "Comments",
@@ -108,18 +143,32 @@ const strings = {
     "showNews.deleteCommentBody": "Accepting this you will lose the comment, so you will not be able to recover it again. Are you sure you would like to continue?",
     "showNews.deletedComment": "The comment has been deleted.",
     "showNews.reportCommentQuestion": "Are you sure you want to report the comment?",
+
+    //Tooltips
+    "tooltip.clickToGoBack": "Click to go back",
+    "tooltip.deleteNews": "Delete news",
+    "tooltip.articleReported": "Article reported",
+    "tooltip.commentReported": "Comment reported",
+    "tooltip.reportComment": "Report comment",
+    "tooltip.articleSave": "Save article",
+    "tooltip.commentArticle": "Comment article",
+    "tooltip.info": "Information",
+    "tooltip.addAdmin": "Add admin",
+    "tooltip.pin": "Pin article",
+    "tooltip.unpin": "Unpin article",
+    "tooltip.infoDisabled": "To enable this option you need to create your first article",
   },
   "es-ES": {
     //NavBar
     "navbar.search": "Buscar",
-    "navbar.logOut": "Cerrar Sesión",
+    "navbar.logout": "Cerrar Sesión",
     "navbar.myProfile": "Mi Perfil",
     "navbar.logIn": "Iniciar Sesión",
     "navbar.register": "Registrarme",
     "navbar.adminPanel": "Panel de Administración",
 
     //Home
-    "home.createArticle.button": "Crear",
+    "home.createArticle.button": "Crear artículo",
     "home.emptyCreators": "No ha habido actividad aún.",
     "home.topCreators": "Creadores populares",
     "search.filter": (params) => `Cancelar filtro de búsqueda: \"${params[0]}\"`,
@@ -205,6 +254,41 @@ const strings = {
     "register.signUp": "Registrarse",
     "register.alreadyMemberQuestion": "¿Ya eres miembro?",
 
+    //Verify email
+    "verifyEmail.goHome": "Ir a la página principal",
+    "verifyEmail.login": "Ir a iniciar sesión",
+
+    //Login
+    "login.error": "Hubo un error con los datos ingresados.",
+    "login.mail.address": "Dirección de mail",
+    "login.password": "Contraseña",
+    "login.rememberMe": "Recordarme",
+    "login.signIn": "Iniciar Sesión",
+    "login.emailNotVerified": "El email no se encuentra verificado.",
+    "login.emailResended": "El link de confirmación fue reenviado.",
+    "login.resendVerificationEmail.button": "Reenviar verificación de email",
+
+    //Moderation panel
+    "moderation.emptyArticles": "No hay noticias reportadas todavía.",
+    "moderation.reportedComments": "Comentarios reportados",
+    "moderation.emptyComments": "No hay comentarios reportados todavía.",
+    "moderation.emptyAdmins": "No hay administradores todavía.",
+    "moderation.emptyAdminsSearch": (params) =>
+        `Ningún administrador coincide con \"${params[0]}\"`,
+    "moderation.details": "Ver detalles",
+    "moderation.reportedArticles": "Noticias reportadas",
+    "moderation.delete": "Borrar noticia",
+    "moderation.deleteComment": "Borrar comentario",
+    "moderation.user": "Usuario",
+    "moderation.reason": "Razón",
+    "moderation.date": "Fecha",
+    "moderation.reportsNum": "Cantidad de reportes",
+    "moderation.makeUserAdmin": "Hacer administrador a un usuario",
+    "moderation.admin.succesfull": "Admininstrador agregado exitosamente!",
+    "moderation.add": "Agregar administrador",
+    "moderation.manage": "Manejar administradoress",
+    "moderation.searchAdmin": "Buscar en panel de administradores",
+
     //Show news
     "showNews.reportNewsQuestion": "¿Estás seguro de que quieres reportar esta noticia?",
     "showNews.comments": "Comentarios",
@@ -216,6 +300,20 @@ const strings = {
     "showNews.deleteCommentBody": "Al eliminar este comentario, no podrás volver a recuperarlo. ¿Estás seguro de que deseas continuar?",
     "showNews.deletedComment": "El comentario ha sido eliminado.",
     "showNews.reportCommentQuestion": "¿Estás seguro de que quieres reportar este comentario?",
+
+    //Tooltips
+    "tooltip.clickToGoBack": "Click para volver hacia atras",
+    "tooltip.deleteNews": "Borrar noticia",
+    "tooltip.articleReported": "Reportar noticia",
+    "tooltip.commentReported": "Reportar comentario",
+    "tooltip.reportComment": "Reportar comentario",
+    "tooltip.articleSave": "Guardar noticia",
+    "tooltip.commentArticle": "Comentar la noticia",
+    "tooltip.pin": "Fijar noticia",
+    "tooltip.unpin": "Desfijar noticia",
+    "tooltip.info": "Información",
+    "tooltip.infoDisabled": "Para habilitar esta caracteristica debes crear tu primer artículo",
+    "tooltip.addAdmin": "Añadir administrador",
   },
 };
 
