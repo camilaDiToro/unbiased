@@ -531,7 +531,12 @@ input:-webkit-autofill:focus {
 }
 
 .select {
-    color: #8ea7e8
+    font-weight: bold;
+    color: #8ea7e8;
+}
+
+.select:hover{
+    color: #8ea7e8;
 }
 
 .hover-hand {
@@ -1050,7 +1055,7 @@ input:checked + .slider:before {
     padding-left:1rem;
 }
 
-.dropdown-items:hover {
+.dropdown-items {
     color: #8ea7e8;
     background-color: transparent;
     text-decoration: none;
