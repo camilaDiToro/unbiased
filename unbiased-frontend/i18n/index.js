@@ -24,8 +24,23 @@ const strings = {
     "moderation.reportedArticles": "Reported articles",
     "moderation.reportedComments": "Reported comments",
     "moderation.manage": "manage admins",
+    "reportOrder.reportCountDesc": "Most Reported",
+    "reportOrder.reportCountAsc": "Least Reported",
+    "reportOrder.reportDateDesc": "Newest Reported",
+    "reportOrder.reportDateAsc": "Oldest Reported",
   },
-  "es-ES": { "home.createArticle.button": "Create cuio" },
+  "es-ES": {
+    "home.createArticle.button": "Create cuio",
+    "moderation.panel": "Panel de moderación",
+    "moderation.reportedArticles": "Noticias reportadas",
+    "moderation.reportedComments": "Comentarios reportados",
+    "moderation.manage": "Gestionar admins",
+    "reportOrder.reportCountDesc": "Más Reportados",
+    "reportOrder.reportCountAsc": "Menos Reportados",
+    "reportOrder.reportDateDesc": "Reportados más recientes",
+    "reportOrder.reportDateAsc":"Reportados más antiguos",
+
+  },
 };
 
 const I18n = (code, params) => {
