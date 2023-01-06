@@ -56,7 +56,9 @@ export default function ShowNews(props) {
 
           <p className="text-sm-left text-secondary">
             Jueves 5 de enero
-            <img className="read-clock" src="img/clock-svgrepo-com.svg" />
+            <img id="clock"
+              className="read-clock"
+              src={"img/clock-svgrepo-com.svg"} />
             1 min para leer
           </p>
 
