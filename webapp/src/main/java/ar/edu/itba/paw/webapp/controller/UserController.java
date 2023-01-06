@@ -142,5 +142,23 @@ public class UserController {
         }
     }
 
+    @PUT
+    @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
+    public Response followUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
+
+        final User follower = userService.getUserById(followerId).orElseThrow(UserNotFoundException::new);
+        userService.followUser(follower, userId);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s followed user of id %d", follower.getUsername(), userId))).build();
+    }
+
+    @PUT
+    @Path(value = "/{userId:[0-9]+}/unfollow/{followerId:[0-9]+}")
+    public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
+
+        final User follower = userService.getUserById(followerId).orElseThrow(UserNotFoundException::new);
+        userService.unfollowUser(follower, userId);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s unfollowed user of id %d", follower.getUsername(), userId))).build();
+    }
+
 }
 
