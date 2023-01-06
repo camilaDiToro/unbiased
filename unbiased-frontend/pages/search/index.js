@@ -1,19 +1,58 @@
 import Head from 'next/head'
 import Tabs from "components/Tabs";
-import Article from "components/Article";
-import Link from "next/link";
 import {useAppContext} from "../../context";
 import {useRouter} from "next/router";
 import CancelSearchLink from "../../components/CancelSearchLink";
 import Creator from "../../components/Creator";
+import Article from "../../components/Article";
 
 
 export default function SearchPage() {
     const router = useRouter()
-    const items = [{text: "Hola", route: "/"}, {text: "Como", route: {
-            pathname: '/search',
-            query: {...router.query, type: 'creator'}
-        }}, {text: "Va", route: "/"}]
+    const news = [
+        {
+            title: "Title",
+            subtitle: "Subtitle",
+            body: "asjkbas jkas askj aksj asjk as",
+            readTime: 3,
+            saved: true,
+            hasImage: false,
+            creator: {
+                name: "username",
+                id: 4,
+                hasImage: false
+            },
+            id: 5,
+        },
+        {
+            title: "Title",
+            subtitle: "Subtitle",
+            body: "asjkbas jkas askj aksj asjk as",
+            readTime: 3,
+            saved: true,
+            hasImage: false,
+            creator: {
+                name: "username",
+                id: 4,
+                hasImage: false
+            },
+            id: 5,
+        },
+        {
+            title: "Title",
+            subtitle: "Subtitle",
+            body: "asjkbas jkas askj aksj asjk as",
+            readTime: 3,
+            saved: true,
+            hasImage: false,
+            creator: {
+                name: "username",
+                id: 4,
+                hasImage: false
+            },
+            id: 5,
+        },
+    ];
     const data = [{id: 1}, {id: 2}]
     const selected = "Hola"
     const ctx = useAppContext()
@@ -34,8 +73,8 @@ export default function SearchPage() {
               <Tabs items={items} selected={selected}></Tabs>
               <div className="container-fluid">
                   <div className={`row row-cols-md-${router.query.type === 'creator' ? '3' : '2'}`}>
-                      {router.query.type === 'creator' ? data.map(d => <Creator key={d.id}></Creator>):
-                          data.map(d => <Article key={d.id}></Article>)}
+                      {router.query.type === 'creator' ? news.map(d => <Creator key={d.id}></Creator>):
+                          news.map(d => <Article {...d} key={d.id}></Article>)}
                   </div>
 
               </div>

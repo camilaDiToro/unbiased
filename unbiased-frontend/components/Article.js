@@ -1,104 +1,127 @@
+import {useAppContext} from "../context";
 import Link from "next/link";
+import Modal from "./Modal";
 import PositivityIndicator from "./PositivityIndicator";
 import Tooltip from "./Tooltip";
-import {useAppContext} from "../context";
+import PropTypes from 'prop-types';
 
 export default function Article(props) {
     const {I18n} = useAppContext()
     return <>
-        <div className="col mb-4 max-h-300px">
-            <div className="card h-100 d-flex flex-row h-100">
-                <PositivityIndicator positivity="positive" interactions={20} upvoted={0.8}></PositivityIndicator>
-                <div
-                    className={`d-flex flex-column justify-content-between ${props.image ? 'w-60' : 'w-100'}`}>
-                    <div className="d-flex w-100">
-                        <div className="upvote-div-home d-flex flex-column align-items-center m-3">
+        <Modal id={`pingModal${props.id}`} title={I18n("profile.pin.question")} body={I18n("profile.pin.body")} onSubmitHandler={() => alert('hola')}/>
+        <Modal id={`binModal${props.id}`} title={I18n("profile.modal.question")} body={I18n("profile.modal.msg")} onSubmitHandler={() => alert('hola')}/>
 
-                            {/*<c:if test="${loggedUser != null}">*/}
-                                <img id="upvote"
-                                     className="svg-btn hover-hand"
-                                     src={`/img/upvote${props.rating === 'upvoted' ? '-clicked' : ''}.svg`}/>
-                                <div id="rating" className="${rating.toString()}">
-                                    123
-                                </div>
-                                <img id="downvote"
-                                     className="svg-btn hover-hand"
-                                     src={`/img/downvote${props.rating === 'downvoted' ? '-clicked' : ''}.svg`}/>
-                            {/*</c:if>*/}
+        <div className="col mb-4">
+            <div className="card h-100 d-flex flex-row max-h-300px">
+                <PositivityIndicator positivity="positive" upvoted={0.8} interactions={5}></PositivityIndicator>
+                <div className={`d-flex flex-column justify-content-between ${props.image ? 'w-60' : 'w-100'}`}>
+                    <div className="d-flex w-100">
+                        <div className="upvote-div-profile d-flex flex-column align-items-center m-3">
+                            <img id="upvote"
+                                 className="svg-btn hover-hand"
+                                 src={`/img/upvote${props.upvoted ? '-clicked' : ''}.svg`}/>
+                            <div id="rating" className="upvote">
+                                5
+                            </div>
+                            <img id="downvote"
+                                 className="svg-btn hover-hand"
+                                 src={`/img/downvote${props.downvoted ? '-clicked' : ''}.svg`}/>
                         </div>
                         <div className="card-body-home">
-                            <Link className="link title-principal-card"
-                               href={`/news/${props.newsId}`}>
-                                <h5 className="link-text text-ellipsis-3">
-                                    TITLE
+                            <Link className="link max-h-10" href="/">
+                                <h5 className="link-text text-ellipsis">
+                                    {props.title}
                                 </h5>
                             </Link>
-                            <h6 className="card-subtitle py-1 text-ellipsis-2 text-white">
-                                SUBTITLE
+                            <h6 className="  card-subtitle py-1 text-ellipsis-2">
+                                {props.subtitle}
                             </h6>
-                            <span className="font-weight-light">2 months ago</span>
+                            <span className="font-weight-light">0 minutes ago</span>
 
-                            <div>
-                                <p className="text-sm-left text-secondary mb-0 text-white d-flex align-content-center gap-1 op-09">
-                                    <img
-                                        src="/img/clock-svgrepo-com.svg"
-                                        alt="..." className="read-clock"/>
-                                    1 min read
-                                </p>
-                            </div>
-
+                            <p className="text-sm-left text-secondary mb-0 d-flex justify-content-center align-content-center w-fit">
+                                <img src="/img/clock-svgrepo-com.svg"
+                                     className="read-clock mr-1"/>
+                                {I18n("home.read", [props.readTime])}
+                            </p>
 
                         </div>
                     </div>
                     <div className="d-flex justify-content-between p-2 w-100">
                         <div className="d-flex align-items-center w-auto gap-1">
                             <div className="img-container-article">
-                                {props.image ? <img className="rounded-circle object-fit-cover mr-1"
-                                                    src=""
-                                                    alt=""/> : <img className="rounded-circle object-fit-cover mr-1"
-                                                                   src="/img/profile-image.png"
-                                                                   alt=""/>}
+                                <img className="rounded-circle object-fit-cover mr-1"
+                                     src="/img/profile-image.png" alt=""/>
                             </div>
-                            <Link className="link"
-                               href={`/profile/${props.creator}`}>
-                                <div id="profile_name_card"
-                                     className="card-name-text text-ellipsis-1">USER</div>
-
+                            <Link className="link" href={`/profile/${props.creator.id}`}>
+                                <div className="link-text card-name-text text-ellipsis-1">{props.creator.name}</div>
                             </Link>
                         </div>
                         <div className="d-flex align-items-center" role="group">
-                            <div
-                                className=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center">
-                                <Link href="">
-                                    <Tooltip position="bottom" className="icon-index svg-btn svg-bookmark bookmark" text={I18n("tooltip.commentArticle")}>
-                                        <img
-                                            src="/img/comment.svg" alt=""
-                                        />
-                                    </Tooltip>
-                                </Link>
-                            </div>
-                            {/*<c:if test="${loggedUser != null}">*/}
-                                <div
-                                    className=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center">
-                                    <Tooltip className="icon-index svg-btn svg-bookmark bookmark" position="bottom" text={I18n("tooltip.articleSave")}>
-                                        <img
 
-                                            src={`/img/bookmark${props.saved ? '-clicked' : ''}.svg`}
-                                        />
-                                    </Tooltip>
+                            {/*<c:if test="${isMyProfile && loggedUser == article.user}">*/}
+                            {!props.profileArticle && props.canDelete ? <button data-toggle="modal" data-target={`#binModal${props.id}`} className="btn bin-modal"
+                                                  id="bin_button">
+                                <Tooltip text={I18n("tooltip.deleteNews")} position="bottom">
+                                    <img src="/img/bin-svgrepo-com.svg" alt="..."
+                                         className="icon-profile"
+                                    />
+                                </Tooltip>
+                            </button> : <></>}
 
-                                </div>
+                            {
+                                props.profileArticle ? <div data-toggle="modal" data-target={`#pingModal${props.id}`}
+                                                            className="svg-btn hover-hand">
+                                    <Tooltip position="bottom" text={I18n("tooltip.pin")}>
+                                        <img className="icon-profile svg-btn svg-bookmark"
+                                             src="/img/pin.svg" alt="" />
+                                    </Tooltip>
+                                </div> : <></>
+                            }
+
+
                             {/*</c:if>*/}
+
+                            {/*<c:if test="${loggedUser != null}">*/}
+
+                            <div className=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center">
+                                <Tooltip position="bottom" text={props.saved ? I18n("tooltip.articleUnsave") : I18n("tooltip.articleSave")}>
+                                    <img className="w-25px svg-btn" id="bookmark"
+                                         src={`/img/bookmark${props.saved ? '-clicked' : ''}.svg`}
+                                         alt=""   />
+                                </Tooltip>
+                            </div>
 
                         </div>
                     </div>
                 </div>
-                {props.image ? <div className="position-relative w-40 custom-rounded-corners ml-2">
-                    <img src=""
-                         className="object-fit-cover" alt="..."/>
+                {props.image ? <div className="bg-secondary position-relative w-40 border-15px">
+
+
+                    <img src="" className="object-fit-cover"
+                         alt="..."/>
+
                 </div> : <></>}
 
             </div>
         </div>
     </>
 }
+
+Article.propTypes = {
+    title: PropTypes.string.isRequired,
+    subtitle: PropTypes.string.isRequired,
+    body: PropTypes.string.isRequired,
+    readTime: PropTypes.number.isRequired,
+    saved: PropTypes.bool.isRequired,
+    hasImage: PropTypes.bool.isRequired,
+    creator: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        id: PropTypes.bigint.isRequired,
+        hasImage: PropTypes.bool.isRequired
+    }),
+    id: PropTypes.bigint.isRequired,
+    canDelete: PropTypes.bool,
+    profileArticle: PropTypes.bool,
+    pinned: PropTypes.bool
+}
+

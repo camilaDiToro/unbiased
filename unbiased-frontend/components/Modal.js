@@ -1,10 +1,8 @@
-
-
-
+import {useAppContext} from "../context";
 
 
 export default function Modal(props) {
-
+    const {I18n} = useAppContext()
     function handleCloseModal(){
         document.getElementById(props.id).classList.remove("show", "d-block");
         document.querySelectorAll(".modal-backdrop")
@@ -29,7 +27,7 @@ export default function Modal(props) {
                     </div>
                     <div className="modal-footer">
                         <button type="submit" className="btn btn-primary" onClick={(e) => {props.onClickHandler && props.onClickHandler(e); handleCloseModal()}}>
-                            {props.acceptText || "profile.modal.accept"}
+                            {props.acceptText || I18n("profile.modal.accept")}
                         </button>
                     </div>
                 </div>

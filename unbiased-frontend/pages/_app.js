@@ -10,7 +10,7 @@ import AppWrapper from "../context"
 
 
 function MyApp({ Component, pageProps }) {
-  return <div id="__next" className="d-flex h-100 flex-column">
+  return <div id="main"  className="d-flex flex-column">
     {/*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>*/}
     <Script strategy="beforeInteractive" id="1" src="/js/http_code.jquery.com_jquery-3.5.1.slim.js"
             ></Script>

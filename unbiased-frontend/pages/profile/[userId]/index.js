@@ -1,13 +1,31 @@
 import Head from "next/head";
 import Tabs from "../../../components/Tabs";
 import { useAppContext } from "../../../context";
-import ProfileArticle from "../../../components/ProfileArticle";
+import Article from "../../../components/Article";
 import PositivityIndicator from "../../../components/PositivityIndicator";
 import Modal from "../../../components/Modal";
 import FollowButton from "../../../components/FollowButton";
 import ProgressBar from "../../../components/ProgressBar";
 import Tooltip from "../../../components/Tooltip";
 import ModalTrigger from "../../../components/ModalTrigger";
+import ProfilePic from "../../../components/ProfilePic";
+import PropTypes from "prop-types";
+
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      isJournalist: true,
+      email: 'email@email.com',
+      username: 'kevin',
+      followers: 10,
+      following: 5,
+      description: 'this is my description',
+      interactions: 98,
+      upvoted: 0.6,
+      positivity: "positive"
+    }, // will be passed to the page component as props
+  }
+}
 
 
 export default function Profile(props) {
@@ -16,11 +34,53 @@ export default function Profile(props) {
     { text: "Como", route: "/" },
     { text: "Va", route: "/" },
   ];
-  const ctx = useAppContext();
-  const news = [{ id: 1 }, { id: 2 }];
+  const {I18n}= useAppContext();
+  const news = [
+    {
+      title: "Title",
+      subtitle: "Subtitle",
+      body: "asjkbas jkas askj aksj asjk as",
+      readTime: 3,
+      saved: true,
+      hasImage: false,
+      creator: {
+        name: "username",
+        id: 4,
+      },
+      id: 5,
+    },
+    {
+      title: "Title",
+      subtitle: "Subtitle",
+      body: "asjkbas jkas askj aksj asjk as",
+      readTime: 3,
+      saved: true,
+      hasImage: false,
+      creator: {
+        name: "username",
+        id: 4,
+        hasImage: false
+      },
+      id: 5,
+    },
+    {
+      title: "Title",
+      subtitle: "Subtitle",
+      body: "asjkbas jkas askj aksj asjk as",
+      readTime: 3,
+      saved: true,
+      hasImage: false,
+      creator: {
+        name: "username",
+        id: 4,
+        hasImage: false
+      },
+      id: 5,
+    },
+  ];
   const selected = "Como";
-  const topCreators = [{ name: "Juan" }, { name: "Lucio" }];
-  const pinnedNews = undefined;
+
+
 
   const RightSide = () => (<div
       className="d-flex flex-column w-30 justify-content-start pr-5">
@@ -28,44 +88,30 @@ export default function Profile(props) {
       <div className="profile">
         {/*<c:if test="${isMyProfile}">*/}
 
-        <span data-toggle="modal" data-target="#profileModal"
-              className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
-              id="pencil_button">
+        <ModalTrigger modalId="profileModal">
+          <span
+                className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
+                id="pencil_button">
                         <div className="position-relative img-container-profile mr-1 d-flex justify-content-center align-items-center">
                             <img className="position-relative object-fit-contain"
                                  src="/img/pencil-edit.png" alt="..."/>
                         </div>
-          {ctx.I18n("profile.edit")}
+            {I18n("profile.edit")}
                         </span>
+        </ModalTrigger>
 
-        {/*</c:if>*/}
-        {/*<c:if test="${profileUser.hasImage()}">*/}
+        <ProfilePic tier="gold"/>
 
-        {/*  <c:if test="${profileFollowers >= 0 && profileFollowers < 1}">*/}
-        {/*    <img id="default-frame-color" src="<c:url value="/profile/${profileUser.getUserId()}/image"/>"*/}
-        {/*         className="rounded-circle object-fit-cover img-div" width="80">*/}
-        {/*  </c:if>*/}
-        {/*  <c:if test="${profileFollowers >=1 && profileFollowers < 2}">*/}
-        {/*    <img id="gold-frame-color" src="<c:url value="/profile/${profileUser.getUserId()}/image"/>"*/}
-        {/*         className="rounded-circle object-fit-cover img-div" width="80">*/}
-        {/*  </c:if>*/}
-        {/*  <c:if test="${profileFollowers >=2}">*/}
-        {/*    <img id="platinum-frame-color" src="<c:url value="/profile/${profileUser.getUserId()}/image"/>"*/}
-        {/*         className="rounded-circle object-fit-cover img-div" width="80">*/}
-        {/*  </c:if>*/}
-        {/*/!*</c:if>*!/*/}
-        {/*<c:if test="${!profileUser.hasImage()}">*/}
-        {/*  <img src="<c:url value="/resources/images/profile-image.png"/>"*/}
-        {/*       className="rounded-circle object-fit-cover img-div" width="80">*/}
-        {/*</c:if>*/}
+
+
+
+
       </div>
-      {/*<c:if test="${profileUser.hasPositivityStats()}">*/}
-        <PositivityIndicator></PositivityIndicator>
-
-      {/*</c:if>*/}
+      {props.isJournalist ?         <PositivityIndicator interactions={props.interactions} positivity={props.positivity} upvoted={props.upvoted}></PositivityIndicator>
+      : <></>}
 
       {/*<c:if test="${isMyProfile}">*/}
-      <Tooltip text={ctx.I18n("tooltip.info")} className="info-profile-btn bg-transparent">
+      <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
         <ModalTrigger modalId="infoModal">
           <button
                   className="bg-transparent border-0 btn-size"
@@ -74,7 +120,7 @@ export default function Profile(props) {
       </Tooltip>
 
       {/*</c:if>*/}
-    <Modal id="infoModal" title={"profile.modal.infoTitle"} body={"profile.modal.infoAllowedMsg"}></Modal>
+    <Modal id="infoModal" title={I18n("profile.modal.infoTitle")} body={I18n("profile.modal.infoAllowedMsg")}></Modal>
 
 
       <img src="/img/front-page-profile.png" className="card-img-top" alt="..."/>
@@ -94,14 +140,14 @@ export default function Profile(props) {
             <div className="d-flex flex-row mr-5">
               <p className="font-weight-bold">{props.followers}</p>
               <p className="custom-follow-text">
-                {"profile.followers"}
+                {I18n("profile.followers")}
               </p>
             </div>
 
             <div className="d-flex flex-row">
               <p className="font-weight-bold">{props.following}</p>
               <p className="custom-follow-text">
-                {"profile.following"}
+                {I18n("profile.following")}
               </p>
             </div>
           </div>
@@ -115,10 +161,9 @@ export default function Profile(props) {
           </div>
         </div>
 
-    {/*<c:if test="${isJournalist}">*/}
 
     </div>
-    <div className="card right-card">
+    {props.isJournalist ? <div className="card right-card">
 
       <div className="card-body">
         {/*<c:forEach var="cat" items="${newsCategories}">*/}
@@ -126,7 +171,7 @@ export default function Profile(props) {
         {/*</c:forEach>*/}
 
       </div>
-    </div>
+    </div> : <></>}
     <Modal id="profileModal" title="profile.user.settings"></Modal>
   </div>)
 
@@ -138,7 +183,7 @@ export default function Profile(props) {
         <div className="container-fluid">
           <div className="row row-cols-1">
             {news.map((n) => (
-                <ProfileArticle key={n.id} id={n.id}></ProfileArticle>
+                <Article {...n} key={n.id} id={n.id}></Article>
             ))}
           </div>
         </div>
@@ -153,7 +198,7 @@ export default function Profile(props) {
         <link rel="icon" href="/img/unbiased-logo-circle.png" />
       </Head>
       <Tabs items={items} selected={selected}></Tabs>
-      <div className="d-flex flex-column h-100">
+      <div className="d-flex flex-column">
         <div className="flex-grow-1 d-flex flex-row">
           <LeftSide></LeftSide>
           <RightSide></RightSide>
@@ -161,4 +206,16 @@ export default function Profile(props) {
       </div>
     </>
   );
+}
+
+Profile.propTypes = {
+  isJournalist: PropTypes.bool.isRequired,
+  email: PropTypes.string.isRequired,
+  username: PropTypes.string,
+  followers: PropTypes.bigint.isRequired,
+  following: PropTypes.bigint.isRequired,
+  description: PropTypes.string,
+  interactions: PropTypes.bigint,
+  upvoted: PropTypes.number,
+  positivity: PropTypes.string
 }

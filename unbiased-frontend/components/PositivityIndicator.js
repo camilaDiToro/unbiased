@@ -1,5 +1,5 @@
 import {useAppContext} from "../context";
-
+import PropTypes from 'prop-types';
 
 export default function PositivityIndicator(props) {
     const ctx = useAppContext()
@@ -15,4 +15,10 @@ export default function PositivityIndicator(props) {
     return <img src={imgMap[props.positivity || 'positive']} alt="..."
                 className="quality-indicator" data-toggle="tooltip" data-placement="top" title={tooltipText}
                 data-original-title={tooltipText} />
+}
+
+PositivityIndicator.propTypes = {
+    positivity: PropTypes.string,
+    upvoted: PropTypes.number,
+    interactions: PropTypes.number.isRequired,
 }

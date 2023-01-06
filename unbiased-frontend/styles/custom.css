@@ -7,13 +7,19 @@
 
 
 #__next {
-    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
     background: radial-gradient(#1C1F2C 30%, #0D0E14);
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     color: white
+}
+
+#main {
+    flex: 1 1 auto;
 }
 
 .btn-size {
@@ -41,6 +47,14 @@
 
 .w-10 {
     width: 10%;
+}
+
+html,
+body,
+body > div:first-child,
+div#__next,
+div#__next > div {
+    min-height: 100vh;
 }
 
 .card-body-home{
