@@ -1,4 +1,5 @@
 import {useAppContext} from "../context";
+import PropTypes from "prop-types";
 
 
 export default function Modal(props) {
@@ -24,6 +25,7 @@ export default function Modal(props) {
                     </div>
                     <div className="modal-body">
                         {props.body}
+                        {props.children}
                     </div>
                     <div className="modal-footer">
                         <button type="submit" className="btn btn-primary" onClick={(e) => {props.onClickHandler && props.onClickHandler(e); handleCloseModal()}}>
@@ -34,4 +36,11 @@ export default function Modal(props) {
             </div>
         </div>
     </>
+}
+
+Modal.propTypes = {
+    body: PropTypes.string,
+    onClickHandler: PropTypes.func,
+    title: PropTypes.string.isRequired,
+    acceptText: PropTypes.string
 }

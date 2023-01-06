@@ -161,6 +161,12 @@ const strings = {
     "tooltip.pin": "Pin article",
     "tooltip.unpin": "Unpin article",
     "tooltip.infoDisabled": "To enable this option you need to create your first article",
+
+    // Mail options
+    "mailOption.follow":"New followers",
+    "mailOption.comment":"New comments",
+    "mailOption.folowingPublished": "A journalist I follow published an article",
+    "mailOption.positivityChanged": "The positivity value of my news changes"
   },
   "es-ES": {
     //NavBar
@@ -322,6 +328,12 @@ const strings = {
     "tooltip.info": "Información",
     "tooltip.infoDisabled": "Para habilitar esta caracteristica debes crear tu primer artículo",
     "tooltip.addAdmin": "Añadir administrador",
+
+    // Mail options
+    "mailOption.follow":"Nuevos seguidores",
+    "mailOption.comment":"Nuevos comentarios",
+    "mailOption.folowingPublished": "Un periodista que sigo publica una noticia",
+    "mailOption.positivityChanged": "El valor de positividad de mi noticia cambia"
   },
 };
 

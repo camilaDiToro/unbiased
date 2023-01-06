@@ -7,6 +7,7 @@ import {useAppContext} from "../../context";
 import Tooltip from "../../components/Tooltip";
 import ModalTrigger from "../../components/ModalTrigger";
 import BackButton from "../../components/BackButton";
+import Modal from "../../components/Modal";
 
 
 const MarkdownEditor = dynamic(
@@ -24,7 +25,7 @@ export default function CreateArticle(props) {
     return <>
         {/*<link rel="stylesheet" href="https://cdn.rawgit.com/xcatliu/simplemde-theme-dark/master/dist/simplemde-theme-dark.min.css"/>*/}
 
-        <ModalTrigger modalId="exampleModal">
+        <ModalTrigger modalId="closeModal">
         <BackButton></BackButton>
         </ModalTrigger>
         <div className="d-flex flex-col align-items-center justify-content-center p-5">
@@ -163,27 +164,7 @@ export default function CreateArticle(props) {
                 </div>
             </form>
 
-
-            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">{"createArticle.modal.question"}</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            {"createArticle.modal.msg"}
-                        </div>
-                        <div className="modal-footer">
-                            <Link href="/">
-                            <button type="button" className="btn btn-primary">{"createArticle.modal.accept"}</button>
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <Modal id="closeModal" body={I18n("createArticle.modal.msg")} title="createArticle.modal.question"></Modal>
 
     </div>
     </>

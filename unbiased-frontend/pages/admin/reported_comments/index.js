@@ -1,4 +1,4 @@
-import Moderation_panel from "../../../components/Moderation_panel";
+import Moderation_panel from "../../../components/ModerationPanel";
 import {useAppContext} from "../../../context";
 import Tabs from "../../../components/Tabs";
 
