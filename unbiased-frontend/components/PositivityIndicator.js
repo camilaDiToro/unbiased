@@ -12,7 +12,7 @@ export default function PositivityIndicator(props) {
 
 
 
-    return <img src={imgMap[props.positivity]} alt="..."
+    return <img src={imgMap[props.positivity || 'positive']} alt="..."
                 className="quality-indicator" data-toggle="tooltip" data-placement="top" title={tooltipText}
                 data-original-title={tooltipText} />
 }

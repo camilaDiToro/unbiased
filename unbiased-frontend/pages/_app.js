@@ -2,6 +2,7 @@ import "../styles/http_cdn.rawgit.com_xcatliu_simplemde-theme-dark_master_dist_s
 
 import '../styles/bootstrap.min.css'
 import '../styles/custom.css'
+import '../styles/profile.css'
 // import "@uiw/react-md-editor/markdown-editor.css";
 import Script from "next/script"
 import Navbar from "../components/Navbar";
@@ -15,7 +16,7 @@ function MyApp({ Component, pageProps }) {
             ></Script>
     <Script strategy="afterInteractive" id="2"  src="/js/http_cdn.jsdelivr.net_npm_bootstrap@4.5.3_dist_js_bootstrap.bundle.js"
             ></Script>
-    <Script strategy="afterInteractive" id="3" order={3} src="/js/script.js"></Script>
+    <Script strategy="lazyOnload" id="3" order={3} src="/js/script.js"></Script>
 
 
     <AppWrapper>

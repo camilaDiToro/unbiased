@@ -48,7 +48,6 @@ public class UserController {
     @POST
     public Response createUser(@QueryParam("email") final String email, @QueryParam("password") final String password){
         final User newUser = userService.create(new User.UserBuilder(email).pass(password));
-
         final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newUser.getId())).build();
         return Response.created(location).build();
     }
