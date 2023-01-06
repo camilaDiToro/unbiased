@@ -3,6 +3,10 @@ import {useCallback, useMemo, useState} from "react";
 
 
 import dynamic from "next/dynamic";
+import {useAppContext} from "../../context";
+import Tooltip from "../../components/Tooltip";
+import ModalTrigger from "../../components/ModalTrigger";
+import BackButton from "../../components/BackButton";
 
 
 const MarkdownEditor = dynamic(
@@ -15,17 +19,14 @@ const MarkdownEditor = dynamic(
 
 export default function CreateArticle(props) {
     const [value, setValue] = useState("Initial");
-
+    const {I18n} = useAppContext()
 
     return <>
         {/*<link rel="stylesheet" href="https://cdn.rawgit.com/xcatliu/simplemde-theme-dark/master/dist/simplemde-theme-dark.min.css"/>*/}
-        <div className="back-button" data-toggle="tooltip" data-placement="bottom" title=""
-             data-original-title="AAAAAAAA" >
-            <div data-toggle="modal" data-target="#exampleModal">
-                <img className="svg-btn hover-hand back-btn" src="/img/back-svgrepo-com.svg"
-                     alt="..."/>
-            </div>
-        </div>
+
+        <ModalTrigger modalId="exampleModal">
+        <BackButton></BackButton>
+        </ModalTrigger>
         <div className="d-flex flex-col align-items-center justify-content-center p-5">
 
 

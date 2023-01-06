@@ -1,5 +1,6 @@
 import {useAppContext} from "../context";
 import Link from "next/link";
+import Tooltip from "./Tooltip";
 
 export default function PanelCard() {
     const ctx = useAppContext()
@@ -18,9 +19,9 @@ export default function PanelCard() {
                     {/*TODO: Modal :)*/}
                     <div className="col mb-4">
                         <div className="card h-100 d-flex flex-row p-3 max-h-300px" id="left-card">
-                            <span className="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" data-toggle="tooltip" data-placement="bottom" title={ctx.I18n("moderation.reportsNum")}>
+                            <Tooltip className="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" position="bottom" text={ctx.I18n("moderation.reportsNum")}>
                                 1
-                            </span>
+                            </Tooltip>
 
                             <div className="d-flex flex-column justify-content-between w-100">
                                 <div className="d-flex w-100">
@@ -47,9 +48,9 @@ export default function PanelCard() {
                                         </Link>
                                     </div>
                                     <div className="d-flex align-items-center mr-2" role="group">
-                                        <button className="btn bin-modal">
-                                            <img src="/img/bin-svgrepo-com.svg" alt="..." className="bin-image" data-toggle="tooltip" data-placement="bottom" title={ctx.I18n("tooltip.deleteNews")}/>
-                                        </button>
+                                        <Tooltip className="btn bin-modal" position="bottom" text={ctx.I18n("tooltip.deleteNews")}>
+                                            <img src="/img/bin-svgrepo-com.svg" alt="..." className="bin-image"  />
+                                        </Tooltip>
                                         <Link href="/" className="font-weight-bold hover-hand link">
                                             <div className="link-text">{ctx.I18n("moderation.details")}</div>
                                         </Link>

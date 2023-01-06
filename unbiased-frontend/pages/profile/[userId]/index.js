@@ -6,6 +6,8 @@ import PositivityIndicator from "../../../components/PositivityIndicator";
 import Modal from "../../../components/Modal";
 import FollowButton from "../../../components/FollowButton";
 import ProgressBar from "../../../components/ProgressBar";
+import Tooltip from "../../../components/Tooltip";
+import ModalTrigger from "../../../components/ModalTrigger";
 
 
 export default function Profile(props) {
@@ -29,11 +31,11 @@ export default function Profile(props) {
         <span data-toggle="modal" data-target="#profileModal"
               className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
               id="pencil_button">
-                        <div className="position-relative img-container-profile mr-1">
+                        <div className="position-relative img-container-profile mr-1 d-flex justify-content-center align-items-center">
                             <img className="position-relative object-fit-contain"
                                  src="/img/pencil-edit.png" alt="..."/>
                         </div>
-          {"profile.edit"}
+          {ctx.I18n("profile.edit")}
                         </span>
 
         {/*</c:if>*/}
@@ -63,14 +65,16 @@ export default function Profile(props) {
       {/*</c:if>*/}
 
       {/*<c:if test="${isMyProfile}">*/}
-                <span data-toggle="tooltip" data-placement="top" title="tooltip.info"
-                      className="info-profile-btn bg-transparent">
-                <button data-toggle="modal" data-target="#infoModal"
-                        className="info-profile-btn bg-transparent border-0"
-                        style={{backgroundImage: 'url(/img/info-svgrepo-com.svg)'}}></button>
-            </span>
+      <Tooltip text={ctx.I18n("tooltip.info")} className="info-profile-btn bg-transparent">
+        <ModalTrigger modalId="infoModal">
+          <button
+                  className="bg-transparent border-0 btn-size"
+                  style={{backgroundImage: 'url(/img/info-svgrepo-com.svg)'}}></button>
+        </ModalTrigger>
+      </Tooltip>
+
       {/*</c:if>*/}
-    <Modal title={"profile.modal.infoTitle"} body={"profile.modal.infoAllowedMsg"}></Modal>
+    <Modal id="infoModal" title={"profile.modal.infoTitle"} body={"profile.modal.infoAllowedMsg"}></Modal>
 
 
       <img src="/img/front-page-profile.png" className="card-img-top" alt="..."/>

@@ -14,6 +14,9 @@ const strings = {
     "home.createArticle.button": "Create",
     "home.emptyCreators": "There hasn't been any activity yet.",
     "home.topCreators": "Top Creators",
+    "home.upvotes": (params) => `${params[0]*100}% upvoted`,
+    "home.read": (params) => `${params[0]} min read`,
+    "home.interactions": (params) => `${params[0]} ${params[0] === 1 ? 'interaction' : 'interactions'}`,
     "search.filter": (params) => `Cancel search filter: \"${params[0]}\"`,
     "search.notFound": (params) =>
       `We could not find any results that match \"${params[0]}\"`,
@@ -171,6 +174,9 @@ const strings = {
     "home.createArticle.button": "Crear artículo",
     "home.emptyCreators": "No ha habido actividad aún.",
     "home.topCreators": "Creadores populares",
+    "home.upvotes": (params) => `${params[0]*100}% gustado`,
+    "home.read": (params) => `${params[0]} min para leer`,
+    "home.interactions": (params) => `${params[0]} ${params[0] === 1 ? 'interacción' : 'interacciones'}`,
     "search.filter": (params) => `Cancelar filtro de búsqueda: \"${params[0]}\"`,
     "search.notFound": (params) =>
         `No se encontraron resultados para la búsqueda \"${params[0]}\"`,

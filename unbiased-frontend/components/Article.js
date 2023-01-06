@@ -1,13 +1,14 @@
 import Link from "next/link";
+import PositivityIndicator from "./PositivityIndicator";
+import Tooltip from "./Tooltip";
+import {useAppContext} from "../context";
 
 export default function Article(props) {
-
+    const {I18n} = useAppContext()
     return <>
         <div className="col mb-4 max-h-300px">
             <div className="card h-100 d-flex flex-row h-100">
-                <img src="/img/happy-positivity.svg" alt="..."
-                     className="quality-indicator "
-                     data-toggle="tooltip" data-placement="top" title="58% upvoted" />
+                <PositivityIndicator positivity="positive" interactions={20} upvoted={0.8}></PositivityIndicator>
                 <div
                     className={`d-flex flex-column justify-content-between ${props.image ? 'w-60' : 'w-100'}`}>
                     <div className="d-flex w-100">
@@ -69,20 +70,23 @@ export default function Article(props) {
                             <div
                                 className=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center">
                                 <Link href="">
-                                <img className="icon-index svg-btn svg-bookmark bookmark"
-                                     src="/img/comment.svg" alt=""
-                                     data-toggle="tooltip" data-placement="bottom"
-                                     title="Comentar"/>
-
+                                    <Tooltip position="bottom" className="icon-index svg-btn svg-bookmark bookmark" text={I18n("tooltip.commentArticle")}>
+                                        <img
+                                            src="/img/comment.svg" alt=""
+                                        />
+                                    </Tooltip>
                                 </Link>
                             </div>
                             {/*<c:if test="${loggedUser != null}">*/}
                                 <div
                                     className=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center">
-                                    <img
-                                         className="icon-index svg-btn svg-bookmark bookmark"
-                                         src={`/img/bookmark${props.saved ? '-clicked' : ''}.svg`}
-                                     data-toggle="tooltip" data-placement="bottom" title="Guardarrrr"/>
+                                    <Tooltip className="icon-index svg-btn svg-bookmark bookmark" position="bottom" text={I18n("tooltip.articleSave")}>
+                                        <img
+
+                                            src={`/img/bookmark${props.saved ? '-clicked' : ''}.svg`}
+                                        />
+                                    </Tooltip>
+
                                 </div>
                             {/*</c:if>*/}
 

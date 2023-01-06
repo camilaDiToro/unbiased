@@ -16,6 +16,11 @@
     color: white
 }
 
+.btn-size {
+    width: 20px;
+    height: 20px
+}
+
 .modal .close {
     color: white
 }
@@ -261,8 +266,8 @@
 .info-profile-btn{
     position: absolute;
     display: inline-block;
-    top: 5px;
-    left: 5px;
+    top: 10px;
+    left: 10px;
     background-repeat: no-repeat;
     height: 20px;
     width: 20px;

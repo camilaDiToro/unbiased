@@ -3,7 +3,7 @@ import {useAppContext} from "../context";
 
 export default function PositivityIndicator(props) {
     const ctx = useAppContext()
-    const tooltipText = `${ctx.I18n("home.upvotes", [props.upvotes*100])}% - ${ctx.I18n("home.interactions", [props.intercations])}`
+    const tooltipText = `${ctx.I18n("home.upvotes", [props.upvoted])} - ${ctx.I18n("home.interactions", [props.interactions])}`
     const imgMap = {
         positive: "/img/looking-positivity.svg",
     }

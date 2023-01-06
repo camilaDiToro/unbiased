@@ -1,4 +1,16 @@
+
+
+
+
+
 export default function Modal(props) {
+
+    function handleCloseModal(){
+        document.getElementById(props.id).classList.remove("show", "d-block");
+        document.querySelectorAll(".modal-backdrop")
+            .forEach(el => el.classList.remove("modal-backdrop"));
+    }
+
 
     return <>
         <div className="modal fade" id={props.id} aria-hidden="true">
@@ -8,7 +20,7 @@ export default function Modal(props) {
                         <h5 className="modal-title">
                             {props.title}
                         </h5>
-                        <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                        <button  type="button" className="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -16,7 +28,7 @@ export default function Modal(props) {
                         {props.body}
                     </div>
                     <div className="modal-footer">
-                        <button type="submit" className="btn btn-primary" onClick={props.onSubmitHandler}>
+                        <button type="submit" className="btn btn-primary" onClick={(e) => {props.onClickHandler && props.onClickHandler(e); handleCloseModal()}}>
                             {props.acceptText || "profile.modal.accept"}
                         </button>
                     </div>
