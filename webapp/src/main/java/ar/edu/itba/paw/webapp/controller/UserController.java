@@ -2,10 +2,14 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
@@ -18,7 +22,6 @@ import javax.ws.rs.core.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,13 +31,15 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+    private final NewsService newsService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, NewsService newsService) {
         this.userService = userService;
+        this.newsService = newsService;
     }
 
     @GET
@@ -73,9 +78,9 @@ public class UserController {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{userId:[0-9]+}")
     @Produces(value = { MediaType.APPLICATION_JSON})
-    public Response getUser(@PathParam("id") final long userId){
+    public Response getUser(@PathParam("userId") final long userId){
         Optional<User> mayBeUser = userService.getUserById(userId);
 
         if(!mayBeUser.isPresent()){
@@ -89,9 +94,9 @@ public class UserController {
 
     //TODO: CHECK THAT THE USER THAT IS BEING UPDATED IS THE ONE THAT IS LOGGED IN.
     @PUT
-    @Path("/{id}")
+    @Path("/{userId:[0-9]+}")
     @Produces(value = { MediaType.APPLICATION_JSON})
-    public Response editUser(@PathParam("id") final long userId, @Valid final UserProfileForm userProfileForm) throws IOException {
+    public Response editUser(@PathParam("userId") final long userId, @Valid final UserProfileForm userProfileForm) throws IOException {
         Optional<User> mayBeUser = userService.getUserById(userId);
 
         if(!mayBeUser.isPresent()){
@@ -106,8 +111,8 @@ public class UserController {
     }
 
     @GET
-    @Path("/{id}/image")
-    public Response profileImage(@PathParam("id") final long userId) {
+    @Path("/{userId:[0-9]+}/image")
+    public Response profileImage(@PathParam("userId") final long userId) {
         final Image image = userService.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage();
 
         if (image.getBytes().length == 0)
@@ -117,6 +122,24 @@ public class UserController {
                 .ok(new ByteArrayInputStream(image.getBytes()))
                 .type(image.getDataType())
                 .build();
+    }
+
+
+    @PUT
+    @Path(value = "/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}")
+    public Response pingNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
+        //final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+
+        final User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final News news =  newsService.getById(user, newsId).orElseThrow(NewsNotFoundException::new);
+
+        //TODO: check if the current user has the id userId and if he is the creator of the article.
+
+        if(userService.pingNewsToggle(user,news)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinged the news of id %d", user.getUsername(), news.getNewsId()))).build();
+        }else{
+            return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinged the news of id %d", user.getUsername(), news.getNewsId()))).build();
+        }
     }
 
 }

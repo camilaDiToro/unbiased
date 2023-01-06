@@ -220,8 +220,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void pingNewsToggle(final User currentUser,final News news) {
-        userDao.pingNewsToggle(currentUser, news);
+    public boolean pingNewsToggle(final User currentUser,final News news) {
+        return userDao.pingNewsToggle(currentUser, news);
     }
 
     @Override

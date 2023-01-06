@@ -29,7 +29,7 @@ public interface UserService {
     void unfollowUser(final User currentUser, long userId);
     void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange);
     Page<User> searchUsers(int page, String search);
-    void pingNewsToggle(User currentUser, News news);
+    boolean pingNewsToggle(User currentUser, News news);
     ProfileCategory getProfileCategory(Optional<User> maybeCurrentUser, ProfileCategory category, final User profile);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);

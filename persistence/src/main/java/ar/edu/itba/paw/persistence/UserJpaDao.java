@@ -158,11 +158,13 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
-    public void pingNewsToggle(User user, News news) {
+    public boolean pingNewsToggle(User user, News news) {
         if (news.equals(user.getPingedNews())) {
             user.setPingedNews(null);
+            return false;
         } else {
             user.setPingedNews(news);
+            return true;
         }
     }
 
