@@ -1,16 +1,44 @@
 import Head from "next/head";
 import Tabs from "../components/Tabs";
 import { useAppContext } from "../context";
-import Link from "next/link";
 import Article from "../components/Article";
+import {useRouter} from "next/router";
+import TopCreatorsPanel from "../components/TopCreatorsPanel";
 
 export default function Home() {
-  const items = [
-    { text: "Hola", params: {param1: 'hola'} },
-    { text: "Como", params: {param1: 'hosla'}},
-    { text: "Va", params: {param1: 'hoasla'} },
-  ];
+  const router = useRouter()
+
+
+
   const ctx = useAppContext();
+
+
+  const I18n = ctx.I18n
+  const categories = [
+    { text: I18n("categories.all"), params: {cat: 'ALL'} },
+    { text: I18n("categories.tourism"), params: {cat: 'TOURISM'} },
+    { text: I18n("categories.entertainment"), params: {cat: 'SHOW'} },
+    { text: I18n("categories.politics"), params: {cat: 'POLITICS'} },
+    { text: I18n("categories.economics"), params: {cat: 'ECONOMICS'} },
+    { text: I18n("categories.sports"), params: {cat: 'SPORTS'} },
+    { text: I18n("categories.technology"), params: {cat: 'TECHNOLOGY'} }
+  ];
+
+  const categoryMap = categories.reduce((a,v) => ({...a, [v.params.cat]: v.text}), {})
+
+  const selectedCategory = categoryMap[router.query.cat] || I18n("categories.all")
+
+  const orders = [
+    { text: I18n("order.new"), params: {order: 'NEW'} },
+    { text: I18n("order.top"), params: {order: 'TOP'} }
+  ];
+
+  const orderMap = orders.reduce((a,v) => ({...a, [v.params.order]: v.text}), {})
+
+
+  const selectedOrder = orderMap[router.query.order] || I18n("order.top");
+
+
   const news = [
     {
       title: "Title",
@@ -55,60 +83,27 @@ export default function Home() {
       id: 5,
     },
   ];
-  const selected = "Hola";
-  const topCreators = [{ name: "Juan" }, { name: "Lucio" }];
+  const topCreators = [{ nameOrEmail: "Juan" , id: 5, hasImage: false}, { nameOrEmail: "Juana" , id: 6, hasImage: false}];
 
   return (
     <>
     <Head>
       <title>unbiased - Home</title>
     </Head>
-      <Tabs items={items} selected={selected}></Tabs>
+      <Tabs items={categories} selected={selectedCategory}></Tabs>
       <div className="d-flex flex-column flex-xl-row ">
         <div className="w-100 w-xl-75 ">
-          <Tabs items={items} pill selected={selected}></Tabs>
+          <Tabs items={orders} pill selected={selectedOrder}></Tabs>
           <div className="container-fluid">
             <div className="row row-cols-1 row-cols-md-2">
               {news.map((n) => (
                 <Article {...n} key={n.id}></Article>
+
               ))}
             </div>
           </div>
         </div>
-        <div
-          className="card container w-100 w-xl-25 p-4 h-auto m-2 h-fit align-self-xl-start"
-          id="none_shadow"
-        >
-          <h5
-            style={{ backgroundImage: "url('/img/crown-svgrepo-com.svg')" }}
-            className="card-title top-creators"
-          >
-            {ctx.I18n("home.topCreators")}
-          </h5>
-
-          {topCreators.length === 0 ? (
-            <h6 className="text-info m-1">{ctx.I18n("home.emptyCreators")}</h6>
-          ) : (
-            <></>
-          )}
-          {topCreators.map((c) => (
-            <Link key={c.name} className="m-1 link" href="">
-              <div
-                className="card text-white d-flex flex-row p-2 creator-card align-items-center"
-                id="none_shadow_creator"
-              >
-                <div className="img-container">
-                  <img
-                    className="rounded-circle object-fit-cover mr-1"
-                    src="/img/profile-image.png"
-                    alt=""
-                  />
-                </div>
-                <div className="mx-2 text-ellipsis-1">{c.name}</div>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <TopCreatorsPanel creators = {topCreators}></TopCreatorsPanel>
       </div>
     </>
   );

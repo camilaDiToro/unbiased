@@ -3,14 +3,20 @@ import "../styles/http_cdn.rawgit.com_xcatliu_simplemde-theme-dark_master_dist_s
 import '../styles/bootstrap.min.css'
 import '../styles/custom.css'
 import '../styles/profile.css'
-// import "@uiw/react-md-editor/markdown-editor.css";
 import Script from "next/script"
 import Navbar from "../components/Navbar";
 import AppWrapper from "../context"
 import Head from "next/head";
+import {useEffect} from "react";
+import {useRouter} from "next/router";
 
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter()
+  useEffect(() => {
+  }, [router.isReady]);
+
+
   return <div id="main"  className="d-flex flex-column">
     {/*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>*/}
     <Script strategy="beforeInteractive" id="1" src="/js/http_code.jquery.com_jquery-3.5.1.slim.js"
@@ -27,7 +33,8 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <Navbar/>
       <div className="container-xxl container-fluid flex-grow-1">
-      <Component {...pageProps} />
+        {router.isReady ?       <Component {...pageProps} />
+        :<></>}
       </div>
     </AppWrapper>
   </div>
