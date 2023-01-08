@@ -6,6 +6,8 @@ export default function PositivityIndicator(props) {
     const tooltipText = `${ctx.I18n("home.upvotes", [props.upvoted])} - ${ctx.I18n("home.interactions", [props.interactions])}`
     const imgMap = {
         positive: "/img/looking-positivity.svg",
+        controversial: "/img/controversial-positivity.svg",
+        negative: "/img/angry-positivity.svg"
     }
 
 

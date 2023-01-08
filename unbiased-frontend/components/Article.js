@@ -3,17 +3,18 @@ import Link from "next/link";
 import Modal from "./Modal";
 import PositivityIndicator from "./PositivityIndicator";
 import Tooltip from "./Tooltip";
-import PropTypes from 'prop-types';
+import types from "../types";
 
 export default function Article(props) {
-    const {I18n} = useAppContext()
+    const {I18n, loggedUser} = useAppContext()
+    const isMyProfile = loggedUser && loggedUser.id === props.creator.id
     return <>
         <Modal id={`pingModal${props.id}`} title={I18n("profile.pin.question")} body={I18n("profile.pin.body")} onSubmitHandler={() => alert('hola')}/>
         <Modal id={`binModal${props.id}`} title={I18n("profile.modal.question")} body={I18n("profile.modal.msg")} onSubmitHandler={() => alert('hola')}/>
 
         <div className="col mb-4">
             <div className="card h-100 d-flex flex-row max-h-300px">
-                <PositivityIndicator positivity="positive" upvoted={0.8} interactions={5}></PositivityIndicator>
+                <PositivityIndicator {...props.stats}></PositivityIndicator>
                 <div className={`d-flex flex-column justify-content-between ${props.image ? 'w-60' : 'w-100'}`}>
                     <div className="d-flex w-100">
                         <div className="upvote-div-profile d-flex flex-column align-items-center m-3">
@@ -21,14 +22,14 @@ export default function Article(props) {
                                  className="svg-btn hover-hand"
                                  src={`/img/upvote${props.upvoted ? '-clicked' : ''}.svg`}/>
                             <div id="rating" className="upvote">
-                                5
+                                {props.upvotes}
                             </div>
                             <img id="downvote"
                                  className="svg-btn hover-hand"
                                  src={`/img/downvote${props.downvoted ? '-clicked' : ''}.svg`}/>
                         </div>
                         <div className="card-body-home">
-                            <Link className="link max-h-10" href="/">
+                            <Link className="link max-h-10" href={`/news/${props.id}`}>
                                 <h5 className="link-text text-ellipsis">
                                     {props.title}
                                 </h5>
@@ -53,13 +54,12 @@ export default function Article(props) {
                                      src="/img/profile-image.png" alt=""/>
                             </div>
                             <Link className="link" href={`/profile/${props.creator.id}`}>
-                                <div className="link-text card-name-text text-ellipsis-1">{props.creator.name}</div>
+                                <div className="link-text card-name-text text-ellipsis-1">{props.creator.nameOrEmail}</div>
                             </Link>
                         </div>
                         <div className="d-flex align-items-center" role="group">
 
-                            {/*<c:if test="${isMyProfile && loggedUser == article.user}">*/}
-                            {!props.profileArticle && props.canDelete ? <button data-toggle="modal" data-target={`#binModal${props.id}`} className="btn bin-modal"
+                            {props.profileArticle && isMyProfile ? <button data-toggle="modal" data-target={`#binModal${props.id}`} className="btn bin-modal"
                                                   id="bin_button">
                                 <Tooltip text={I18n("tooltip.deleteNews")} position="bottom">
                                     <img src="/img/bin-svgrepo-com.svg" alt="..."
@@ -107,21 +107,5 @@ export default function Article(props) {
     </>
 }
 
-Article.propTypes = {
-    title: PropTypes.string.isRequired,
-    subtitle: PropTypes.string.isRequired,
-    body: PropTypes.string.isRequired,
-    readTime: PropTypes.number.isRequired,
-    saved: PropTypes.bool.isRequired,
-    hasImage: PropTypes.bool.isRequired,
-    creator: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        id: PropTypes.bigint.isRequired,
-        hasImage: PropTypes.bool.isRequired
-    }),
-    id: PropTypes.bigint.isRequired,
-    canDelete: PropTypes.bool,
-    profileArticle: PropTypes.bool,
-    pinned: PropTypes.bool
-}
+Article.propTypes = types.Article
 

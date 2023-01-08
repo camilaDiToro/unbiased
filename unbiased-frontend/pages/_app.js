@@ -5,7 +5,7 @@ import '../styles/custom.css'
 import '../styles/profile.css'
 import Script from "next/script"
 import Navbar from "../components/Navbar";
-import AppWrapper from "../context"
+import AppWrapper, {useAppContext} from "../context"
 import Head from "next/head";
 import {useEffect} from "react";
 import {useRouter} from "next/router";

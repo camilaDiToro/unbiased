@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Tooltip from "./Tooltip";
 import {useAppContext} from "../context";
+import types from "../types";
 
 export default function FollowButton(props) {
     const {I18n} = useAppContext()
@@ -19,3 +20,5 @@ export default function FollowButton(props) {
 
     </>
 }
+
+FollowButton.propTypes = types.FollowButton

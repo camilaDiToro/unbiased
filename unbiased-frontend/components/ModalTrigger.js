@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import types from "../types";
 
 export default function ModalTrigger(props) {
 
@@ -7,6 +7,4 @@ export default function ModalTrigger(props) {
     </div>
 }
 
-ModalTrigger.propTypes = {
-    modalId: PropTypes.string.isRequired
-}
+ModalTrigger.propTypes = types.ModalTrigger

@@ -9,99 +9,107 @@ import ProgressBar from "../../../components/ProgressBar";
 import Tooltip from "../../../components/Tooltip";
 import ModalTrigger from "../../../components/ModalTrigger";
 import ProfilePic from "../../../components/ProfilePic";
-import PropTypes from "prop-types";
+import types from "../../../types";
+import TopNewTabs from "../../../components/TopNewTabs";
+import ProfileTabs from "../../../components/ProfileTabs";
 
 export async function getServerSideProps(context) {
   return {
     props: {
       isJournalist: true,
       email: 'email@email.com',
+      news:  [
+        {
+          title: 'Title',
+          subtitle: "Subtitle",
+          body: "asjkbas jkas askj aksj asjk as",
+          readTime: 3,
+          saved: true,
+          hasImage: false,
+          creator: {
+            nameOrEmail: "username",
+            id: 4,
+            hasImage: false
+          },
+          id: 5,
+        },
+        {
+          title: "Title",
+          subtitle: "Subtitle",
+          body: "asjkbas jkas askj aksj asjk as",
+          readTime: 3,
+          saved: true,
+          hasImage: false,
+          creator: {
+            nameOrEmail: "username",
+            id: 4,
+            hasImage: false
+          },
+          id: 3,
+        },
+        {
+          title: "Title",
+          subtitle: "Subtitle",
+          body: "asjkbas jkas askj aksj asjk as",
+          readTime: 3,
+          saved: true,
+          hasImage: false,
+          creator: {
+            nameOrEmail: "username",
+            id: 4,
+            hasImage: false
+          },
+          id: 6,
+        },
+      ],
       username: 'kevin',
       followers: 10,
       following: 5,
+      tier: 'gold',
       description: 'this is my description',
-      interactions: 98,
-      upvoted: 0.6,
-      positivity: "positive",
+      isLoggedUserFollowing: false,
+      newsStatistics: [
+        { title: "categories.tourism", progress: 0.2, i18n: true },
+        { title:"categories.entertainment", progress: 0.2, i18n: true },
+        { title: "categories.politics", progress: 0.2, i18n: true },
+        { title: "categories.economics", progress: 0.2, i18n: true },
+        { title: "categories.sports", progress: 0.2, i18n: true },
+        {title: "categories.technology", progress: 0.2, i18n: true }
+      ],
+      stats: {interactions: 98,
+        upvoted: 0.6,
+        positivity: "positive"},
       mailOptions: [{identifier: "mailOption.follow", checked: true}, {identifier: "mailOption.comment", checked: true}, {identifier: "mailOption.folowingPublished", checked: false}, {identifier: "mailOption.positivityChanged", checked: false}]
+
     }, // will be passed to the page component as props
   }
 }
 
 
 export default function Profile(props) {
-  const items = [
-    { text: "Hola", route: "/" },
-    { text: "Como", route: "/" },
-    { text: "Va", route: "/" },
-  ];
-  const {I18n}= useAppContext();
-  const news = [
-    {
-      title: "Title",
-      subtitle: "Subtitle",
-      body: "asjkbas jkas askj aksj asjk as",
-      readTime: 3,
-      saved: true,
-      hasImage: false,
-      creator: {
-        name: "username",
-        id: 4,
-      },
-      id: 5,
-    },
-    {
-      title: "Title",
-      subtitle: "Subtitle",
-      body: "asjkbas jkas askj aksj asjk as",
-      readTime: 3,
-      saved: true,
-      hasImage: false,
-      creator: {
-        name: "username",
-        id: 4,
-        hasImage: false
-      },
-      id: 5,
-    },
-    {
-      title: "Title",
-      subtitle: "Subtitle",
-      body: "asjkbas jkas askj aksj asjk as",
-      readTime: 3,
-      saved: true,
-      hasImage: false,
-      creator: {
-        name: "username",
-        id: 4,
-        hasImage: false
-      },
-      id: 5,
-    },
-  ];
-  const selected = "Como";
 
+  const {I18n, loggedUser}= useAppContext();
+  const isMyProfile = loggedUser && loggedUser.id === props.id
 
 
   const RightSide = () => (<div
       className="d-flex flex-column w-30 justify-content-start pr-5">
     <div className="card right-card" id="right-card">
       <div className="profile">
-        {/*<c:if test="${isMyProfile}">*/}
 
-        <ModalTrigger modalId="profileModal">
+        {isMyProfile ? <ModalTrigger modalId="profileModal">
           <span
-                className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
-                id="pencil_button">
+              className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
+              id="pencil_button">
                         <div className="position-relative img-container-profile mr-1 d-flex justify-content-center align-items-center">
                             <img className="position-relative object-fit-contain"
                                  src="/img/pencil-edit.png" alt="..."/>
                         </div>
             {I18n("profile.edit")}
                         </span>
-        </ModalTrigger>
+        </ModalTrigger>: <></>}
 
-        <ProfilePic tier="gold"/>
+        <ProfilePic tier={props.tier}/>
 
 
 
@@ -111,16 +119,13 @@ export default function Profile(props) {
       {props.isJournalist ?         <PositivityIndicator interactions={props.interactions} positivity={props.positivity} upvoted={props.upvoted}></PositivityIndicator>
       : <></>}
 
-      {/*<c:if test="${isMyProfile}">*/}
-      <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
+      {isMyProfile ? <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
         <ModalTrigger modalId="infoModal">
           <button
-                  className="bg-transparent border-0 btn-size"
-                  style={{backgroundImage: 'url(/img/info-svgrepo-com.svg)'}}></button>
+              className="bg-transparent border-0 btn-size"
+              style={{backgroundImage: 'url(/img/info-svgrepo-com.svg)'}}></button>
         </ModalTrigger>
-      </Tooltip>
-
-      {/*</c:if>*/}
+      </Tooltip> : <></>}
     <Modal id="infoModal" title={I18n("profile.modal.infoTitle")} >
       <h6>
         {I18n("profile.modal.infoAllowedMsg")}
@@ -172,7 +177,7 @@ export default function Profile(props) {
           <div className="d-flex flex-row align-items-center justify-content-center m-2 gap-2">
             <span className="card-text text-muted d-block">{props.email}</span>
             {/*<c:if test="${loggedUser != null && !isMyProfile}">*/}
-              <FollowButton following={true}></FollowButton>
+              <FollowButton following={loggedUser && props.isLoggedUserFollowing}></FollowButton>
             {/*</c:if>*/}
           </div>
 
@@ -193,11 +198,9 @@ export default function Profile(props) {
           </div>
 
           <div className="d-flex justify-content-center align-items-center">
-            {/*<c:if test="${isJournalist}">*/}
-              <div className="text-center font-weight-light m-1 overflow-wrap w-85">
-                {props.description}
-              </div>
-            {/*</c:if>*/}
+            {props.isJournalist ? <div className="text-center font-weight-light m-1 overflow-wrap w-85">
+              {props.description}
+            </div> : <></>}
           </div>
         </div>
 
@@ -206,9 +209,7 @@ export default function Profile(props) {
     {props.isJournalist ? <div className="card right-card">
 
       <div className="card-body">
-        {/*<c:forEach var="cat" items="${newsCategories}">*/}
-        <ProgressBar progress={0.2} title="Tech"></ProgressBar>
-        {/*</c:forEach>*/}
+        {props.newsStatistics.map(stats => <ProgressBar key={stats.title} {...stats}></ProgressBar>)}
 
       </div>
     </div> : <></>}
@@ -273,13 +274,13 @@ export default function Profile(props) {
 
     const LeftSide = () => (<div className="d-flex flex-column w-70 align-items-start">
       <div className="tab">
-        <Tabs items={items} pill selected={selected}></Tabs>
+        <TopNewTabs></TopNewTabs>
       </div>
       <div className="tab">
         <div className="container-fluid">
           <div className="row row-cols-1">
-            {news.map((n) => (
-                <Article {...n} key={n.id} id={n.id}></Article>
+            {props.news.map((n) => (
+                <Article profileArticle {...n} key={n.id} id={n.id}></Article>
             ))}
           </div>
         </div>
@@ -293,7 +294,7 @@ export default function Profile(props) {
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/img/unbiased-logo-circle.png" />
       </Head>
-      <Tabs items={items} selected={selected}></Tabs>
+      <ProfileTabs userId={props.id}></ProfileTabs>
       <div className="d-flex flex-column">
         <div className="flex-grow-1 d-flex flex-row">
           <LeftSide></LeftSide>
@@ -304,18 +305,4 @@ export default function Profile(props) {
   );
 }
 
-Profile.propTypes = {
-  isJournalist: PropTypes.bool.isRequired,
-  email: PropTypes.string.isRequired,
-  username: PropTypes.string,
-  followers: PropTypes.bigint.isRequired,
-  following: PropTypes.bigint.isRequired,
-  description: PropTypes.string,
-  interactions: PropTypes.bigint,
-  upvoted: PropTypes.number,
-  positivity: PropTypes.string,
-  mailOptions: PropTypes.arrayOf(PropTypes.shape({
-    identifier: PropTypes.string.isRequired,
-    checked: PropTypes.bool.isRequired
-  }))
-}
+Profile.propTypes = types.Profile

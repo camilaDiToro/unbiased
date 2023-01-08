@@ -14,6 +14,8 @@ const strings = {
     "home.createArticle.button": "Create",
     "home.emptyCreators": "There hasn't been any activity yet.",
     "home.topCreators": "Top Creators",
+    "home.type.article":"Articles",
+    "home.type.creator":"Creators",
     "home.upvotes": (params) => `${params[0]*100}% upvoted`,
     "home.read": (params) => `${params[0]} min read`,
     "home.interactions": (params) => `${params[0]} ${params[0] === 1 ? 'interaction' : 'interactions'}`,
@@ -166,7 +168,13 @@ const strings = {
     "mailOption.follow":"New followers",
     "mailOption.comment":"New comments",
     "mailOption.folowingPublished": "A journalist I follow published an article",
-    "mailOption.positivityChanged": "The positivity value of my news changes"
+    "mailOption.positivityChanged": "The positivity value of my news changes",
+
+    // Profile categories
+    "profileCategories.myPosts": "Posts",
+    "profileCategories.saved": "Saved",
+    "profileCategories.upvoted": "Upvoted",
+    "profileCategories.downvoted": "Downvoted"
   },
   "es-ES": {
     //NavBar
@@ -181,6 +189,8 @@ const strings = {
     "home.createArticle.button": "Crear artículo",
     "home.emptyCreators": "No ha habido actividad aún.",
     "home.topCreators": "Creadores populares",
+    "home.type.article":"Noticias",
+    "home.type.creator":"Creadores",
     "home.upvotes": (params) => `${params[0]*100}% gustado`,
     "home.read": (params) => `${params[0]} min para leer`,
     "home.interactions": (params) => `${params[0]} ${params[0] === 1 ? 'interacción' : 'interacciones'}`,
@@ -333,7 +343,13 @@ const strings = {
     "mailOption.follow":"Nuevos seguidores",
     "mailOption.comment":"Nuevos comentarios",
     "mailOption.folowingPublished": "Un periodista que sigo publica una noticia",
-    "mailOption.positivityChanged": "El valor de positividad de mi noticia cambia"
+    "mailOption.positivityChanged": "El valor de positividad de mi noticia cambia",
+
+    // Profile categories
+    "profileCategories.myPosts": "Noticias",
+    "profileCategories.saved": "Guardados",
+    "profileCategories.upvoted": "Me gusta",
+    "profileCategories.downvoted": "No me gusta"
   },
 };
 

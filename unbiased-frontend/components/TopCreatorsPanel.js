@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {useAppContext} from "../context";
 import PropTypes, {shape} from "prop-types";
+import TopCreator from "./TopCreator";
 
 export default function TopCreatorsPanel(props) {
     const {I18n} = useAppContext()
@@ -20,26 +21,10 @@ export default function TopCreatorsPanel(props) {
         ) : (
             <></>
         )}
-        {props.creators.map((c) => (
-            <Link key={c.id} className="m-1 link" href={`/profile/${c.id}`}>
-                <div
-                    className="card text-white d-flex flex-row p-2 creator-card align-items-center"
-                    id="none_shadow_creator"
-                >
-                    <div className="img-container">
-                        <img
-                            className="rounded-circle object-fit-cover mr-1"
-                            src="/img/profile-image.png"
-                            alt=""
-                        />
-                    </div>
-                    <div className="mx-2 text-ellipsis-1">{c.nameOrEmail}</div>
-                </div>
-            </Link>
-        ))}
+        {props.creators}
     </div>
 }
 
 TopCreatorsPanel.propTypes = {
-    creators: PropTypes.arrayOf(PropTypes.shape({nameOrEmail: PropTypes.string.isRequired, hasImage: PropTypes.bool.isRequired, id: PropTypes.number.isRequired}))
+    creators: PropTypes.arrayOf(TopCreator)
 }

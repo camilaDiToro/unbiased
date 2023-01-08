@@ -1,5 +1,6 @@
 import {useAppContext} from "../context";
 import PropTypes from "prop-types";
+import types from "../types";
 
 
 export default function Modal(props) {
@@ -38,9 +39,4 @@ export default function Modal(props) {
     </>
 }
 
-Modal.propTypes = {
-    body: PropTypes.string,
-    onClickHandler: PropTypes.func,
-    title: PropTypes.string.isRequired,
-    acceptText: PropTypes.string
-}
+Modal.propTypes = types.Modal

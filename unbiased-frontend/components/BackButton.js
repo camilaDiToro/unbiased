@@ -1,6 +1,6 @@
 import Tooltip from "./Tooltip";
 import {useAppContext} from "../context";
-import Link from "next/link";
+import types from "../types";
 
 export default function BackButton(props) {
     const {I18n} = useAppContext()
@@ -11,3 +11,5 @@ export default function BackButton(props) {
 
     </Tooltip>
 }
+
+BackButton.propTypes = types.BackButton

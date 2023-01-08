@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import Link from 'next/link';
 import {useState} from "react";
 import PropTypes from "prop-types";
+import types from "../types";
 
 function TabPills(className, items, state, children, router) {
     const activeClasses = "bg-info active"
@@ -106,10 +107,4 @@ export default function Tabs(props) {
     }
 }
 
-Tabs.propTypes = {
-    items: PropTypes.arrayOf(PropTypes.shape({
-        text: PropTypes.string.isRequired,
-        params: PropTypes.objectOf(PropTypes.string)
-    })),
-    selected: PropTypes.string.isRequired
-}
+Tabs.propTypes = types.Tabs
