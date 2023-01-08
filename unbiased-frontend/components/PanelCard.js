@@ -2,7 +2,7 @@ import {useAppContext} from "../context";
 import Link from "next/link";
 import Tooltip from "./Tooltip";
 
-export default function PanelCard() {
+export default function PanelCard(props) {
     const ctx = useAppContext()
 
     return(
@@ -27,9 +27,9 @@ export default function PanelCard() {
                                 <div className="d-flex w-100">
                                     <div className="card-body-home pt-0">
                                         <Link href="/" className="link mh-10">
-                                            <h5 className="text-ellipsis link-text">TITULO</h5>
+                                            <h5 className="text-ellipsis link-text">{props.title}</h5>
                                         </Link>
-                                        <h6 className="card-subtitle py-1 text-ellipsis-2">SUBTITULO</h6>
+                                        <h6 className="card-subtitle py-1 text-ellipsis-2">{props.subtitle}</h6>
                                         <span className="font-weight-light">
                                             timeAmount
                                         </span>
@@ -43,7 +43,7 @@ export default function PanelCard() {
                                         </div>
                                         <Link href="/" className="link">
                                             <div className="card-name-text text-ellipsis-1 link-text">
-                                                Nombre
+                                                {props.name}
                                             </div>
                                         </Link>
                                     </div>
