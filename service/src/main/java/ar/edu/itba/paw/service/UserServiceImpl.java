@@ -154,19 +154,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void followUser(final User currentUser, long userId) {
+    public boolean followUser(final User currentUser, long userId) {
+        if(isFollowing(currentUser,userId)){
+            return false;
+        }
         final User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
         userDao.addFollow(currentUser.getId(), userId);
         final EmailSettings emailSettings = following.getEmailSettings();
         if(emailSettings!= null && emailSettings.isFollow()){
             emailService.sendNewFollowerEmail(following,currentUser,emailSettings.getLocale());
         }
+        return true;
     }
 
     @Override
     @Transactional
-    public void unfollowUser(final User currentUser, long userId) {
-        userDao.unfollow(currentUser.getId(), userId);
+    public boolean unfollowUser(final User currentUser, long userId) {
+        if(isFollowing(currentUser,userId)){
+            userDao.unfollow(currentUser.getId(), userId);
+            return true;
+        }
+        return false;
     }
 
     @Override

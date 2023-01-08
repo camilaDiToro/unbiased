@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.config;
 
+import ar.edu.itba.paw.webapp.auth.JwtFilter;
 import ar.edu.itba.paw.webapp.auth.LoginFailureHandler;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +16,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,9 +35,14 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     private PawUserDetailsService userDetailsService;
     @Autowired
     private LoginFailureHandler loginFailureHandler;
+    @Autowired
+    private JwtTokenService jwtTokenService;
 
     @Value("${security.key.remeberme}")
     private String rememberMeKey;
+
+    @Value("${spa.url}")
+    private String spaUrl;
 
     @Bean
     @Override
@@ -50,16 +60,24 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
+    @Bean
+    public CorsConfiguration corsConfiguration() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin(spaUrl);
+        return corsConfiguration;
+    }
+
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
 
-        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-        successHandler.setDefaultTargetUrl("/");
-        successHandler.setAlwaysUseDefaultTargetUrl(false);
-        successHandler.setTargetUrlParameter("redirectTo");
+//        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+//        successHandler.setDefaultTargetUrl("/");
+//        successHandler.setAlwaysUseDefaultTargetUrl(false);
+//        successHandler.setTargetUrlParameter("redirectTo");
 
         http.sessionManagement()
-                .invalidSessionUrl("/")
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().headers().cacheControl().disable()
                 .and().authorizeRequests()
                     .antMatchers("/login", "/create").anonymous()
                     .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
@@ -67,23 +85,24 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
                             "/news/{\\d+}/delete", "/news/{\\d+}/comment", "/news/{\\d+}/save").authenticated()
                     .antMatchers("/**").permitAll()
-                .and().formLogin()
-                    .usernameParameter("username")
-                    .passwordParameter("password")
-                    .successHandler(successHandler)
-                    .loginPage("/login")
-                    .failureHandler(loginFailureHandler)
-                .and().rememberMe()
-                    .rememberMeParameter("rememberme")
-                    .userDetailsService(userDetailsService)
-                    .key(rememberMeKey)
-                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-                .and().logout()
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login")
+//                .and().formLogin()
+//                    .usernameParameter("username")
+//                    .passwordParameter("password")
+//                    .successHandler(successHandler)
+//                    .loginPage("/login")
+//                    .failureHandler(loginFailureHandler)
+//                .and().rememberMe()
+//                    .rememberMeParameter("rememberme")
+//                    .userDetailsService(userDetailsService)
+//                    .key(rememberMeKey)
+//                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
+//                .and().logout()
+//                    .logoutUrl("/logout")
+//                    .logoutSuccessUrl("/login")
                     .and().exceptionHandling()
                     .accessDeniedPage("/403")
-                .and().csrf().disable();
+                .and().addFilterBefore(new JwtFilter(userDetailsService, authenticationManager(), jwtTokenService), UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable();
     }
     @Override
     public void configure(final WebSecurity web) throws Exception {

@@ -25,8 +25,8 @@ public interface UserService {
     Optional<User> findByUsername(String username);
     void updateEmailSettings(User currentUser, Collection<MailOption> options);
     boolean isFollowing(final User currentUser, long userId);
-    void followUser(final User currentUser, long userId);
-    void unfollowUser(final User currentUser, long userId);
+    boolean followUser(final User currentUser, long userId);
+    boolean unfollowUser(final User currentUser, long userId);
     void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange);
     Page<User> searchUsers(int page, String search);
     boolean pingNewsToggle(User currentUser, News news);

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class PawUserDetailsService implements UserDetailsService {
 
     private final UserService us;
+    private User user;
 
     @Autowired
     public PawUserDetailsService(UserService us) {
@@ -32,8 +33,13 @@ public class PawUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("No user by the name " + username);
         }
+        this.user = user;
         final Collection<? extends GrantedAuthority> authorities = user.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
 
         return new org.springframework.security.core.userdetails.User(username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities);
+    }
+
+    public User getUser() {
+        return user;
     }
 }

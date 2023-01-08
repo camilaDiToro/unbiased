@@ -8,6 +8,7 @@ import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
@@ -32,14 +33,16 @@ public class UserController {
 
     private final UserService userService;
     private final NewsService newsService;
+    private final SecurityService securityService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public UserController(UserService userService, NewsService newsService) {
+    public UserController(UserService userService, NewsService newsService, SecurityService securityService) {
         this.userService = userService;
         this.newsService = newsService;
+        this.securityService = securityService;
     }
 
     @GET
@@ -143,21 +146,23 @@ public class UserController {
     }
 
     @PUT
-    @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
-    public Response followUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
-
-        final User follower = userService.getUserById(followerId).orElseThrow(UserNotFoundException::new);
-        userService.followUser(follower, userId);
-        return Response.ok(SimpleMessageDto.fromString(String.format("User %s followed user of id %d", follower.getUsername(), userId))).build();
+    @Path(value = "/{userId:[0-9]+}/followers}")
+    public Response followUser(@PathParam("userId") final long userId) {
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        if(userService.followUser(currentUser, userId)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] already followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
     }
 
-    @PUT
-    @Path(value = "/{userId:[0-9]+}/unfollow/{followerId:[0-9]+}")
-    public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
-
-        final User follower = userService.getUserById(followerId).orElseThrow(UserNotFoundException::new);
-        userService.unfollowUser(follower, userId);
-        return Response.ok(SimpleMessageDto.fromString(String.format("User %s unfollowed user of id %d", follower.getUsername(), userId))).build();
+    @DELETE
+    @Path(value = "/{userId:[0-9]+}/followers}")
+    public Response unfollowUser(@PathParam("userId") final long userId) {
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        if(userService.unfollowUser(currentUser, userId)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] unfollowed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] did not followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
     }
 
 }
