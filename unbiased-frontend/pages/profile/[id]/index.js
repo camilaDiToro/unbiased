@@ -12,56 +12,18 @@ import ProfilePic from "../../../components/ProfilePic";
 import types from "../../../types";
 import TopNewTabs from "../../../components/TopNewTabs";
 import ProfileTabs from "../../../components/ProfileTabs";
+import {users, news} from "../../../hardcoded"
+import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+import EditProfileForm from "../../../components/EditProfileForm";
 
 export async function getServerSideProps(context) {
   return {
     props: {
       isJournalist: true,
       email: 'email@email.com',
-      news:  [
-        {
-          title: 'Title',
-          subtitle: "Subtitle",
-          body: "asjkbas jkas askj aksj asjk as",
-          readTime: 3,
-          saved: true,
-          hasImage: false,
-          creator: {
-            nameOrEmail: "username",
-            id: 4,
-            hasImage: false
-          },
-          id: 5,
-        },
-        {
-          title: "Title",
-          subtitle: "Subtitle",
-          body: "asjkbas jkas askj aksj asjk as",
-          readTime: 3,
-          saved: true,
-          hasImage: false,
-          creator: {
-            nameOrEmail: "username",
-            id: 4,
-            hasImage: false
-          },
-          id: 3,
-        },
-        {
-          title: "Title",
-          subtitle: "Subtitle",
-          body: "asjkbas jkas askj aksj asjk as",
-          readTime: 3,
-          saved: true,
-          hasImage: false,
-          creator: {
-            nameOrEmail: "username",
-            id: 4,
-            hasImage: false
-          },
-          id: 6,
-        },
-      ],
+      news,
+      id: parseInt(context.query.id),
       username: 'kevin',
       followers: 10,
       following: 5,
@@ -79,7 +41,7 @@ export async function getServerSideProps(context) {
       stats: {interactions: 98,
         upvoted: 0.6,
         positivity: "positive"},
-      mailOptions: [{identifier: "mailOption.follow", checked: true}, {identifier: "mailOption.comment", checked: true}, {identifier: "mailOption.folowingPublished", checked: false}, {identifier: "mailOption.positivityChanged", checked: false}]
+      mailOptions: ["mailOption.follow", "mailOption.comment"]
 
     }, // will be passed to the page component as props
   }
@@ -89,8 +51,20 @@ export async function getServerSideProps(context) {
 export default function Profile(props) {
 
   const {I18n, loggedUser}= useAppContext();
+  const router = useRouter()
   const isMyProfile = loggedUser && loggedUser.id === props.id
+  const [useNews, setNews] = useState(props.news)
 
+
+
+
+
+
+
+
+  useEffect(() => {
+    setNews(props.news)
+  }, [router.query.order, router.query.cat])
 
   const RightSide = () => (<div
       className="d-flex flex-column w-30 justify-content-start pr-5">
@@ -111,16 +85,12 @@ export default function Profile(props) {
 
         <ProfilePic tier={props.tier}/>
 
-
-
-
-
       </div>
-      {props.isJournalist ?         <PositivityIndicator interactions={props.interactions} positivity={props.positivity} upvoted={props.upvoted}></PositivityIndicator>
+      {props.isJournalist ?         <PositivityIndicator {...props.stats}></PositivityIndicator>
       : <></>}
 
       {isMyProfile ? <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
-        <ModalTrigger modalId="infoModal">
+        <ModalTrigger  modalId="infoModal">
           <button
               className="bg-transparent border-0 btn-size"
               style={{backgroundImage: 'url(/img/info-svgrepo-com.svg)'}}></button>
@@ -176,9 +146,8 @@ export default function Profile(props) {
           </h4>
           <div className="d-flex flex-row align-items-center justify-content-center m-2 gap-2">
             <span className="card-text text-muted d-block">{props.email}</span>
-            {/*<c:if test="${loggedUser != null && !isMyProfile}">*/}
-              <FollowButton following={loggedUser && props.isLoggedUserFollowing}></FollowButton>
-            {/*</c:if>*/}
+            {(loggedUser && !isMyProfile) ?  <FollowButton userId={props.id} following={loggedUser && props.isLoggedUserFollowing}></FollowButton>
+             : <></>}
           </div>
 
           <div className="d-flex flex-row align-items-center justify-content-center">
@@ -214,61 +183,7 @@ export default function Profile(props) {
       </div>
     </div> : <></>}
     <Modal id="profileModal" title={I18n("profile.user.settings")}>
-      <label >
-        {I18n("profile.modal.changeUsername")}
-      </label>
-      <div className="input-group mb-3">
-        <div className="input-group-prepend">
-          <span className="input-group-text" id="basic-addon1">@</span>
-        </div>
-        <input type="text" className="form-control" id="username-input"
-                    placeholder={I18n("profile.modal.changeUsername")} value={props.username}/>
-
-      </div>
-
-      <label >
-        {I18n("profile.modal.changeProfilePicture")}
-      </label>
-      <div className="input-group mb-3">
-        <div className="custom-file">
-          <input id="file-input" type="file" accept="image/png, image/jpeg"
-                      className="custom-file-input"/>
-          <label id="file-input-label" className="custom-file-label"
-                      htmlFor="inputGroupFile01"></label>
-
-        </div>
-
-      </div>
-
-
-      {props.isJournalist ?
-          <>
-            <label>
-              {I18n("profile.modal.changeDescription")}
-            </label>
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" id="description-input"
-                     placeholder={I18n("profile.modal.changeDescription")} value={props.description}/>
-
-            </div>
-          </> : <></>}
-
-      <div className="input-group mb-3">
-        <label>
-          {I18n("profile.modal.changeMailOptions")}
-        </label>
-        {props.mailOptions.map(op => <div key={op.identifier} className="form-check  w-100">
-
-          <input className="mr-1" checked={op.checked} type="checkbox" value={I18n(op.identifier)}/>
-          <label className="form-check-label" htmlFor="${option.interCode}">
-            {I18n(op.identifier)}
-          </label>
-        </div>)}
-        <div className="w-100">
-          <p className="text-danger">error</p>
-        </div>
-      </div>
-
+      <EditProfileForm {...props}></EditProfileForm>
     </Modal>
   </div>)
 
@@ -279,7 +194,7 @@ export default function Profile(props) {
       <div className="tab">
         <div className="container-fluid">
           <div className="row row-cols-1">
-            {props.news.map((n) => (
+            {useNews.map((n) => (
                 <Article profileArticle {...n} key={n.id} id={n.id}></Article>
             ))}
           </div>

@@ -30,6 +30,7 @@ const Article = {
     profileArticle: PropTypes.bool,
     pinned: PropTypes.bool,
     upvotes: PropTypes.number.isRequired,
+    rating: PropTypes.number,
     stats: PropTypes.shape(PositivityIndicator).isRequired
 }
 
@@ -50,7 +51,6 @@ const types = {
         userId: PropTypes.number.isRequired
     },
     MainCardsContainer: {
-        cards: PropTypes.arrayOf(PropTypes.elementType),
         rows: PropTypes.number.isRequired
     },
     Modal: {
@@ -99,10 +99,7 @@ const types = {
         description: PropTypes.string,
         isLoggedUserFollowing: PropTypes.bool,
         stats: PropTypes.shape(PositivityIndicator),
-        mailOptions: PropTypes.arrayOf(PropTypes.shape({
-            identifier: PropTypes.string.isRequired,
-            checked: PropTypes.bool.isRequired
-        })),
+        mailOptions: PropTypes.arrayOf(PropTypes.string),
         newsStatistics: PropTypes.arrayOf(PropTypes.shape(ProgressBar))
     }
 }

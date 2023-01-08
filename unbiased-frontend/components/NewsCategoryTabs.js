@@ -1,8 +1,10 @@
 import {useAppContext} from "../context";
 import Tabs from "./Tabs";
+import {useRouter} from "next/router";
 
 export default function NewsCategoryTabs() {
     const {I18n} = useAppContext()
+    const router = useRouter()
     const categories = [
         { text: I18n("categories.all"), params: {cat: 'ALL'} },
         { text: I18n("categories.tourism"), params: {cat: 'TOURISM'} },

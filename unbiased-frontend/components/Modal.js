@@ -13,7 +13,7 @@ export default function Modal(props) {
 
 
     return <>
-        <div className="modal fade" id={props.id} aria-hidden="true">
+        <div className="modal fade" id={props.id} >
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
@@ -29,7 +29,7 @@ export default function Modal(props) {
                         {props.children}
                     </div>
                     <div className="modal-footer">
-                        <button type="submit" className="btn btn-primary" onClick={(e) => {props.onClickHandler && props.onClickHandler(e); handleCloseModal()}}>
+                        <button data-dismiss="modal" type="submit" className="btn btn-primary" onClick={(e) => {props.onClickHandler && props.onClickHandler(e); handleCloseModal()}}>
                             {props.acceptText || I18n("profile.modal.accept")}
                         </button>
                     </div>

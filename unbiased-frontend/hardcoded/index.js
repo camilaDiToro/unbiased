@@ -6,10 +6,12 @@ const news = [
         body: "asjkbas jkas askj aksj asjk as",
         readTime: 3,
         saved: true,
+        rating: 1,
         hasImage: false,
+        upvotes: 5,
         creator: {
-            nameOrEmail: "username",
-            id: 4,
+            nameOrEmail: "kevin",
+            id: 5,
             hasImage: false,
             tier: 'platinum'
         },
@@ -27,6 +29,8 @@ const news = [
         readTime: 3,
         saved: true,
         hasImage: false,
+        rating: -1,
+        upvotes: 5,
         creator: {
             nameOrEmail: "username",
             id: 4,
@@ -46,6 +50,8 @@ const news = [
         body: "asjkbas jkas askj aksj asjk as",
         readTime: 3,
         saved: true,
+        upvotes: 5,
+        rating: 1,
         hasImage: false,
         creator: {
             nameOrEmail: "username",

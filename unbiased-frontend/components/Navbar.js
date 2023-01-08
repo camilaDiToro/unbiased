@@ -35,15 +35,12 @@ export default function Navbar(props) {
 
 
             <div className="d-flex h-75 gap-2 align-items-center h-100">
-                {/*<c:if test="${loggedUser != null && !adminPage}">*/}
                 {loggedUser && !(router.pathname.startsWith('/admin'))  ? <Link href="/create-article">
                     <button type="button" className="btn btn-sm rounded-pill btn-info create_article_navbar_btn">
                         {I18n("home.createArticle.button")}
                     </button>
                 </Link> : <></>}
-                {/*</c:if>*/}
 
-                {/*<c:if test="${!adminPage}">*/}
                 {router.pathname.startsWith('/admin') ? <></> : <form id="search-form" className="form-inline my-2 my-lg-0" method="GET" action="/TOP">
                     <div>
                         <input
@@ -57,7 +54,6 @@ export default function Navbar(props) {
                         <input name="type"/>
                     </div>
                 </form>}
-                {/*</c:if>*/}
 
                 {loggedUser ? <div className="dropdown dropdown-p h-100">
                     <button className="btn btn-primary dropdown-toggle w-100 h-100 py-0" type="button" id="dropdownMenuButton"
@@ -83,7 +79,7 @@ export default function Navbar(props) {
                     <div id="navbar-dropdown" className="dropdown-menu bg-dropdown"
                     >
 
-                        <Link className="dropdown-item" href="/profile">
+                        <Link className="dropdown-item" href={`/profile/${loggedUser.id}`}>
                             <div className="text-decoration-none text-white"
                             >
                                 <img className="profile-img"
@@ -93,7 +89,6 @@ export default function Navbar(props) {
                         </Link>
 
 
-                        {/*<c:if test="${isAdmin}">*/}
                         {loggedUser.isAdmin ? <Link className="dropdown-item" href="/admin/reported_news">
                             <div className="text-decoration-none text-white"
                             >
@@ -103,7 +98,6 @@ export default function Navbar(props) {
                             </div>
                         </Link>: <></>}
 
-                        {/*</c:if>*/}
 
                         <Link className="dropdown-item " href="/logout">
                             <div className="text-decoration-none text-white" >

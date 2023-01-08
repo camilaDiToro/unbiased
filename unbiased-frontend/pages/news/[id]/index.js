@@ -58,7 +58,7 @@ export default function ShowNews(props) {
             Jueves 5 de enero
             <img id="clock"
               className="read-clock"
-              src={"img/clock-svgrepo-com.svg"} />
+              src={"/img/clock-svgrepo-com.svg"} />
             1 min para leer
           </p>
 
@@ -67,13 +67,13 @@ export default function ShowNews(props) {
               <div className="img-container-article">
                 <img
                   className="rounded-circle object-fit-cover mr-1"
-                  src="img/profile-image.png" />
+                  src="/img/profile-image.png" />
               </div>
               <b>Username</b>
             </div>
           </div>
 
-          <div class="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
+          <div className="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
             <div className="text-sm-left font-weight-bold text-white">
               {ctx.I18n("showNews.categories")}
             </div>

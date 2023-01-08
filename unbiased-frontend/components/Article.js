@@ -4,13 +4,62 @@ import Modal from "./Modal";
 import PositivityIndicator from "./PositivityIndicator";
 import Tooltip from "./Tooltip";
 import types from "../types";
+import ModalTrigger from "./ModalTrigger";
+import {news} from "../hardcoded"
+
+
+
 
 export default function Article(props) {
     const {I18n, loggedUser} = useAppContext()
+    // const [useUpvote, setUpvote] = useState(props.rating)
+    // const [useSaved, setSaved] = useState(props.saved)
+    // const [usePinned, setPinned] = useState(props.pinned)
     const isMyProfile = loggedUser && loggedUser.id === props.creator.id
+
+    const handleUpvote = async (e) => {
+        // if (useUpvote > 0) {
+        //     setUpvote(0)
+        // } else {
+        //     setUpvote(1)
+        // }
+        props.setNews(news)
+    }
+
+    const handleDownvote = async (e) => {
+        // if (useUpvote < 0) {
+        //     setUpvote(0)
+        // } else {
+        //     setUpvote(-1)
+        // }
+    }
+
+    const handleSave = async (e) => {
+        // if (useSaved) {
+        //     setSaved(false)
+        // } else {
+        //     setSaved(true)
+        // }
+    }
+
+    const handlePin = async (e) => {
+        // if (usePinned) {
+        //     setPinned(false)
+        // } else {
+        //     setPinned(true)
+        // }
+    }
+
+    let upvoteClass = ''
+
+    if (props.rating > 0)
+        upvoteClass = 'upvoted'
+    else if (props.rating < 0)
+        upvoteClass = 'downvoted'
+
     return <>
-        <Modal id={`pingModal${props.id}`} title={I18n("profile.pin.question")} body={I18n("profile.pin.body")} onSubmitHandler={() => alert('hola')}/>
-        <Modal id={`binModal${props.id}`} title={I18n("profile.modal.question")} body={I18n("profile.modal.msg")} onSubmitHandler={() => alert('hola')}/>
+        <Modal id={`pingModal${props.id}`} title={I18n("profile.pin.question")} body={I18n("profile.pin.body")} onClickHandler={handlePin}/>
+        <Modal id={`binModal${props.id}`} title={I18n("profile.modal.question")} body={I18n("profile.modal.msg")} />
 
         <div className="col mb-4">
             <div className="card h-100 d-flex flex-row max-h-300px">
@@ -20,13 +69,15 @@ export default function Article(props) {
                         <div className="upvote-div-profile d-flex flex-column align-items-center m-3">
                             <img id="upvote"
                                  className="svg-btn hover-hand"
-                                 src={`/img/upvote${props.upvoted ? '-clicked' : ''}.svg`}/>
-                            <div id="rating" className="upvote">
+                                 onClick={handleUpvote}
+                                 src={`/img/upvote${props.rating > 0 ? '-clicked' : ''}.svg`}/>
+                            <div id="rating" className={upvoteClass}>
                                 {props.upvotes}
                             </div>
                             <img id="downvote"
                                  className="svg-btn hover-hand"
-                                 src={`/img/downvote${props.downvoted ? '-clicked' : ''}.svg`}/>
+                                 onClick={handleDownvote}
+                                 src={`/img/downvote${props.rating < 0 ? '-clicked' : ''}.svg`}/>
                         </div>
                         <div className="card-body-home">
                             <Link className="link max-h-10" href={`/news/${props.id}`}>
@@ -37,7 +88,7 @@ export default function Article(props) {
                             <h6 className="  card-subtitle py-1 text-ellipsis-2">
                                 {props.subtitle}
                             </h6>
-                            <span className="font-weight-light">0 minutes ago</span>
+                            <span className="font-weight-light">{props.readTime} minutes ago</span>
 
                             <p className="text-sm-left text-secondary mb-0 d-flex justify-content-center align-content-center w-fit">
                                 <img src="/img/clock-svgrepo-com.svg"
@@ -69,35 +120,35 @@ export default function Article(props) {
                             </button> : <></>}
 
                             {
-                                props.profileArticle ? <div data-toggle="modal" data-target={`#pingModal${props.id}`}
+                                props.profileArticle ? <ModalTrigger modalId={`pingModal${props.id}`}
                                                             className="svg-btn hover-hand">
-                                    <Tooltip position="bottom" text={I18n("tooltip.pin")}>
+                                    <Tooltip position="bottom" text={I18n("tooltip.pin")} >
                                         <img className="icon-profile svg-btn svg-bookmark"
-                                             src="/img/pin.svg" alt="" />
+                                             src={`/img/pin${props.pinned ? '-clicked' : ''}.svg`} alt="" />
                                     </Tooltip>
-                                </div> : <></>
+                                </ModalTrigger> : <></>
                             }
 
 
-                            {/*</c:if>*/}
 
-                            {/*<c:if test="${loggedUser != null}">*/}
 
-                            <div className=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center">
-                                <Tooltip position="bottom" text={props.saved ? I18n("tooltip.articleUnsave") : I18n("tooltip.articleSave")}>
+
+
+                            {loggedUser ? <div className=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center">
+                                <Tooltip onClickHandler={handleSave} position="bottom" text={props.saved ? I18n("tooltip.articleUnsave") : I18n("tooltip.articleSave")}>
                                     <img className="w-25px svg-btn" id="bookmark"
                                          src={`/img/bookmark${props.saved ? '-clicked' : ''}.svg`}
                                          alt=""   />
                                 </Tooltip>
-                            </div>
+                            </div> : <></>}
 
                         </div>
                     </div>
                 </div>
-                {props.image ? <div className="bg-secondary position-relative w-40 border-15px">
+                {props.hasImage ? <div className="bg-secondary position-relative w-40 border-15px">
 
 
-                    <img src="" className="object-fit-cover"
+                    <img src={`/news/${props.id}/image`} className="object-fit-cover"
                          alt="..."/>
 
                 </div> : <></>}
