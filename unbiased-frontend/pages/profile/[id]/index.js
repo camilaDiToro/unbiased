@@ -56,12 +56,6 @@ export default function Profile(props) {
   const [useNews, setNews] = useState(props.news)
 
 
-
-
-
-
-
-
   useEffect(() => {
     setNews(props.news)
   }, [router.query.order, router.query.cat])
