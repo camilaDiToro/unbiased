@@ -1,8 +1,17 @@
 import Moderation_panel from "../../../components/ModerationPanel";
 import Tabs from "../../../components/Tabs"
 import {useAppContext} from "../../../context";
-import PanelCard from "../../../components/PanelCard";
+import ReportedCard from "../../../components/ReportedCard";
 import Link from "next/link";
+import {news} from "../../../hardcoded"
+
+export async function getServerSideProps(context) {
+    return {
+        props: {
+            news
+        }, // will be passed to the page component as props
+    }
+}
 
 export default function Reported_news(){
     const ctx = useAppContext()
@@ -19,10 +28,9 @@ export default function Reported_news(){
                     <Tabs items={items} pill selected={ctx.I18n("reportOrder.reportCountDesc")}/>
 
                     {
-                        [0,1,2].map((i) => {
+                        news.map((n) => {
                             return (
-                                <PanelCard key={i} title={"TITULO"} subtitle={"Subtitulo"} timeAmount={null}
-                                           name={"Nombre"} profileImg={null} reportsCount={null}
+                                <ReportedCard key={n.id} {...n}
                                 />
                             )
                         })

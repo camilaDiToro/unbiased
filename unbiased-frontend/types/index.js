@@ -31,6 +31,7 @@ const Article = {
     pinned: PropTypes.bool,
     upvotes: PropTypes.number.isRequired,
     rating: PropTypes.number,
+    datetime: PropTypes.string.isRequired,
     stats: PropTypes.shape(PositivityIndicator).isRequired
 }
 
@@ -101,6 +102,13 @@ const types = {
         stats: PropTypes.shape(PositivityIndicator),
         mailOptions: PropTypes.arrayOf(PropTypes.string),
         newsStatistics: PropTypes.arrayOf(PropTypes.shape(ProgressBar))
+    },
+    ReportedArticle: {
+        title: PropTypes.string.isRequired,
+        subtitle: PropTypes.string.isRequired,
+        datetime: PropTypes.string.isRequired,
+        reportsCount: PropTypes.number.isRequired,
+        creator: PropTypes.shape(TopCreator)
     }
 }
 

@@ -349,7 +349,9 @@ const strings = {
     "profileCategories.myPosts": "Noticias",
     "profileCategories.saved": "Guardados",
     "profileCategories.upvoted": "Me gusta",
-    "profileCategories.downvoted": "No me gusta"
+    "profileCategories.downvoted": "No me gusta",
+
+
   },
 };
 
