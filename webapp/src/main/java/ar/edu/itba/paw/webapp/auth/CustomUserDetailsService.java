@@ -15,13 +15,12 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Component
-public class PawUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService us;
-    private User user;
 
     @Autowired
-    public PawUserDetailsService(UserService us) {
+    public CustomUserDetailsService(UserService us) {
         this.us = us;
     }
 
@@ -33,13 +32,8 @@ public class PawUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("No user by the name " + username);
         }
-        this.user = user;
         final Collection<? extends GrantedAuthority> authorities = user.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
 
-        return new org.springframework.security.core.userdetails.User(username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities);
-    }
-
-    public User getUser() {
-        return user;
+        return new CustomUserDetails(username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities, user.getId());
     }
 }

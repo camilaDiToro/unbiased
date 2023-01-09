@@ -1,17 +1,18 @@
 package ar.edu.itba.paw.webapp.auth.jwt;
 
-import ar.edu.itba.paw.model.user.Role;
-import ar.edu.itba.paw.model.user.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,29 +33,37 @@ public class JwtTokenServiceImpl implements JwtTokenService{
 
 
     @Override
-    public String createAccessToken(final JwtTokenDetails jwtTokenDetails) {
-        return createToken(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION_SECS * 1000), jwtTokenDetails);
+    public String createAccessToken(final UserDetails userDetails) {
+        return createToken(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION_SECS * 1000), userDetails);
     }
 
     @Override
-    public String createRefreshToken(final JwtTokenDetails jwtTokenDetails) {
-        return createToken(new Date(System.currentTimeMillis() + REFRESH_TOKEN_DURATION_SECS * 1000), jwtTokenDetails);
+    public String createRefreshToken(final UserDetails userDetails) {
+        return createToken(new Date(System.currentTimeMillis() + REFRESH_TOKEN_DURATION_SECS * 1000), userDetails);
     }
 
-    private String createToken(final Date expiresAt, final JwtTokenDetails jwtTokenDetails){
-        final User user = jwtTokenDetails.getUser();
+    private String createToken(final Date expiresAt, final UserDetails userDetails){
        return JWT.create()
-                .withSubject(user.getEmail())
-                .withExpiresAt(expiresAt)
-                .withIssuedAt(new Date())
-                .withNotBefore(new Date())
-                .withClaim("roles", user.getRoles().stream().map(Role::getRole).collect(Collectors.toList()))
+               .withSubject(userDetails.getUsername())
+               .withExpiresAt(expiresAt)
+               .withIssuedAt(new Date())
+               .withNotBefore(new Date())
+               .withClaim("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                .sign(Algorithm.HMAC256(jwtSecret.getBytes()));
     }
 
     @Override
-    public JwtTokenDetails getTokenDetails(final String token) {
-        //TODO
-        return null;
+    public UserDetails validateTokenAndGetDetails(final String token) {
+        final String plainToken = token.substring("Bearer ".length());
+        final DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(jwtSecret.getBytes())).build().verify(plainToken);
+
+        final List<String> roles = decodedJWT.getClaim("roles").asList(String.class);
+        Collection<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return new User(decodedJWT.getSubject(), "", true, true, true, true, authorities);
+    }
+
+    @Override
+    public void authenticateFromDetails(final UserDetails userDetails) {
+
     }
 }

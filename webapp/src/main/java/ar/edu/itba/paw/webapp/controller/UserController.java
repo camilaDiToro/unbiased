@@ -84,14 +84,9 @@ public class UserController {
     @Path("/{userId:[0-9]+}")
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response getUser(@PathParam("userId") final long userId){
-        Optional<User> mayBeUser = userService.getUserById(userId);
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
 
-        if(!mayBeUser.isPresent()){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        UserDto userDto = UserDto.fromUser(uriInfo, mayBeUser.get(), userService.getFollowersCount(userId), userService.getFollowingCount(userId));
-
+        UserDto userDto = UserDto.fromUser(uriInfo, user, userService.getFollowersCount(userId), userService.getFollowingCount(userId));
         return Response.ok(userDto).build();
     }
 

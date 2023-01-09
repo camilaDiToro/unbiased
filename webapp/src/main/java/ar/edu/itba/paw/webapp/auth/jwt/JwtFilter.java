@@ -1,7 +1,8 @@
-package ar.edu.itba.paw.webapp.auth;
+package ar.edu.itba.paw.webapp.auth.jwt;
 
-import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenDetails;
-import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenService;
+import ar.edu.itba.paw.webapp.auth.AuthUtils;
+import ar.edu.itba.paw.webapp.auth.Credentials;
+import ar.edu.itba.paw.webapp.auth.CustomUserDetailsService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,11 +43,11 @@ public class JwtFilter extends OncePerRequestFilter {
     // Informacion que se podria incluir en el token jwt: id del usuario, self url, roles
 
 
-    private final PawUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
 
-    public JwtFilter( PawUserDetailsService userDetailsService, AuthenticationManager authenticationManager, JwtTokenService jwtTokenService) {
+    public JwtFilter(CustomUserDetailsService userDetailsService, AuthenticationManager authenticationManager, JwtTokenService jwtTokenService) {
         this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
         this.jwtTokenService = jwtTokenService;
@@ -56,7 +57,6 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        System.out.println(authHeader);
 
         if(authHeader == null){
             filterChain.doFilter(request, response);
@@ -65,21 +65,26 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(authHeader.startsWith("Basic ")){
             final Credentials credentials = AuthUtils.getCredentialsFromBasic(authHeader);
-            System.out.println(credentials.getEmail());
             try {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(credentials.getEmail());
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(auth);
-                JwtTokenDetails jwtTokenDetails = new JwtTokenDetails(userDetails, userDetailsService.getUser());
-                response.addHeader("x-access-token", jwtTokenService.createAccessToken(jwtTokenDetails));
-                response.addHeader("x-refresh-token", jwtTokenService.createRefreshToken(jwtTokenDetails));
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,credentials.getPassword(), userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(authenticationToken));
+                response.addHeader("x-access-token", jwtTokenService.createAccessToken(userDetails));
+                response.addHeader("x-refresh-token", jwtTokenService.createRefreshToken(userDetails));
             }catch (Exception e){
                 response.addHeader("x-jwt-error-message", e.getLocalizedMessage());
                 SecurityContextHolder.clearContext();
             }
 
         } else if(authHeader.startsWith("Bearer ")) {
-            //TODO
+            try {
+                UserDetails userDetails = jwtTokenService.validateTokenAndGetDetails(authHeader);
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }catch (Exception e) {
+                response.addHeader("x-jwt-error-message", e.getLocalizedMessage());
+                SecurityContextHolder.clearContext();
+            }
         }
 
         filterChain.doFilter(request, response);

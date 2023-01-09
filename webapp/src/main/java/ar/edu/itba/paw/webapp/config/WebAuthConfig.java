@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.webapp.config;
 
-import ar.edu.itba.paw.webapp.auth.JwtFilter;
+import ar.edu.itba.paw.webapp.auth.jwt.JwtFilter;
 import ar.edu.itba.paw.webapp.auth.LoginFailureHandler;
-import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.CustomUserDetailsService;
 import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,11 +19,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.concurrent.TimeUnit;
+import static org.springframework.http.HttpMethod.GET;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -32,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private PawUserDetailsService userDetailsService;
+    private CustomUserDetailsService userDetailsService;
     @Autowired
     private LoginFailureHandler loginFailureHandler;
     @Autowired
@@ -79,26 +78,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().headers().cacheControl().disable()
                 .and().authorizeRequests()
-                    .antMatchers("/login", "/create").anonymous()
+                    //.antMatchers("/login", "/create").anonymous()
+                    .antMatchers (GET, "/users").authenticated()
                     .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
                     .antMatchers("/owner/**").hasRole("OWNER")
                     .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
                             "/news/{\\d+}/delete", "/news/{\\d+}/comment", "/news/{\\d+}/save").authenticated()
                     .antMatchers("/**").permitAll()
-//                .and().formLogin()
-//                    .usernameParameter("username")
-//                    .passwordParameter("password")
-//                    .successHandler(successHandler)
-//                    .loginPage("/login")
-//                    .failureHandler(loginFailureHandler)
-//                .and().rememberMe()
-//                    .rememberMeParameter("rememberme")
-//                    .userDetailsService(userDetailsService)
-//                    .key(rememberMeKey)
-//                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-//                .and().logout()
-//                    .logoutUrl("/logout")
-//                    .logoutSuccessUrl("/login")
                     .and().exceptionHandling()
                     .accessDeniedPage("/403")
                 .and().addFilterBefore(new JwtFilter(userDetailsService, authenticationManager(), jwtTokenService), UsernamePasswordAuthenticationFilter.class)
