@@ -48,11 +48,13 @@ export default function Login() {
             {/*TODO: i18n to all inputs*/}
             <div className="form-signIn d-flex flex-column align-items-center " onSubmit={(e)=>{handleSubmit(e)}}>
 
-                <h1 id="title-log" className="logo mb-5">
+                <h1 id="title-log" className="logo mb-3">
                     <Link className="text-info link" href="/">
                         unbiased
                     </Link>
                 </h1>
+
+                <h1 className="h3 mb-4 font-weight-normal text-light">Register</h1>
 
                 <div className="d-flex mb-4">
                     <img className="size-img-modal-login align-self-center" src="/img/profile-svgrepo-com.svg" alt="..."/>
