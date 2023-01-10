@@ -36,6 +36,7 @@ const Article = {
 }
 
 const types = {
+    ShowNews: {...Article, categories: PropTypes.arrayOf(PropTypes.string)},
     Article,
     BackButton: {
         onClickHandler: PropTypes.func

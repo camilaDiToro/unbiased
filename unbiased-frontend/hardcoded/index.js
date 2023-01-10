@@ -32,7 +32,7 @@ const news = [
     readTime: 3,
     saved: true,
     reportsCount: 3,
-
+    categories: [],
     hasImage: false,
     datetime: "2011-10-10 14:48:00",
     rating: -1,
@@ -57,7 +57,6 @@ const news = [
     readTime: 3,
     saved: true,
     reportsCount: 3,
-
     upvotes: 5,
     rating: 1,
     hasImage: false,

@@ -6,28 +6,14 @@ import Tooltip from "./Tooltip";
 import types from "../types";
 import ModalTrigger from "./ModalTrigger";
 import {news} from "../hardcoded"
-import TimeAgo from 'javascript-time-ago'
-
-
-import es from 'javascript-time-ago/locale/es'
-import en from 'javascript-time-ago/locale/en'
-import {useEffect, useState} from "react";
-
-TimeAgo.addLocale(es)
-TimeAgo.addDefaultLocale(en)
+import FormattedDate from "./FormattedDate";
 
 
 
 
 export default function Article(props) {
     const {I18n, loggedUser} = useAppContext()
-    const [useTimeAgo, setTimeAgo] = useState('')
-    // const [useSaved, setSaved] = useState(props.saved)
-    // const [usePinned, setPinned] = useState(props.pinned)
 
-    useEffect(() => setTimeAgo(timeAgo.format(new Date(props.datetime))), [])
-
-    const timeAgo = new TimeAgo('en-US')
     const isMyProfile = loggedUser && loggedUser.id === props.creator.id
 
     const handleUpvote = async (e) => {
@@ -101,7 +87,7 @@ export default function Article(props) {
                             <h6 className="  card-subtitle py-1 text-ellipsis-2">
                                 {props.subtitle}
                             </h6>
-                            <span className="font-weight-light">{useTimeAgo}</span>
+                            <span className="font-weight-light"><FormattedDate timeAgo datetime={props.datetime}></FormattedDate></span>
 
                             <p className="text-sm-left text-secondary mb-0 d-flex justify-content-center align-content-center w-fit">
                                 <img src="/img/clock-svgrepo-com.svg"
