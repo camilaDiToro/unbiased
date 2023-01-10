@@ -1,6 +1,7 @@
 import Head from "next/head";
 import CommentList from "../../../components/CommentList";
 import { useAppContext } from "../../../context";
+import Link from "next/link";
 
 export default function ShowNews(props) {
   const {I18n, loggedUser}= useAppContext();
@@ -66,14 +67,16 @@ export default function ShowNews(props) {
           </p>
 
           <div className="w-fit">
-            <div className="w-fit d-flex flex-row align-items-center p-2 gap-1">
-              <div className="img-container-article">
-                <img
-                  className="rounded-circle object-fit-cover mr-1"
-                  src="/img/profile-image.png" />
+            <Link className="link" href={`/profile/5`}>
+              <div className="w-fit d-flex flex-row align-items-center p-2 gap-1">
+                <div className="img-container-article">
+                  <img
+                    className="rounded-circle object-fit-cover mr-1"
+                    src="/img/profile-image.png" />
+                </div>
+                <b>Username</b>
               </div>
-              <b>Username</b>
-            </div>
+            </Link>
           </div>
 
           <div className="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">

@@ -1,5 +1,6 @@
 import { useAppContext } from "../context";
 import Tooltip from "./Tooltip";
+import Link from "next/link";
 
 
 export default function Comment(props) {
@@ -15,7 +16,9 @@ export default function Comment(props) {
                      src="/img/profile-image.png" />
               </div>
             </div>
-            <h5 className="mb-0 link-text">Username</h5>
+            <Link className="link" href={`/profile/5`}>
+              <h5 className="mb-0 link-text">Username</h5>
+            </Link>
           </div>
           <span className="font-weight-light mt-1 mb-2">Hace 1 mes</span>
 
