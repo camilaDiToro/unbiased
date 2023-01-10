@@ -1118,6 +1118,12 @@ li{
     cursor: pointer;
 }
 
+.eye-button-properties{
+    position: absolute;
+    bottom: 5px;
+    right: 0;
+}
+
 .sign-form-control{
     border: none;
     border-radius: 0px;
@@ -1125,6 +1131,8 @@ li{
     background: none;
     color: #C2C2CC;
     width: 300px;
+    padding-left: 10px;
+    padding-bottom: 5px;
 }
 
 .sign-form-control::placeholder{

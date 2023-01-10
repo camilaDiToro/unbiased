@@ -43,7 +43,7 @@ export default function Login() {
     }
 
     return(
-        <div className="text-center d-flex flex-column align-content-center">
+        <div className="text-center d-flex flex-column align-content-center justify-content-center">
             <h1 id="title-log" className="logo mb-4">
                 <Link className="text-info link" href="/">
                     unbiased
@@ -57,24 +57,22 @@ export default function Login() {
                     <input onChange={handleChange} type="text" id="username" name="username" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
                 </div>
 
-                <div className="mt-1 d-flex justify-content-center align-items-center position-relative">
+                <div className="mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
                     <img src="/img/lock-svgrepo-com.svg" alt="..." className="size-img-modal-login align-self-center"/>
                     <input type={passwordType} onChange={handleChange} name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
-                    <div className="input-group-btn">
-                        <button className="btn btn-outline-primary" onClick={togglePassword}>
-                            { passwordType==="password"? <i className="bi bi-eye-slash"></i> : <i className="bi bi-eye"></i> }
-                        </button>
-                    </div>
+                    <button className="btn  eye-button-properties" onClick={togglePassword}>
+                        { passwordType==="password"? <img src="/img/eye.svg"/> : <img src="/img/eye-slash.svg"/> }
+                    </button>
                 </div>
 
                 <div className="checkbox mb-3">
                     <label className="text-light">
-                        <input onChange={handleChange} type="checkbox" name="rememberMe"/>
+                        <input onChange={handleChange} className="mr-1" type="checkbox" name="rememberMe"/>
                         Remember me
                     </label>
                 </div>
 
-                <button type="submit" className="btn btn-md btn-info btn-block">Sign in</button>
+                <button type="submit" className="btn btn-md btn-info btn-block">Log in</button>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>
             </div>
         </div>
