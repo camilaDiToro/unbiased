@@ -1,7 +1,10 @@
 import { useAppContext } from "../context";
+import Tooltip from "./Tooltip";
+
 
 export default function Comment(props) {
-  const {I18n, loggedUser}= useAppContext();
+    const {I18n, loggedUser}= useAppContext();
+
     return(
       <>
         <div className="mb-4 w-100 p-4 bg-black rounded-comment">
@@ -28,8 +31,16 @@ export default function Comment(props) {
           </div>
           <div className="d-flex align-items-center justify-content-between float-sm-right gap-1">
             <div className="d-flex flex-row align-items-center gap-1">
-              <img src="/img/bin-svgrepo-com.svg"
-                   className="icon-comment svg-bookmark" />
+              {props.profileArticle ? <button data-toggle="modal" data-target={`#binModal${props.id}`} className="btn bin-modal" id="bin_button">
+                <Tooltip text={I18n("tooltip.deleteNews")} position="bottom">
+                  <img src="/img/bin-svgrepo-com.svg" alt="..."
+                       className="icon-comment svg-btn svg-bookmark bookmark"
+                  />
+                </Tooltip>
+              </button> : <></>}
+              <img src="/img/bin-svgrepo-com.svg" alt="..."
+                   className="icon-comment svg-btn svg-bookmark bookmark"
+              />
               <img id="save" className="icon-comment svg-btn svg-bookmark bookmark"
                    src={`/img/flag.svg`} />
             </div>

@@ -17,7 +17,7 @@ export default function CommentList(props) {
             <div className="form-group w-100">
                   <textarea name="comment" className="form-control w-100 custom-comment-area text-white" rows="5"
                             id="comment-input"
-                            placeholder="Comentario" />
+                            placeholder={I18n("showNews.comment")} />
             </div>
             <button className="btn btn-primary flex-grow-0 align-self-end" type="submit">
               {I18n("showNews.comment.submit")}
