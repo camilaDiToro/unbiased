@@ -1,6 +1,8 @@
 import Head from "next/head";
+import TopNewTabs from "../../../components/TopNewTabs";
 
 export default function ShowNews(props) {
+
   return(
     <>
       <Head>
@@ -75,13 +77,35 @@ export default function ShowNews(props) {
 
           <div className="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
             <div className="text-sm-left font-weight-bold text-white">
-              {ctx.I18n("showNews.categories")}
+              <h5 className="text-white">
+                Categorias
+              </h5>
             </div>
           </div>
 
           <div className="d-flex w-100 min-vh-65 align-items-center flex-column">
             <div className="article-body">
               TEXTO
+            </div>
+            <div className="d-flex flex-column w-75 align-items-center justify-content-center align-self-center"
+                 id="comments">
+              <h2 className="align-self-start my-2 text-white">
+                Comentarios
+              </h2>
+              <div className="d-flex flex-column w-100 mb-4">
+                <TopNewTabs></TopNewTabs>
+              <div class="d-flex flex-column mt-4 mb-4">
+                <div class="form-group w-100">
+                  <textarea name="comment" className="form-control w-100 custom-comment-area text-white" rows="5" id="comment-input"
+                         placeholder="Comentario"/>
+                </div>
+                <button class="btn btn-primary flex-grow-0 align-self-end" type="submit">
+                  Comentar
+                </button>
+              </div>
+
+            </div>
+
             </div>
           </div>
 

@@ -117,6 +117,7 @@ const strings = {
     "login.resendVerificationEmail.button": "Resend verification email",
 
     //Moderation panel
+    "moderation.panel": "Moderation Panel",
     "moderation.emptyArticles": "There are no reported articles yet.",
     "moderation.reportedComments": "Reported comments",
     "moderation.emptyComments": "There are no reported comments yet.",
@@ -136,6 +137,14 @@ const strings = {
     "moderation.add": "Add admins",
     "moderation.manage": "Manage admins",
     "moderation.searchAdmin": "Search in admin panel",
+    "reportOrder.reportCountDesc": "Most Reported",
+    "reportOrder.reportCountAsc": "Least Reported",
+    "reportOrder.reportDateDesc": "Newest Reported",
+    "reportOrder.reportDateAsc": "Oldest Reported",
+    "report.inappropiate": "The content is inappropriate.",
+    "report.notSerious": "The content is not serious.",
+    "report.violent": "The content is violent.",
+    "report.lie": "The content is not true.",
 
     //Show news
     "showNews.reportNewsQuestion": "Are you sure you want to report this article?",
@@ -292,6 +301,7 @@ const strings = {
     "login.resendVerificationEmail.button": "Reenviar verificación de email",
 
     //Moderation panel
+    "moderation.panel": "Panel de moderación",
     "moderation.emptyArticles": "No hay noticias reportadas todavía.",
     "moderation.reportedComments": "Comentarios reportados",
     "moderation.emptyComments": "No hay comentarios reportados todavía.",
@@ -311,6 +321,14 @@ const strings = {
     "moderation.add": "Agregar administrador",
     "moderation.manage": "Manejar administradoress",
     "moderation.searchAdmin": "Buscar en panel de administradores",
+    "reportOrder.reportCountDesc": "Más Reportados",
+    "reportOrder.reportCountAsc": "Menos Reportados",
+    "reportOrder.reportDateDesc": "Reportados más recientes",
+    "reportOrder.reportDateAsc": "Reportados más antiguos",
+    "report.inappropiate": "El contenido es inapropiado.",
+    "report.notSerious": "El contenido no es serio.",
+    "report.violent": "El contenido es violento.",
+    "report.lie": "Hay contenido que no es verdad en la noticia.",
 
     //Show news
     "showNews.reportNewsQuestion": "¿Estás seguro de que quieres reportar esta noticia?",
