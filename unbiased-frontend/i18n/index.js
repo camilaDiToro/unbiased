@@ -62,6 +62,12 @@ const strings = {
     "profile.unpin.question": "Are you sure you want to unpin the article?",
     "profile.unpin.body": "Unpinning this article it will appear on top of the rest of the news. Are you sure you would like to continue?",
     "profile.followers": "Followers",
+    "profileCategories.saved": "Saved",
+    "profileCategories.upvoted": "Upvoted",
+    "profileCategories.downvoted": "Downvoted",
+    "profileCategories.myPosts": "Posts",
+    "profile.notFound": (params) =>
+      `No results found for filter \"${params[0]}\"`,
 
     //Error
     "error.articlNotFound": "The news article you're looking for doesn't exist.",
@@ -105,6 +111,11 @@ const strings = {
     //Verify email
     "verifyEmail.goHome": "Go home",
     "verifyEmail.login": "Go to login",
+    "verificationToken.succesfullyVerified": "Email verification successful.",
+    "verificationToken.succesfullyResended": "Verification email resended.",
+    "verificationToken.expired": "The verification token has expired.",
+    "verificationToken.notExists": "The verification token does not exist.",
+    "verificationToken.alreadyVerified": "This account has already been verified.",
 
     //Login
     "login.error": "There was an error with the inputted values",
@@ -179,11 +190,6 @@ const strings = {
     "mailOption.folowingPublished": "A journalist I follow published an article",
     "mailOption.positivityChanged": "The positivity value of my news changes",
 
-    // Profile categories
-    "profileCategories.myPosts": "Posts",
-    "profileCategories.saved": "Saved",
-    "profileCategories.upvoted": "Upvoted",
-    "profileCategories.downvoted": "Downvoted"
   },
   "es-ES": {
     //NavBar
@@ -246,6 +252,12 @@ const strings = {
     "profile.unpin.question": "¿EstÃ¡s seguro de que quieres desfijar esta noticia?",
     "profile.unpin.body": "Al desfijar esta noticia no podrás visualizarla sobre las demas noticias. ¿Estás seguro de que deseas continuar?",
     "profile.followers": "Seguidores",
+    "profileCategories.myPosts": "Noticias",
+    "profileCategories.saved": "Guardados",
+    "profileCategories.upvoted": "Me gusta",
+    "profileCategories.downvoted": "No me gusta",
+    "profile.notFound": (params) =>
+      `No se encontraron resultados para el filtro \"${params[0]}\"`,
 
     //Error
     "error.articlNotFound": "El artículo buscado no existe.",
@@ -289,6 +301,11 @@ const strings = {
     //Verify email
     "verifyEmail.goHome": "Ir a la página principal",
     "verifyEmail.login": "Ir a iniciar sesión",
+    "verificationToken.succesfullyVerified": "Email verificado exitosamente.",
+    "verificationToken.succesfullyResended": "Verificación de email reenviada.",
+    "verificationToken.expired": "El token de verificación expiró.",
+    "verificationToken.notExists": "El token de verificación no existe.",
+    "verificationToken.alreadyVerified": "Esta cuenta ya fue verificada.",
 
     //Login
     "login.error": "Hubo un error con los datos ingresados.",
@@ -363,12 +380,6 @@ const strings = {
     "mailOption.comment":"Nuevos comentarios",
     "mailOption.folowingPublished": "Un periodista que sigo publica una noticia",
     "mailOption.positivityChanged": "El valor de positividad de mi noticia cambia",
-
-    // Profile categories
-    "profileCategories.myPosts": "Noticias",
-    "profileCategories.saved": "Guardados",
-    "profileCategories.upvoted": "Me gusta",
-    "profileCategories.downvoted": "No me gusta",
 
 
   },
