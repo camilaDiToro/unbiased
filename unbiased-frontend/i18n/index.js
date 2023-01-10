@@ -349,6 +349,7 @@ const strings = {
 
     //Show news
     "showNews.reportNewsQuestion": "¿Estás seguro de que quieres reportar esta noticia?",
+    "showNews.comment": "Comentario",
     "showNews.comments": "Comentarios",
     "showNews.comment.submit": "Comentar",
     "showNews.categories": "Categorías:",
