@@ -4,6 +4,7 @@ import {useAppContext} from "../../../context";
 import ReportedCard from "../../../components/ReportedCard";
 import Link from "next/link";
 import {news} from "../../../hardcoded"
+import {useEffect, useState} from "react";
 
 export async function getServerSideProps(context) {
     return {
@@ -20,6 +21,7 @@ export default function Reported_news(){
                     {text: ctx.I18n("reportOrder.reportDateDesc"), route: "/admin/reported_news"},
                     {text: ctx.I18n("reportOrder.reportDateAsc"), route: "/admin/reported_news"}]
 
+
     return (
         <div className="d-flex h-100 flex-column">
             <div className="flex-grow-1 d-flex flex-row bg-fixed">
@@ -30,8 +32,7 @@ export default function Reported_news(){
                     {
                         news.map((n) => {
                             return (
-                                <ReportedCard key={n.id} {...n}
-                                />
+                                <ReportedCard key={n.id} {...n}/>
                             )
                         })
                     }
