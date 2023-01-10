@@ -1,4 +1,7 @@
+import { useAppContext } from "../context";
+
 export default function Comment(props) {
+  const {I18n, loggedUser}= useAppContext();
     return(
       <>
         <div className="mb-4 w-100 p-4 bg-black rounded-comment">

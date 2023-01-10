@@ -1,13 +1,15 @@
 import TopNewTabs from "./TopNewTabs";
 import Comment from "./Comment";
+import { useAppContext } from "../context";
 
-export default function CommentList() {
+export default function CommentList(props) {
+  const {I18n, loggedUser}= useAppContext();
   return (
     <>
       <div className="d-flex flex-column w-75 align-items-center justify-content-center align-self-center"
            id="comments">
         <h2 className="align-self-start my-2 text-white">
-          Comentarios
+          {I18n("showNews.comments")}
         </h2>
         <div className="d-flex flex-column w-100 mb-4">
           <TopNewTabs></TopNewTabs>
@@ -18,7 +20,7 @@ export default function CommentList() {
                             placeholder="Comentario" />
             </div>
             <button className="btn btn-primary flex-grow-0 align-self-end" type="submit">
-              Comentar
+              {I18n("showNews.comment.submit")}
             </button>
           </div>
           <Comment></Comment>
