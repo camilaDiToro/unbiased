@@ -36,6 +36,7 @@ const Article = {
 }
 
 const types = {
+    ShowNews: {...Article, categories: PropTypes.arrayOf(PropTypes.string), reported: PropTypes.bool},
     Article,
     BackButton: {
         onClickHandler: PropTypes.func
@@ -109,6 +110,14 @@ const types = {
         datetime: PropTypes.string.isRequired,
         reportsCount: PropTypes.number.isRequired,
         creator: PropTypes.shape(TopCreator)
+    },
+    Bookmark: {
+        onSave: PropTypes.func.isRequired,
+        saved: PropTypes.bool
+    },
+    ReportFlag: {
+        comment: PropTypes.bool,
+        id: PropTypes.number.isRequired
     }
 }
 
