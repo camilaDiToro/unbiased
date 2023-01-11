@@ -22,7 +22,6 @@ export default function ReportedCard(props) {
                              <c:set var="newsId" value="${article.newsId}"/>
                              <c:set var="creator" value="${reportedNews.creator}"/>*/}
 
-                        {/*TODO: Modal :)*/}
                         <div className="col mb-4">
                             <div className="card h-100 d-flex flex-row p-3 max-h-300px" id="left-card">
                                 <Tooltip className="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" position="bottom" text={ctx.I18n("moderation.reportsNum")}>
@@ -59,7 +58,7 @@ export default function ReportedCard(props) {
                                                     <img src="/img/bin-svgrepo-com.svg" alt="..." className="bin-image"  />
                                                 </Tooltip>
                                             </button>
-                                            <Link href="/" className="font-weight-bold hover-hand link">
+                                            <Link href={`/admin/${props.pageName}_detail`} className="font-weight-bold hover-hand link">
                                                 <div className="link-text">{ctx.I18n("moderation.details")}</div>
                                             </Link>
                                         </div>
