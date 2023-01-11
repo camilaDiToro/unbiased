@@ -2,7 +2,14 @@ import Head from "next/head";
 import CommentList from "../../../components/CommentList";
 import { useAppContext } from "../../../context";
 import Link from "next/link";
+import { news, users } from "../../../hardcoded";
 
+export async function getServerSideProps(context) {
+  return {
+      props: {news,
+      creators: users},
+  }
+}
 export default function ShowNews(props) {
   const {I18n, loggedUser}= useAppContext();
   return(

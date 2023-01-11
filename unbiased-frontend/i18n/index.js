@@ -70,7 +70,7 @@ const strings = {
       `No results found for filter \"${params[0]}\"`,
 
     //Error
-    "error.articlNotFound": "The news article you're looking for doesn't exist.",
+    "error.articleNotFound": "The news article you're looking for doesn't exist.",
     "error.commentNotFound": "The comment you're looking for doesn't exist.",
     "error.userNotFound": "The user you're looking for doesn't exist.",
     "error.invalidCategory": "Invalid category.",
@@ -260,7 +260,7 @@ const strings = {
       `No se encontraron resultados para el filtro \"${params[0]}\"`,
 
     //Error
-    "error.articlNotFound": "El artículo buscado no existe.",
+    "error.articleNotFound": "El artículo buscado no existe.",
     "error.commentNotFound": "El comentario buscado no existe.",
     "error.userNotFound": "El usuario buscado no existe.",
     "error.invalidCategory": "Categoría inválida.",
