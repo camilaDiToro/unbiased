@@ -11,6 +11,12 @@ export default function Modal(props) {
             .forEach(el => el.classList.remove("modal-backdrop"));
     }
 
+    const handler = (e) => {
+        props.onClickHandler && props.onClickHandler(e);
+    props.onClickHandlerArray[0] && props.onClickHandlerArray[0](e)
+        handleCloseModal()
+    }
+
 
     return <>
         <div className="modal fade" id={props.id} >
@@ -29,7 +35,7 @@ export default function Modal(props) {
                         {props.children}
                     </div>
                     <div className="modal-footer">
-                        <button data-dismiss="modal" type="submit" className="btn btn-primary" onClick={(e) => {props.onClickHandler && props.onClickHandler(e); handleCloseModal()}}>
+                        <button data-dismiss="modal" type="submit" className="btn btn-primary" onClick={handler}>
                             {props.acceptText || I18n("profile.modal.accept")}
                         </button>
                     </div>

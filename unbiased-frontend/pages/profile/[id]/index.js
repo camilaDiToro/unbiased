@@ -16,6 +16,7 @@ import {users, news} from "../../../hardcoded"
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import EditProfileForm from "../../../components/EditProfileForm";
+import UserPrivileges from "../../../components/UserPrivileges";
 
 export async function getServerSideProps(context) {
   return {
@@ -53,12 +54,43 @@ export default function Profile(props) {
   const {I18n, loggedUser}= useAppContext();
   const router = useRouter()
   const isMyProfile = loggedUser && loggedUser.id === props.id
+  const [profileEffectTrigger, setProfileEffectTrigger] = useState(false)
+  const profileTriggerEffect = () => {
+    setProfileEffectTrigger(t => !t)
+  }
+  const [newsEffectTrigger, setNewsEffectTrigger] = useState(false)
+  const newsTriggerEffect = () => {
+    setNewsEffectTrigger(t => !t)
+  }
   const [useNews, setNews] = useState(props.news)
+  const [useCounter, setCounter] = useState(0)
+  const {news: _, ...rest} = props;
+  const [profileInfo, setProfileInfo] = useState(rest)
 
 
   useEffect(() => {
-    setNews(props.news)
-  }, [router.query.order, router.query.cat])
+    setNews(n => {
+      for (const news of n) {
+        switch(news.rating) {
+          case 1: news.rating = 0;
+          break;
+          case 0: news.rating = -1;
+          break;
+          case -1:news.rating =  1;
+        }
+      }
+      return n
+    })
+  }, [router.query, newsEffectTrigger])
+
+  useEffect(() => {
+    const {news: _, ...rest} = props;
+    setProfileInfo(rest)
+  }, [profileEffectTrigger])
+
+
+
+  let submitHandlerArray = []
 
   const RightSide = () => (<div
       className="d-flex flex-column w-30 justify-content-start pr-5">
@@ -80,7 +112,7 @@ export default function Profile(props) {
         <ProfilePic tier={props.tier}/>
 
       </div>
-      {props.isJournalist ?         <PositivityIndicator {...props.stats}></PositivityIndicator>
+      {props.isJournalist ? <PositivityIndicator {...props.stats}></PositivityIndicator>
       : <></>}
 
       {isMyProfile ? <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
@@ -91,52 +123,14 @@ export default function Profile(props) {
         </ModalTrigger>
       </Tooltip> : <></>}
     <Modal id="infoModal" title={I18n("profile.modal.infoTitle")} >
-      <h6>
-        {I18n("profile.modal.infoAllowedMsg")}
-      </h6>
-
-      <div className="info-function d-flex flex-row mb-3">
-
-        <div className="d-flex">
-          1. {I18n("profile.modal.infoChangeUsername")}
-        </div>
-
-        <div className="d-flex info-enabled info-custom-box">
-          {I18n("profile.modal.enabled")}
-        </div>
-      </div>
-
-      <div className="info-function d-flex flex-row mb-3">
-
-        <div className="d-flex">
-          2. {I18n("profile.modal.infoChangeProfileimg")}
-        </div>
-
-        <div className="d-flex info-enabled info-custom-box">
-          {I18n("profile.modal.enabled")}
-        </div>
-      </div>
-
-      <div className="info-function d-flex flex-row">
-
-        <div className="d-flex">
-          3. {I18n("profile.modal.infoChangeAddDescription")}
-        </div>
-        {props.isJournalist ? <div className="d-flex info-enabled info-custom-box">
-          {I18n("profile.modal.enabled")}
-        </div> : <Tooltip className="d-flex info-disabled info-custom-box" position="bottom"
-                          text={I18n("tooltip.infoDisabled")}>
-          {I18n("profile.modal.disabled")}
-        </Tooltip>}
-      </div>
+     <UserPrivileges></UserPrivileges>
     </Modal>
-
 
       <img src="/img/front-page-profile.png" className="card-img-top" alt="..."/>
 
         <div className="card-body">
           <h4 className="mb-0 card-title text-center">
-            {props.username}
+            {profileInfo.username}
           </h4>
           <div className="d-flex flex-row align-items-center justify-content-center m-2 gap-2">
             <span className="card-text text-muted d-block">{props.email}</span>
@@ -176,8 +170,8 @@ export default function Profile(props) {
 
       </div>
     </div> : <></>}
-    <Modal id="profileModal" title={I18n("profile.user.settings")}>
-      <EditProfileForm {...props}></EditProfileForm>
+    <Modal  onClickHandlerArray={submitHandlerArray} id="profileModal" title={I18n("profile.user.settings")}>
+      <EditProfileForm triggerEffect={triggerEffect} handlerArray={submitHandlerArray} {...profileInfo}></EditProfileForm>
     </Modal>
   </div>)
 
@@ -188,6 +182,8 @@ export default function Profile(props) {
       <div className="tab">
         <div className="container-fluid">
           <div className="row row-cols-1">
+            {/*{JSON.stringify(profileInfo)}*/}
+
             {useNews.map((n) => (
                 <Article profileArticle {...n} key={n.id} id={n.id}></Article>
             ))}

@@ -118,6 +118,16 @@ const types = {
     ReportFlag: {
         comment: PropTypes.bool,
         id: PropTypes.number.isRequired
+    },
+    DeleteButton: {
+        id: PropTypes.number.isRequired,
+        comment: PropTypes.bool,
+        creatorId: PropTypes.number.isRequired
+    },
+    PinButton: {
+        id: PropTypes.number.isRequired,
+        pinned: PropTypes.bool.isRequired,
+        creatorId: PropTypes.number.isRequired
     }
 }
 
