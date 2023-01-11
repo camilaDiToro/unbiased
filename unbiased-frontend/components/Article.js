@@ -7,6 +7,9 @@ import types from "../types";
 import ModalTrigger from "./ModalTrigger";
 import {news} from "../hardcoded"
 import FormattedDate from "./FormattedDate";
+import ProfilePic from "./ProfilePic";
+import ProfileLink from "./ProfileLink";
+import Bookmark from "./Bookmark";
 
 
 
@@ -100,12 +103,9 @@ export default function Article(props) {
                     <div className="d-flex justify-content-between p-2 w-100">
                         <div className="d-flex align-items-center w-auto gap-1">
                             <div className="img-container-article">
-                                <img className="rounded-circle object-fit-cover mr-1"
-                                     src="/img/profile-image.png" alt=""/>
+                                <ProfilePic id={props.creator.id} hasImage={props.creator.hasImage}></ProfilePic>
                             </div>
-                            <Link className="link" href={`/profile/${props.creator.id}`}>
-                                <div className="link-text card-name-text text-ellipsis-1">{props.creator.nameOrEmail}</div>
-                            </Link>
+                            <ProfileLink {...props.creator}></ProfileLink>
                         </div>
                         <div className="d-flex align-items-center" role="group">
 
@@ -133,13 +133,7 @@ export default function Article(props) {
 
 
 
-                            {loggedUser ? <div className=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center">
-                                <Tooltip onClickHandler={handleSave} position="bottom" text={props.saved ? I18n("tooltip.articleUnsave") : I18n("tooltip.articleSave")}>
-                                    <img className="w-25px svg-btn" id="bookmark"
-                                         src={`/img/bookmark${props.saved ? '-clicked' : ''}.svg`}
-                                         alt=""   />
-                                </Tooltip>
-                            </div> : <></>}
+                            <Bookmark saved={props.saved} onSave={handleSave}></Bookmark>
 
                         </div>
                     </div>

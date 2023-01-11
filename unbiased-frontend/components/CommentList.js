@@ -23,7 +23,7 @@ export default function CommentList(props) {
               {I18n("showNews.comment.submit")}
             </button>
           </div>
-          <Comment></Comment>
+          {props.comments.map(c => <Comment key={c.id} {...c}></Comment>)}
         </div>
       </div>
     </>

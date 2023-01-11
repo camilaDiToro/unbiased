@@ -6,6 +6,11 @@ import {news, users} from "../../../hardcoded";
 import PositivityIndicator from "../../../components/PositivityIndicator";
 import FormattedDate from "../../../components/FormattedDate";
 import ProfilePic from "../../../components/ProfilePic";
+import NewsCategoryPills from "../../../components/NewsCategoryPills";
+import Link from "next/link";
+import ProfileLink from "../../../components/ProfileLink";
+import Bookmark from "../../../components/Bookmark";
+import ReportFlag from "../../../components/ReportFlag";
 
 export async function getServerSideProps(context) {
   return {
@@ -59,18 +64,14 @@ export default function ShowNews(props) {
                 {props.subtitle}
               </h4>
             </div>
-            <div className="d-flex flex-row align-items-center gap-4px">
+            {loggedUser ? <div className="d-flex flex-row align-items-center gap-4px">
               <div className="ml-2 d-flex justify-content-center align-items-center">
-                <img id="save"
-                     className="icon-index svg-btn svg-bookmark bookmark"
-                     src={`/img/bookmark.svg`}/>
+                <Bookmark saved={props.saved} onSave={(e) => {}}></Bookmark>
               </div>
               <div className="ml-2 d-flex justify-content-center align-items-center">
-                <img id="save"
-                     className="icon-index svg-btn svg-bookmark bookmark"
-                     src={`/img/flag.svg`}/>
+                <ReportFlag id={props.id}></ReportFlag>
               </div>
-            </div>
+            </div>: <></>}
           </div>
 
           <p className="text-sm-left text-secondary mr-1">
@@ -86,23 +87,23 @@ export default function ShowNews(props) {
               <div className="img-container-article">
                 <ProfilePic {...props.creator}></ProfilePic>
               </div>
-              <b>{props.creator.nameOrEmail}</b>
+              <ProfileLink bold {...props.creator}></ProfileLink>
             </div>
           </div>
 
           <div className="w-50 d-flex flex-wrap align-items-center gap-1 mt-3">
-            <div className="text-sm-left font-weight-bold text-white">
-              <h6 className="text-white">
+            <div className="text-sm-left font-weight-bold text-white w-100 d-flex gap-1">
+              {props.categories.length ? <div className="w-fit text-sm-left font-weight-bold text-white">
                 {I18n("showNews.categories")}
-              </h6>
+              </div> : <></>}
+              <NewsCategoryPills categories={props.categories}></NewsCategoryPills>
             </div>
           </div>
 
           <div className="d-flex w-100 min-vh-65 align-items-center flex-column">
-            <div className="article-body">
-              TEXTO
+            <div className="article-body p-5" dangerouslySetInnerHTML={{__html: props.body}}>
             </div>
-            <CommentList></CommentList>
+            <CommentList comments={props.comments}></CommentList>
         </div>
       </div>
       </div>

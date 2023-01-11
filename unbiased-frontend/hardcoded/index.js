@@ -3,15 +3,16 @@ const news = [
   {
     title: "Title",
     subtitle: "Subtitle",
-    body: "asjkbas jkas askj aksj asjk as",
+    body: "<h1>asjkbas jkas askj aksj asjk as</h1>",
     readTime: 3,
     saved: true,
     rating: 1,
     hasImage: false,
     datetime: "2022-10-10 14:48:00",
-
+    reported: false,
     upvotes: 5,
     reportsCount: 3,
+    categories: ["SHOW", "TOURISM"],
     creator: {
       nameOrEmail: "kevin",
       id: 5,
@@ -24,6 +25,12 @@ const news = [
       interactions: 20,
       upvoted: 0.8,
     },
+    comments: [{id: 2,creator: {
+        nameOrEmail: "kevin",
+        id: 5,
+        hasImage: false,
+        tier: "platinum",
+      }, body: 'HOlaaaaaaa', datetime: "2022-10-10 14:48:00"}]
   },
   {
     title: "Title",
@@ -31,8 +38,9 @@ const news = [
     body: "asjkbas jkas askj aksj asjk as",
     readTime: 3,
     saved: true,
+    reported: false,
     reportsCount: 3,
-    categories: [],
+    categories: ["SHOW", "TOURISM"],
     hasImage: false,
     datetime: "2011-10-10 14:48:00",
     rating: -1,
@@ -58,8 +66,10 @@ const news = [
     saved: true,
     reportsCount: 3,
     upvotes: 5,
+    reported: true,
     rating: 1,
     hasImage: false,
+    categories: ["SHOW", "TOURISM"],
     datetime: "2011-10-10 14:48:00",
 
     creator: {
