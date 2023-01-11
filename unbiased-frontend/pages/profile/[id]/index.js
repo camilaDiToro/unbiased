@@ -171,7 +171,7 @@ export default function Profile(props) {
       </div>
     </div> : <></>}
     <Modal  onClickHandlerArray={submitHandlerArray} id="profileModal" title={I18n("profile.user.settings")}>
-      <EditProfileForm triggerEffect={triggerEffect} handlerArray={submitHandlerArray} {...profileInfo}></EditProfileForm>
+      <EditProfileForm triggerEffect={profileTriggerEffect} handlerArray={submitHandlerArray} {...profileInfo}></EditProfileForm>
     </Modal>
   </div>)
 
