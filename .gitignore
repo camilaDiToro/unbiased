@@ -50,3 +50,11 @@ Thumbs.db
 
 #Application properties
 webapp/src/main/resources/application.properties
+
+
+webapp/src/main/java/ar/edu/itba/paw/webapp/auth/exceptions/ApiErrorCode.java
+webapp/src/main/java/ar/edu/itba/paw/webapp/auth/exceptions/ApiErrorException.java
+webapp/src/main/java/ar/edu/itba/paw/webapp/auth/exceptions/UserDisabeledException.java
+webapp/src/main/java/ar/edu/itba/paw/webapp/auth/jwt/JwtFilter.java
+webapp/src/main/java/ar/edu/itba/paw/webapp/dto/ApiErrorDto.java
+webapp/src/main/java/ar/edu/itba/paw/webapp/mappers/ApiErrorExceptionMapper.java

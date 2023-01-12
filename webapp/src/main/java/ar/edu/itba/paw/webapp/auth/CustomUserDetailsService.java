@@ -34,6 +34,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         final Collection<? extends GrantedAuthority> authorities = user.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
 
-        return new CustomUserDetails(username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities, user.getId());
+        return new org.springframework.security.core.userdetails.User(username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities);
     }
 }
