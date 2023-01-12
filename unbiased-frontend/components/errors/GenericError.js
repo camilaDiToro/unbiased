@@ -5,7 +5,7 @@ export default function GenericError(props){
   const {I18n}= useAppContext();
   const typeErrors= [
     { text: "error.articleNotFound", value: I18n("error.articleNotFound") },
-    { text: "error.commentNotFound",value: I18n("error.commentNotFound") },
+    { text: "error.commentNotFound",value: I18n("error.commentNotFound" ) },
     { text: "error.userNotFound", value: I18n("error.userNotFound") },
     { text: "error.invalidCategory", value: I18n("error.invalidCategory") },
     { text: "error.userNotAuthorized", value: I18n("error.userNotAuthorized") },
@@ -15,8 +15,8 @@ export default function GenericError(props){
 
   return(
   <>
-    { props.errors.map(c => <Link key={c} href={{
-      pathname: "/",
+    { typeErrors.map(c => <Link key={c} href={{
+      pathname: "/${c}",
       query: { cat: c },
     }}>
             <h1 className="display-1 fw-bold">404</h1>
@@ -25,7 +25,7 @@ export default function GenericError(props){
                 {I18n("genericError.message.404")}
             </p>
             <p className="lead">
-              {categoryMap[c]}
+              {c.value}
             </p>
             <button className="btn btn-info" type="submit">{I18n("genericError.button.goHome")}</button>
     </Link>)}
