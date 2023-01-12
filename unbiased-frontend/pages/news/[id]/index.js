@@ -7,7 +7,6 @@ import PositivityIndicator from "../../../components/PositivityIndicator";
 import FormattedDate from "../../../components/FormattedDate";
 import ProfilePic from "../../../components/ProfilePic";
 import NewsCategoryPills from "../../../components/NewsCategoryPills";
-import Link from "next/link";
 import ProfileLink from "../../../components/ProfileLink";
 import Bookmark from "../../../components/Bookmark";
 import ReportFlag from "../../../components/ReportFlag";
@@ -42,7 +41,7 @@ export default function ShowNews(props) {
                    className="svg-btn hover-hand"
                    src={`/img/upvote${props.rating > 0 ? '-clicked' : ''}.svg`}/>
               <div id="rating" className={upvoteClass}>
-                123
+                {props.rating}
               </div>
               <img id="downvote"
                    className="svg-btn hover-hand"
