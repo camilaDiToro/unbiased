@@ -17,6 +17,7 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import EditProfileForm from "../../../components/EditProfileForm";
 import UserPrivileges from "../../../components/UserPrivileges";
+import {useTriggerEffect} from "../../../utils"
 
 export async function getServerSideProps(context) {
   return {
@@ -54,14 +55,13 @@ export default function Profile(props) {
   const {I18n, loggedUser}= useAppContext();
   const router = useRouter()
   const isMyProfile = loggedUser && loggedUser.id === props.id
-  const [profileEffectTrigger, setProfileEffectTrigger] = useState(false)
-  const profileTriggerEffect = () => {
-    setProfileEffectTrigger(t => !t)
-  }
-  const [newsEffectTrigger, setNewsEffectTrigger] = useState(false)
-  const newsTriggerEffect = () => {
-    setNewsEffectTrigger(t => !t)
-  }
+  // const [profileEffectTrigger, setProfileEffectTrigger] = useState(false)
+  // const profileTriggerEffect = () => {
+  //   setProfileEffectTrigger(t => !t)
+  // }
+  const [profileEffectTrigger, profileTriggerEffect] = useTriggerEffect()
+  const [newsEffectTrigger, newsTriggerEffect] = useTriggerEffect()
+
   const [useNews, setNews] = useState(props.news)
   const [useCounter, setCounter] = useState(0)
   const {news: _, ...rest} = props;
@@ -69,6 +69,7 @@ export default function Profile(props) {
 
 
   useEffect(() => {
+    console.log('hola')
     setNews(n => {
       for (const news of n) {
         switch(news.rating) {
@@ -84,10 +85,14 @@ export default function Profile(props) {
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {
-    const {news: _, ...rest} = props;
-    setProfileInfo(rest)
-  }, [profileEffectTrigger])
+    setProfileInfo(rest => {
+      rest.following++
+      rest.username += 'a'
+      rest.newsStatistics[0].progress += 0.01
+      return rest
+    })
 
+  }, [profileEffectTrigger])
 
 
   let submitHandlerArray = []
@@ -109,10 +114,10 @@ export default function Profile(props) {
                         </span>
         </ModalTrigger>: <></>}
 
-        <ProfilePic tier={props.tier}/>
+        <ProfilePic tier={profileInfo.tier}/>
 
       </div>
-      {props.isJournalist ? <PositivityIndicator {...props.stats}></PositivityIndicator>
+      {profileInfo.isJournalist ? <PositivityIndicator {...profileInfo.stats}></PositivityIndicator>
       : <></>}
 
       {isMyProfile ? <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
@@ -133,21 +138,21 @@ export default function Profile(props) {
             {profileInfo.username}
           </h4>
           <div className="d-flex flex-row align-items-center justify-content-center m-2 gap-2">
-            <span className="card-text text-muted d-block">{props.email}</span>
-            {(loggedUser && !isMyProfile) ?  <FollowButton userId={props.id} following={loggedUser && props.isLoggedUserFollowing}></FollowButton>
+            <span className="card-text text-muted d-block">{profileInfo.email}</span>
+            {(loggedUser && !isMyProfile) ?  <FollowButton userId={profileInfo.id} following={loggedUser && profileInfo.isLoggedUserFollowing}></FollowButton>
              : <></>}
           </div>
 
           <div className="d-flex flex-row align-items-center justify-content-center">
             <div className="d-flex flex-row mr-5">
-              <p className="font-weight-bold">{props.followers}</p>
+              <p className="font-weight-bold">{profileInfo.followers}</p>
               <p className="custom-follow-text">
                 {I18n("profile.followers")}
               </p>
             </div>
 
             <div className="d-flex flex-row">
-              <p className="font-weight-bold">{props.following}</p>
+              <p className="font-weight-bold">{profileInfo.following}</p>
               <p className="custom-follow-text">
                 {I18n("profile.following")}
               </p>
@@ -155,18 +160,18 @@ export default function Profile(props) {
           </div>
 
           <div className="d-flex justify-content-center align-items-center">
-            {props.isJournalist ? <div className="text-center font-weight-light m-1 overflow-wrap w-85">
-              {props.description}
+            {profileInfo.isJournalist ? <div className="text-center font-weight-light m-1 overflow-wrap w-85">
+              {profileInfo.description}
             </div> : <></>}
           </div>
         </div>
 
 
     </div>
-    {props.isJournalist ? <div className="card right-card">
+    {profileInfo.isJournalist ? <div className="card right-card">
 
       <div className="card-body">
-        {props.newsStatistics.map(stats => <ProgressBar key={stats.title} {...stats}></ProgressBar>)}
+        {profileInfo.newsStatistics.map(stats => <ProgressBar key={stats.title} {...stats}></ProgressBar>)}
 
       </div>
     </div> : <></>}
@@ -185,7 +190,7 @@ export default function Profile(props) {
             {/*{JSON.stringify(profileInfo)}*/}
 
             {useNews.map((n) => (
-                <Article profileArticle {...n} key={n.id} id={n.id}></Article>
+                <Article triggerEffect={newsTriggerEffect} profileArticle {...n} key={n.id} id={n.id}></Article>
             ))}
           </div>
         </div>
@@ -199,7 +204,7 @@ export default function Profile(props) {
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/img/unbiased-logo-circle.png" />
       </Head>
-      <ProfileTabs userId={props.id}></ProfileTabs>
+      <ProfileTabs userId={profileInfo.id}></ProfileTabs>
       <div className="d-flex flex-column">
         <div className="flex-grow-1 d-flex flex-row">
           <LeftSide></LeftSide>

@@ -9,6 +9,7 @@ import MainCardsContainer from "../components/MainCardsContainer";
 import NewsCategoryTabs from "../components/NewsCategoryTabs";
 import {news, users} from "../hardcoded"
 import {useEffect, useState} from "react";
+import {useTriggerEffect} from "../utils";
 
 export async function getServerSideProps(context) {
   return {
@@ -19,15 +20,33 @@ export async function getServerSideProps(context) {
 
 export default function Home(props) {
   const router = useRouter()
-
+  const [newsEffectTrigger, newsTriggerEffect] = useTriggerEffect()
   const [useNews, setNews] = useState(props.news)
+  const [topCreators, setTopCreators] = useState(props.topCreators)
   const [useA, setA] = useState(0)
 
   useEffect(() => {
-    setNews(props.news)
-  }, [router.query.order, router.query.cat])
+    setNews(n => {
+      for (const news of n) {
+        switch(news.rating) {
+          case 1: news.rating = 0;
+            break;
+          case 0: news.rating = -1;
+            break;
+          case -1:news.rating =  1;
+        }
+      }
+      return n
+    })
+  }, [router.query, newsEffectTrigger])
 
-
+  useEffect(() => {
+    const aux = props.topCreators
+    const first = aux[0]
+    aux[0] = aux[1]
+    aux[1] = first
+    setTopCreators(aux)
+  }, [newsEffectTrigger])
 
   return (
     <>
@@ -40,11 +59,11 @@ export default function Home(props) {
           <TopNewTabs></TopNewTabs>
           <div className="container-fluid">
             <MainCardsContainer rows={2}>
-              {useNews.map( n => <Article setNews={setNews} key={n.id} {...n}></Article>)}
+              {useNews.map( n => <Article triggerEffect={newsTriggerEffect} setNews={setNews} key={n.id} {...n}></Article>)}
             </MainCardsContainer>
           </div>
         </div>
-        <TopCreatorsPanel creators = {props.topCreators.map(c => <TopCreator key={c.id} {...c}></TopCreator>)}></TopCreatorsPanel>
+        <TopCreatorsPanel triggerEffect={newsTriggerEffect} creators = {topCreators.map(c => <TopCreator key={c.id} {...c}></TopCreator>)}></TopCreatorsPanel>
       </div>
     </>
   );

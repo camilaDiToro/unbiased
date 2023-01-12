@@ -16,7 +16,7 @@ const strings = {
     "home.topCreators": "Top Creators",
     "home.type.article":"Articles",
     "home.type.creator":"Creators",
-    "home.upvotes": (params) => `${params[0]*100}% upvoted`,
+    "home.upvotes": (params) => `${parseInt(params[0]*100)}% upvoted`,
     "home.read": (params) => `${params[0]} min read`,
     "home.interactions": (params) => `${params[0]} ${params[0] === 1 ? 'interaction' : 'interactions'}`,
     "search.filter": (params) => `Cancel search filter: \"${params[0]}\"`,

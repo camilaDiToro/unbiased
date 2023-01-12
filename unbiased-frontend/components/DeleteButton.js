@@ -9,6 +9,7 @@ export default function DeleteButton(props) {
     const isMyProfile = loggedUser && props.creatorId === loggedUser.id
     const onDelete = (e) => {
         alert(`Deleted ${props.comment ? 'comment' : 'article'} of id ${props.id}`)
+        props.triggerEffect()
     }
     return isMyProfile ? <>
         <Modal onClickHandler={onDelete} id={`binModal${props.id}`} title={I18n(props.comment ? "showNews.deleteCommentQuestion" : "profile.modal.question")} body={I18n(props.comment ? "showNews.deleteCommentBody" : "profile.modal.msg")}

@@ -7,14 +7,26 @@ import Script from "next/script"
 import Navbar from "../components/Navbar";
 import AppWrapper, {useAppContext} from "../context"
 import Head from "next/head";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
+import TimeAgo from "javascript-time-ago";
+import es from "javascript-time-ago/locale/es";
+import en from 'javascript-time-ago/locale/en'
+
 
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter()
   useEffect(() => {
   }, [router.isReady]);
+
+  const [addedLocale, setAddLocale] = useState(false)
+
+  if(!addedLocale) {
+    TimeAgo.addLocale(en)
+    TimeAgo.addLocale(es)
+    setAddLocale(true)
+  }
 
 
   return <div id="main"  className="d-flex flex-column">

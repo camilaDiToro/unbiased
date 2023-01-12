@@ -13,6 +13,7 @@ export default function PinButton(props) {
         } else {
             alert(`Unpinned article of id ${props.id}`)
         }
+        props.triggerEffect()
     }
     return isMyProfile ? <>
         <Modal onClickHandler={onPinOrUnpin} id={`pingModal${props.id}`} title={I18n("profile.pin.question")} body={I18n("profile.pin.body")}/>

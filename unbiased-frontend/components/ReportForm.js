@@ -4,9 +4,10 @@ import {useAppContext} from "../context";
 export default function ReportForm(props) {
     const {I18n} = useAppContext()
 
-    const [reason, setReason] = props.state
+    const [reason, setReason] = useState('')
 
     const reportReasons = ["report.inappropiate", "report.notSerious", "report.violent", "report.lie"]
+
 
 
     const handleChange = (e) => {
@@ -18,6 +19,17 @@ export default function ReportForm(props) {
         }
 
     }
+
+    const handler = (e) => {
+        if (props.comment) {
+            alert(`reported comment of id ${props.id} with ${reason}`)
+        } else {
+            alert(`reported news of id ${props.id} with ${reason}`)
+        }
+        props.triggerEffect()
+    }
+
+    props.handlerArray[0] = handler
 
     return <>
         <div className="input-group">

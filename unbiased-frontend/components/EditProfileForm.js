@@ -11,8 +11,8 @@ export default function EditProfileForm(props) {
     });
 
     const handleEditFormSubmit = (e) => {
+        alert(`Edit of profile of id ${props.id} completed`)
         props.triggerEffect()
-        alert('Edit profile completed')
     }
 
     props.handlerArray[0] = handleEditFormSubmit

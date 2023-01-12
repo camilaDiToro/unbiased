@@ -12,6 +12,7 @@ import ProfileLink from "./ProfileLink";
 import Bookmark from "./Bookmark";
 import DeleteButton from "./DeleteButton";
 import PinButton from "./PinButton";
+import UpvoteButtons from "./UpvoteButtons";
 
 
 
@@ -27,7 +28,7 @@ export default function Article(props) {
         // } else {
         //     setUpvote(1)
         // }
-        props.setNews(news)
+        props.triggerEffect()
     }
 
     const handleDownvote = async (e) => {
@@ -36,6 +37,8 @@ export default function Article(props) {
         // } else {
         //     setUpvote(-1)
         // }
+        props.triggerEffect()
+
     }
 
     const handleSave = async (e) => {
@@ -44,6 +47,8 @@ export default function Article(props) {
         // } else {
         //     setSaved(true)
         // }
+        props.triggerEffect()
+
     }
 
     const handlePin = async (e) => {
@@ -52,14 +57,11 @@ export default function Article(props) {
         // } else {
         //     setPinned(true)
         // }
+        props.triggerEffect()
+
     }
 
-    let upvoteClass = ''
 
-    if (props.rating > 0)
-        upvoteClass = 'upvoted'
-    else if (props.rating < 0)
-        upvoteClass = 'downvoted'
 
     return <>
 
@@ -68,19 +70,7 @@ export default function Article(props) {
                 <PositivityIndicator {...props.stats}></PositivityIndicator>
                 <div className={`d-flex flex-column justify-content-between ${props.image ? 'w-60' : 'w-100'}`}>
                     <div className="d-flex w-100">
-                        <div className="upvote-div-profile d-flex flex-column align-items-center m-3">
-                            <img id="upvote"
-                                 className="svg-btn hover-hand"
-                                 onClick={handleUpvote}
-                                 src={`/img/upvote${props.rating > 0 ? '-clicked' : ''}.svg`}/>
-                            <div id="rating" className={upvoteClass}>
-                                {props.upvotes}
-                            </div>
-                            <img id="downvote"
-                                 className="svg-btn hover-hand"
-                                 onClick={handleDownvote}
-                                 src={`/img/downvote${props.rating < 0 ? '-clicked' : ''}.svg`}/>
-                        </div>
+                        <UpvoteButtons triggerEffect={props.triggerEffect} upvotes={props.upvotes} rating={props.rating}></UpvoteButtons>
                         <div className="card-body-home">
                             <Link className="link max-h-10" href={`/news/${props.id}`}>
                                 <h5 className="link-text text-ellipsis">
@@ -109,14 +99,14 @@ export default function Article(props) {
                         </div>
                         <div className="d-flex align-items-center" role="group">
 
-                            {props.profileArticle ? <DeleteButton creatorId={props.creator.id} id={props.id} ></DeleteButton> : <></>}
+                            {props.profileArticle ? <DeleteButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} ></DeleteButton> : <></>}
 
                             {
-                                props.profileArticle ? <PinButton creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>
+                                props.profileArticle ? <PinButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>
                             }
 
 
-                            <Bookmark saved={props.saved} onSave={handleSave}></Bookmark>
+                            <Bookmark id={props.id} triggerEffect={props.triggerEffect} saved={props.saved} ></Bookmark>
 
                         </div>
                     </div>

@@ -13,7 +13,7 @@ export default function Modal(props) {
 
     const handler = (e) => {
         props.onClickHandler && props.onClickHandler(e);
-    props.onClickHandlerArray[0] && props.onClickHandlerArray[0](e)
+        props.onClickHandlerArray && props.onClickHandlerArray[0] && props.onClickHandlerArray[0](e)
         handleCloseModal()
     }
 

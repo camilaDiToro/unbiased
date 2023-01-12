@@ -112,22 +112,34 @@ const types = {
         creator: PropTypes.shape(TopCreator)
     },
     Bookmark: {
-        onSave: PropTypes.func.isRequired,
-        saved: PropTypes.bool
-    },
-    ReportFlag: {
-        comment: PropTypes.bool,
+        triggerEffect: PropTypes.func.isRequired,
+        saved: PropTypes.bool,
         id: PropTypes.number.isRequired
     },
+    ReportFlag: {
+        triggerEffect: PropTypes.func.isRequired,
+        comment: PropTypes.bool,
+        id: PropTypes.number.isRequired,
+    },
     DeleteButton: {
+        triggerEffect: PropTypes.func.isRequired,
         id: PropTypes.number.isRequired,
         comment: PropTypes.bool,
         creatorId: PropTypes.number.isRequired
     },
     PinButton: {
+        triggerEffect: PropTypes.func.isRequired,
         id: PropTypes.number.isRequired,
         pinned: PropTypes.bool.isRequired,
         creatorId: PropTypes.number.isRequired
+    },
+    Comment: {
+        id: PropTypes.number.isRequired,
+        creator: TopCreator,
+        body: PropTypes.string.isRequired,
+        datetime: PropTypes.string.isRequired,
+        upvotes: PropTypes.number.isRequired,
+        rating: PropTypes.number,
     }
 }
 
