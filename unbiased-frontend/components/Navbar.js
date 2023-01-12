@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 import {useAppContext} from "../context";
 import types from "../types";
+import {useState} from "react";
 
 
 
@@ -10,16 +11,21 @@ import types from "../types";
 export default function Navbar(props) {
     const {I18n, loggedUser} = useAppContext()
     const router = useRouter()
-
+    const [query, setQuery] = useState(router.query.query || '')
     const goToSearchPage = (e) => {
         if (e.key === 'Enter') {
             router.push({
-                pathname: '/search',
-                query: {query: e.target.value}
+                pathname: '/',
+                query: {type: router.query.type, query: e.target.value}
             })
         }
     }
 
+    const paths = ['/login', '/register']
+
+    if (paths.includes(router.pathname)) {
+        return <></>
+    }
 
     return <nav className="d-flex navbar navbar-dark navbar-expand-sm bg-primary text-white h-75px">
         <div className="d-flex container-fluid h-100">
@@ -47,6 +53,8 @@ export default function Navbar(props) {
                             style={{backgroundImage: 'url("/img/loupe-svgrepo-com.svg")'}}
                             className="search-form search form-control text-white"
                             type="search" placeholder={I18n("navbar.search")} id="query" name="query"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
                             onKeyDown={goToSearchPage}
                         />
                     </div>
@@ -103,11 +111,9 @@ export default function Navbar(props) {
                             <div className="text-decoration-none text-white" >
                                 <img className="moderation-img"
                                      src="/img/log-out-svgrepo-com.svg" alt="..."/>
-                                {I18n("navbar.logout")}
+                                {I18n("navbar.logOut")}
                             </div>
                         </Link>
-
-
                     </div>
 
                 </div>

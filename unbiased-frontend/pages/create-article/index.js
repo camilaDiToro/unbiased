@@ -9,6 +9,7 @@ import ModalTrigger from "../../components/ModalTrigger";
 import BackButton from "../../components/BackButton";
 import Modal from "../../components/Modal";
 import Head from "next/head";
+import {useRouter} from "next/router";
 
 
 const MarkdownEditor = dynamic(
@@ -21,6 +22,7 @@ const MarkdownEditor = dynamic(
 
 
 export default function CreateArticle(props) {
+    const router = useRouter()
     const [article, setArticle] = useState({
         title: '',
         subtitle: '',

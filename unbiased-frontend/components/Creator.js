@@ -16,7 +16,7 @@ return <>
                             <img className="rounded-circle object-fit-cover mr-1"
                                  src={props.hasImage ? `/profile/${props.id}/image` : "/img/profile-image.png"} alt=""/>
                         </div>
-                        <div className="link-text card-name-text text-ellipsis-1">{props.nameOrEmail}</div>
+                        <Link href={`/profile/${props.id}`} className="link-text text-white card-name-text text-ellipsis-1">{props.nameOrEmail}</Link>
 
                     </div>
                 </div>

@@ -10,11 +10,15 @@ import NewsCategoryTabs from "../components/NewsCategoryTabs";
 import {news, users} from "../hardcoded"
 import {useEffect, useState} from "react";
 import {useTriggerEffect} from "../utils";
+import CancelSearchLink from "../components/CancelSearchLink";
+import ProfileCardTypeTab from "../components/ProfileCardTypeTab";
+import Creator from "../components/Creator";
 
 export async function getServerSideProps(context) {
   return {
     props: {news,
-      topCreators: users },
+      topCreators: users,
+      creators: users},
   }
 }
 
@@ -22,22 +26,32 @@ export default function Home(props) {
   const router = useRouter()
   const [newsEffectTrigger, newsTriggerEffect] = useTriggerEffect()
   const [useNews, setNews] = useState(props.news)
+  const [useUsers, setUsers] = useState(props.creators)
   const [topCreators, setTopCreators] = useState(props.topCreators)
-  const [useA, setA] = useState(0)
+  const {I18n} = useAppContext()
+
 
   useEffect(() => {
-    setNews(n => {
-      for (const news of n) {
-        switch(news.rating) {
-          case 1: news.rating = 0;
-            break;
-          case 0: news.rating = -1;
-            break;
-          case -1:news.rating =  1;
+    if (router.query.query && router.query.type === 'creator') {
+      const aux = props.creators
+      const first = aux[0]
+      aux[0] = aux[1]
+      aux[1] = first
+      setUsers(aux)
+    } else {
+      setNews(n => {
+        for (const news of n) {
+          switch(news.rating) {
+            case 1: news.rating = 0;
+              break;
+            case 0: news.rating = -1;
+              break;
+            case -1:news.rating =  1;
+          }
         }
-      }
-      return n
-    })
+        return n
+      })
+    }
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {
@@ -50,16 +64,19 @@ export default function Home(props) {
 
   return (
     <>
-    {/*<Head>*/}
-    {/*  <title>unbiased - Home </title>*/}
-    {/*</Head>*/}
-      <NewsCategoryTabs></NewsCategoryTabs>
+    <Head>
+      <title>unbiased - Home </title>
+    </Head>
+      {router.query.query ? <></> : <NewsCategoryTabs></NewsCategoryTabs>}
       <div className="d-flex flex-column flex-xl-row ">
         <div className="w-100 w-xl-75 ">
           <TopNewTabs></TopNewTabs>
+          {router.query.query ? <><CancelSearchLink text={I18n("search.filter", [router.query.query])}></CancelSearchLink> <ProfileCardTypeTab></ProfileCardTypeTab></> : <></>}
           <div className="container-fluid">
             <MainCardsContainer rows={2}>
-              {useNews.map( n => <Article triggerEffect={newsTriggerEffect} setNews={setNews} key={n.id} {...n}></Article>)}
+              {/*{useNews.map( n => <Article triggerEffect={newsTriggerEffect} setNews={setNews} key={n.id} {...n}></Article>)}*/}
+              { router.query.query && router.query.type === 'creator' ? useUsers.map(c => <Creator key={`creator${c.id}`} {...c}></Creator>) :
+                  useNews.map(c => <Article key={`article${c.id}`} {...c}></Article>)}
             </MainCardsContainer>
           </div>
         </div>

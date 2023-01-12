@@ -56,7 +56,7 @@ const strings = {
     "profile.modal.infoChangeProfileimg": "Change your profile image",
     "profile.modal.infoChangeAddDescription": "Add a description",
     "profile.modal.enabled": "Enabled",
-    "profile.modal.disabled": "Desabled",
+    "profile.modal.disabled": "Disabled",
     "profile.pin.question": "Are you sure you want to pin the article?",
     "profile.pin.body": "Pinning this article it will appear on top of the rest of the news. Are you sure you would like to continue?",
     "profile.unpin.question": "Are you sure you want to unpin the article?",
