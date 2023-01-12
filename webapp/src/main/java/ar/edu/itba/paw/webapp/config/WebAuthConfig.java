@@ -7,6 +7,7 @@ import ar.edu.itba.paw.webapp.auth.handlers.AuthSuccessHandler;
 import ar.edu.itba.paw.webapp.auth.handlers.CustomAccessDeniedHandler;
 import ar.edu.itba.paw.webapp.auth.LoginFailureHandler;
 import ar.edu.itba.paw.webapp.auth.CustomUserDetailsService;
+import ar.edu.itba.paw.webapp.auth.jwt.JwtAuthProvider;
 import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,6 +61,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Value("${spa.url}")
     private String spaUrl;
 
+    @Autowired
+    private JwtAuthProvider jwtAuthProvider;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -79,6 +83,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        auth.authenticationProvider(jwtAuthProvider);
     }
 
     @Bean
@@ -128,7 +133,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().headers().cacheControl().disable()
                 .and().authorizeRequests()
                     //.antMatchers("/login", "/create").anonymous()
-                    .antMatchers (GET, "/api/users").hasAuthority("ADMIN")
+                    .antMatchers (GET, "/api/users").hasRole("ADMIN")
                     .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
                     .antMatchers("/owner/**").hasRole("OWNER")
                     .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",

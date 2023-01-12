@@ -48,18 +48,18 @@ public class JwtTokenServiceImpl implements JwtTokenService{
                .withExpiresAt(expiresAt)
                .withIssuedAt(new Date())
                .withNotBefore(new Date())
-               .withClaim("roles", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+               .withClaim("authorities", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                .sign(Algorithm.HMAC256(jwtSecret.getBytes()));
     }
 
-    @Override
-    public UserDetails validateTokenAndGetDetails(final String token) {
-        final String plainToken = token.substring("Bearer ".length());
-        final DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(jwtSecret.getBytes())).build().verify(plainToken);
 
-        final List<String> roles = decodedJWT.getClaim("roles").asList(String.class);
-        Collection<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        return new User(decodedJWT.getSubject(), "", true, true, true, true, authorities);
+    //TODO: BETTER TOKEN VALIDATON
+    @Override
+    public JwtTokenDetails validateTokenAndGetDetails(final String token) {
+       final DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(jwtSecret.getBytes())).build().verify(token);
+
+        final List<String> authorities = decodedJWT.getClaim("authorities").asList(String.class);
+        return new JwtTokenDetails.Builder().withAuthorities(authorities).withEmail(decodedJWT.getSubject()).build();
     }
 
     @Override
