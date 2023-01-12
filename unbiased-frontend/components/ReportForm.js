@@ -3,8 +3,8 @@ import {useAppContext} from "../context";
 
 export default function ReportForm(props) {
     const {I18n} = useAppContext()
-    const [reason, setReason] = useState('');
 
+    const [reason, setReason] = props.state
 
     const reportReasons = ["report.inappropiate", "report.notSerious", "report.violent", "report.lie"]
 

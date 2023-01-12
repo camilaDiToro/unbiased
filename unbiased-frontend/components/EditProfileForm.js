@@ -10,6 +10,13 @@ export default function EditProfileForm(props) {
         mailOptions: props.mailOptions
     });
 
+    const handleEditFormSubmit = (e) => {
+        props.triggerEffect()
+        alert('Edit profile completed')
+    }
+
+    props.handlerArray[0] = handleEditFormSubmit
+
     const [filename, setFilename] = useState(I18n("createArticle.selectFile"))
 
     const mailOptions = ["mailOption.follow", "mailOption.comment", "mailOption.folowingPublished", "mailOption.positivityChanged"]

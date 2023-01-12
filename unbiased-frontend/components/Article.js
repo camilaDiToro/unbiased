@@ -10,6 +10,8 @@ import FormattedDate from "./FormattedDate";
 import ProfilePic from "./ProfilePic";
 import ProfileLink from "./ProfileLink";
 import Bookmark from "./Bookmark";
+import DeleteButton from "./DeleteButton";
+import PinButton from "./PinButton";
 
 
 
@@ -60,8 +62,6 @@ export default function Article(props) {
         upvoteClass = 'downvoted'
 
     return <>
-        <Modal id={`pingModal${props.id}`} title={I18n("profile.pin.question")} body={I18n("profile.pin.body")} onClickHandler={handlePin}/>
-        <Modal id={`binModal${props.id}`} title={I18n("profile.modal.question")} body={I18n("profile.modal.msg")} />
 
         <div className="col mb-4">
             <div className="card h-100 d-flex flex-row max-h-300px">
@@ -103,34 +103,17 @@ export default function Article(props) {
                     <div className="d-flex justify-content-between p-2 w-100">
                         <div className="d-flex align-items-center w-auto gap-1">
                             <div className="img-container-article">
-                                <ProfilePic id={props.creator.id} hasImage={props.creator.hasImage}></ProfilePic>
+                                <ProfilePic tier={props.creator.tier} id={props.creator.id} hasImage={props.creator.hasImage}></ProfilePic>
                             </div>
                             <ProfileLink {...props.creator}></ProfileLink>
                         </div>
                         <div className="d-flex align-items-center" role="group">
 
-                            {props.profileArticle && isMyProfile ? <button data-toggle="modal" data-target={`#binModal${props.id}`} className="btn bin-modal"
-                                                  id="bin_button">
-                                <Tooltip text={I18n("tooltip.deleteNews")} position="bottom">
-                                    <img src="/img/bin-svgrepo-com.svg" alt="..."
-                                         className="icon-profile"
-                                    />
-                                </Tooltip>
-                            </button> : <></>}
+                            {props.profileArticle ? <DeleteButton creatorId={props.creator.id} id={props.id} ></DeleteButton> : <></>}
 
                             {
-                                props.profileArticle ? <ModalTrigger modalId={`pingModal${props.id}`}
-                                                            className="svg-btn hover-hand">
-                                    <Tooltip position="bottom" text={I18n("tooltip.pin")} >
-                                        <img className="icon-profile svg-btn svg-bookmark"
-                                             src={`/img/pin${props.pinned ? '-clicked' : ''}.svg`} alt="" />
-                                    </Tooltip>
-                                </ModalTrigger> : <></>
+                                props.profileArticle ? <PinButton creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>
                             }
-
-
-
-
 
 
                             <Bookmark saved={props.saved} onSave={handleSave}></Bookmark>
