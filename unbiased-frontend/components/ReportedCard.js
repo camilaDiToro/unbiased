@@ -42,7 +42,7 @@ export default function ReportedCard(props) {
                                     </div>
                                     <div className="d-flex align-items-center mr-2" role="group">
                                         <DeleteButton comment={props.comment} triggerEffect={props.triggerEffect} admin id={props.id}></DeleteButton>
-                                        <Link href="/" className="font-weight-bold hover-hand link">
+                                        <Link href={`/admin/${props.pageName}_detail`} className="font-weight-bold hover-hand link">
                                             <div className="link-text">{ctx.I18n("moderation.details")}</div>
                                         </Link>
                                     </div>
