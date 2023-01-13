@@ -9,6 +9,7 @@ import MainCardsContainer from "../components/MainCardsContainer";
 import NewsCategoryTabs from "../components/NewsCategoryTabs";
 import {news, users} from "../hardcoded"
 import {useEffect, useState} from "react";
+import Pagination from "../components/Pagination";
 
 export async function getServerSideProps(context) {
   return {
@@ -46,6 +47,7 @@ export default function Home(props) {
         </div>
         <TopCreatorsPanel creators = {props.topCreators.map(c => <TopCreator key={c.id} {...c}></TopCreator>)}></TopCreatorsPanel>
       </div>
+      <Pagination></Pagination>
     </>
   );
 }

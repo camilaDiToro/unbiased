@@ -10,6 +10,8 @@ import NewsCategoryPills from "../../../components/NewsCategoryPills";
 import ProfileLink from "../../../components/ProfileLink";
 import Bookmark from "../../../components/Bookmark";
 import ReportFlag from "../../../components/ReportFlag";
+import DeleteButton from "../../../components/DeleteButton";
+import PinButton from "../../../components/PinButton";
 
 export async function getServerSideProps(context) {
   return {
@@ -69,6 +71,15 @@ export default function ShowNews(props) {
               </div>
               <div className="ml-2 d-flex justify-content-center align-items-center">
                 <ReportFlag id={props.id}></ReportFlag>
+              </div>
+              <div className="ml-2 d-flex justify-content-center align-items-center">
+                {props.profileArticle ? <DeleteButton creatorId={props.creator.id} id={props.id} ></DeleteButton> : <></>}
+              </div>
+              <div className="ml-2 d-flex justify-content-center align-items-center">
+                {props.profileArticle ? <DeleteButton creatorId={props.creator.id} id={props.id} ></DeleteButton> : <></>}
+              </div>
+              <div className="ml-2 d-flex justify-content-center align-items-center">
+                {props.profileArticle ? <PinButton creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>}
               </div>
             </div>: <></>}
           </div>

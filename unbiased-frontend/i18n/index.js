@@ -22,6 +22,8 @@ const strings = {
     "search.filter": (params) => `Cancel search filter: \"${params[0]}\"`,
     "search.notFound": (params) =>
       `We could not find any results that match \"${params[0]}\"`,
+    "home.pagination.first": "First",
+    "home.pagination.last": "Last",
 
     //Categories
     "order.top": "Top",
@@ -213,6 +215,8 @@ const strings = {
     "search.filter": (params) => `Cancelar filtro de búsqueda: \"${params[0]}\"`,
     "search.notFound": (params) =>
         `No se encontraron resultados para la búsqueda \"${params[0]}\"`,
+    "home.pagination.first": "Inicio",
+    "home.pagination.last": "Fin",
 
     //Categories
     "order.top": "Más popular",
@@ -241,7 +245,7 @@ const strings = {
     "profile.modal.changeMailOptions": "Notificarme por correo cuando los siguientes eventos ocurren:",
     "profile.follow": "Seguir",
     "profile.following": "Siguiendo",
-    "profile.modal.infoTitle": "Informacion de la cuenta",
+    "profile.modal.infoTitle": "Información de la cuenta",
     "profile.modal.infoAllowedMsg": "Tenes permitido:",
     "profile.modal.infoChangeUsername": "Cambiar tu nombre de usuario",
     "profile.modal.infoChangeProfileimg": "Cambiar tu imagen de perfil",
