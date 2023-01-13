@@ -6,10 +6,11 @@ import types from "../types";
 import ProfilePic from "./ProfilePic";
 import DeleteButton from "./DeleteButton";
 import ProfileLink from "./ProfileLink";
+import {useRouter} from "next/router";
 
 export default function ReportedCard(props) {
     const ctx = useAppContext()
-
+    const router = useRouter()
     return(
         <div className="tab">
             <div className="container-fluid">
@@ -42,7 +43,7 @@ export default function ReportedCard(props) {
                                     </div>
                                     <div className="d-flex align-items-center mr-2" role="group">
                                         <DeleteButton comment={props.comment} triggerEffect={props.triggerEffect} admin id={props.id}></DeleteButton>
-                                        <Link href={`/admin/${props.pageName}_detail`} className="font-weight-bold hover-hand link">
+                                        <Link href={`${router.pathname}/${props.id}`} className="font-weight-bold hover-hand link">
                                             <div className="link-text">{ctx.I18n("moderation.details")}</div>
                                         </Link>
                                     </div>
