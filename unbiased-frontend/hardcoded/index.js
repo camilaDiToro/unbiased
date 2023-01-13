@@ -112,4 +112,19 @@ const users = [
   },
 ];
 
-module.exports = { users, news };
+const reportInfo = [
+  {
+    user: "Aleca",
+    reason: "The content is not serious.",
+    datetime: "2011-10-10 14:48:00",
+    id: 1,
+  },
+  {
+    user: "Kevin",
+    reason: "The content is not serious.",
+    datetime: "2011-10-10 14:48:00",
+    id: 2,
+  },
+];
+
+module.exports = { users, news, reportInfo };
