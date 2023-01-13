@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.auth.jwt;
+/*package ar.edu.itba.paw.webapp.auth.jwt;
 
 import ar.edu.itba.paw.webapp.auth.AuthUtils;
 import ar.edu.itba.paw.webapp.auth.Credentials;
@@ -91,3 +91,4 @@ public class JwtFilter extends OncePerRequestFilter {
         return;
     }
 }
+*/

@@ -6,5 +6,4 @@ public interface JwtTokenService {
     String createAccessToken(final UserDetails userDetails);
     String createRefreshToken(final UserDetails userDetails);
     JwtTokenDetails validateTokenAndGetDetails(final String token);
-    void authenticateFromDetails(final UserDetails userDetails);
 }
