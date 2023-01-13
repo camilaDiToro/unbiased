@@ -40,12 +40,21 @@ export default function Add_admin(){
 
                     <div className="d-flex flex-column w-75 align-items-center">
                         <div className="w-100 my-3 d-flex flex-row justify-content-center">
-                            <div className=" d-flex w-100 form-inline m-2 my-lg-0 ">
+                            <div className=" d-flex w-100 m-2 my-lg-0 ">
                                 <div className="d-flex w-100 justify-content-center">
                                     <input id="searchBar_addAdmin" style={{backgroundImage: "url(/img/loupe-svgrepo-com.svg)"}} className="search-form search form-control text-white w-55"
                                            type="search" placeholder={i18n("moderation.searchAdmin")} onChange={handleChange}/>
                                 </div>
                             </div>
+
+                            <div data-toggle="tooltip" data-placement="bottom" title={i18n("tooltip.addAdmin")}>
+                                <button data-toggle="modal" data-target="#addAdminModal"
+                                        className="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent"
+                                        style={{backgroundImage: "url(/img/plus-svgrepo-com.svg)"}} >
+                                </button>
+                            </div>
+
+                            {/*TODO: modal*/}
                         </div>
                     </div>
 
