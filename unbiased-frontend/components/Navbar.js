@@ -111,7 +111,7 @@ export default function Navbar(props) {
                             <div className="text-decoration-none text-white" >
                                 <img className="moderation-img"
                                      src="/img/log-out-svgrepo-com.svg" alt="..."/>
-                                {I18n("navbar.logOut")}
+                                {I18n("navbar.logout")}
                             </div>
                         </Link>
                     </div>

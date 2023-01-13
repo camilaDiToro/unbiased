@@ -69,7 +69,7 @@ export default function Home(props) {
       <title>unbiased - Home </title>
     </Head>
       {router.query.query ? <></> : <NewsCategoryTabs></NewsCategoryTabs>}
-      <div className="d-flex flex-column flex-xl-row ">
+      <div className="d-flex flex-column flex-xl-row  flex-grow-1">
         <div className="w-100 w-xl-75 ">
           <TopNewTabs></TopNewTabs>
           {router.query.query ? <><CancelSearchLink text={I18n("search.filter", [router.query.query])}></CancelSearchLink> <ProfileCardTypeTab></ProfileCardTypeTab></> : <></>}
@@ -77,13 +77,13 @@ export default function Home(props) {
             <MainCardsContainer rows={2}>
               {/*{useNews.map( n => <Article triggerEffect={newsTriggerEffect} setNews={setNews} key={n.id} {...n}></Article>)}*/}
               { router.query.query && router.query.type === 'creator' ? useUsers.map(c => <Creator key={`creator${c.id}`} {...c}></Creator>) :
-                  useNews.map(c => <Article key={`article${c.id}`} {...c}></Article>)}
+                  useNews.map(c => <Article triggerEffect={newsTriggerEffect} key={`article${c.id}`} {...c}></Article>)}
             </MainCardsContainer>
           </div>
         </div>
         <TopCreatorsPanel triggerEffect={newsTriggerEffect} creators = {topCreators.map(c => <TopCreator key={c.id} {...c}></TopCreator>)}></TopCreatorsPanel>
       </div>
-      <Pagination></Pagination>
+      <Pagination currentPage={2} lastPage={4}></Pagination>
     </>
   );
 }

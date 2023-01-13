@@ -8,6 +8,8 @@ import {useEffect, useState} from "react";
 import {useTriggerEffect} from "../../../utils";
 import {useRouter} from "next/router";
 import AdminOrderTabs from "../../../components/AdminOrderTabs";
+import Pagination from "../../../components/Pagination";
+import Head from "next/head";
 
 export async function getServerSideProps(context) {
     return {
@@ -18,7 +20,8 @@ export async function getServerSideProps(context) {
 }
 
 export default function Reported_news(props){
-    const ctx = useAppContext()
+    const {I18n}= useAppContext()
+
     const router = useRouter()
     const [reportedNews, setReportedNews] = useState(props.news)
     const [effectTrigger, triggerEffect] = useTriggerEffect()
@@ -33,22 +36,28 @@ export default function Reported_news(props){
     }, [router.query, effectTrigger])
 
     return (
-        <div className="d-flex h-100 flex-column">
-            <div className="flex-grow-1 d-flex flex-row bg-fixed">
-                <Moderation_panel/>
-                <div className="d-flex flex-column w-75 align-items-center">
+        <>
+            <Head>
+                <title>{I18n("moderation.panel")}</title>
+            </Head>
+            <div className="d-flex h-100 flex-column">
+                <div className="flex-grow-1 d-flex flex-row bg-fixed">
+                    <Moderation_panel/>
+                    <div className="d-flex flex-column w-75 align-items-center">
                         <AdminOrderTabs></AdminOrderTabs>
-                    {
-                        reportedNews.map((n) => {
-                            return (
-                                <ReportedCard triggerEffect={triggerEffect} key={n.id} {...n}/>
-                            )
-                        })
-                    }
+                        {
+                            reportedNews.map((n) => {
+                                return (
+                                    <ReportedCard triggerEffect={triggerEffect} key={n.id} {...n}/>
+                                )
+                            })
+                        }
 
+                    </div>
                 </div>
+                {/*TODO: if not empty newList and pagination*/}
+                <Pagination currentPage={2} lastPage={4}></Pagination>
             </div>
-            {/*TODO: if not empty newList and pagination*/}
-        </div>
+        </>
     )
 }

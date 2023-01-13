@@ -4,7 +4,7 @@ const strings = {
   "en-US": {
     //NavBar
     "navbar.search": "Search",
-    "navbar.logOut": "Log out",
+    "navbar.logout": "Log out",
     "navbar.myProfile": "My profile",
     "navbar.logIn": "Log in",
     "navbar.register": "Sign up",

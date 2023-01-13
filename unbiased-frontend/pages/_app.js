@@ -44,7 +44,7 @@ function MyApp({ Component, pageProps }) {
 
     <AppWrapper>
       <Navbar/>
-      <div className="container-xxl container-fluid flex-grow-1">
+      <div className="container-xxl container-fluid flex-grow-1 d-flex flex-column">
         {/*{router.isReady ?       <Component {...pageProps} />*/}
         {/*:<></>}*/}
         <Component {...pageProps} />

@@ -18,6 +18,7 @@ import {useRouter} from "next/router";
 import EditProfileForm from "../../../components/EditProfileForm";
 import UserPrivileges from "../../../components/UserPrivileges";
 import {useTriggerEffect} from "../../../utils"
+import Pagination from "../../../components/Pagination";
 
 export async function getServerSideProps(context) {
   return {
@@ -205,12 +206,15 @@ export default function Profile(props) {
         <link rel="icon" href="/img/unbiased-logo-circle.png" />
       </Head>
       <ProfileTabs userId={profileInfo.id}></ProfileTabs>
-      <div className="d-flex flex-column">
+      <div className="d-flex flex-column h-100">
         <div className="flex-grow-1 d-flex flex-row">
           <LeftSide></LeftSide>
           <RightSide></RightSide>
         </div>
+        <Pagination currentPage={2} lastPage={4}></Pagination>
+
       </div>
+
     </>
   );
 }

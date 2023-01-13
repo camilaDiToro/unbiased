@@ -7,6 +7,10 @@ import {useRouter} from "next/router";
 import AdminOrderTabs from "../../../components/AdminOrderTabs";
 import ReportedCard from "../../../components/ReportedCard";
 import {news} from "../../../hardcoded";
+import Pagination from "../../../components/Pagination";
+import Link from "next/link";
+import ModerationPanel from "../../../components/ModerationPanel";
+import Head from "next/head";
 
 export async function getServerSideProps(context) {
     return {
@@ -19,6 +23,7 @@ export async function getServerSideProps(context) {
 export default function Reported_comments(props){
 
     const ctx = useAppContext()
+    const I18n = ctx.I18n
     const items = [{text: ctx.I18n("reportOrder.reportCountDesc"), route: "/admin/reported_comments"},
         {text: ctx.I18n("reportOrder.reportCountAsc"), route: "/admin/reported_comments"},
         {text: ctx.I18n("reportOrder.reportDateDesc"), route: "/admin/reported_comments"},
@@ -36,23 +41,29 @@ export default function Reported_comments(props){
         })
     }, [router.query, effectTrigger])
     return (
-        <div className="d-flex h-100 flex-column">
-            <div className="flex-grow-1 d-flex flex-row">
+        <>
+            <Head>
+                <title>{I18n("moderation.panel")}</title>
+            </Head>
+            <div className="d-flex h-100 flex-column">
+                <div className="flex-grow-1 d-flex flex-row">
 
-                <Moderation_panel/>
+                    <Moderation_panel/>
 
-                <div className="d-flex flex-column w-75 align-items-center">
-                    <AdminOrderTabs></AdminOrderTabs>
-                    {
-                        reportedComments.map((n) => {
-                            return (
-                                <ReportedCard comment triggerEffect={triggerEffect} key={n.id} {...n}/>
-                            )
-                        })
-                    }
+                    <div className="d-flex flex-column w-75 align-items-center">
+                        <AdminOrderTabs></AdminOrderTabs>
+                        {
+                            reportedComments.map((n) => {
+                                return (
+                                    <ReportedCard comment triggerEffect={triggerEffect} key={n.id} {...n}/>
+                                )
+                            })
+                        }
+                    </div>
                 </div>
+                <Pagination currentPage={2} lastPage={4}></Pagination>
 
             </div>
-        </div>
+        </>
     )
 }

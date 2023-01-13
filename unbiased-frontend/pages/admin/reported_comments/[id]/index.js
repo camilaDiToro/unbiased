@@ -1,13 +1,12 @@
-import ModerationPanel from "../../../../components/ModerationPanel";
-import Link from "next/link";
-import {reportInfo} from "hardcoded"
 import {useAppContext} from "../../../../context";
 import {useRouter} from "next/router";
-import {useState} from "react";
-import Modal from "../../../../components/Modal";
-import {useTriggerEffect} from "../../../../utils";
-import ReportReason from "../../../../components/ReportReason";
 import Head from "next/head";
+import Modal from "../../../../components/Modal";
+import ModerationPanel from "../../../../components/ModerationPanel";
+import Link from "next/link";
+import ReportReason from "../../../../components/ReportReason";
+import {reportInfo} from "../../../../hardcoded";
+
 
 export async function getServerSideProps(context) {
     return {
@@ -18,21 +17,22 @@ export async function getServerSideProps(context) {
     }
 }
 
-export default function ReportedNewsDetail(props){
+export default function ReportedCommentDetail(props){
+
     const {I18n} = useAppContext()
     const actualReportInfo = props.reportInfo
     const router = useRouter()
 
     const onDelete = () => {
-        alert(`deleted article of id = ${props.id}`)
-        router.push('/admin/reported_news')
+        alert(`deleted comment of id = ${props.id}`)
+        router.push('/admin/reported_comments')
     }
     return (<>
             <Head>
                 <title>{I18n("moderation.panel")}</title>
             </Head>
             <div className="d-flex flex-row h-100">
-                <Modal onClickHandler={onDelete} id="binModal" title={I18n("profile.modal.question")} body={I18n("profile.modal.msg")} acceptText={I18n("moderation.delete")}/>
+                <Modal onClickHandler={onDelete} id="binModal" title={I18n("showNews.deleteCommentQuestion")} body={I18n("showNews.deleteCommentBody")} acceptText={I18n("moderation.delete")}/>
                 <ModerationPanel/>
 
                 <div className="d-flex w-75 flex-column">
@@ -57,7 +57,7 @@ export default function ReportedNewsDetail(props){
                         </tbody>
                     </table>
 
-                    <button data-toggle="modal" data-target="#binModal" className="btn btn-danger delete-btn">{I18n("moderation.delete")}</button>
+                    <button data-toggle="modal" data-target="#binModal" className="btn btn-danger delete-btn">{I18n("moderation.deleteComment")}</button>
                 </div>
 
                 {/*TODO: Hay un if al final, agregar*/}

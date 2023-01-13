@@ -17,7 +17,7 @@ export default function ReportFlag(props) {
         <ModalTrigger modalId={`report${props.comment ? 'Comment' : 'Article'}${props.id}`}>
             <Tooltip text={tooltipMap[`${!!props.reported}`]} position="bottom" >
                 <img id="save"
-                     className="icon-index svg-btn svg-bookmark bookmark"
+                     className={`icon-index ${props.reported ? '' : 'svg-btn'} svg-bookmark bookmark`}
                      src={`/img/flag${props.reported ? '-clicked' : ''}.svg`}/>
             </Tooltip>
         </ModalTrigger>

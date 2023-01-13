@@ -1,6 +1,7 @@
 import TopNewTabs from "./TopNewTabs";
 import Comment from "./Comment";
 import { useAppContext } from "../context";
+import Pagination from "./Pagination";
 
 export default function CommentList(props) {
   const {I18n, loggedUser}= useAppContext();
@@ -12,8 +13,7 @@ export default function CommentList(props) {
           {I18n("showNews.comments")}
         </h2>
         <div className="d-flex flex-column w-100 mb-4">
-          <TopNewTabs></TopNewTabs>
-          <div className="d-flex flex-column mt-4 mb-4">
+          <div className="flex-grow-1 d-flex flex-column mt-4 mb-4">
             <div className="form-group w-100">
                   <textarea name="comment" className="form-control w-100 custom-comment-area text-white" rows="5"
                             id="comment-input"
@@ -23,8 +23,12 @@ export default function CommentList(props) {
               {I18n("showNews.comment.submit")}
             </button>
           </div>
+          <TopNewTabs></TopNewTabs>
+
           {props.comments.map(c => <Comment triggerEffect={props.triggerEffect} key={c.id} {...c}></Comment>)}
         </div>
+        {props.comments.length ? <Pagination currentPage={2} lastPage={4}></Pagination> : <></>}
+
       </div>
     </>
   );
