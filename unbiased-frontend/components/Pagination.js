@@ -17,6 +17,7 @@ export default function Pagination(){
         </li>
 
         {pages.map(c => <Link key={c} href={{
+          pathname: "/",
           }}>
             <li class="page-item">
               <div class="page-link " >
