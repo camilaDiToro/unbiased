@@ -22,6 +22,8 @@ const strings = {
     "search.filter": (params) => `Cancel search filter: \"${params[0]}\"`,
     "search.notFound": (params) =>
       `We could not find any results that match \"${params[0]}\"`,
+    "home.pagination.first": "First",
+    "home.pagination.last": "Last",
 
     //Categories
     "order.top": "Top",
@@ -70,7 +72,7 @@ const strings = {
       `No results found for filter \"${params[0]}\"`,
 
     //Error
-    "error.articlNotFound": "The news article you're looking for doesn't exist.",
+    "error.articleNotFound": "The news article you're looking for doesn't exist.",
     "error.commentNotFound": "The comment you're looking for doesn't exist.",
     "error.userNotFound": "The user you're looking for doesn't exist.",
     "error.invalidCategory": "Invalid category.",
@@ -213,6 +215,8 @@ const strings = {
     "search.filter": (params) => `Cancelar filtro de búsqueda: \"${params[0]}\"`,
     "search.notFound": (params) =>
         `No se encontraron resultados para la búsqueda \"${params[0]}\"`,
+    "home.pagination.first": "Inicio",
+    "home.pagination.last": "Fin",
 
     //Categories
     "order.top": "Más popular",
@@ -241,7 +245,7 @@ const strings = {
     "profile.modal.changeMailOptions": "Notificarme por correo cuando los siguientes eventos ocurren:",
     "profile.follow": "Seguir",
     "profile.following": "Siguiendo",
-    "profile.modal.infoTitle": "Informacion de la cuenta",
+    "profile.modal.infoTitle": "Información de la cuenta",
     "profile.modal.infoAllowedMsg": "Tenes permitido:",
     "profile.modal.infoChangeUsername": "Cambiar tu nombre de usuario",
     "profile.modal.infoChangeProfileimg": "Cambiar tu imagen de perfil",
@@ -261,7 +265,7 @@ const strings = {
       `No se encontraron resultados para el filtro \"${params[0]}\"`,
 
     //Error
-    "error.articlNotFound": "El artículo buscado no existe.",
+    "error.articleNotFound": "El artículo buscado no existe.",
     "error.commentNotFound": "El comentario buscado no existe.",
     "error.userNotFound": "El usuario buscado no existe.",
     "error.invalidCategory": "Categoría inválida.",

@@ -13,6 +13,7 @@ import {useTriggerEffect} from "../utils";
 import CancelSearchLink from "../components/CancelSearchLink";
 import ProfileCardTypeTab from "../components/ProfileCardTypeTab";
 import Creator from "../components/Creator";
+import Pagination from "../components/Pagination";
 
 export async function getServerSideProps(context) {
   return {
@@ -82,6 +83,7 @@ export default function Home(props) {
         </div>
         <TopCreatorsPanel triggerEffect={newsTriggerEffect} creators = {topCreators.map(c => <TopCreator key={c.id} {...c}></TopCreator>)}></TopCreatorsPanel>
       </div>
+      <Pagination></Pagination>
     </>
   );
 }
