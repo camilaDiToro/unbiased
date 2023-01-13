@@ -31,7 +31,7 @@ const news = [
         id: 5,
         hasImage: false,
         tier: "platinum",
-      }, body: 'HOlaaaaaaa', datetime: "2022-10-10 14:48:00", upvotes:3, rating: -1}]
+      }, body: 'HOlaaaaaaa', datetime: "2022-10-10 14:48:00", upvotes:3, rating: -1, reportsCount: 4}]
   },
   {
     title: "Title",

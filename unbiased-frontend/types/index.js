@@ -125,7 +125,7 @@ const types = {
         triggerEffect: PropTypes.func.isRequired,
         id: PropTypes.number.isRequired,
         comment: PropTypes.bool,
-        creatorId: PropTypes.number.isRequired
+        creatorId: PropTypes.number
     },
     PinButton: {
         triggerEffect: PropTypes.func.isRequired,
