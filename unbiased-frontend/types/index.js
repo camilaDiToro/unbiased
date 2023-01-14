@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 
-const PositivityIndicator = {positivity: PropTypes.string.isRequired,
+const PositivityIndicator = {
+    positivity: PropTypes.string.isRequired,
     upvoted: PropTypes.number.isRequired,
     interactions: PropTypes.number.isRequired}
 
@@ -8,7 +9,8 @@ const TopCreator = {
     nameOrEmail: PropTypes.string.isRequired,
     hasImage: PropTypes.bool.isRequired,
     id: PropTypes.number.isRequired,
-    tier: PropTypes.string.isRequired
+    tier: PropTypes.string.isRequired,
+    image: PropTypes.string
 }
 
 const ProgressBar = {
@@ -47,6 +49,7 @@ const types = {
     Creator: {
         ...TopCreator,
         isJournalist: PropTypes.bool.isRequired,
+        hasPositivity: PropTypes.bool.isRequired,
         stats: PropTypes.shape(PositivityIndicator)
     },
     FollowButton: {

@@ -118,7 +118,7 @@ export default function Profile(props) {
         <ProfilePic tier={profileInfo.tier}/>
 
       </div>
-      {profileInfo.isJournalist ? <PositivityIndicator {...profileInfo.stats}></PositivityIndicator>
+      {profileInfo.hasPositivity ? <PositivityIndicator {...profileInfo.stats}></PositivityIndicator>
       : <></>}
 
       {isMyProfile ? <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
