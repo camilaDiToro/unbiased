@@ -23,10 +23,6 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
         private static final int BASIC_LENGTH = 6;
         private static final int JWT_LENGTH = 7;
 
-//        @Override
-//        protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
-//            return true;
-//        }
 
         @Override
         protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {

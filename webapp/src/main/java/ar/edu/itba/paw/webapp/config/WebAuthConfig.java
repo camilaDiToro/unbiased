@@ -87,6 +87,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(jwtAuthProvider);
     }
 
+
     @Bean
     public AbstractAuthFilter abstractAuthFilter() throws Exception {
         AbstractAuthFilter abstractAuthFilter = new AbstractAuthFilter();
@@ -133,15 +134,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().headers().cacheControl().disable()
                 .and().authorizeRequests()
-                    //.antMatchers("/login", "/create").anonymous()
-                    .antMatchers (PUT, "/api/users/{\\d+}").authenticated()
                     .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
                     .antMatchers("/owner/**").hasRole("OWNER")
                     .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
                             "/news/{\\d+}/delete", "/news/{\\d+}/comment", "/news/{\\d+}/save").authenticated()
                     .antMatchers("/api/**").permitAll()
-                    .and().exceptionHandling()
-                    .accessDeniedPage("/403")
                 .and().addFilterBefore(abstractAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf()
                 .disable();
