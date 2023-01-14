@@ -6,11 +6,14 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,10 +23,10 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
         private static final int BASIC_LENGTH = 6;
         private static final int JWT_LENGTH = 7;
 
-        @Override
-        protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
-            return true;
-        }
+//        @Override
+//        protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+//            return true;
+//        }
 
         @Override
         protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
@@ -32,7 +35,12 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
         }
 
         public AbstractAuthFilter() {
-            super("/api/");
+            super(new OrRequestMatcher(
+                    new AntPathRequestMatcher("/api/users/{\\d+}", HttpMethod.PUT),
+                    new AntPathRequestMatcher("/api/users/{\\d+}/pingNews/{\\d+}", HttpMethod.PUT),
+                    new AntPathRequestMatcher("/api/users/{\\d+}/followers/{\\d+}", HttpMethod.PUT),
+                    new AntPathRequestMatcher("/api/users/{\\d+}/followers/{\\d+}", HttpMethod.DELETE)
+            ));
         }
 
         @Override

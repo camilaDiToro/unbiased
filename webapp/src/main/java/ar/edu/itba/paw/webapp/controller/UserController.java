@@ -15,6 +15,7 @@ import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
@@ -46,7 +47,7 @@ public class UserController {
     }
 
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_JSON})
     public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search) {
         final Page<User> userPage = userService.searchUsers(page, search);
 
@@ -90,10 +91,12 @@ public class UserController {
         return Response.ok(userDto).build();
     }
 
-    //TODO: CHECK THAT THE USER THAT IS BEING UPDATED IS THE ONE THAT IS LOGGED IN.
+
     @PUT
     @Path("/{userId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
     @Produces(value = { MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public Response editUser(@PathParam("userId") final long userId, @Valid final UserProfileForm userProfileForm) throws IOException {
         Optional<User> mayBeUser = userService.getUserById(userId);
 
@@ -101,11 +104,18 @@ public class UserController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        userService.updateProfile(userId, userProfileForm.getUsername(),
-                userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
-        userService.updateEmailSettings(mayBeUser.get(), MailOption.getEnumCollection(userProfileForm.getMailOptions()));
+        if(userProfileForm.getImage() != null){
+            userService.updateProfile(userId, userProfileForm.getUsername(),
+                    userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
+        }else{
+            userService.updateProfile(userId, userProfileForm.getUsername(),
+                    null, null, userProfileForm.getDescription());
+        }
+        if(userProfileForm.getMailOptions()!=null){
+            userService.updateEmailSettings(mayBeUser.get(), MailOption.getEnumCollection(userProfileForm.getMailOptions()));
+        }
 
-        return Response.ok(UserDto.fromUser(uriInfo, mayBeUser.get())).build();
+        return Response.ok(UserDto.fromUser(uriInfo, mayBeUser.get(), userService.getFollowersCount(userId), userService.getFollowingCount(userId))).build();
     }
 
     @GET
@@ -124,14 +134,12 @@ public class UserController {
 
 
     @PUT
+    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
     @Path(value = "/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}")
     public Response pingNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
-        //final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
 
         final User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         final News news =  newsService.getById(user, newsId).orElseThrow(NewsNotFoundException::new);
-
-        //TODO: check if the current user has the id userId and if he is the creator of the article.
 
         if(userService.pingNewsToggle(user,news)){
             return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinged the news of id %d", user.getUsername(), news.getNewsId()))).build();
@@ -141,8 +149,9 @@ public class UserController {
     }
 
     @PUT
-    @Path(value = "/{userId:[0-9]+}/followers}")
-    public Response followUser(@PathParam("userId") final long userId) {
+    @PreAuthorize("@ownerCheck.userMatches(#followerId)")
+    @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
+    public Response followUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
         final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
         if(userService.followUser(currentUser, userId)){
             return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
@@ -151,8 +160,9 @@ public class UserController {
     }
 
     @DELETE
-    @Path(value = "/{userId:[0-9]+}/followers}")
-    public Response unfollowUser(@PathParam("userId") final long userId) {
+    @PreAuthorize("@ownerCheck.userMatches(#followerId)")
+    @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
+    public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
         final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
         if(userService.unfollowUser(currentUser, userId)){
             return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] unfollowed user of id %d", currentUser, currentUser.getUserId(), userId))).build();

@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.auth.handlers;
 
 import ar.edu.itba.paw.webapp.auth.jwt.JwtAuthToken;
+import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenDetails;
 import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenService;
+import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -20,9 +23,10 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        // TODO:IMPROVE
-        if(! (authentication instanceof JwtAuthToken)) {
-            response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwtTokenService.createAccessToken((UserDetails) authentication.getPrincipal()));
+        if((!(authentication instanceof JwtAuthToken)) || ((JwtTokenDetails) authentication.getDetails()).getTokenType().equals(JwtTokenType.REFRESH)) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            response.addHeader("access-token", "Bearer " + jwtTokenService.createAccessToken(userDetails));
+            response.addHeader("refresh-token", "Bearer " + jwtTokenService.createRefreshToken(userDetails));
         }
     }
 }

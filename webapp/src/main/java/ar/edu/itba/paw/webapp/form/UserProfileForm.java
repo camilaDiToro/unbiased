@@ -15,7 +15,6 @@ public class UserProfileForm {
     @Length(max=50)
     private String username;
 
-
     private String description;
 
     @NotExistingMailOption

@@ -38,6 +38,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.PUT;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -133,12 +134,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().headers().cacheControl().disable()
                 .and().authorizeRequests()
                     //.antMatchers("/login", "/create").anonymous()
-                    .antMatchers (GET, "/api/users").hasRole("ADMIN")
+                    .antMatchers (PUT, "/api/users/{\\d+}").authenticated()
                     .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
                     .antMatchers("/owner/**").hasRole("OWNER")
                     .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
                             "/news/{\\d+}/delete", "/news/{\\d+}/comment", "/news/{\\d+}/save").authenticated()
-                    .antMatchers("/**").permitAll()
+                    .antMatchers("/api/**").permitAll()
                     .and().exceptionHandling()
                     .accessDeniedPage("/403")
                 .and().addFilterBefore(abstractAuthFilter(), UsernamePasswordAuthenticationFilter.class)
