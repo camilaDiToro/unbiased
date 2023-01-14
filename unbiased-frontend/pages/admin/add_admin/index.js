@@ -4,6 +4,8 @@ import Tabs from "../../../components/Tabs";
 import Pagination from "../../../components/Pagination";
 import Link from "next/link";
 import Head from "next/head";
+import i18n from "../../../i18n";
+import {useState} from "react";
 
 export default function Add_admin(){
 
@@ -13,7 +15,18 @@ export default function Add_admin(){
         {text: ctx.I18n("reportOrder.reportCountAsc"), params: {order: 'REP_COUNT_ASC'}},
         {text: ctx.I18n("reportOrder.reportDateDesc"), params: {order: 'REP_DATE_DESC'}},
         {text: ctx.I18n("reportOrder.reportDateAsc"), params: {order: 'REP_DATE_ASC'}}
-]
+    ]
+    const [details, setDetails] = useState({
+        searchInput: ""
+    })
+
+    const handleChange = (e) => {
+        const {name, value} = e.target
+
+        setDetails((prev) => {
+            return {...prev, [name]: value}
+        })
+    }
 
     return (
         <>
@@ -26,12 +39,29 @@ export default function Add_admin(){
                     <ModerationPanel/>
 
                     <div className="d-flex flex-column w-75 align-items-center">
-                        <Tabs items={items} pill selected={ctx.I18n("reportOrder.reportCountDesc")}/>
+                        <div className="w-100 my-3 d-flex flex-row justify-content-center">
+                            <div className=" d-flex w-100 m-2 my-lg-0 ">
+                                <div className="d-flex w-100 justify-content-center">
+                                    <input id="searchBar_addAdmin" style={{backgroundImage: "url(/img/loupe-svgrepo-com.svg)"}} className="search-form search form-control text-white w-55"
+                                           type="search" placeholder={i18n("moderation.searchAdmin")} onChange={handleChange}/>
+                                </div>
+                            </div>
+
+                            <div data-toggle="tooltip" data-placement="bottom" title={i18n("tooltip.addAdmin")}>
+                                <button data-toggle="modal" data-target="#addAdminModal"
+                                        className="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent"
+                                        style={{backgroundImage: "url(/img/plus-svgrepo-com.svg)"}} >
+                                </button>
+                            </div>
+
+                            {/*TODO: modal*/}
+                        </div>
                     </div>
 
                 </div>
                 <Pagination currentPage={2} lastPage={4}></Pagination>
 
-            </div></>
+            </div>
+        </>
     )
 }

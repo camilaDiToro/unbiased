@@ -7,6 +7,7 @@ import ProfilePic from "./ProfilePic";
 import DeleteButton from "./DeleteButton";
 import ProfileLink from "./ProfileLink";
 import {useRouter} from "next/router";
+import FormattedDate from "./FormattedDate";
 
 export default function ReportedCard(props) {
     const ctx = useAppContext()
@@ -30,7 +31,7 @@ export default function ReportedCard(props) {
                                         </Link>
                                         {props.comment ? <></> : <h6 className="card-subtitle py-1 text-ellipsis-2">{props.subtitle}</h6>}
                                         <span className="font-weight-light">
-                                            {props.datetime}
+                                            <FormattedDate timeAgo datetime={props.datetime}></FormattedDate>
                                         </span>
                                     </div>
                                 </div>

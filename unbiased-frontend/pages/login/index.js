@@ -16,8 +16,6 @@ export default function Login() {
 
         const {name, value} = e.target
 
-        console.log(name, value)
-
         if (name !== "rememberMe") {
             setDetails((prev) => {
                 return {...prev, [name]: value}
