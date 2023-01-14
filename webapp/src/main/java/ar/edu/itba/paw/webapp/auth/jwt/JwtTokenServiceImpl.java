@@ -23,7 +23,7 @@ public class JwtTokenServiceImpl implements JwtTokenService{
     private final String jwtIssuer;
 
     private static final long ACCESS_TOKEN_DURATION_SECS = 2 * 60;
-    private static final long REFRESH_TOKEN_DURATION_SECS = 2 * 24 * 60;
+    private static final long REFRESH_TOKEN_DURATION_SECS = 12 * 60;
 
     private static final String AUTHORITIES_CLAIM = "authorities";
     private static final String TOKEN_TYPE_CLAIM = "token_type";

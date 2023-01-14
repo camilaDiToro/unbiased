@@ -24,8 +24,10 @@ public class OwnerCheck {
         this.newsService = newsService;
     }
 
-    public boolean checkNewsOwnership(long newsId) {
-        return newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getCreatorId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+    public boolean newsOwnership(long newsId, long userId) {
+        long creatorId = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getCreatorId();
+        long currentUserId = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+        return creatorId==currentUserId && currentUserId == userId;
     }
 
     public boolean checkCommentOwnership(long commentId) {
@@ -36,6 +38,11 @@ public class OwnerCheck {
         if(!category.equals(ProfileCategory.SAVED.getDescription())){
             return true;
         }
+        Optional<User> mayBeUser = securityService.getCurrentUser();
+        return mayBeUser.filter(user -> user.getId() == userId).isPresent();
+    }
+
+    public boolean userMatches(long userId){
         Optional<User> mayBeUser = securityService.getCurrentUser();
         return mayBeUser.filter(user -> user.getId() == userId).isPresent();
     }
