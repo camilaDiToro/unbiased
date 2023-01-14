@@ -1,32 +1,62 @@
 import ModerationPanel from "../../../components/ModerationPanel";
 import {useAppContext} from "../../../context";
-import Tabs from "../../../components/Tabs";
 import Pagination from "../../../components/Pagination";
-import Link from "next/link";
 import Head from "next/head";
 import i18n from "../../../i18n";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+import {useTriggerEffect} from "../../../utils";
+import {users} from "../../../hardcoded";
+import MainCardsContainer from "../../../components/MainCardsContainer";
+import Creator from "../../../components/Creator";
+import Modal from "../../../components/Modal";
 
-export default function Add_admin(){
+export async function getServerSideProps(context) {
+    return {
+        props: {
+            users: users.filter(user => user.nameOrEmail.includes(context.query.query || ''))
+        }, // will be passed to the page component as props
+    }
+}
+
+export default function AddAdmin(props){
 
     const ctx = useAppContext()
     const I18n = ctx.I18n
-    const items = [{text: ctx.I18n("reportOrder.reportCountDesc"), params: {order: 'REP_COUNT_DESC'}},
-        {text: ctx.I18n("reportOrder.reportCountAsc"), params: {order: 'REP_COUNT_ASC'}},
-        {text: ctx.I18n("reportOrder.reportDateDesc"), params: {order: 'REP_DATE_DESC'}},
-        {text: ctx.I18n("reportOrder.reportDateAsc"), params: {order: 'REP_DATE_ASC'}}
-    ]
-    const [details, setDetails] = useState({
-        searchInput: ""
-    })
+    const router = useRouter()
+
+    const [details, setDetails] = useState(router.query.query || '')
+    const [email, setEmail] = useState('')
+    const [userList, setUserList] = useState(props.users)
+
+    const [effectTrigger, triggerEffect] = useTriggerEffect()
+
+    useEffect(() => {
+        // alert(props.users[0].nameOrEmail)
+        setUserList(props.users.filter(user => user.nameOrEmail.includes(details)))
+        // setUserList(props.users)
+
+    }, [router.query, effectTrigger])
+
+    const search = (e) => {
+        if (e.key === 'Enter') {
+            router.push({
+                pathname: router.pathname,
+                query: {...(e.target.value && {query: e.target.value})}
+            })
+        }
+    }
 
     const handleChange = (e) => {
-        const {name, value} = e.target
-
-        setDetails((prev) => {
-            return {...prev, [name]: value}
-        })
+        setDetails(e.target.value)
     }
+
+    const addAdmin = () => {
+        alert(`added user ${email} as admin`)
+        triggerEffect()
+    }
+
+    // return <></>
 
     return (
         <>
@@ -34,15 +64,38 @@ export default function Add_admin(){
                 <title>{I18n("moderation.panel")}</title>
             </Head>
             <div className="d-flex h-100 flex-column">
+                <Modal onClickHandler={addAdmin} acceptText={I18n("tooltip.addAdmin")} id="addAdminModal" title={I18n("tooltip.addAdmin")}>
+                    <div id="form-login-index" >
+                        <div className="d-flex flex-column align-items-center">
+                            <div className="d-flex align-items-center">
+                                <img className="size-img-modal-login align-self-center"
+                                     src="/img/profile-svgrepo-com.svg" alt="..."/>
+                                <label htmlFor="email-input" className="sr-only">
+                                    {I18n("login.mail.address")}
+                                </label>
+                                <input onChange={(e) => setEmail(e.target.value)} value={email} className="form-control text-white w-100 mb-2" id="email-input"
+                                            placeholder={I18n("login.mail.address")}/>
+
+                            </div>
+                            {/*<div className="my-1">*/}
+                            {/*    <form:errors cssClass="text-danger" path="email" element="small"/>*/}
+                            {/*</div>*/}
+
+
+                            {/*<button onClick={addAdmin} className="btn btn-info" type="submit">*/}
+                            {/*    {I18n("tooltip.addAdmin")}*/}
+                            {/*</button>*/}
+                        </div>
+                    </div>
+                </Modal>
                 <div className="flex-grow-1 d-flex flex-row">
 
                     <ModerationPanel/>
-
                     <div className="d-flex flex-column w-75 align-items-center">
                         <div className="w-100 my-3 d-flex flex-row justify-content-center">
                             <div className=" d-flex w-100 m-2 my-lg-0 ">
                                 <div className="d-flex w-100 justify-content-center">
-                                    <input id="searchBar_addAdmin" style={{backgroundImage: "url(/img/loupe-svgrepo-com.svg)"}} className="search-form search form-control text-white w-55"
+                                    <input onKeyDown={search} value={details} id="searchBar_addAdmin" style={{backgroundImage: "url(/img/loupe-svgrepo-com.svg)"}} className="search-form search form-control text-white w-55"
                                            type="search" placeholder={i18n("moderation.searchAdmin")} onChange={handleChange}/>
                                 </div>
                             </div>
@@ -55,6 +108,12 @@ export default function Add_admin(){
                             </div>
 
                             {/*TODO: modal*/}
+                        </div>
+                        <div className="container-fluid">
+                            <MainCardsContainer rows={3}>
+                                {userList.map(c => <Creator admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)}
+                            </MainCardsContainer>
+
                         </div>
                     </div>
 

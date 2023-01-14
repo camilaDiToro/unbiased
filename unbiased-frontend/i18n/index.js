@@ -193,6 +193,10 @@ const strings = {
     "mailOption.folowingPublished": "A journalist I follow published an article",
     "mailOption.positivityChanged": "The positivity value of my news changes",
 
+    //Owner
+    "owner.removeAdminTitle": "Are you sure you want to revoke admin privileges?",
+    "owner.removeAdminMsg": "By accepting the user will no longer be able to access the administration panel"
+
   },
   "es-ES": {
     //NavBar
@@ -387,6 +391,9 @@ const strings = {
     "mailOption.folowingPublished": "Un periodista que sigo publica una noticia",
     "mailOption.positivityChanged": "El valor de positividad de mi noticia cambia",
 
+    //Owner
+    "owner.removeAdminTitle": "¿Está seguro de que quiere quitar los privilegios de administrador?",
+    "owner.removeAdminMsg": "Si acepta, el usuario no podrá ingresar más al panel de administradores."
 
   },
 };
