@@ -143,7 +143,10 @@ const types = {
         datetime: PropTypes.string.isRequired,
         upvotes: PropTypes.number.isRequired,
         rating: PropTypes.number,
-    }
+    },
+    CommentButton: {
+
+    },
 }
 
 export default types;

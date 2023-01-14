@@ -15,6 +15,8 @@ import {useTriggerEffect} from "../../../utils";
 import UpvoteButtons from "../../../components/UpvoteButtons";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
+import DeleteButton from "../../../components/DeleteButton";
+import PinButton from "../../../components/PinButton";
 
 export async function getServerSideProps(context) {
   return {
@@ -29,6 +31,8 @@ export default function ShowNews(props) {
   const [article, setArticle] = useState(news[0])
   const [comments, setComments] = useState(news[0].comments)
   const router = useRouter()
+  const isMyArticle = loggedUser && loggedUser.id === props.id
+
   useEffect(() => {
     console.log('article refresh')
     setArticle(a => {
@@ -74,10 +78,16 @@ export default function ShowNews(props) {
             </div>
             {loggedUser ? <div className="d-flex flex-row align-items-center gap-4px">
               <div className="ml-2 d-flex justify-content-center align-items-center">
-                <Bookmark id={article.id} triggerEffect={articleTriggerEffect} saved={article.saved} onSave={(e) => {}}></Bookmark>
+                <Bookmark id={article.id} triggerEffect={articleTriggerEffect} saved={article.saved} onSave={(e) => {}}></Bookmark> : <></>
               </div>
               <div className="ml-2 d-flex justify-content-center align-items-center">
-                <ReportFlag reported={article.reported} triggerEffect={articleTriggerEffect} id={article.id}></ReportFlag>
+                 <ReportFlag reported={article.reported} triggerEffect={articleTriggerEffect} id={article.id}></ReportFlag>
+              </div>
+              <div className="ml-2 d-flex justify-content-center align-items-center">
+                {isMyArticle ? <DeleteButton creatorId={props.creator.id} id={props.id} ></DeleteButton> : <></>}
+              </div>
+              <div className="ml-2 d-flex justify-content-center align-items-center">
+                {isMyArticle ? <PinButton creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>}
               </div>
             </div>: <></>}
           </div>

@@ -9,6 +9,7 @@ import Bookmark from "./Bookmark";
 import DeleteButton from "./DeleteButton";
 import PinButton from "./PinButton";
 import UpvoteButtons from "./UpvoteButtons";
+import CommentButton from "./CommentButton";
 
 
 
@@ -97,13 +98,11 @@ export default function Article(props) {
 
                             {props.profileArticle ? <DeleteButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} ></DeleteButton> : <></>}
 
-                            {
-                                props.profileArticle ? <PinButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>
-                            }
+                            {props.profileArticle ? <PinButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>}
 
+                            {props.profileArticle ? <></> : <CommentButton triggerEffect={props.triggerEffect}></CommentButton>}
 
                             <Bookmark id={props.id} triggerEffect={props.triggerEffect} saved={props.saved} ></Bookmark>
-
                         </div>
                     </div>
                 </div>
