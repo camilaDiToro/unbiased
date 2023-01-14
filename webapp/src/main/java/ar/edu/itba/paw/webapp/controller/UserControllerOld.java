@@ -61,37 +61,37 @@
 //        return new ModelAndView("login");
 //    }
 //
-//    @RequestMapping(value = "/create", method = RequestMethod.GET)
-//    public ModelAndView createForm(@ModelAttribute("registerForm") final UserForm userForm) {
-//        return new MyModelAndView.Builder("register", "pageTitle.register", TextType.INTERCODE)
-//                .build();
-//    }
-//
-//    @RequestMapping(value = "/create", method = RequestMethod.POST)
-//    public ModelAndView create(@Valid @ModelAttribute("registerForm") final UserForm userForm, final BindingResult errors) {
-//
-//        if (errors.hasErrors()) {
-//            return createForm(userForm);
-//        }
-//
-//        final User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
-//
-//        userService.create(userBuilder);
-//        return new ModelAndView("email_verification_pending");
-//    }
-//
-//    @RequestMapping(value = "/profile/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}", method = RequestMethod.POST)
-//    public ModelAndView pingNews(@PathVariable("userId") final long userId, @PathVariable("newsId") final long newsId) {
-//        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-//        userService.pingNewsToggle(currentUser, newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new));
-//
-//        return new ModelAndView("redirect:/profile/" + userId);
-//    }
-//
-//    @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
-//    public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
-//        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
-//    }
+                                        //    @RequestMapping(value = "/create", method = RequestMethod.GET)
+                                        //    public ModelAndView createForm(@ModelAttribute("registerForm") final UserForm userForm) {
+                                        //        return new MyModelAndView.Builder("register", "pageTitle.register", TextType.INTERCODE)
+                                        //                .build();
+                                        //    }
+                                        //
+                                        //    @RequestMapping(value = "/create", method = RequestMethod.POST)
+                                        //    public ModelAndView create(@Valid @ModelAttribute("registerForm") final UserForm userForm, final BindingResult errors) {
+                                        //
+                                        //        if (errors.hasErrors()) {
+                                        //            return createForm(userForm);
+                                        //        }
+                                        //
+                                        //        final User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
+                                        //
+                                        //        userService.create(userBuilder);
+                                        //        return new ModelAndView("email_verification_pending");
+                                        //    }
+                                        //
+                                        //    @RequestMapping(value = "/profile/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}", method = RequestMethod.POST)
+                                        //    public ModelAndView pingNews(@PathVariable("userId") final long userId, @PathVariable("newsId") final long newsId) {
+                                        //        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+                                        //        userService.pingNewsToggle(currentUser, newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new));
+                                        //
+                                        //        return new ModelAndView("redirect:/profile/" + userId);
+                                        //    }
+                                        //
+                                        //    @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
+                                        //    public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
+                                        //        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
+                                        //    }
 //
 //
 //    @PreAuthorize("@ownerCheck.checkSavedNewsAccess(#category, #userId)")
@@ -153,26 +153,26 @@
 //
 //    }
 //
-//    @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
-//    public ModelAndView profileFollow(@PathVariable("userId") long userId) {
-//        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-//        userService.followUser(currentUser, userId);
-//        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
-//    }
-//
-//    @RequestMapping(value = "/profile", method = RequestMethod.POST)
-//    public ModelAndView profilePicture(@Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
-//        final User user = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-//        final long userId = user.getId();
-//        if (errors.hasErrors()) {
-//            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
-//        }
-//
-//        userService.updateProfile(userId, userProfileForm.getUsername(),
-//                userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
-//        userService.updateEmailSettings(user, MailOption.getEnumCollection(userProfileForm.getMailOptions()));
-//        return new ModelAndView("redirect:/profile/" + user.getUserId());
-//    }
+                                        //    @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
+                                        //    public ModelAndView profileFollow(@PathVariable("userId") long userId) {
+                                        //        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+                                        //        userService.followUser(currentUser, userId);
+                                        //        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
+                                        //    }
+                                        //
+                                        //    @RequestMapping(value = "/profile", method = RequestMethod.POST)
+                                        //    public ModelAndView profilePicture(@Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
+                                        //        final User user = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+                                        //        final long userId = user.getId();
+                                        //        if (errors.hasErrors()) {
+                                        //            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
+                                        //        }
+                                        //
+                                        //        userService.updateProfile(userId, userProfileForm.getUsername(),
+                                        //                userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
+                                        //        userService.updateEmailSettings(user, MailOption.getEnumCollection(userProfileForm.getMailOptions()));
+                                        //        return new ModelAndView("redirect:/profile/" + user.getUserId());
+                                        //    }
 //
 //    @RequestMapping("/verify_email")
 //    public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
@@ -187,12 +187,12 @@
 //        return mav;
 //    }
 //
-//    @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
-//    public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
-//        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-//        userService.unfollowUser(currentUser, userId);
-//        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
-//    }
+                                        //    @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
+                                        //    public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
+                                        //        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+                                        //        userService.unfollowUser(currentUser, userId);
+                                        //        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
+                                        //    }
 //
 //    @RequestMapping(value = "/email_not_verified/{status:expired|not_exists}", method = RequestMethod.GET)
 //    public ModelAndView resendVerificationEmail(@ModelAttribute("resendEmailForm") final ResendVerificationEmail userForm, @PathVariable("status") String status) {
@@ -223,11 +223,11 @@
 //
 //
 //
-//    @RequestMapping( value = "/profile/{userId:[0-9]+}/image", method = {RequestMethod.GET},
-//            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-//    @ResponseBody
-//    public byte[] profileImage(@PathVariable("userId") long userId) {
-//        return userService.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage().getBytes();
-//    }
+                                        //    @RequestMapping( value = "/profile/{userId:[0-9]+}/image", method = {RequestMethod.GET},
+                                        //            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+                                        //    @ResponseBody
+                                        //    public byte[] profileImage(@PathVariable("userId") long userId) {
+                                        //        return userService.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage().getBytes();
+                                        //    }
 //
 //}

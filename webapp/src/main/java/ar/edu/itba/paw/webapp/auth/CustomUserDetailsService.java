@@ -15,12 +15,12 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Component
-public class PawUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService us;
 
     @Autowired
-    public PawUserDetailsService(UserService us) {
+    public CustomUserDetailsService(UserService us) {
         this.us = us;
     }
 

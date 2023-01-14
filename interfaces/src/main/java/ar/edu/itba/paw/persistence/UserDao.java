@@ -23,6 +23,6 @@ public interface UserDao {
     Page<User> getAdmins(int page, String search);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);
-    void pingNewsToggle(User user, News news);
+    boolean pingNewsToggle(User user, News news);
     List<User> getFollowersWithEmailPublishNewsActive(User user);
 }
