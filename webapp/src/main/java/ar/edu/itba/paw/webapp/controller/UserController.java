@@ -55,7 +55,10 @@ public class UserController {
             return Response.noContent().build();
         }
 
-        final List<UserDto> allUsers = userPage.getContent().stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
+        final List<UserDto> allUsers = userPage.getContent().stream().map(u -> {
+
+            return UserDto.fromUser(uriInfo, u);
+        }).collect(Collectors.toList());
 
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<UserDto>>(allUsers) {})
                 .link(uriInfo.getAbsolutePathBuilder().queryParam("page", userPage.getTotalPages()).build(), "last")

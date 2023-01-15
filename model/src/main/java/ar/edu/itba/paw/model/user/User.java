@@ -108,6 +108,23 @@ public class User implements Serializable {
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Follow> following;
 
+    public Set<Follow> getFollowers() {
+        return followers;
+    }
+
+    public Tier getTier() {
+        return Tier.getTier(followers.size());
+    }
+
+    public void setFollowers(Set<Follow> followers) {
+        this.followers = followers;
+    }
+
+    @OneToMany(mappedBy="follows",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Follow> followers;
+
+
+
 
     /* package */ User() {
         //Just for Hibernate
@@ -129,7 +146,9 @@ public class User implements Serializable {
         final int downvotes = upvoteSet
                 .stream().map(upvote -> upvote.isValue() ? 0 : 1)
                 .reduce(0, Integer::sum);
-        positivityStats = new PositivityStats(upvotes, downvotes);
+        if (upvotes + downvotes > 0) {
+            positivityStats = new PositivityStats(upvotes, downvotes);
+        }
     }
 
     public void removeAdminRole(){
