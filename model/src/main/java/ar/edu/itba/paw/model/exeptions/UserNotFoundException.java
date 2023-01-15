@@ -2,10 +2,14 @@ package ar.edu.itba.paw.model.exeptions;
 
 public class UserNotFoundException extends RuntimeException {
 
-    public UserNotFoundException() {
+    public static final String ID_MSG = "User of id %d not found";
+    public static final String EMAIL_MSG = "User with email %s not found";
+
+    public UserNotFoundException(String s) {
+        super(s);
     }
 
-    public UserNotFoundException(Throwable var1) {
-        super(var1);
+    public UserNotFoundException(String s, Throwable var1) {
+        super(s,var1);
     }
 }

@@ -1,7 +1,12 @@
 package ar.edu.itba.paw.webapp.auth.jwt;
 
+import ar.edu.itba.paw.webapp.auth.exceptions.ExpiredJwtTokenException;
+import ar.edu.itba.paw.webapp.auth.exceptions.InvalidJwtClaimException;
+import ar.edu.itba.paw.webapp.auth.exceptions.InvalidJwtTokenException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.InvalidClaimException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -60,17 +65,24 @@ public class JwtTokenServiceImpl implements JwtTokenService{
 
     @Override
     public JwtTokenDetails validateTokenAndGetDetails(final String token) {
-       final DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(jwtSecret.getBytes())).withIssuer(jwtIssuer).build().verify(token);
-
-        return new JwtTokenDetails.Builder()
-                .withId(decodedJWT.getId())
-                .withEmail(decodedJWT.getSubject())
-                .withAuthorities(decodedJWT.getClaim(AUTHORITIES_CLAIM).asList(String.class))
-                .withIssuedDate(decodedJWT.getIssuedAt())
-                .withExpirationDate(decodedJWT.getExpiresAt())
-                .withToken(token)
-                .withTokenType(JwtTokenType.getByType(decodedJWT.getClaim(TOKEN_TYPE_CLAIM).asString()))
-                .build();
+       try {
+           final DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(jwtSecret.getBytes())).withIssuer(jwtIssuer).build().verify(token);
+           return new JwtTokenDetails.Builder()
+                   .withId(decodedJWT.getId())
+                   .withEmail(decodedJWT.getSubject())
+                   .withAuthorities(decodedJWT.getClaim(AUTHORITIES_CLAIM).asList(String.class))
+                   .withIssuedDate(decodedJWT.getIssuedAt())
+                   .withExpirationDate(decodedJWT.getExpiresAt())
+                   .withToken(token)
+                   .withTokenType(JwtTokenType.getByType(decodedJWT.getClaim(TOKEN_TYPE_CLAIM).asString()))
+                   .build();
+       }catch (TokenExpiredException e){
+            throw new ExpiredJwtTokenException(e.getMessage(), e);
+       }catch (InvalidClaimException e){
+            throw new InvalidJwtClaimException(e.getMessage(), e);
+       }catch (Exception e){
+            throw new InvalidJwtTokenException(e.getMessage(), e);
+       }
     }
 
     private String generateTokenIdentifier() {

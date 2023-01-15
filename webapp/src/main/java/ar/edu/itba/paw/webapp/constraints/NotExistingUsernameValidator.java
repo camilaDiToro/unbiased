@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.constraints;
 
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.service.SecurityService;
@@ -23,6 +24,6 @@ public class NotExistingUsernameValidator implements ConstraintValidator<NotExis
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         Optional<User> user = userService.findByUsername(value);
-        return !user.isPresent() || securityService.getCurrentUser().orElseThrow(UserNotFoundException::new).getId() == user.get().getId();
+        return !user.isPresent() || securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId() == user.get().getId();
     }
 }

@@ -58,14 +58,6 @@ public class UserDto {
 
     private boolean isJournalist;
 
-    public static UserDto fromUser(final UriInfo uriInfo, final User user, final long followers, final long following){
-        final UserDto dto = fromUser(uriInfo,user);
-        dto.followers = followers;
-        dto.following = following;
-
-        return dto;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -137,8 +129,8 @@ public class UserDto {
         if (dto.hasImage) {
             dto.image = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).path("image").build();
         }
-        long followers = user.getFollowers().size();
-        long following = user.getFollowing().size();
+        long followers = user.getFollowers() == null ? 0 : user.getFollowers().size();
+        long following = user.getFollowing() == null ? 0 : user.getFollowing().size();
         dto.following = following;
         dto.followers = followers;
         dto.tier = Tier.getTier(followers).toString();
@@ -146,6 +138,8 @@ public class UserDto {
         if (dto.isJournalist) {
             dto.newsStats = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).path("news-stats").build();
         }
+        PositivityStats stats = user.getPositivityStats();
+        dto.isJournalist = user.getRoles() != null && user.getRoles().contains(Role.ROLE_JOURNALIST);
         dto.description = user.getDescription();
         dto.hasPositivity = user.hasPositivityStats();
         if (dto.hasPositivity) {

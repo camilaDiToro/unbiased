@@ -38,7 +38,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     @Transactional
     public void reportNews(final User currentUser, long newsId, ReportReason reportReason) {
-        final News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
+        final News news = newsService.getById(currentUser, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
         newsDao.reportNews(news,currentUser,reportReason);
     }
 
@@ -77,7 +77,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public void deleteNews(long newsId) {
 
-        final News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
         User creator = news.getCreator();
         final Locale locale = creator.getEmailSettings() != null ? creator.getEmailSettings().getLocale() :  LocaleContextHolder.getLocale();
         emailService.sendNewsDeletedEmail(creator, news, locale);

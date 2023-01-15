@@ -127,13 +127,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addRole(long userId, Role role) {
-        userDao.getUserById(userId).orElseThrow(UserNotFoundException::new).addRole(role);
+        userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId))).addRole(role);
     }
 
     @Override
     @Transactional
     public void updateProfile(long userId, String username, final byte[] bytes, String dataType, String description) {
-        final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final User user = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
         if(isFollowing(currentUser,userId)){
             return false;
         }
-        final User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final User following = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
         userDao.addFollow(currentUser.getId(), userId);
         final EmailSettings emailSettings = following.getEmailSettings();
         if(emailSettings!= null && emailSettings.isFollow()){
@@ -209,7 +209,7 @@ public class UserServiceImpl implements UserService {
 
     /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
     private void login(long userId) {
-        final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final User user = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
         final Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
         SecurityContextHolder.getContext().setAuthentication(auth);
         LOGGER.debug("User {} has loged in automatically", user);
