@@ -737,7 +737,7 @@ input:-webkit-autofill:focus {
     color: white;
 }
 
-.link .link-text:hover {
+.link:hover {
     color: #8ea7e8 !important;
     text-decoration: none;
 }

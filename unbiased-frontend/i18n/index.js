@@ -164,12 +164,13 @@ const strings = {
     "showNews.comments": "Comments",
     "showNews.comment.submit": "Comment",
     "showNews.categories": "Categories:",
-    "showNews.emptyCommentsLogged": "There are no comments.",
+    "showNews.emptyCommentsLogged": "Nobody has commened yet.",
     "showNews.deleteComment": "Delete comment",
     "showNews.deleteCommentQuestion": "Are you sure you want to delete the comment?",
     "showNews.deleteCommentBody": "Accepting this you will lose the comment, so you will not be able to recover it again. Are you sure you would like to continue?",
     "showNews.deletedComment": "The comment has been deleted.",
     "showNews.reportCommentQuestion": "Are you sure you want to report the comment?",
+    "showNews.commentLogged": " to comment!",
 
     //Tooltips
     "tooltip.clickToGoBack": "Click to go back",
@@ -368,6 +369,7 @@ const strings = {
     "showNews.deleteCommentBody": "Al eliminar este comentario, no podrás volver a recuperarlo. ¿Estás seguro de que deseas continuar?",
     "showNews.deletedComment": "El comentario ha sido eliminado.",
     "showNews.reportCommentQuestion": "¿Estás seguro de que quieres reportar este comentario?",
+    "showNews.commentLogged": " para comentar!",
 
     //Tooltips
     "tooltip.clickToGoBack": "Click para volver hacia atras",
