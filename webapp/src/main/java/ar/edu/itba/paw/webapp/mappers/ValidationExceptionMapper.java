@@ -26,7 +26,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViol
                 .stream().map((violation)->new ApiErrorDto(
                         "Validation error",
                         ApiErrorCode.VALIDATION,
-                        violation.getInvalidValue().toString()
+                        violation.getMessage()
                 )).collect(Collectors.toList());
 
         return Response.status(Response.Status.BAD_REQUEST).entity(new GenericEntity<List<ApiErrorDto>>(errors) {}).build();
