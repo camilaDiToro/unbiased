@@ -88,4 +88,12 @@ public class CommentDto {
     public void setCommentedDate(Timestamp commentedDate) {
         this.commentedDate = commentedDate;
     }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 }
