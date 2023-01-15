@@ -177,7 +177,7 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public boolean toggleSaveNews(final User currentUser, long newsId) {
 
-        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(NewsNotFoundException::new);
+        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
 
         boolean returnValue;
         if (news.getLoggedUserParameters().isSaved()) {
@@ -263,7 +263,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public void addComment(final User currentUser, long newsId, String comment) {
-        final News news = getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
+        final News news = getById(currentUser, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
         commentDao.addComment(currentUser, news, comment);
         final User newsOwner = news.getCreator();
         final EmailSettings emailSettings = newsOwner.getEmailSettings();

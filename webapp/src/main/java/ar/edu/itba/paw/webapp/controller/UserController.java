@@ -143,7 +143,7 @@ public class UserController {
     public Response pingNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
 
         final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
-        final News news =  newsService.getById(user, newsId).orElseThrow(NewsNotFoundException::new);
+        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
 
         if(userService.pingNewsToggle(user,news)){
             return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinged the news of id %d", user.getUsername(), news.getNewsId()))).build();

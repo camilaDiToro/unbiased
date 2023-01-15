@@ -53,4 +53,3 @@ webapp/src/main/resources/application.properties
 
 
 webapp/src/main/java/ar/edu/itba/paw/webapp/auth/jwt/JwtFilter.java
-webapp/src/main/java/ar/edu/itba/paw/webapp/auth/ApiErrorExceptionMapper.java

@@ -25,7 +25,7 @@ public class OwnerCheck {
     }
 
     public boolean newsOwnership(long newsId, long userId) {
-        long creatorId = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getCreatorId();
+        long creatorId = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId))).getCreatorId();
         long currentUserId = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
         return creatorId==currentUserId && currentUserId == userId;
     }
