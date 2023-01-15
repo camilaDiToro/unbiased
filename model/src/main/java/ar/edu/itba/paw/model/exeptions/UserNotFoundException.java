@@ -12,4 +12,7 @@ public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String s, Throwable var1) {
         super(s,var1);
     }
+
+    public UserNotFoundException() {
+    }
 }

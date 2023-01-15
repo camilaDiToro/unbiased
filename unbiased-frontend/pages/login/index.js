@@ -3,6 +3,7 @@ import {useAppContext} from "../../context";
 import {useState} from "react";
 import axios from "axios";
 import baseURL from "../back";
+import {useRouter} from "next/router";
 
 
 export default function Login() {
@@ -14,20 +15,20 @@ export default function Login() {
         rememberMe: false
     })
     const [passwordType, setPasswordType] = useState("password");
-
+    const router = useRouter()
     const handleChange = (e) => {
 
         const {name, value} = e.target
-
         if (name !== "rememberMe") {
             setDetails((prev) => {
                 return {...prev, [name]: value}
             })
+        } else {
+            setDetails((prev) => {
+                return {...prev, [name]: !details.rememberMe}
+            })
         }
 
-        setDetails((prev) => {
-            return {...prev, [name]: !details.rememberMe}
-        })
     }
 
     const togglePassword = () => {
@@ -40,6 +41,30 @@ export default function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        alert(JSON.stringify(details))
+        ctx.axios({
+            // headers: {'Content-Type': 'application/json'},
+            method: 'put',
+            url: 'users/13/pingNews/4',
+            auth: {
+                username: 'kevincatino18@gmail.com',
+                password: '123'
+            }
+        }).then(res => {
+            alert('no error')
+            console.log(res.data)
+            console.log(res.headers)
+            // router.back()
+        }).catch(error => {
+            console.log(error.response.headers)
+            if (error.response.status === 404) {
+                const accessToken = error.response.headers.get('access-token').split(' ')[1]
+                const refreshToken = error.response.headers.get('refresh-token').split(' ')[1]
+                localStorage.setItem('access-token', accessToken)
+                localStorage.setItem('refresh-token', refreshToken)
+                // router.back()
+            }
+        })
     }
 
     return(
@@ -74,7 +99,7 @@ export default function Login() {
                     </label>
                 </div>
 
-                <button type="submit" className="btn btn-md btn-info btn-block">Log in</button>
+                <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">Log in</button>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>
             </div>
         </div>
