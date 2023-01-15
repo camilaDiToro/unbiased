@@ -4,12 +4,17 @@ import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.CategoryStatistics;
 import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.MailOption;
+import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -25,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,6 +51,8 @@ public class UserController {
         this.newsService = newsService;
         this.securityService = securityService;
     }
+
+
 
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
@@ -89,9 +97,23 @@ public class UserController {
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response getUser(@PathParam("userId") final long userId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-
         UserDto userDto = UserDto.fromUser(uriInfo, user, userService.getFollowersCount(userId), userService.getFollowingCount(userId));
         return Response.ok(userDto).build();
+    }
+
+    @GET
+    @Path("/{userId:[0-9]+}/news-stats")
+    @Produces(value = { MediaType.APPLICATION_JSON})
+    public Response getUserNewsStats(@PathParam("userId") final long userId){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        if (!user.getRoles().contains(Role.ROLE_JOURNALIST)) {
+            return Response.status(404).build();
+        }
+
+        Map<Category, CategoryStatistics.Statistic> newsCategoryMap = newsService.getCategoryStatistics(user.getUserId()).getStatiscticsMap();
+        List<CategoryStatisticsDto> newsStats = newsCategoryMap.entrySet().stream().map(CategoryStatisticsDto::fromCategoryStatistic).collect(Collectors.toList());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CategoryStatisticsDto>>(newsStats) {});
+        return responseBuilder.build();
     }
 
 

@@ -56,7 +56,7 @@ public class PositivityStats {
         private final String imageName;
 
         public String toString() {
-            return className;
+            return className.toLowerCase();
         }
 
         public String getInterCode() {

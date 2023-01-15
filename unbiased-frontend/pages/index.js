@@ -41,27 +41,20 @@ export default function Home(props) {
   const [topCreators, setTopCreators] = useState([])
   // const [pagination, setPagination] = useState(null)
   const [pagination, setPagination] = usePagination()
-  const {I18n} = useAppContext()
-  const maybeCurrent = parseInt(router.query.page || '1')
   const setParams = useURLWithParams()
+
+  const {I18n, axios} = useAppContext()
+  const maybeCurrent = parseInt(router.query.page || '1')
 
 
   useEffect(() => {
     if (router.query.search && router.query.type === 'creator') {
-      setParams(urlBase, ['type'])
-      // alert(urlBase.href)
-      fetch(urlBase.href).then(res=> {
-        setPagination(res).then(() => {
-          if (res.status !== 204)
-            res.json().then(list => {setUsers(list.map(userMapper))
-          })
-        })
+      const params = {...router.query}
+      delete params['type']
+      axios.get('users', {params}).then(res => {
+        setUsers(res.data ? res.data.map(userMapper) : [])
       })
-      // const aux = props.creators
-      // const first = aux[0]
-      // aux[0] = aux[1]
-      // aux[1] = first
-      // setUsers(aux)
+
     } else {
       setNews(n => {
         for (const news of n) {

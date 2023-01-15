@@ -17,8 +17,11 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import EditProfileForm from "../../../components/EditProfileForm";
 import UserPrivileges from "../../../components/UserPrivileges";
-import {useTriggerEffect} from "../../../utils"
+import {useTriggerEffect, useURLWithParams} from "../../../utils"
 import Pagination from "../../../components/Pagination";
+import {userMapper} from "../../../mappers";
+import usePagination from "../../../pagination";
+import baseURL from "../../back";
 
 export async function getServerSideProps(context) {
   return {
@@ -53,20 +56,17 @@ export async function getServerSideProps(context) {
 
 export default function Profile(props) {
 
-  const {I18n, loggedUser}= useAppContext();
+  const {I18n, loggedUser, axios}= useAppContext();
   const router = useRouter()
   const isMyProfile = loggedUser && loggedUser.id === props.id
-  // const [profileEffectTrigger, setProfileEffectTrigger] = useState(false)
-  // const profileTriggerEffect = () => {
-  //   setProfileEffectTrigger(t => !t)
-  // }
+const urlBase = new URL(`users/${props.id}`, baseURL)
   const [profileEffectTrigger, profileTriggerEffect] = useTriggerEffect()
   const [newsEffectTrigger, newsTriggerEffect] = useTriggerEffect()
 
   const [useNews, setNews] = useState(props.news)
-  const [useCounter, setCounter] = useState(0)
-  const {news: _, ...rest} = props;
-  const [profileInfo, setProfileInfo] = useState(rest)
+  const [pagination, setPagination] = usePagination()
+  const setParams = useURLWithParams()
+  const [profileInfo, setProfileInfo] = useState(props)
 
 
   useEffect(() => {
@@ -86,11 +86,18 @@ export default function Profile(props) {
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {
-    setProfileInfo(rest => {
-      rest.following++
-      rest.username += 'a'
-      rest.newsStatistics[0].progress += 0.01
-      return rest
+    // setParams(urlBase, ['type'])
+    const relativePath = `users/${props.id}`
+    axios.get(relativePath).then(res => {
+      const data = res.data
+      if (data && data.newsStats) {
+        axios.get(data.newsStats).then(newsStats =>  {
+          data.newsStats = newsStats.data
+          setProfileInfo(userMapper(res.data))
+        })
+      } else {
+        setProfileInfo(res.data ? userMapper(res.data) : {})
+      }
     })
 
   }, [profileEffectTrigger])
@@ -115,7 +122,7 @@ export default function Profile(props) {
                         </span>
         </ModalTrigger>: <></>}
 
-        <ProfilePic tier={profileInfo.tier}/>
+        <ProfilePic image={profileInfo.image} hasImage={profileInfo.hasImage} tier={profileInfo.tier}/>
 
       </div>
       {profileInfo.hasPositivity ? <PositivityIndicator {...profileInfo.stats}></PositivityIndicator>
@@ -211,7 +218,7 @@ export default function Profile(props) {
           <LeftSide></LeftSide>
           <RightSide></RightSide>
         </div>
-        <Pagination currentPage={2} lastPage={4}></Pagination>
+        <Pagination {...pagination}></Pagination>
 
       </div>
 

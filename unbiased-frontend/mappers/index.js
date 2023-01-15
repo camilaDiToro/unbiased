@@ -6,11 +6,20 @@ export const userMapper = (u) => {
         hasImage: u.hasImage,
         id: u.id,
         tier: u.tier,
-        isJournalist: u.isJournalist,
-        stats: {
-            positivity: u.positivity,
-            upvoted: u.upvotedProportion,
-            interactions: u.interactions},
-        image: u.image
+        isJournalist: u.journalist,
+        stats: u.stats,
+        image: u.image,
+        description: u.description,
+        mailOptions: u.mailOptions,
+        hasPositivity: u.hasPositivity,
+        username: u.username,
+        email: u.email,
+        followers: u.followers,
+        following: u.following,
+        newsStatistics: u.newsStats.map(s => ({
+            progress: s.proportion,
+            title: s['category'],
+            i18n: true
+        }))
     }
 }
