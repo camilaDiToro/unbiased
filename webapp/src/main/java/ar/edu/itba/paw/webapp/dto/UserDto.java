@@ -114,10 +114,10 @@ public class UserDto {
         final UserDto dto = new UserDto();
         dto.email = user.getEmail();
         dto.username = user.getUsername();
-        dto.self = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).build();
+        dto.self = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).build();
         dto.hasImage = user.hasImage();
         if (dto.hasImage) {
-            dto.image = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("image").build();
+            dto.image = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).path("image").build();
         }
         long followers = user.getFollowers() == null ? 0 : user.getFollowers().size();
         long following = user.getFollowing() == null ? 0 : user.getFollowing().size();
