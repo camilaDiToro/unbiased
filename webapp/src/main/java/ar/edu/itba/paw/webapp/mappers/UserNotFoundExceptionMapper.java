@@ -21,7 +21,7 @@ public class UserNotFoundExceptionMapper implements ExceptionMapper<UserNotFound
 
     @Override
     public Response toResponse(UserNotFoundException e) {
-        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.USER_NOT_FOUND, e.getMessage(), HttpStatus.NOT_FOUND);
+        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.USER_NOT_FOUND, e.getMessage());
         return Response.status(Response.Status.NOT_FOUND).entity(dto).build();
     }
 }

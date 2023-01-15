@@ -31,10 +31,10 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         if (e instanceof ApiErrorException) {
             apiErrorDto = ApiErrorDto.fromApiErrorException((ApiErrorException) e);
         }else{
-            apiErrorDto = new ApiErrorDto("Access denied", ApiErrorCode.ACCESS_DENIED, e.getMessage(), HttpStatus.UNAUTHORIZED);
+            apiErrorDto = new ApiErrorDto("Access denied", ApiErrorCode.ACCESS_DENIED, e.getMessage());
         }
 
-        response.setStatus(apiErrorDto.getStatus());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(CustomMediaType.ERROR_V1);
 
         mapper.writeValue(response.getWriter(), apiErrorDto);

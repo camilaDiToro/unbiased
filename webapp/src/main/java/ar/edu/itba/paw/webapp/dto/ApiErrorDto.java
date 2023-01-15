@@ -10,14 +10,15 @@ public class ApiErrorDto {
 
     private String message;
     private Integer apiCode;
-    private Integer status;
     private String details;
 
-    public ApiErrorDto(String message, ApiErrorCode apiCode, String details, HttpStatus status) {
+    public ApiErrorDto(String message, ApiErrorCode apiCode, String details) {
         this.message = message;
         this.apiCode = apiCode.getErrorCode();
         this.details = details;
-        this.status = status.value();
+    }
+
+    public ApiErrorDto() {
     }
 
 
@@ -25,17 +26,7 @@ public class ApiErrorDto {
         return new ApiErrorDto(
                 apiErrorException.getApiErrorMessage(),
                 apiErrorException.getApiCode(),
-                apiErrorException.getDetails(),
-                apiErrorException.getHttpStatus()
-        );
-    }
-
-    public static ApiErrorDto fromValidationException(final ConstraintViolation<?> violation){
-        return new ApiErrorDto(
-                "Validation error",
-                ApiErrorCode.VALIDATION,
-                violation.getMessage(),
-                HttpStatus.BAD_REQUEST
+                apiErrorException.getDetails()
         );
     }
 
@@ -55,13 +46,6 @@ public class ApiErrorDto {
         this.apiCode = apiCode;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
 
     public String getDetails() {
         return details;

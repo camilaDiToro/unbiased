@@ -18,7 +18,7 @@ public class AccessDeniedExceptionMapper implements ExceptionMapper<AccessDenied
 
     @Override
     public Response toResponse(AccessDeniedException e) {
-        ApiErrorDto dto = new ApiErrorDto(e.getMessage(), ApiErrorCode.ACCESS_DENIED, e.getMessage(), HttpStatus.FORBIDDEN);
+        ApiErrorDto dto = new ApiErrorDto(e.getMessage(), ApiErrorCode.ACCESS_DENIED, e.getMessage());
         return Response.status(Response.Status.FORBIDDEN).entity(dto).build();
     }
 }

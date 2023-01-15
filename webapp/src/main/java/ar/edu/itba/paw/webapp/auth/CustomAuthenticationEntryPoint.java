@@ -35,10 +35,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         if (authException instanceof ApiErrorException) {
             apiErrorDto = ApiErrorDto.fromApiErrorException((ApiErrorException) authException);
         }else{
-            apiErrorDto = new ApiErrorDto("Forbidden", ApiErrorCode.FORBIDDEN, authException.getMessage(), HttpStatus.FORBIDDEN);
+            apiErrorDto = new ApiErrorDto("Forbidden", ApiErrorCode.FORBIDDEN, authException.getMessage());
         }
 
-        response.setStatus(apiErrorDto.getStatus());
+        response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType(CustomMediaType.ERROR_V1);
 
         mapper.writeValue(response.getWriter(), apiErrorDto);
