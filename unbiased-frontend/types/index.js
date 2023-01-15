@@ -26,6 +26,7 @@ const Article = {
     readTime: PropTypes.number.isRequired,
     saved: PropTypes.bool.isRequired,
     hasImage: PropTypes.bool.isRequired,
+    image: PropTypes.string,
     creator: PropTypes.shape(TopCreator),
     id: PropTypes.number.isRequired,
     canDelete: PropTypes.bool,

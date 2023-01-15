@@ -1,5 +1,12 @@
 import PropTypes from "prop-types";
 
+
+export const newsMapper = (n) => {
+return {
+    ...n
+}
+}
+
 export const userMapper = (u) => {
     return {
         nameOrEmail: u.username || u.email,

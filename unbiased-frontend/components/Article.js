@@ -90,7 +90,7 @@ export default function Article(props) {
                     <div className="d-flex justify-content-between p-2 w-100">
                         <div className="d-flex align-items-center w-auto gap-1">
                             <div className="img-container-article">
-                                <ProfilePic tier={props.creator.tier} id={props.creator.id} hasImage={props.creator.hasImage}></ProfilePic>
+                                <ProfilePic {...props.creator}></ProfilePic>
                             </div>
                             <ProfileLink {...props.creator}></ProfileLink>
                         </div>

@@ -128,9 +128,6 @@ public class UserDto {
 
     private URI newsStats;
 
-
-
-
     public static UserDto fromUser(final UriInfo uriInfo, final User user){
         final UserDto dto = new UserDto();
         dto.email = user.getEmail();

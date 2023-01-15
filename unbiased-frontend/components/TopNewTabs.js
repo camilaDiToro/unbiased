@@ -14,7 +14,9 @@ export default function TopNewTabs(props) {
     const orderMap = orders.reduce((a,v) => ({...a, [v.params.order]: v.text}), {})
     const selectedOrder = orderMap[router.query.order] || I18n("order.top");
 
-    return  <Tabs className={props.className} items={orders} pill selected={selectedOrder}></Tabs>
+    return  <Tabs className={props.className} items={orders} pill selected={selectedOrder}>
+        {props.children}
+    </Tabs>
 
 }
 

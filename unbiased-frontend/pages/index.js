@@ -16,7 +16,8 @@ import Creator from "../components/Creator";
 import Pagination from "../components/Pagination";
 import baseURL from "./back";
 import usePagination from "../pagination";
-import {userMapper} from "../mappers"
+import {newsMapper, userMapper} from "../mappers"
+import TimeSelector from "../components/TimeSelector";
 
 const urlBase = new URL('users', baseURL)
 
@@ -48,24 +49,19 @@ export default function Home(props) {
 
 
   useEffect(() => {
+    const params = {...router.query}
+    delete params['type']
     if (router.query.search && router.query.type === 'creator') {
-      const params = {...router.query}
-      delete params['type']
+
       axios.get('users', {params}).then(res => {
         setUsers(res.data ? res.data.map(userMapper) : [])
       })
 
     } else {
       setNews(n => {
-        for (const news of n) {
-          switch(news.rating) {
-            case 1: news.rating = 0;
-              break;
-            case 0: news.rating = -1;
-              break;
-            case -1:news.rating =  1;
-          }
-        }
+        axios.get('news', {params}).then(res => {
+          setNews(res.data ? res.data.map(newsMapper) : [])
+        })
         return n
       })
     }
@@ -87,7 +83,9 @@ export default function Home(props) {
       {router.query.search ? <></> : <NewsCategoryTabs></NewsCategoryTabs>}
       <div className="d-flex flex-column flex-xl-row  flex-grow-1">
         <div className="w-100 w-xl-75 ">
-          <TopNewTabs></TopNewTabs>
+          <TopNewTabs>
+            <TimeSelector></TimeSelector>
+          </TopNewTabs>
           {router.query.search ? <><CancelSearchLink text={I18n("search.filter", [router.query.search])}></CancelSearchLink> <ProfileCardTypeTab></ProfileCardTypeTab></> : <></>}
           <div className="container-fluid">
             <MainCardsContainer rows={2}>

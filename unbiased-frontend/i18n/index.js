@@ -196,7 +196,13 @@ const strings = {
 
     //Owner
     "owner.removeAdminTitle": "Are you sure you want to revoke admin privileges?",
-    "owner.removeAdminMsg": "By accepting the user will no longer be able to access the administration panel"
+    "owner.removeAdminMsg": "By accepting the user will no longer be able to access the administration panel",
+
+    // Time Constraint
+    "timeConstraint.hour":"Last hour",
+    "timeConstraint.day":"Today",
+    "timeConstraint.week":"Last week",
+    "timeConstraint.alltime":"All time"
 
   },
   "es-ES": {
@@ -395,7 +401,13 @@ const strings = {
 
     //Owner
     "owner.removeAdminTitle": "¿Está seguro de que quiere quitar los privilegios de administrador?",
-    "owner.removeAdminMsg": "Si acepta, el usuario no podrá ingresar más al panel de administradores."
+    "owner.removeAdminMsg": "Si acepta, el usuario no podrá ingresar más al panel de administradores.",
+
+    // Time Constraint
+    "timeConstraint.hour":"Última hora",
+    "timeConstraint.day":"Hoy",
+    "timeConstraint.week":"Última semana",
+    "timeConstraint.alltime":"Todo el tiempo"
 
   },
 };
