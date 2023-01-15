@@ -1,10 +1,12 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.webapp.auth.models.ApiErrorDetails;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.auth.exceptions.ApiErrorCode;
+import ar.edu.itba.paw.webapp.auth.exceptions.ApiErrorException;
+import ar.edu.itba.paw.webapp.dto.ApiErrorDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -28,27 +30,17 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
 
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-        ApiErrorDetails errorDetails = new ApiErrorDetails();
+        ApiErrorDto apiErrorDto;
 
-        /*if (authException instanceof InvalidAuthenticationTokenException) {
-            status = HttpStatus.UNAUTHORIZED;
-            errorDetails.setTitle(authException.getMessage());
-            errorDetails.setMessage(authException.getCause().getMessage());
-        } else {
-            status = HttpStatus.FORBIDDEN;
-            errorDetails.setTitle(status.getReasonPhrase());
-            errorDetails.setMessage(authException.getMessage());
-        }*/
+        if (authException instanceof ApiErrorException) {
+            apiErrorDto = ApiErrorDto.fromApiErrorException((ApiErrorException) authException);
+        }else{
+            apiErrorDto = new ApiErrorDto("Forbidden", ApiErrorCode.FORBIDDEN, authException.getMessage(), HttpStatus.FORBIDDEN);
+        }
 
-        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        response.setStatus(apiErrorDto.getStatus());
+        response.setContentType(CustomMediaType.ERROR_V1.getValue());
 
-        errorDetails.setStatus(status.value());
-        errorDetails.setPath(request.getRequestURI());
-
-        response.setStatus(status.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-        mapper.writeValue(response.getWriter(), errorDetails);
+        mapper.writeValue(response.getWriter(), apiErrorDto);
     }
 }

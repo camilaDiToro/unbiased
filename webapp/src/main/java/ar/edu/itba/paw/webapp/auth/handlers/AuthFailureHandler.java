@@ -1,10 +1,12 @@
 package ar.edu.itba.paw.webapp.auth.handlers;
 
-import ar.edu.itba.paw.webapp.auth.models.ApiErrorDetails;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.auth.exceptions.ApiErrorCode;
+import ar.edu.itba.paw.webapp.auth.exceptions.ApiErrorException;
+import ar.edu.itba.paw.webapp.dto.ApiErrorDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -20,16 +22,19 @@ public class AuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     ObjectMapper mapper;
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException {
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-        ApiErrorDetails errorDetails = new ApiErrorDetails();
-        errorDetails.setTitle(status.getReasonPhrase());
-        errorDetails.setMessage(exception.getMessage());
-        errorDetails.setStatus(status.value());
-        errorDetails.setPath(request.getRequestURI());
-        response.setStatus(status.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        mapper.writeValue(response.getWriter(), errorDetails);
+        ApiErrorDto apiErrorDto;
+
+        if (authException instanceof ApiErrorException) {
+            apiErrorDto = ApiErrorDto.fromApiErrorException((ApiErrorException) authException);
+        }else{
+            apiErrorDto = new ApiErrorDto("Unauthorized", ApiErrorCode.UNAUTHORIZED, authException.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+
+        response.setStatus(apiErrorDto.getStatus());
+        response.setContentType(CustomMediaType.ERROR_V1.getValue());
+
+        mapper.writeValue(response.getWriter(), apiErrorDto);
     }
 }
