@@ -44,7 +44,7 @@ export default function Home(props) {
   const [pagination, setPagination] = usePagination()
   const setParams = useURLWithParams()
 
-  const {I18n, axios} = useAppContext()
+  const {I18n, axios, setErrorDetails} = useAppContext()
   const maybeCurrent = parseInt(router.query.page || '1')
 
 
@@ -53,8 +53,26 @@ export default function Home(props) {
     delete params['type']
     if (router.query.search && router.query.type === 'creator') {
 
-      axios.get('users', {params}).then(res => {
-        setUsers(res.data ? res.data.map(userMapper) : [])
+      // axios.get('users', {params}).then(res => {
+      //   setUsers(res.data ? res.data.map(userMapper) : [])
+      // })
+      axios.put(`users/2/pingNews/4`, {}).catch(error => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+          setErrorDetails(error.response.data)
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.log(error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message);
+        }
       })
 
     } else {

@@ -27,7 +27,7 @@ public class AuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
         errorDetails.setTitle(status.getReasonPhrase());
         errorDetails.setMessage(exception.getMessage());
         errorDetails.setStatus(status.value());
-        errorDetails.setPath(request.getRequestURI());
+        errorDetails.setPath(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getRequestURI());
         response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         mapper.writeValue(response.getWriter(), errorDetails);

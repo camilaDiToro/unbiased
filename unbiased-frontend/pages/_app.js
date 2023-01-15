@@ -22,6 +22,7 @@ function MyApp({ Component, pageProps }) {
 
   const [addedLocale, setAddLocale] = useState(false)
 
+
   if(!addedLocale) {
     TimeAgo.addLocale(en)
     TimeAgo.addLocale(es)
