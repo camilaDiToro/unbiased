@@ -213,7 +213,7 @@ public class UserJpaDao implements UserDao{
     }
 
     private int getTotalPagesSearchUsers(String search){
-        final long count = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE (LOWER(u.username) LIKE :query  escape '' or LOWER(u.email) LIKE :query  escape '\\') and u.status <> 'UNABLE'", Long.class)
+        final long count = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE (LOWER(u.username) LIKE :query  escape '\\' or LOWER(u.email) LIKE :query  escape '\\') and u.status <> 'UNABLE'", Long.class)
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%").getSingleResult();
         return Page.getPageCount(count, SEARCH_PAGE_SIZE);
     }

@@ -24,8 +24,8 @@ public class PositivityStats {
         return upvotes + downvotes;
     }
 
-    public int getPercentageUpvoted() {
-        return (int)(((double)upvotes/(double)(upvotes + downvotes))*100);
+    public double getProportionUpvoted() {
+        return upvotes + downvotes >0 ? (double)upvotes/(double)(upvotes + downvotes) : 0;
     }
 
     public int getNetUpvotes() {
@@ -34,6 +34,7 @@ public class PositivityStats {
     public Positivity getPositivity() {
         return positivity;
     }
+
 
     public enum Positivity {
 

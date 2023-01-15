@@ -36,8 +36,14 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.PUT;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -70,6 +76,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return new CustomAccessDeniedHandler();
@@ -95,11 +102,27 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         return abstractAuthFilter;
     }
 
+//    @Bean
+//    public CorsConfiguration corsConfiguration() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.addAllowedOrigin(spaUrl);
+//        return corsConfiguration;
+//    }
+
     @Bean
-    public CorsConfiguration corsConfiguration() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin(spaUrl);
-        return corsConfiguration;
+    public CorsConfigurationSource corsConfigurationSource() {
+        final CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
+        config.setAllowCredentials(true);
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        config.setExposedHeaders(Arrays.asList("x-auth-token", "authorization", "X-Total-Pages", "Content-Disposition", "Link"));
+
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 
     @Bean
@@ -124,7 +147,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
 
-        http
+
+        http.cors().and().csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler()).and()
@@ -133,12 +157,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().headers().cacheControl().disable()
                 .and().authorizeRequests()
                     //.antMatchers("/login", "/create").anonymous()
-                    .antMatchers (GET, "/api/users").hasRole("ADMIN")
+                    .antMatchers (PUT, "/api/users/{\\d+}").authenticated()
                     .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
                     .antMatchers("/owner/**").hasRole("OWNER")
                     .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
                             "/news/{\\d+}/delete", "/news/{\\d+}/comment", "/news/{\\d+}/save").authenticated()
-                    .antMatchers("/**").permitAll()
+                    .antMatchers("/api/**").permitAll()
                     .and().exceptionHandling()
                     .accessDeniedPage("/403")
                 .and().addFilterBefore(abstractAuthFilter(), UsernamePasswordAuthenticationFilter.class)

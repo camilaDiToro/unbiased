@@ -7,7 +7,7 @@ export default function CancelSearchLink(props) {
     return <div className="m-3 ">
         <Link className="link" href={{
             pathname: "/",
-            query: { ...router.query.order },
+            query: { order: router.query.order, type: router.query.type },
         }}>
             <div className="link-text">
                 {props.text}

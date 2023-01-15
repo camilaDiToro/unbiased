@@ -9,7 +9,10 @@ export default function Pagination(props){
   const [currentPage, setCurrentPage] = useState(props.currentPage)
   let pages = [props.currentPage-1, props.currentPage, props.currentPage+1]
 
-  pages = pages.filter(p => p>1 && p<props.lastPage)
+  pages = pages.filter(p => p>=1 && p<=props.lastPage)
+
+  if (!props.lastPage)
+    return <></>
 
   const onClick = (e) => {
     setCurrentPage(e)

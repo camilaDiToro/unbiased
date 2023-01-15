@@ -11,12 +11,12 @@ import {useState} from "react";
 export default function Navbar(props) {
     const {I18n, loggedUser} = useAppContext()
     const router = useRouter()
-    const [query, setQuery] = useState(router.query.query || '')
+    const [query, setQuery] = useState(router.query.search || '')
     const goToSearchPage = (e) => {
         if (e.key === 'Enter') {
             router.push({
                 pathname: '/',
-                query: {...(router.query.type && {type: router.query.type}), ...(e.target.value && {query: e.target.value})}
+                query: {...(router.query.type && {type: router.query.type}), ...(e.target.value && {search: e.target.value})}
             })
         }
     }

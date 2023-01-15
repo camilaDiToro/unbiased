@@ -2,24 +2,19 @@ package ar.edu.itba.paw.webapp.auth.jwt;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-/**
- * Application model that holds details about an authentication token.
- *
- * @author cassiomolin
- */
+
 public final class JwtTokenDetails {
 
     private final String id;
     private final String email;
     private final List<String> authorities;
-    private final ZonedDateTime issuedDate;
-    private final ZonedDateTime expirationDate;
-    private final int refreshCount;
-    private final int refreshLimit;
+    private final Date issuedDate;
+    private final Date expirationDate;
+    private final String token;
+    private final JwtTokenType tokenType;
 
     public String getId() {
         return id;
@@ -33,34 +28,30 @@ public final class JwtTokenDetails {
         return authorities;
     }
 
-    public ZonedDateTime getIssuedDate() {
+    public Date getIssuedDate() {
         return issuedDate;
     }
 
-    public ZonedDateTime getExpirationDate() {
+    public Date getExpirationDate() {
         return expirationDate;
     }
 
-    public int getRefreshCount() {
-        return refreshCount;
-    }
-
-    public int getRefreshLimit() {
-        return refreshLimit;
-    }
-
-    public boolean isEligibleForRefreshment() {
-        return refreshCount < refreshLimit;
-    }
-
-    private JwtTokenDetails(String id, String email, List<String> authorities, ZonedDateTime issuedDate, ZonedDateTime expirationDate, int refreshCount, int refreshLimit) {
+    private JwtTokenDetails(String id, String email, List<String> authorities, Date issuedDate, Date expirationDate, String token,JwtTokenType tokenType) {
         this.id = id;
         this.email = email;
         this.authorities = authorities;
         this.issuedDate = issuedDate;
         this.expirationDate = expirationDate;
-        this.refreshCount = refreshCount;
-        this.refreshLimit = refreshLimit;
+        this.token = token;
+        this.tokenType = tokenType;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public JwtTokenType getTokenType() {
+        return tokenType;
     }
 
 
@@ -69,10 +60,10 @@ public final class JwtTokenDetails {
         private String id;
         private String email;
         private List<String> authorities;
-        private ZonedDateTime issuedDate;
-        private ZonedDateTime expirationDate;
-        private int refreshCount;
-        private int refreshLimit;
+        private Date issuedDate;
+        private Date expirationDate;
+        private String token;
+        private JwtTokenType tokenType;
 
         public Builder withId(String id) {
             this.id = id;
@@ -89,28 +80,29 @@ public final class JwtTokenDetails {
             return this;
         }
 
-        public Builder withIssuedDate(ZonedDateTime issuedDate) {
+        public Builder withIssuedDate(Date issuedDate) {
             this.issuedDate = issuedDate;
             return this;
         }
 
-        public Builder withExpirationDate(ZonedDateTime expirationDate) {
+        public Builder withExpirationDate(Date expirationDate) {
             this.expirationDate = expirationDate;
             return this;
         }
 
-        public Builder withRefreshCount(int refreshCount) {
-            this.refreshCount = refreshCount;
+        public Builder withToken(String token) {
+            this.token = token;
             return this;
         }
 
-        public Builder withRefreshLimit(int refreshLimit) {
-            this.refreshLimit = refreshLimit;
+        public Builder withTokenType(JwtTokenType tokenType) {
+            this.tokenType = tokenType;
             return this;
         }
+
 
         public JwtTokenDetails build() {
-            return new JwtTokenDetails(id, email, authorities, issuedDate, expirationDate, refreshCount, refreshLimit);
+            return new JwtTokenDetails(id, email, authorities, issuedDate, expirationDate, token, tokenType);
         }
     }
 }
