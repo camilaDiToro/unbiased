@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.mappers;
 
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
-import ar.edu.itba.paw.webapp.auth.exceptions.ApiErrorCode;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
 import ar.edu.itba.paw.webapp.dto.ApiErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;

@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.MailOption;
@@ -88,7 +89,7 @@ public class UserController {
     @Path("/{userId:[0-9]+}")
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response getUser(@PathParam("userId") final long userId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
 
         UserDto userDto = UserDto.fromUser(uriInfo, user, userService.getFollowersCount(userId), userService.getFollowingCount(userId));
         return Response.ok(userDto).build();
@@ -124,7 +125,7 @@ public class UserController {
     @GET
     @Path("/{userId:[0-9]+}/image")
     public Response profileImage(@PathParam("userId") final long userId) {
-        final Image image = userService.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage();
+        final Image image = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId))).getImage();
 
         if (image.getBytes().length == 0)
             return Response.noContent().build();
@@ -141,7 +142,7 @@ public class UserController {
     @Path(value = "/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}")
     public Response pingNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
 
-        final User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
         final News news =  newsService.getById(user, newsId).orElseThrow(NewsNotFoundException::new);
 
         if(userService.pingNewsToggle(user,news)){
@@ -155,7 +156,7 @@ public class UserController {
     @PreAuthorize("@ownerCheck.userMatches(#followerId)")
     @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
     public Response followUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
         if(userService.followUser(currentUser, userId)){
             return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
         }
@@ -166,7 +167,7 @@ public class UserController {
     @PreAuthorize("@ownerCheck.userMatches(#followerId)")
     @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
     public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         if(userService.unfollowUser(currentUser, userId)){
             return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] unfollowed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
         }

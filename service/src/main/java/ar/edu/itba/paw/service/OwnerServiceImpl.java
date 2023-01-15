@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
@@ -27,7 +28,7 @@ public class OwnerServiceImpl implements OwnerService{
     @Override
     @Transactional
     public void makeUserAdmin(String email) {
-        final User user = userDao.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        final User user = userDao.findByEmail(email).orElseThrow( () -> new UserNotFoundException(String.format(UserNotFoundException.EMAIL_MSG, email)));
         if(!user.getRoles().contains(Role.ROLE_ADMIN)){
             user.addRole(Role.ROLE_ADMIN);
             final Locale locale = user.getEmailSettings() != null ? user.getEmailSettings().getLocale() : LocaleContextHolder.getLocale();
@@ -38,7 +39,7 @@ public class OwnerServiceImpl implements OwnerService{
     @Override
     @Transactional
     public void deleteUserAdmin(long userId) {
-        final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final User user = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
         user.removeAdminRole();
     }
 

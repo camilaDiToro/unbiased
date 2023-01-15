@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.webapp.auth.exceptions;
 
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 
-import javax.ws.rs.core.Response;
-
-public class ExpiredJwtTokenException extends AuthenticationException implements ApiErrorException{
+public class ExpiredJwtTokenException extends AuthenticationException implements ApiErrorException {
 
     private static final String MSG = "Invalid authentication JWT token";
     private static final ApiErrorCode CODE = ApiErrorCode.EXPIRED_JWT_TOKEN;

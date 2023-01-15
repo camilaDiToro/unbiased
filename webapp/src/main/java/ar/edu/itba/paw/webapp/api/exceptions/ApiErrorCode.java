@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.auth.exceptions;
+package ar.edu.itba.paw.webapp.api.exceptions;
 
 public enum ApiErrorCode {
 
@@ -12,7 +12,11 @@ public enum ApiErrorCode {
     UNAUTHORIZED(606),
 
     //Validation
-    VALIDATION(700);
+    VALIDATION(701),
+
+    //Backend
+    USER_NOT_FOUND(801),
+    NEWS_NOT_FOUND(802);
 
     private final int errorCode;
 

@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.webapp.auth.exceptions;
 
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
-
-import javax.ws.rs.core.Response;
 
 public class InvalidJwtTokenException extends AuthenticationException implements ApiErrorException {
 

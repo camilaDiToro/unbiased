@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 
-import ar.edu.itba.paw.webapp.auth.exceptions.ApiErrorCode;
-import ar.edu.itba.paw.webapp.auth.exceptions.ApiErrorException;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorException;
 import org.springframework.http.HttpStatus;
 
 import javax.validation.ConstraintViolation;
