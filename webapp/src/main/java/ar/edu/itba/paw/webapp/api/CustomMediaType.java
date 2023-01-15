@@ -1,16 +1,10 @@
 package ar.edu.itba.paw.webapp.api;
 
-public enum CustomMediaType {
+public class CustomMediaType {
 
-    ERROR_V1("application/vnd.campus.error.v1+json");
+    public static final String ERROR_V1 = "application/vnd.campus.error.v1+json";
 
-    private final String value;
+    private CustomMediaType(){
 
-    CustomMediaType(final String value){
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 }

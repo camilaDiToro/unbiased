@@ -9,7 +9,10 @@ public enum ApiErrorCode {
     INVALID_JWT_CLAIM(603),
     EXPIRED_JWT_TOKEN(604),
     FORBIDDEN(605),
-    UNAUTHORIZED(606);
+    UNAUTHORIZED(606),
+
+    //Validation
+    VALIDATION(700);
 
     private final int errorCode;
 

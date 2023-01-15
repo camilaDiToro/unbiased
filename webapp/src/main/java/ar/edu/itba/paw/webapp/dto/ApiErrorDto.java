@@ -4,6 +4,8 @@ import ar.edu.itba.paw.webapp.auth.exceptions.ApiErrorCode;
 import ar.edu.itba.paw.webapp.auth.exceptions.ApiErrorException;
 import org.springframework.http.HttpStatus;
 
+import javax.validation.ConstraintViolation;
+
 public class ApiErrorDto {
 
     private String message;
@@ -25,6 +27,15 @@ public class ApiErrorDto {
                 apiErrorException.getApiCode(),
                 apiErrorException.getDetails(),
                 apiErrorException.getHttpStatus()
+        );
+    }
+
+    public static ApiErrorDto fromValidationException(final ConstraintViolation<?> violation){
+        return new ApiErrorDto(
+                "Validation error",
+                ApiErrorCode.VALIDATION,
+                violation.getMessage(),
+                HttpStatus.BAD_REQUEST
         );
     }
 

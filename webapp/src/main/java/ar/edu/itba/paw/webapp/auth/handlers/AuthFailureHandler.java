@@ -33,7 +33,7 @@ public class AuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
         }
 
         response.setStatus(apiErrorDto.getStatus());
-        response.setContentType(CustomMediaType.ERROR_V1.getValue());
+        response.setContentType(CustomMediaType.ERROR_V1);
 
         mapper.writeValue(response.getWriter(), apiErrorDto);
     }
