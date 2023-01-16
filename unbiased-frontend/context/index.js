@@ -27,6 +27,29 @@ export default function AppWrapper({ children }) {
         }]
     })
 
+    const setHeadersIfExist = (response) => {
+        const accessHeader = response.headers.get('access-token')
+        const refreshHeader = response.headers.get('refresh-token')
+        if (accessHeader && refreshHeader) {
+            const accessToken = response.headers.get('access-token').split(' ')[1]
+            const refreshToken = response.headers.get('refresh-token').split(' ')[1]
+            // localStorage.setItem('access-token', accessToken)
+            // localStorage.setItem('refresh-token', refreshToken)
+            jwtState[1]({accessToken, refreshToken})
+
+        }
+    }
+
+    axiosInstance.interceptors.response.use((r) => {
+        setHeadersIfExist(r)
+        return r;
+    }, (error) => {
+        setHeadersIfExist(error.response)
+        // Any status codes that falls outside the range of 2xx cause this function to trigger
+        // Do something with response error
+        return Promise.reject(error);
+    });
+
     const jwt = jwtState[0]
 
     useEffect(() => {

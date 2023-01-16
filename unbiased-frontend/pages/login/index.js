@@ -57,11 +57,7 @@ export default function Login() {
         }).catch(error => {
             console.log(error.response.headers)
             if (error.response.status === 404) {
-                const accessToken = error.response.headers.get('access-token').split(' ')[1]
-                const refreshToken = error.response.headers.get('refresh-token').split(' ')[1]
-                // localStorage.setItem('access-token', accessToken)
-                // localStorage.setItem('refresh-token', refreshToken)
-                setJwt({accessToken, refreshToken})
+
                 if (localStorage.getItem('fromPage')) {
                     router.back();
                 } else {

@@ -25,47 +25,49 @@ import baseURL from "../../back";
 import axios from "axios";
 
 export async function getServerSideProps(context) {
-
-  const relativePath = `users/${props.id}`
+  const id = parseInt(context.query.id)
+  const relativePath = new URL(`users/${id}`, baseURL)
   const props = {}
-  axios.get(relativePath).then(res => {
-    const data = res.data
-    if (data && data.newsStats) {
-      axios.get(data.newsStats).then(newsStats =>  {
-        data.newsStats = newsStats.data
-        props.users = userMapper(res.data)
-      })
-    } else {
-      props.users = res.data ? userMapper(res.data) : {}
-    }
-  })
-  return {
-    props: {
-      isJournalist: true,
-      email: 'email@email.com',
-      news,
-      id: parseInt(context.query.id),
-      username: 'kevin',
-      followers: 10,
-      following: 5,
-      tier: 'gold',
-      description: 'this is my description',
-      isLoggedUserFollowing: false,
-      newsStatistics: [
-        { title: "categories.tourism", progress: 0.2, i18n: true },
-        { title:"categories.entertainment", progress: 0.2, i18n: true },
-        { title: "categories.politics", progress: 0.2, i18n: true },
-        { title: "categories.economics", progress: 0.2, i18n: true },
-        { title: "categories.sports", progress: 0.2, i18n: true },
-        {title: "categories.technology", progress: 0.2, i18n: true }
-      ],
-      stats: {interactions: 98,
-        upvoted: 0.6,
-        positivity: "positive"},
-      mailOptions: ["mailOption.follow", "mailOption.comment"]
-
-    }, // will be passed to the page component as props
+  const res = await axios.get(relativePath)
+  const data = res.data
+  if (data && data.newsStats) {
+    const newsStatsRes = await axios.get(data.newsStats)
+    data.newsStats = newsStatsRes.data
+    props.userInfo = userMapper(res.data)
+  } else {
+    props.userInfo = res.data ? userMapper(res.data) : {}
   }
+  props.news = news
+  return {
+    props: {...props, id}
+  }
+  // return {
+  //   props: {
+  //     isJournalist: true,
+  //     email: 'email@email.com',
+  //     news,
+  //     id: parseInt(context.query.id),
+  //     username: 'kevin',
+  //     followers: 10,
+  //     following: 5,
+  //     tier: 'gold',
+  //     description: 'this is my description',
+  //     isLoggedUserFollowing: false,
+  //     newsStatistics: [
+  //       { title: "categories.tourism", progress: 0.2, i18n: true },
+  //       { title:"categories.entertainment", progress: 0.2, i18n: true },
+  //       { title: "categories.politics", progress: 0.2, i18n: true },
+  //       { title: "categories.economics", progress: 0.2, i18n: true },
+  //       { title: "categories.sports", progress: 0.2, i18n: true },
+  //       {title: "categories.technology", progress: 0.2, i18n: true }
+  //     ],
+  //     stats: {interactions: 98,
+  //       upvoted: 0.6,
+  //       positivity: "positive"},
+  //     mailOptions: ["mailOption.follow", "mailOption.comment"]
+  //
+  //   }, // will be passed to the page component as props
+  // }
 }
 
 
@@ -79,7 +81,7 @@ export default function Profile(props) {
 
   const [useNews, setNews] = useState(props.news)
   const [pagination, setPagination] = usePagination()
-  const [profileInfo, setProfileInfo] = useState(props)
+  const [profileInfo, setProfileInfo] = useState(props.userInfo)
 
 
   useEffect(() => {
