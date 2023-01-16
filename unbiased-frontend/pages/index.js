@@ -44,7 +44,8 @@ export default function Home(props) {
   const [pagination, setPagination] = usePagination()
   const setParams = useURLWithParams()
 
-  const {I18n, axios, setErrorDetails} = useAppContext()
+  const {I18n, axios, setErrorDetails, jwtState} = useAppContext()
+  const [jwt, setJwt] = jwtState
   const maybeCurrent = parseInt(router.query.page || '1')
 
 

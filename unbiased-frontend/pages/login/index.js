@@ -9,6 +9,7 @@ import {useRouter} from "next/router";
 export default function Login() {
 
     const ctx = useAppContext()
+    const [jwt, setJwt] = ctx.jwtState
     const [details, setDetails] = useState({
         username: "",
         password: "",
@@ -41,7 +42,6 @@ export default function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        alert(JSON.stringify(details))
         ctx.axios({
             // headers: {'Content-Type': 'application/json'},
             method: 'put',
@@ -51,7 +51,6 @@ export default function Login() {
                 password: '123'
             }
         }).then(res => {
-            alert('no error')
             console.log(res.data)
             console.log(res.headers)
             // router.back()
@@ -60,9 +59,15 @@ export default function Login() {
             if (error.response.status === 404) {
                 const accessToken = error.response.headers.get('access-token').split(' ')[1]
                 const refreshToken = error.response.headers.get('refresh-token').split(' ')[1]
-                localStorage.setItem('access-token', accessToken)
-                localStorage.setItem('refresh-token', refreshToken)
-                // router.back()
+                // localStorage.setItem('access-token', accessToken)
+                // localStorage.setItem('refresh-token', refreshToken)
+                setJwt({accessToken, refreshToken})
+                if (localStorage.getItem('fromPage')) {
+                    router.back();
+                } else {
+                    localStorage.removeItem('fromPage')
+                    router.push('/')
+                }
             }
         })
     }

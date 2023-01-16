@@ -22,8 +22,23 @@ import Pagination from "../../../components/Pagination";
 import {userMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
 import baseURL from "../../back";
+import axios from "axios";
 
 export async function getServerSideProps(context) {
+
+  const relativePath = `users/${props.id}`
+  const props = {}
+  axios.get(relativePath).then(res => {
+    const data = res.data
+    if (data && data.newsStats) {
+      axios.get(data.newsStats).then(newsStats =>  {
+        data.newsStats = newsStats.data
+        props.users = userMapper(res.data)
+      })
+    } else {
+      props.users = res.data ? userMapper(res.data) : {}
+    }
+  })
   return {
     props: {
       isJournalist: true,
@@ -59,18 +74,15 @@ export default function Profile(props) {
   const {I18n, loggedUser, axios}= useAppContext();
   const router = useRouter()
   const isMyProfile = loggedUser && loggedUser.id === props.id
-const urlBase = new URL(`users/${props.id}`, baseURL)
   const [profileEffectTrigger, profileTriggerEffect] = useTriggerEffect()
   const [newsEffectTrigger, newsTriggerEffect] = useTriggerEffect()
 
   const [useNews, setNews] = useState(props.news)
   const [pagination, setPagination] = usePagination()
-  const setParams = useURLWithParams()
   const [profileInfo, setProfileInfo] = useState(props)
 
 
   useEffect(() => {
-    console.log('hola')
     setNews(n => {
       for (const news of n) {
         switch(news.rating) {
