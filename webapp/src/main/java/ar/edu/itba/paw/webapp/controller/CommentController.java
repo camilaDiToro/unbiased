@@ -78,4 +78,10 @@ public class CommentController {
         return Response.created(commentDto.getSelf()).entity(commentDto).build();
     }
 
+    /*@DELETE
+    @Path("/{commentId:[0-9]+}")
+    public Response deleteComment(@PathParam("newsId") final long newsId, @PathParam("commentId") final long commentId) {
+        newsService.deleteComment(commentId);
+    }*/
+
 }
