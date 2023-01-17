@@ -34,9 +34,10 @@ public class CommentJpaDao implements CommentDao{
     }
 
     @Override
-    public void addComment(User user, News news, String comment) {
+    public Comment addComment(User user, News news, String comment) {
         final Comment commentObj = new Comment(user, comment, news);
         entityManager.persist(commentObj);
+        return commentObj;
     }
 
     @Override

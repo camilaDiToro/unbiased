@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
@@ -39,6 +40,7 @@ public class NewsServiceImplTest {
 
     private static final Category CATEGORY = Category.ALL;
     private static final NewsOrder ORDER = NewsOrder.NEW;
+    private static final ReportOrder REPORT_ORDER = ReportOrder.REP_COUNT_DESC;
     private static final TimeConstraint TIME = TimeConstraint.ALLTIME;
 
     // GET NEWS
@@ -113,7 +115,7 @@ public class NewsServiceImplTest {
     public void testGetComents(){
         Mockito.when(mockCommentDao.getNewComments(Mockito.eq(NEWS_ID), Mockito.eq(PAGE_NUM))).thenReturn(COMMENT_PAGE_2);
 
-        assertEquals(COMMENT_PAGE_2,newsService.getComments(NEWS_ID, PAGE_NUM, ORDER));
+        assertEquals(COMMENT_PAGE_2,newsService.getComments(NEWS_ID, PAGE_NUM, ORDER, null, REPORT_ORDER));
     }
 
     @Test

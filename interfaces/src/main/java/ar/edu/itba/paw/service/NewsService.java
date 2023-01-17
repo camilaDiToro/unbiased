@@ -2,6 +2,7 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.CategoryStatistics;
 import ar.edu.itba.paw.model.news.Comment;
@@ -30,8 +31,8 @@ public interface NewsService {
     Optional<News> getPingedNews(Optional<User> maybeCurrentUser, final  User profileUser);
     Page<News> getNewsForUserProfile(Optional<User> maybeCurrentUser, int page, NewsOrder newsOrder, final User user, ProfileCategory pc);
     Map<Long, Rating> getCommentsRating(List<Comment> comments, Optional<User> maybeLoggedUser);
-    void addComment(final User currentUser, long newsId, String comment);
-    Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj);
+    Comment addComment(final User currentUser, long newsId, String comment);
+    Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, Boolean reported, ReportOrder reportOrder);
     void deleteComment(long commentId);
     CategoryStatistics getCategoryStatistics(final long userId);
 }

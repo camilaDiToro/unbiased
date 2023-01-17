@@ -13,7 +13,6 @@ public interface AdminService {
     void reportNews(final User currentUser, long newsId, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
     void reportComment(final User currentUser, long commentId, ReportReason reportReason);
-    Page<Comment> getReportedComments(int page, ReportOrder reportOrder);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsIs);
     void deleteNews(long newsId);
     void deleteComment(long commentId);

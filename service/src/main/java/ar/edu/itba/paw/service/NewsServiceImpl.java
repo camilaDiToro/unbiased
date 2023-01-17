@@ -2,6 +2,7 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
@@ -262,23 +263,28 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public void addComment(final User currentUser, long newsId, String comment) {
+    public Comment addComment(final User currentUser, long newsId, String comment) {
         final News news = getById(currentUser, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
-        commentDao.addComment(currentUser, news, comment);
+        final Comment commentObj = commentDao.addComment(currentUser, news, comment);
         final User newsOwner = news.getCreator();
         final EmailSettings emailSettings = newsOwner.getEmailSettings();
         if(emailSettings!=null && emailSettings.isComment()){
             emailService.sendNewCommentEmail(newsOwner,news,emailSettings.getLocale());
         }
+        return commentObj;
     }
 
     @Override
     @Transactional
-    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj) {
-        if (orderByObj.equals(NewsOrder.NEW)) {
-            return commentDao.getNewComments(newsId, page);
+    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, final Boolean reported, ReportOrder reportOrder) {
+        if(reported == null){
+            if (orderByObj.equals(NewsOrder.NEW)) {
+                return commentDao.getNewComments(newsId, page);
+            }
+            return commentDao.getTopComments(newsId, page);
         }
-        return commentDao.getTopComments(newsId, page);
+
+        return commentDao.getReportedComment(page, reportOrder);
     }
 
     @Override

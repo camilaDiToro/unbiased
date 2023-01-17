@@ -55,11 +55,6 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Page<Comment> getReportedComments(int page, ReportOrder reportOrder) {
-        return commentDao.getReportedComment(page, reportOrder);
-    }
-
-    @Override
     public Page<ReportDetail> getReportedNewsDetail(int page, long newsId) {
         return newsDao.getReportedNewsDetail(page, newsId);
     }

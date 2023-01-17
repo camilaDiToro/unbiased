@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.auth.handlers;
 
+import ar.edu.itba.paw.webapp.auth.CustomUserDetails;
 import ar.edu.itba.paw.webapp.auth.jwt.JwtAuthToken;
 import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenDetails;
 import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
+import java.net.MalformedURLException;
 
 @Component
 public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -22,9 +24,9 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     private JwtTokenService jwtTokenService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws MalformedURLException {
         if((!(authentication instanceof JwtAuthToken)) || ((JwtTokenDetails) authentication.getDetails()).getTokenType().equals(JwtTokenType.REFRESH)) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             response.addHeader("access-token", "Bearer " + jwtTokenService.createAccessToken(userDetails));
             response.addHeader("refresh-token", "Bearer " + jwtTokenService.createRefreshToken(userDetails));
         }
