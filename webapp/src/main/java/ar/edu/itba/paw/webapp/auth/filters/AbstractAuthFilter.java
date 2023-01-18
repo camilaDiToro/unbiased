@@ -8,6 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -34,6 +35,12 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
             super(new OrRequestMatcher(
                     new AntPathRequestMatcher("/api/users/{\\d+}", HttpMethod.PUT),
                     new AntPathRequestMatcher("/api/users/{\\d+}/pingNews/{\\d+}", HttpMethod.PUT),
+                    // no se que estoy haciendo mal jeje
+//                    new RegexRequestMatcher("/api/news/\\d+\\?(.)*savedNews=(.)+", HttpMethod.GET),
+//                    new AntPathRequestMatcher("/api/news/{\\d+}/likes/{\\d+}", HttpMethod.PUT),
+//                    new AntPathRequestMatcher("/api/news/{\\d+}/dislikes/{\\d+}", HttpMethod.PUT),
+//                    new AntPathRequestMatcher("/api/news/{\\d+}/likes/{\\d+}", HttpMethod.DELETE),
+//                    new AntPathRequestMatcher("/api/news/{\\d+}/dislikes/{\\d+}", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/api/users/{\\d+}/followers/{\\d+}", HttpMethod.PUT),
                     new AntPathRequestMatcher("/api/users/{\\d+}/followers/{\\d+}", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/api/news/{\\d+}/comments", HttpMethod.POST),

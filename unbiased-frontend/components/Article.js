@@ -67,7 +67,7 @@ export default function Article(props) {
                 <PositivityIndicator {...props.stats}></PositivityIndicator>
                 <div className={`d-flex flex-column justify-content-between ${props.image ? 'w-60' : 'w-100'}`}>
                     <div className="d-flex w-100">
-                        <UpvoteButtons triggerEffect={props.triggerEffect} upvotes={props.upvotes} rating={props.rating}></UpvoteButtons>
+                        <UpvoteButtons id={props.id} triggerEffect={props.triggerEffect} upvotes={props.upvotes} rating={props.rating}></UpvoteButtons>
                         <div className="card-body-home">
                             <Link className="link max-h-10" href={`/news/${props.id}`}>
                                 <h5 className="link-text text-ellipsis">

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -156,12 +157,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().headers().cacheControl().disable().and().authorizeRequests()
-                .regexMatchers("/api/news\\?(.)*savedBy=(.)+").authenticated()
+//                .regexMatchers("/api/news\\?(.)*savedBy=(.)+").authenticated()
                 .and().authorizeRequests()
                 .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
                     .antMatchers("/owner/**").hasRole("OWNER")
                     .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
                             "/news/{\\d+}/delete", "/news/{\\d+}/comment").authenticated()
+                .antMatchers(HttpMethod.PUT,"/news/{\\d+}/likes/{\\d+}","/news/{\\\\d+}/dislikes/{\\\\d+}").authenticated()
                     .antMatchers("/api/**")
                 .permitAll()
                 .and().addFilterBefore(abstractAuthFilter(), UsernamePasswordAuthenticationFilter.class)

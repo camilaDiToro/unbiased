@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
@@ -14,11 +16,15 @@ import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.dto.NewsDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -89,11 +95,11 @@ public class NewsController {
         } else if (!savedBy.equals("")) {
             final ProfileCategory catObject = ProfileCategory.SAVED;
             final User profileUser = userService.getUserById(Long.parseLong(savedBy)).orElseThrow(UserNotFoundException::new);
-            final User user = securityService.getCurrentUser().get();
-            if (!user.equals(profileUser)) {
-                throw new UserNotAuthorized();
-            }
-            newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
+            final Optional<User> user = securityService.getCurrentUser();
+//            if (!user.equals(profileUser)) {
+//                throw new UserNotAuthorized();
+//            }
+            newsPage = newsService.getNewsForUserProfile(user, page, orderObj, profileUser, catObject);
         }
         else {
             newsPage = newsService.getNews(Optional.empty(), page,categoryObj, orderObj, timeObj, search);
@@ -127,6 +133,46 @@ public class NewsController {
             responseBuilder.link(pathBuilder.clone().replaceQueryParam("page", page+1).build(), "next");
         }
         return responseBuilder.build();
+    }
+
+    @PUT
+    @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
+//    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response like(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.setRating(user, news, Rating.UPVOTE);
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
+//  @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response dislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.setRating(user, news, Rating.DOWNVOTE);
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
+//        @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response removeLike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.setRating(user, news, Rating.NO_RATING);
+        return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
+//    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response removeDislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.setRating(user, news, Rating.NO_RATING);
+        return Response.ok().build();
     }
 //
 //    @Consumes({MediaType.APPLICATION_JSON})

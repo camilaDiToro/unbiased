@@ -1,7 +1,9 @@
 import {useAppContext} from "../context";
+import {useRouter} from "next/router";
 
 export default function UpvoteButtons(props) {
-    const {loggedUser} = useAppContext()
+    const {loggedUser, axios} = useAppContext()
+    const router = useRouter()
     let upvoteClass = ''
 
     if (loggedUser) {
@@ -11,15 +13,27 @@ export default function UpvoteButtons(props) {
             upvoteClass = 'downvoted'
     }
 
-    const handleUpvote = () => {
-        props.triggerEffect()
-        alert('toggled upvote')
+    const handleUpvoteOrDownvote = async (s) => {
+        if (!loggedUser) {
+            await router.push('/login')
+        } else {
+            try {
+                if (props.rating === 0 || props.rating > 0 && s === 'dislikes' || props.rating < 0 && s === 'likes') {
+                    await axios.put(`/news/${props.id}/${s}/${loggedUser.id}`)
+                } else {
+                    await axios.delete(`/news/${props.id}/${s}/${loggedUser.id}`)
+                }
+                props.triggerEffect()
+            } catch(e) {
+                console.log(e)
+            }
+        }
     }
 
-    const handleDownvote = () => {
-        props.triggerEffect()
-        alert('toggled downvote')
-    }
+    const handleUpvote = async () => handleUpvoteOrDownvote('likes')
+
+
+    const handleDownvote = async () => handleUpvoteOrDownvote('dislikes')
 
     // if (props.comment) {
     //     return <div className="d-flex flex-row align-items-center gap-1">

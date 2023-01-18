@@ -11,4 +11,8 @@ public class NewsNotFoundException extends RuntimeException {
     public NewsNotFoundException(String s, Throwable var1) {
         super(s,var1);
     }
+
+    public NewsNotFoundException() {
+
+    }
 }
