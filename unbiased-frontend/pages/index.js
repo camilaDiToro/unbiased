@@ -9,7 +9,7 @@ import MainCardsContainer from "../components/MainCardsContainer";
 import NewsCategoryTabs from "../components/NewsCategoryTabs";
 import {news, users} from "../hardcoded"
 import {useEffect, useState} from "react";
-import {useTriggerEffect, useURLWithParams} from "../utils";
+import {useLoggedParamsFiller, useTriggerEffect, useURLWithParams} from "../utils";
 import CancelSearchLink from "../components/CancelSearchLink";
 import ProfileCardTypeTab from "../components/ProfileCardTypeTab";
 import Creator from "../components/Creator";
@@ -18,6 +18,7 @@ import baseURL from "./back";
 import usePagination from "../pagination";
 import {newsMapper, userMapper} from "../mappers"
 import TimeSelector from "../components/TimeSelector";
+
 
 const urlBase = new URL('users', baseURL)
 
@@ -44,9 +45,9 @@ export default function Home(props) {
   const [pagination, setPagination] = usePagination()
   const setParams = useURLWithParams()
 
-  const {I18n, axios, setErrorDetails, jwtState} = useAppContext()
+  const {I18n, axios, loggedUser, jwtState} = useAppContext()
   const [jwt, setJwt] = jwtState
-  const maybeCurrent = parseInt(router.query.page || '1')
+  const fillNewsLoggedParams = useLoggedParamsFiller()
 
   const getUsersData = async res => {
     const data = res.data
@@ -72,36 +73,22 @@ export default function Home(props) {
     setUsers(finalData ? finalData.map(userMapper) : [])
   }
 
+
+
   useEffect(() => {
     const params = {...router.query}
     delete params['type']
     if (router.query.search && router.query.type === 'creator') {
 
       axios.get('users', {params}).then(getUsersData)
-      // axios.put(`users/2/pingNews/4`, {}).catch(error => {
-      //   if (error.response) {
-      //     // The request was made and the server responded with a status code
-      //     // that falls out of the range of 2xx
-      //     console.log(error.response.data);
-      //     console.log(error.response.status);
-      //     console.log(error.response.headers);
-      //   } else if (error.request) {
-      //     // The request was made but no response was received
-      //     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      //     // http.ClientRequest in node.js
-      //     console.log(error.request);
-      //   } else {
-      //     // Something happened in setting up the request that triggered an Error
-      //     console.log('Error', error.message);
-      //   }
-      // })
 
     } else {
-      axios.get('news', {params}).then(res => {
-        console.log(res)
-        setNews(res.data ? res.data.map(newsMapper) : [])
+        const news = axios.get('news', {params}).then(res => {
+        const mappedNews = (res.data || []).map(newsMapper)
+          fillNewsLoggedParams(mappedNews).then(n => setNews(n))
       })
-    }
+      }
+      // setNews(res.data ? res.data.map(newsMapper) : [])
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {

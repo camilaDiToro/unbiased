@@ -1,51 +1,35 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
-import ar.edu.itba.paw.model.news.CategoryStatistics;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TimeConstraint;
-import ar.edu.itba.paw.model.user.MailOption;
-import ar.edu.itba.paw.model.user.Role;
+import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.dto.NewsDto;
-import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
-import ar.edu.itba.paw.webapp.dto.UserDto;
-import ar.edu.itba.paw.webapp.form.UserForm;
-import ar.edu.itba.paw.webapp.form.UserProfileForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -74,11 +58,47 @@ public class NewsController {
     public Response listNews(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search,
                              @QueryParam("cat") @DefaultValue("ALL") final String category,
                              @QueryParam("order") @DefaultValue("TOP") final String order,
-                             @QueryParam("time") @DefaultValue("WEEK") final String time) {
+                             @QueryParam("time") @DefaultValue("WEEK") final String time,
+                             @QueryParam("likedBy") @DefaultValue("") final String likedBy,
+                             @QueryParam("dislikedBy") @DefaultValue("") final String dislikedBy,
+                             @QueryParam("savedBy") @DefaultValue("") final String savedBy,
+                             @QueryParam("publishedBy") @DefaultValue("") final String publishedBy) {
         Category categoryObj = Category.getByValue(category);
         NewsOrder orderObj = NewsOrder.getByValue(order);
         TimeConstraint timeObj = TimeConstraint.getByValue(time);
-        final Page<News> newsPage = newsService.getNews(Optional.empty(), page,categoryObj, orderObj, timeObj, search);
+        final Page<News> newsPage;
+        final int uniqueParamCount = Arrays.stream(new String[]{likedBy, dislikedBy, savedBy, publishedBy}).map(s -> s.equals("") ?0 : 1).reduce(Integer::sum).get();
+
+        if (uniqueParamCount > 1) {
+            // excepcion de request invalido
+        }
+
+        // SE PUEDE HACER MEJOR
+        if (!likedBy.equals("")) {
+            final ProfileCategory catObject = ProfileCategory.UPVOTED;
+            final User profileUser = userService.getUserById(Long.parseLong(likedBy)).orElseThrow(UserNotFoundException::new);
+            newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
+        } else if (!dislikedBy.equals(""))  {
+            final ProfileCategory catObject = ProfileCategory.DOWNVOTED;
+            final User profileUser = userService.getUserById(Long.parseLong(dislikedBy)).orElseThrow(UserNotFoundException::new);
+            newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
+        } else if (!publishedBy.equals("")) {
+            final ProfileCategory catObject = ProfileCategory.MY_POSTS;
+            final User profileUser = userService.getUserById(Long.parseLong(publishedBy)).orElseThrow(UserNotFoundException::new);
+            newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
+        } else if (!savedBy.equals("")) {
+            final ProfileCategory catObject = ProfileCategory.SAVED;
+            final User profileUser = userService.getUserById(Long.parseLong(savedBy)).orElseThrow(UserNotFoundException::new);
+            final User user = securityService.getCurrentUser().get();
+            if (!user.equals(profileUser)) {
+                throw new UserNotAuthorized();
+            }
+            newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
+        }
+        else {
+            newsPage = newsService.getNews(Optional.empty(), page,categoryObj, orderObj, timeObj, search);
+        }
+
 
         if(newsPage.getContent().isEmpty()){
             return Response.noContent().build();
@@ -89,16 +109,22 @@ public class NewsController {
             return NewsDto.fromNews(uriInfo, n);
         }).collect(Collectors.toList());
 
+        final MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
+        final UriBuilder pathBuilder = uriInfo.getAbsolutePathBuilder();
+
+        queryParams.entrySet().forEach(entry -> pathBuilder.queryParam(entry.getKey(), entry.getValue().get(0)));
+
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsDto>>(allNews) {})
-                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", newsPage.getTotalPages()).build(), "last")
-                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", 1).build(), "first");
+                .link(pathBuilder.clone().replaceQueryParam("page", newsPage.getTotalPages()).build(), "last")
+                .link(pathBuilder.clone().replaceQueryParam("page", 1).build(), "first");
 
         if(page != 1){
-            responseBuilder.link(uriInfo.getAbsolutePathBuilder().queryParam("page", page-1).build(), "prev");
+            responseBuilder.link(pathBuilder.clone().replaceQueryParam("page", page-1).build(), "prev");
         }
 
+
         if(page != newsPage.getTotalPages()){
-            responseBuilder.link(uriInfo.getAbsolutePathBuilder().queryParam("page", page+1).build(), "next");
+            responseBuilder.link(pathBuilder.clone().replaceQueryParam("page", page+1).build(), "next");
         }
         return responseBuilder.build();
     }

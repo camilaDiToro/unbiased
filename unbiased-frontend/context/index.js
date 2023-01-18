@@ -57,8 +57,7 @@ export default function AppWrapper({ children }) {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
         const loginURL = '/login'
-        console.log(errorDetails)
-
+        const errorDetails = error.response
         if (errorDetails.apiCode && router.pathname !== loginURL) {
             if (errorDetails.apiCode === 606 || errorDetails.apiCode === 603) {
                 router.push(loginURL)
@@ -94,6 +93,9 @@ export default function AppWrapper({ children }) {
 
         } else {
             localStorage.removeItem('refreshToken')
+        }
+        if (!jwt.accessToken && !jwt.refreshToken) {
+            setLoggedUser(undefined)
         }
         // alert(JSON.stringify(jwt))
     }, [jwt])

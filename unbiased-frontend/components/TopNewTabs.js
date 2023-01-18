@@ -11,7 +11,7 @@ export default function TopNewTabs(props) {
         { text: I18n("order.top"), params: {order: 'TOP'} }
     ];
 
-    if (!router.query.order) {
+    if (typeof window !== 'undefined' &&  !router.query.order) {
         router.replace({
             pathname: router.pathname,
                 query: { ...router.query, order: 'TOP' },

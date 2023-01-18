@@ -13,7 +13,7 @@ export default function TimeSelector(props) {
         { text: I18n("timeConstraint.alltime"), params: {time: 'ALLTIME'} },
     ];
 
-    if (!router.query.time) {
+    if (typeof window !== 'undefined' && !router.query.time) {
         router.replace({
             pathname: router.pathname,
             query: { ...router.query, time: 'WEEK' },
