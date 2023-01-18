@@ -48,40 +48,58 @@ export default function Home(props) {
   const [jwt, setJwt] = jwtState
   const maybeCurrent = parseInt(router.query.page || '1')
 
+  const getUsersData = async res => {
+    const data = res.data
+    // setPagination(res)
+    // const promises = data.map(d => {
+    //   if (d && d.newsStats) {
+    //     return axios.get(d.newsStats).then(newsStats =>  {
+    //       // alert(JSON.stringify(newsStats.data))
+    //       d.newsStats = newsStats.data
+    //       return d
+    //     })
+    //   } else {
+    //     return d
+    //   }
+    // })
+    // const finalData = await Promise.all(promises);
+    const finalData = data.map(d => {
+      const aux = d
+      delete aux['newsStats']
+      return aux
+    })
+
+    setUsers(finalData ? finalData.map(userMapper) : [])
+  }
 
   useEffect(() => {
     const params = {...router.query}
     delete params['type']
     if (router.query.search && router.query.type === 'creator') {
 
-      // axios.get('users', {params}).then(res => {
-      //   setUsers(res.data ? res.data.map(userMapper) : [])
+      axios.get('users', {params}).then(getUsersData)
+      // axios.put(`users/2/pingNews/4`, {}).catch(error => {
+      //   if (error.response) {
+      //     // The request was made and the server responded with a status code
+      //     // that falls out of the range of 2xx
+      //     console.log(error.response.data);
+      //     console.log(error.response.status);
+      //     console.log(error.response.headers);
+      //   } else if (error.request) {
+      //     // The request was made but no response was received
+      //     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      //     // http.ClientRequest in node.js
+      //     console.log(error.request);
+      //   } else {
+      //     // Something happened in setting up the request that triggered an Error
+      //     console.log('Error', error.message);
+      //   }
       // })
-      axios.put(`users/2/pingNews/4`, {}).catch(error => {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-          setErrorDetails(error.response.data)
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          console.log(error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message);
-        }
-      })
 
     } else {
-      setNews(n => {
-        axios.get('news', {params}).then(res => {
-          setNews(res.data ? res.data.map(newsMapper) : [])
-        })
-        return n
+      axios.get('news', {params}).then(res => {
+        console.log(res)
+        setNews(res.data ? res.data.map(newsMapper) : [])
       })
     }
   }, [router.query, newsEffectTrigger])
@@ -99,11 +117,11 @@ export default function Home(props) {
     <Head>
       <title>unbiased - Home </title>
     </Head>
-      {router.query.search ? <></> : <NewsCategoryTabs></NewsCategoryTabs>}
+      {router.query.search  ? <></> : <NewsCategoryTabs></NewsCategoryTabs>}
       <div className="d-flex flex-column flex-xl-row  flex-grow-1">
         <div className="w-100 w-xl-75 ">
           <TopNewTabs>
-            <TimeSelector></TimeSelector>
+            {router.query.search && router.query.type === 'creator' || (!router.query.order  || router.query.order === 'NEW')? <></> : <TimeSelector></TimeSelector>}
           </TopNewTabs>
           {router.query.search ? <><CancelSearchLink text={I18n("search.filter", [router.query.search])}></CancelSearchLink> <ProfileCardTypeTab></ProfileCardTypeTab></> : <></>}
           <div className="container-fluid">

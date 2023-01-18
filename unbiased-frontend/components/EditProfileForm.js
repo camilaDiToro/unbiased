@@ -89,9 +89,7 @@ export default function EditProfileForm(props) {
                     {I18n(op)}
                 </label>
             </div>)}
-            <div className="w-100">
-                <p className="text-danger">error</p>
-            </div>
+
         </div>
     </>
 }

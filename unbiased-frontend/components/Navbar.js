@@ -16,7 +16,7 @@ export default function Navbar(props) {
         if (e.key === 'Enter') {
             router.push({
                 pathname: '/',
-                query: {...(router.query.type && {type: router.query.type}), ...(e.target.value && {search: e.target.value})}
+                query: {...(router.query.type && {type: router.query.type}), ...(e.target.value && {search: e.target.value}), ...(router.query.time && {time: router.query.time})}
             })
         }
     }

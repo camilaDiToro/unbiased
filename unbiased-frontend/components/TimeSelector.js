@@ -12,6 +12,13 @@ export default function TimeSelector(props) {
         { text: I18n("timeConstraint.week"), params: {time: 'WEEK'} },
         { text: I18n("timeConstraint.alltime"), params: {time: 'ALLTIME'} },
     ];
+
+    if (!router.query.time) {
+        router.replace({
+            pathname: router.pathname,
+            query: { ...router.query, time: 'WEEK' },
+        })
+    }
     const timeMap = categories.reduce((a,v) => ({...a, [v.params.time]: v.text}), {})
 
 

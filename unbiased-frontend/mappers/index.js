@@ -14,19 +14,19 @@ export const userMapper = (u) => {
         id: u.id,
         tier: u.tier,
         isJournalist: u.journalist,
-        stats: u.stats,
+        ...(u.stats && {stats: u.stats} ),
         image: u.image,
-        description: u.description,
+        ...(u.description && {description: u.description} ),
         mailOptions: u.mailOptions,
         hasPositivity: u.hasPositivity,
-        username: u.username,
+        ...(u.username && {username: u.username} ),
         email: u.email,
         followers: u.followers,
         following: u.following,
-        newsStatistics: u.newsStats.map(s => ({
+        newsStatistics: u.newsStats ? u.newsStats.map(s => ({
             progress: s.proportion,
             title: s['category'],
             i18n: true
-        }))
+        })) : []
     }
 }

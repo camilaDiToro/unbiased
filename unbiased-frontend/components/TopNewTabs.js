@@ -11,6 +11,13 @@ export default function TopNewTabs(props) {
         { text: I18n("order.top"), params: {order: 'TOP'} }
     ];
 
+    if (!router.query.order) {
+        router.replace({
+            pathname: router.pathname,
+                query: { ...router.query, order: 'TOP' },
+        })
+    }
+
     const orderMap = orders.reduce((a,v) => ({...a, [v.params.order]: v.text}), {})
     const selectedOrder = orderMap[router.query.order] || I18n("order.top");
 

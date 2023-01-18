@@ -33,7 +33,7 @@ export async function getServerSideProps(context) {
   if (data && data.newsStats) {
     const newsStatsRes = await axios.get(data.newsStats)
     data.newsStats = newsStatsRes.data
-    props.userInfo = userMapper(res.data)
+    props.userInfo = userMapper(data)
   } else {
     props.userInfo = res.data ? userMapper(res.data) : {}
   }
@@ -150,7 +150,7 @@ export default function Profile(props) {
         </ModalTrigger>
       </Tooltip> : <></>}
     <Modal id="infoModal" title={I18n("profile.modal.infoTitle")} >
-     <UserPrivileges></UserPrivileges>
+     <UserPrivileges isJournalist={profileInfo.isJournalist}></UserPrivileges>
     </Modal>
 
       <img src="/img/front-page-profile.png" className="card-img-top" alt="..."/>

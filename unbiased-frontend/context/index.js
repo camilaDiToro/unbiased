@@ -7,11 +7,18 @@ const AppContext = createContext(null);
 
 export default function AppWrapper({ children }) {
     const [errorDetails, setErrorDetails] = useState({})
-    const jwtState = useState({})
-    useEffect(()=> {
-        jwtState[1]({        accessToken: localStorage.getItem('accessToken'), refreshToken: localStorage.getItem('refreshToken')
-        })
-    }, [])
+    let newJwt = {}
+    if (typeof window !== 'undefined') {
+        newJwt = {        accessToken: localStorage.getItem('accessToken'), refreshToken: localStorage.getItem('refreshToken')
+        }
+    }
+    const jwtState = useState(newJwt)
+    const [loggedUser, setLoggedUser] = useState(null)
+    // useEffect(()=> {
+    //
+    //     alert('About to set to ' + JSON.stringify(newJwt))
+    //     jwtState[1](newJwt)
+    // }, [])
     const router = useRouter()
     const axiosInstance = axios.create({
         baseURL: baseURL.href,
@@ -21,6 +28,7 @@ export default function AppWrapper({ children }) {
             if (accessToken) {
                 headers.Authorization = `Bearer ${accessToken}`
             } else if(refreshToken) {
+                // alert('setting refreshToken')
                 headers.Authorization = `Bearer ${refreshToken}`
             }
             return data;
@@ -28,15 +36,16 @@ export default function AppWrapper({ children }) {
     })
 
     const setHeadersIfExist = (response) => {
-        const accessHeader = response.headers.get('access-token')
-        const refreshHeader = response.headers.get('refresh-token')
-        if (accessHeader && refreshHeader) {
-            const accessToken = response.headers.get('access-token').split(' ')[1]
-            const refreshToken = response.headers.get('refresh-token').split(' ')[1]
-            // localStorage.setItem('access-token', accessToken)
-            // localStorage.setItem('refresh-token', refreshToken)
-            jwtState[1]({accessToken, refreshToken})
-
+        if (response) {
+            const accessHeader = response.headers.get('access-token')
+            const refreshHeader = response.headers.get('refresh-token')
+            if (accessHeader && refreshHeader) {
+                const accessToken = response.headers.get('access-token').split(' ')[1]
+                const refreshToken = response.headers.get('refresh-token').split(' ')[1]
+                // localStorage.setItem('access-token', accessToken)
+                // localStorage.setItem('refresh-token', refreshToken)
+                jwtState[1]({accessToken, refreshToken})
+            }
         }
     }
 
@@ -47,25 +56,6 @@ export default function AppWrapper({ children }) {
         setHeadersIfExist(error.response)
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
-        return Promise.reject(error);
-    });
-
-    const jwt = jwtState[0]
-
-    useEffect(() => {
-        if (jwt.accessToken) {
-            localStorage.setItem('accessToken', jwt.accessToken)
-        } else {
-            localStorage.removeItem('accessToken')
-        }
-        if (jwt.refreshToken) {
-            localStorage.setItem('refreshToken', jwt.refreshToken)
-        } else {
-            localStorage.removeItem('refreshToken')
-        }
-    }, [jwt])
-
-    useEffect(() => {
         const loginURL = '/login'
         console.log(errorDetails)
 
@@ -82,13 +72,34 @@ export default function AppWrapper({ children }) {
                 }
             }
         }
-    }, [errorDetails])
-    let sharedState = {I18n, loggedUser: {
-        nameOrEmail: 'kevin',
-            id: 13,
-            hasImage: false,
-            isAdmin: true
-        }, axios: axiosInstance, setErrorDetails, jwtState}
+
+        return Promise.reject(error);
+    });
+
+    const jwt = jwtState[0]
+
+
+    useEffect(() => {
+        // alert('setting jwt to ' + JSON.stringify(jwt))
+        if (jwt.accessToken) {
+            localStorage.setItem('accessToken', jwt.accessToken)
+        } else {
+            localStorage.removeItem('accessToken')
+        }
+        if (jwt.refreshToken) {
+            localStorage.setItem('refreshToken', jwt.refreshToken)
+            const loggedUser = JSON.parse(atob(jwt.refreshToken.split('.')[1]))
+            setLoggedUser({...loggedUser, nameOrEmail: loggedUser.username, hasImage: !!loggedUser.imageLink,
+            image: loggedUser.imageLink, id: loggedUser.userId})
+
+        } else {
+            localStorage.removeItem('refreshToken')
+        }
+        // alert(JSON.stringify(jwt))
+    }, [jwt])
+
+
+    let sharedState = {I18n, loggedUser, axios: axiosInstance, setErrorDetails, jwtState}
 
 
     return (
