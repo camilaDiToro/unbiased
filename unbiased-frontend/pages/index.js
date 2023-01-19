@@ -83,7 +83,7 @@ export default function Home(props) {
       axios.get('users', {params}).then(getUsersData)
 
     } else {
-        const news = axios.get('news', {params}).then(res => {
+        axios.get('news', {params}).then(res => {
         const mappedNews = (res.data || []).map(newsMapper)
           fillNewsLoggedParams(mappedNews).then(n => setNews(n))
       })

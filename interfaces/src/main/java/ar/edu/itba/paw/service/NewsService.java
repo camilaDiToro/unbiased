@@ -24,6 +24,13 @@ public interface NewsService {
     Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query);
     void setRating(final User currentUser, News news, Rating rating);
     void setCommentRating(final User currentUser, Comment comment, Rating rating);
+
+
+    void saveNews(User currentUser, long newsId);
+
+
+    void unsaveNews(User currentUser, long newsId);
+
     boolean toggleSaveNews(final User currentUser, long newsId);
     void deleteNews(News news);
     Iterable<ProfileCategory> getProfileCategories(Optional<User> maybeCurrentUser, final User user);

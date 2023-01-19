@@ -3,12 +3,13 @@ import {useAppContext} from "../context";
 import types from "../types";
 
 export default function Bookmark(props) {
-    const {loggedUser, I18n} = useAppContext()
-    const onSave = (e) => {
+    const {loggedUser, I18n, axios} = useAppContext()
+
+    const onSave = async (e) => {
         if(props.saved) {
-           alert(`unsaved article of id ${props.id}`)
+            await axios.delete(`/news/${props.id}/bookmarks/${loggedUser.id}`)
         } else {
-            alert(`saved article of id ${props.id}`)
+            await axios.put(`/news/${props.id}/bookmarks/${loggedUser.id}`)
         }
         props.triggerEffect()
     }

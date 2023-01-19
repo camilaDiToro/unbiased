@@ -59,11 +59,12 @@ export default function AppWrapper({ children }) {
         const loginURL = '/login'
         const errorDetails = error.response.data
         if (errorDetails.apiCode && router.pathname !== loginURL) {
-            if (errorDetails.apiCode === 606 || errorDetails.apiCode === 603 || errorDetails.apiCode === 605) {
+            if (errorDetails.apiCode === 606 || errorDetails.apiCode === 603 || errorDetails.apiCode === 605|| errorDetails.apiCode === 600) {
                 jwtState[1]({})
             } else if (errorDetails.apiCode === 604) {
                 if(jwt.accessToken) {
                     jwtState[1]({refreshToken: jwt.refreshToken})
+                    return axios(error.config)
                 } else {
                     jwtState[1]({})
                     localStorage.setItem('fromPage', 'true')

@@ -29,7 +29,7 @@ export const useLoggedParamsFiller =  () => {
 
     const auxFunc = async (queryParam) => {
         try {
-            const likedNewsResponse = await axios.get('news', {params: {[queryParam]: loggedUser.id}})
+            const likedNewsResponse = await axios.get('news', {retry: 1,params: {[queryParam]: loggedUser.id}})
             let likedNews = (likedNewsResponse.data || []).map(n => n.id)
             let parsedLink = await parse(likedNewsResponse.headers.get('Link'))
             while (parsedLink && parsedLink.next) {
@@ -45,16 +45,15 @@ export const useLoggedParamsFiller =  () => {
 
     }
 
-
-
     const fillLoggedParams = async (news) => {
         console.log(news)
         if (loggedUser) {
             const likedNews = await auxFunc('likedBy')
-            console.log(likedNews)
             const dislikedNews = await auxFunc('dislikedBy')
 
             const savedNews = await auxFunc('savedBy')
+            console.log(savedNews)
+
             news.forEach(n => {
                 n.rating = likedNews.includes(n.id) ? 1 : (dislikedNews.includes(n.id) ? -1 : 0)
                 n.saved = savedNews.includes(n.id)

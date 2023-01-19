@@ -176,6 +176,28 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+    public void saveNews(final User currentUser, long newsId) {
+
+        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+
+        newsDao.saveNews(news, currentUser);
+        news.setUserSpecificVariables(currentUser.getId());
+
+    }
+
+    @Override
+    @Transactional
+    public void unsaveNews(final User currentUser, long newsId) {
+
+        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+
+        newsDao.removeSaved(news, currentUser);
+        news.setUserSpecificVariables(currentUser.getId());
+
+    }
+
+    @Override
+    @Transactional
     public boolean toggleSaveNews(final User currentUser, long newsId) {
 
         final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));

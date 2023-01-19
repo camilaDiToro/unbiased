@@ -17,9 +17,9 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import EditProfileForm from "../../../components/EditProfileForm";
 import UserPrivileges from "../../../components/UserPrivileges";
-import {useTriggerEffect, useURLWithParams} from "../../../utils"
+import {useLoggedParamsFiller, useTriggerEffect, useURLWithParams} from "../../../utils"
 import Pagination from "../../../components/Pagination";
-import {userMapper} from "../../../mappers";
+import {newsMapper, userMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
 import baseURL from "../../back";
 import axios from "axios";
@@ -71,6 +71,8 @@ export async function getServerSideProps(context) {
 }
 
 
+
+
 export default function Profile(props) {
 
   const {I18n, loggedUser, axios}= useAppContext();
@@ -82,20 +84,28 @@ export default function Profile(props) {
   const [useNews, setNews] = useState(props.news)
   const [pagination, setPagination] = usePagination()
   const [profileInfo, setProfileInfo] = useState(props.userInfo)
+  const fillNewsLoggedParams = useLoggedParamsFiller()
 
+  const queryParamMap = {
+    MY_POSTS: 'publishedBy',
+    SAVED: 'savedBy',
+    UPVOTED: 'likedBy',
+    DOWNVOTED: 'dislikedBy'
+  }
+
+  const getQueryParams = () => {
+    const params = {order: router.query.order}
+
+    if (loggedUser) {
+      params[queryParamMap[router.query.cat] || queryParamMap.MY_POSTS] = loggedUser.id
+    }
+    return {params}
+  }
 
   useEffect(() => {
-    setNews(n => {
-      for (const news of n) {
-        switch(news.rating) {
-          case 1: news.rating = 0;
-          break;
-          case 0: news.rating = -1;
-          break;
-          case -1:news.rating =  1;
-        }
-      }
-      return n
+    axios.get('news', getQueryParams()).then(res => {
+      const mappedNews = (res.data || []).map(newsMapper)
+      fillNewsLoggedParams(mappedNews).then(n => setNews(n))
     })
   }, [router.query, newsEffectTrigger])
 

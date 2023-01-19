@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import {useAppContext} from "../context";
 import types from "../types";
 import {useState} from "react";
+import ProfilePic from "./ProfilePic";
 
 
 
@@ -71,10 +72,8 @@ export default function Navbar(props) {
 
                             <div className="img-container-navbar">
 
-                                <div className="frame-navbar">
-                                    <img src="/img/profile-image.png"
-                                         className="rounded-circle object-fit-cover mr-1"/>
-                                </div>
+                                <ProfilePic {...loggedUser}></ProfilePic>
+
                             </div>
 
 

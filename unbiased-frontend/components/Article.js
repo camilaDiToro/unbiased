@@ -19,45 +19,6 @@ export default function Article(props) {
 
     const isMyProfile = loggedUser && loggedUser.id === props.creator.id
 
-    const handleUpvote = async (e) => {
-        // if (useUpvote > 0) {
-        //     setUpvote(0)
-        // } else {
-        //     setUpvote(1)
-        // }
-        props.triggerEffect()
-    }
-
-    const handleDownvote = async (e) => {
-        // if (useUpvote < 0) {
-        //     setUpvote(0)
-        // } else {
-        //     setUpvote(-1)
-        // }
-        props.triggerEffect()
-
-    }
-
-    const handleSave = async (e) => {
-        // if (useSaved) {
-        //     setSaved(false)
-        // } else {
-        //     setSaved(true)
-        // }
-        props.triggerEffect()
-
-    }
-
-    const handlePin = async (e) => {
-        // if (usePinned) {
-        //     setPinned(false)
-        // } else {
-        //     setPinned(true)
-        // }
-        props.triggerEffect()
-
-    }
-
 
 
     return <>

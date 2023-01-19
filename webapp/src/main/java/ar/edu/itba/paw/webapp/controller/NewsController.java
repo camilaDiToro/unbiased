@@ -8,20 +8,31 @@ import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
+import ar.edu.itba.paw.model.news.TextUtils;
 import ar.edu.itba.paw.model.news.TimeConstraint;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.constraints.FileSize;
 import ar.edu.itba.paw.webapp.dto.NewsDto;
+import ar.edu.itba.paw.webapp.dto.UserDto;
+import ar.edu.itba.paw.webapp.form.CreateNewsForm;
+import ar.edu.itba.paw.webapp.form.UserForm;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -34,6 +45,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -57,8 +69,6 @@ public class NewsController {
         this.securityService = securityService;
     }
 
-
-
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response listNews(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search,
@@ -76,7 +86,7 @@ public class NewsController {
         final int uniqueParamCount = Arrays.stream(new String[]{likedBy, dislikedBy, savedBy, publishedBy}).map(s -> s.equals("") ?0 : 1).reduce(Integer::sum).get();
 
         if (uniqueParamCount > 1) {
-            // excepcion de request invalido
+
         }
 
         // SE PUEDE HACER MEJOR
@@ -118,7 +128,7 @@ public class NewsController {
         final MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
         final UriBuilder pathBuilder = uriInfo.getAbsolutePathBuilder();
 
-        queryParams.entrySet().forEach(entry -> pathBuilder.queryParam(entry.getKey(), entry.getValue().get(0)));
+        queryParams.forEach((key, value) -> pathBuilder.queryParam(key, value.get(0)));
 
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsDto>>(allNews) {})
                 .link(pathBuilder.clone().replaceQueryParam("page", newsPage.getTotalPages()).build(), "last")
@@ -135,9 +145,32 @@ public class NewsController {
         return responseBuilder.build();
     }
 
+    @GET
+    @Path("/{newsId:[0-9]+}")
+    @Produces(value = {CustomMediaType.USER_V1})
+    public Response getNews(@PathParam("newsId") final long newsId){
+        News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+
+        NewsDto newsDto = NewsDto.fromNews(uriInfo, news);
+        return Response.ok(newsDto).build();
+    }
+
+    @PUT
+//    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("/{newsId:[0-9]+}/image")
+    public Response updateNewsImage(@PathParam("newsId") long id,
+                                 @FormDataParam("image") final FormDataBodyPart newsBodyPart,
+                                 @FileSize @FormDataParam("image") byte[] bytes) {
+
+        final String imageType = newsBodyPart.getMediaType().toString();
+
+        return Response.noContent().build();
+    }
+
     @PUT
     @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
-//    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
@@ -147,7 +180,7 @@ public class NewsController {
 
     @PUT
     @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
-//  @PreAuthorize("@ownerCheck.userMatches(#userId)")
+  @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
@@ -157,7 +190,7 @@ public class NewsController {
 
     @DELETE
     @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
-//        @PreAuthorize("@ownerCheck.userMatches(#userId)")
+        @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
@@ -167,12 +200,44 @@ public class NewsController {
 
     @DELETE
     @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
-//    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         newsService.setRating(user, news, Rating.NO_RATING);
         return Response.ok().build();
+    }
+
+    @DELETE
+    @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response removeBookmark(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.unsaveNews(user, newsId);
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response save(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.saveNews(user, newsId);
+        return Response.ok().build();
+    }
+
+    @Consumes({MediaType.APPLICATION_JSON})
+    @POST
+    public Response createNews(@Valid final CreateNewsForm createNewsFrom){
+        final User user = securityService.getCurrentUser().get();
+        final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, TextUtils.convertMarkdownToHTML(createNewsFrom.getBody()), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+
+        final News news = newsService.create(newsBuilder, Arrays.stream(createNewsFrom.getCategories()).map(Category::getByCode).collect(Collectors.toList()));
+
+        final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(news.getNewsId())).build();
+        return Response.created(location).entity(NewsDto.fromNews(uriInfo, news)).build();
     }
 //
 //    @Consumes({MediaType.APPLICATION_JSON})
