@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import ar.edu.itba.paw.model.user.Tier;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.service.UserService;
@@ -34,6 +35,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         final Collection<? extends GrantedAuthority> authorities = user.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
 
-        return new CustomUserDetails(user.getId(), username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities, user.toString());
+        return new CustomUserDetails(user.getId(), username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities, user.toString(), Tier.getTier(us.getFollowersCount(user.getUserId())).toString());
     }
 }

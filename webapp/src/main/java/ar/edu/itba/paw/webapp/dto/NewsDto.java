@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.dto;
 
+import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.User;
@@ -12,6 +13,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.net.URI;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class NewsDto {
     private String title;
@@ -23,6 +25,16 @@ public class NewsDto {
 
     @XmlJavaTypeAdapter(CreatorAdapter.class)
     private HashMap<String, String> creator = new HashMap<>();
+
+    public String[] getCategories() {
+        return categories;
+    }
+
+    public void setCategories(String[] categories) {
+        this.categories = categories;
+    }
+
+    private String[] categories;
     private long id;
     private Boolean pinned;
     private long upvotes;
@@ -43,6 +55,7 @@ public class NewsDto {
         PositivityStats p = news.getPositivityStats();
         n.upvotes = p.getNetUpvotes();
         n.hasImage = n.isHasImage();
+        n.categories = news.getCategories().stream().map(Category::getInterCode).collect(Collectors.toList()).toArray(new String[]{});
         if (n.hasImage) {
             n.image = uriInfo.getBaseUriBuilder().path("api").path("news").path(String.valueOf(news.getNewsId())).path("image").build();
         }
