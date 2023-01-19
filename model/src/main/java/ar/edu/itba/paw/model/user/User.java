@@ -41,6 +41,14 @@ public class User implements Serializable {
         return pingedNews;
     }
 
+    public long getFollowerCount() {
+        return followers.size();
+    }
+
+    public long getFollowingCount() {
+        return following.size();
+    }
+
     public void setPingedNews(final News pingedNews) {
         this.pingedNews = pingedNews;
     }
@@ -293,6 +301,9 @@ public class User implements Serializable {
     }
 
     public EmailSettings getEmailSettings() {
+        if (emailSettings == null)
+            return new EmailSettings();
+        
         return emailSettings;
     }
 

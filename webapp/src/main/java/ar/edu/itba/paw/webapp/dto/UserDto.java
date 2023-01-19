@@ -4,10 +4,15 @@ import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.Tier;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.webapp.adapter.PositivityAdapter;
 
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.net.URI;
+import java.util.HashMap;
 
+@XmlRootElement
 public class UserDto {
 
     private String email;
@@ -39,35 +44,9 @@ public class UserDto {
     private boolean hasImage;
 
 
-    public String getPositivity() {
-        return positivity;
-    }
 
-    public void setPositivity(String positivity) {
-        this.positivity = positivity;
-    }
 
-    private String positivity;
 
-    private int interactions;
-
-    public int getInteractions() {
-        return interactions;
-    }
-
-    public void setInteractions(int interactions) {
-        this.interactions = interactions;
-    }
-
-    public double getUpvotedProportion() {
-        return upvotedProportion;
-    }
-
-    public void setUpvotedProportion(double upvotedProportion) {
-        this.upvotedProportion = upvotedProportion;
-    }
-
-    private double upvotedProportion;
 
     public boolean isJournalist() {
         return isJournalist;
@@ -117,31 +96,73 @@ public class UserDto {
 
     private boolean hasPositivity;
 
+    public String[] getMailOptions() {
+        return mailOptions;
+    }
+
+    public void setMailOptions(String[] mailOptions) {
+        this.mailOptions = mailOptions;
+    }
+
+    private String[] mailOptions = new String[]{};
+
+
+    public HashMap<String, String> getStats() {
+        return stats;
+    }
+
+    public void setStats(HashMap<String, String> stats) {
+        this.stats = stats;
+    }
+
+    @XmlJavaTypeAdapter(PositivityAdapter.class)
+    private HashMap<String, String> stats = new HashMap<>();
+
+    public URI getNewsStats() {
+        return newsStats;
+    }
+
+    public void setNewsStats(URI newsStats) {
+        this.newsStats = newsStats;
+    }
+
+    private URI newsStats;
+
+
+
 
     public static UserDto fromUser(final UriInfo uriInfo, final User user){
         final UserDto dto = new UserDto();
         dto.email = user.getEmail();
         dto.username = user.getUsername();
-        dto.self = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).build();
+        dto.self = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).build();
         dto.hasImage = user.hasImage();
         if (dto.hasImage) {
-            dto.image = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("image").build();
+            dto.image = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).path("image").build();
         }
         long followers = user.getFollowers().size();
         long following = user.getFollowing().size();
         dto.following = following;
         dto.followers = followers;
         dto.tier = Tier.getTier(followers).toString();
-        PositivityStats stats = user.getPositivityStats();
         dto.isJournalist = user.getRoles().contains(Role.ROLE_JOURNALIST);
+        if (dto.isJournalist) {
+            dto.newsStats = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).path("news-stats").build();
+        }
         dto.description = user.getDescription();
         dto.hasPositivity = user.hasPositivityStats();
         if (dto.hasPositivity) {
-            dto.positivity = stats.getPositivity().toString().toLowerCase();
-            dto.interactions = stats.getInteractions();
-            dto.upvotedProportion = stats.getProportionUpvoted();
+            PositivityStats p = user.getPositivityStats();
+            dto.stats.put("upvoted", Double.toString(p.getProportionUpvoted()));
+            dto.stats.put("positivity", p.getPositivity().toString());
+            dto.stats.put("interactions", Long.toString(p.getInteractions()));
         }
         dto.id = user.getUserId();
+        // TODO if user == loggedInUser
+            dto.mailOptions = user.getEmailSettings().getOptionsArray();
+
+
+
         return dto;
     }
 

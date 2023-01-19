@@ -11,8 +11,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -57,6 +59,17 @@ public class EmailSettings {
         setterByEnum.put(MailOption.FOLLOW, this::setFollow);
         setterByEnum.put(MailOption.FOLLOWING_PUBLISHED, this::setFollowingPublished);
         setterByEnum.put(MailOption.POSITIVITY_CHANGED, this::setPositivityChange);
+    }
+
+    public String[] getOptionsArray() {
+        Map<MailOption, Boolean> map = getValueByEnum();
+        List<String> list = new ArrayList<>();
+        for (Map.Entry<MailOption, Boolean> entry : map.entrySet()) {
+            if (entry.getValue()) {
+                list.add(entry.getKey().getInterCode());
+            }
+        }
+        return list.toArray(new String[]{});
     }
 
     public EmailSettings(boolean follow, boolean comment, boolean followingPublished, boolean positivityChange, Locale locale, User user) {
@@ -135,6 +148,7 @@ public class EmailSettings {
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
+
 
     public Map<MailOption, Boolean> getValueByEnum() {
         Map<MailOption, Boolean> getterByEnum = new EnumMap<>(MailOption.class);
