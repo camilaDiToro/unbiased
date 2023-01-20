@@ -84,6 +84,7 @@ export default function Home(props) {
 
     } else {
         axios.get('news', {params}).then(res => {
+          setPagination(res)
         const mappedNews = (res.data || []).map(newsMapper)
           fillNewsLoggedParams(mappedNews).then(n => setNews(n))
       })

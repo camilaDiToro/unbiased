@@ -24,7 +24,7 @@ const Article = {
     subtitle: PropTypes.string.isRequired,
     body: PropTypes.string.isRequired,
     readTime: PropTypes.number.isRequired,
-    saved: PropTypes.bool.isRequired,
+    saved: PropTypes.bool,
     hasImage: PropTypes.bool.isRequired,
     image: PropTypes.string,
     creator: PropTypes.shape(TopCreator),

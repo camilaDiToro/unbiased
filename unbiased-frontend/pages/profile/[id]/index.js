@@ -94,7 +94,7 @@ export default function Profile(props) {
   }
 
   const getQueryParams = () => {
-    const params = {order: router.query.order}
+    const params = {order: router.query.order, page: router.query.page}
 
     if (loggedUser) {
       params[queryParamMap[router.query.cat] || queryParamMap.MY_POSTS] = loggedUser.id
@@ -104,6 +104,8 @@ export default function Profile(props) {
 
   useEffect(() => {
     axios.get('news', getQueryParams()).then(res => {
+      console.log(res)
+      setPagination(res)
       const mappedNews = (res.data || []).map(newsMapper)
       fillNewsLoggedParams(mappedNews).then(n => setNews(n))
     })
@@ -133,7 +135,6 @@ export default function Profile(props) {
       className="d-flex flex-column w-30 justify-content-start pr-5">
     <div className="card right-card" id="right-card">
       <div className="profile">
-
         {isMyProfile ? <ModalTrigger modalId="profileModal">
           <span
               className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
