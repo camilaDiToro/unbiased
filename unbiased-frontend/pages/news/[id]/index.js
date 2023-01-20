@@ -54,7 +54,6 @@ export default function ShowNews(props) {
         setArticle(n[0])
         console.log(n[0])
       })
-
     })
 
   }, [articleEffectTrigger])
@@ -86,7 +85,7 @@ export default function ShowNews(props) {
             </div>
           </div>
           <hr/>
-          {article.hasImage ? <img className="w-50 m-4 max-h-300px rounded mx-auto d-block img-thumbnail" src={`/news/${article.id}/image`} alt=""/>
+          {article.hasImage ? <img className="w-50 m-4 max-h-300px rounded mx-auto d-block img-thumbnail" src={article.image} alt=""/>
            : <></>}
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex gap-1 align-items-center justify-content-between w-100">
@@ -111,6 +110,7 @@ export default function ShowNews(props) {
           </div>
 
           <p className="text-sm-left text-secondary mr-1">
+
             <FormattedDate datetime={article.datetime}></FormattedDate>{" • "}
             <img id="clock"
               className="read-clock mx-1 mb-1"
@@ -123,7 +123,8 @@ export default function ShowNews(props) {
               <div className="img-container-article">
                 <ProfilePic {...article.creator}></ProfilePic>
               </div>
-              <ProfileLink bold {...article.creator}></ProfileLink>
+
+              <ProfileLink  bold {...article.creator}></ProfileLink>
             </div>
           </div>
 

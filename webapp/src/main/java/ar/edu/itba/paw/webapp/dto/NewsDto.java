@@ -54,7 +54,7 @@ public class NewsDto {
         n.id = news.getNewsId();
         PositivityStats p = news.getPositivityStats();
         n.upvotes = p.getNetUpvotes();
-        n.hasImage = n.isHasImage();
+        n.hasImage = news.hasImage();
         n.categories = news.getCategories().stream().map(Category::getInterCode).collect(Collectors.toList()).toArray(new String[]{});
         if (n.hasImage) {
             n.image = uriInfo.getBaseUriBuilder().path("api").path("news").path(String.valueOf(news.getNewsId())).path("image").build();

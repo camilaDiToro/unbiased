@@ -42,13 +42,16 @@ public class NewsServiceImpl implements NewsService {
     private final UserDao userDao;
     private final CommentDao commentDao;
 
+    private final ImageService imageService;
+
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao, UserService userService, EmailService emailService, UserDao userDao, CommentDao commentDao) {
+    public NewsServiceImpl(NewsDao newsDao, UserService userService, EmailService emailService, UserDao userDao, CommentDao commentDao, ImageService imageService) {
         this.newsDao = newsDao;
         this.userService = userService;
         this.emailService = emailService;
         this.userDao = userDao;
         this.commentDao = commentDao;
+        this.imageService = imageService;
     }
 
     @Override
@@ -250,6 +253,14 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public Optional<News> getById(final User currentUser, long id) {
         return newsDao.getById(id, currentUser.getUserId());
+    }
+
+    @Override
+    @Transactional
+    public void setNewsImage(final long newsId, final byte[] image,String dataType) {
+        final News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        final long imageId = imageService.uploadImage(image, dataType);
+        news.setImageId(imageId);
     }
 
     @Override

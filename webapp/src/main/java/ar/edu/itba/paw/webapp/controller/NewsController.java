@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
@@ -12,6 +14,7 @@ import ar.edu.itba.paw.model.news.TextUtils;
 import ar.edu.itba.paw.model.news.TimeConstraint;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
@@ -45,6 +48,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,14 +65,18 @@ public class NewsController {
     private final NewsService newsService;
     private final SecurityService securityService;
 
+    private final ImageService imageService;
+
+
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public NewsController(UserService userService, NewsService newsService, SecurityService securityService) {
+    public NewsController(UserService userService, NewsService newsService, SecurityService securityService, ImageService imageService) {
         this.userService = userService;
         this.newsService = newsService;
         this.securityService = securityService;
+        this.imageService = imageService;
     }
 
     @GET
@@ -158,16 +166,16 @@ public class NewsController {
     }
 
     @PUT
-//    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/{newsId:[0-9]+}/image")
-    public Response updateNewsImage(@PathParam("newsId") long id,
+    public Response updateNewsImage(@PathParam("newsId") long newsId,
                                  @FormDataParam("image") final FormDataBodyPart newsBodyPart,
-                                 @FileSize @FormDataParam("image") byte[] bytes) {
-
+                                 @FormDataParam("image") byte[] bytes) {
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         final String imageType = newsBodyPart.getMediaType().toString();
-
-        return Response.noContent().build();
+        newsService.setNewsImage(news.getNewsId(), bytes, imageType);
+        final URI location = uriInfo.getAbsolutePathBuilder().build();
+        return Response.created(location).build();
     }
 
     @PUT
@@ -360,6 +368,23 @@ public class NewsController {
 //        }
 //        return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] did not followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
 //    }
+
+    @GET
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path("/{newsId:[0-9]+}/image")
+    public Response profileImage(@PathParam("newsId") final long newsId) {
+        final News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(UserNotFoundException.ID_MSG, newsId)));
+        final Optional<Long> maybeImageId = news.getImageId();
+
+        if (!maybeImageId.isPresent())
+            return Response.noContent().build();
+        final Image image = imageService.getImageById(maybeImageId.get()).orElseThrow(ImageNotFoundException::new);
+
+        return Response
+                .ok(new ByteArrayInputStream(image.getBytes()))
+                .type(image.getDataType())
+                .build();
+    }
 
 }
 

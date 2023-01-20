@@ -19,6 +19,10 @@ public interface NewsService {
     News create(News.NewsBuilder newsBuilder, final List<Category> categories);
     Optional<News> getById(Optional<User> maybeCurrentUser, long id);
     Optional<News> getById(final User currentUser, long id);
+
+
+    void setNewsImage(long newsId, byte[] image, String dataType);
+
     Optional<News> getById(long id);
     Optional<Comment> getCommentById(long id);
     Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query);
