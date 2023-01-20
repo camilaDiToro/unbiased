@@ -27,10 +27,23 @@ export default function CreateArticle(props) {
         title: '',
         subtitle: '',
         body: '',
-        image: null,
+        // image: null,
         categories: []
     });
-    const {I18n} = useAppContext()
+    const {I18n, axios} = useAppContext()
+
+
+    const handleSubmit = async () => {
+        console.log(article)
+        const res = await axios.post('news', JSON.stringify(article),{
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        const splittedLocation = res.headers.location.split('/')
+        const id = splittedLocation[splittedLocation.length - 1]
+        await router.replace(`/news/${id}`)
+    }
 
     const [filename, setFilename] = useState(I18n("createArticle.selectFile"))
 
@@ -48,8 +61,8 @@ export default function CreateArticle(props) {
             setArticle({...article, [el.name]: el.type === "file" ? el.files[0] : el.value})
         }
 
-        if (el.type === 'file')
-            setFilename(el.files[0].name)
+        // if (el.type === 'file')
+        //     setFilename(el.files[0].name)
     }
 
     const categories = [
@@ -136,7 +149,7 @@ export default function CreateArticle(props) {
                 </div>
 
                 <div className="w-100 d-flex justify-content-end">
-                    <button className="btn btn-info" type="submit">{I18n("createArticle.save")}</button>
+                    <button onClick={handleSubmit} className="btn btn-info" type="submit">{I18n("createArticle.save")}</button>
                 </div>
             </div>
 

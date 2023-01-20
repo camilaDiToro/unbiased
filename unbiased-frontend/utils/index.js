@@ -34,7 +34,8 @@ export const useLoggedParamsFiller =  () => {
             let parsedLink = await parse(likedNewsResponse.headers.get('Link'))
             while (parsedLink && parsedLink.next) {
                 const nextBatchResponse = await axios.get(parsedLink.next.url)
-                likedNews = likedNews.concat(nextBatchResponse.map(n => n.id))
+                const data = nextBatchResponse.data
+                likedNews = likedNews.concat(data.map(n => n.id))
                 parsedLink = parse(nextBatchResponse.headers.get('Link'))
             }
             return likedNews

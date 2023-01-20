@@ -21,19 +21,10 @@ export default function AppWrapper({ children }) {
     // }, [])
     const router = useRouter()
     const axiosInstance = axios.create({
-        baseURL: baseURL.href,
-        transformRequest: [function (data, headers) {
-            // Do whatever you want to transform the data
-            const {accessToken, refreshToken} = jwt
-            if (accessToken) {
-                headers.Authorization = `Bearer ${accessToken}`
-            } else if(refreshToken) {
-                // alert('setting refreshToken')
-                headers.Authorization = `Bearer ${refreshToken}`
-            }
-            return data;
-        }]
+        baseURL: baseURL.href
     })
+
+
 
     const setHeadersIfExist = (response) => {
         if (response) {
@@ -48,6 +39,18 @@ export default function AppWrapper({ children }) {
             }
         }
     }
+
+    axiosInstance.interceptors.request.use(function (config) {
+        // Do whatever you want to transform the data
+        const {accessToken, refreshToken} = jwt
+        if (accessToken) {
+            config.headers.Authorization = `Bearer ${accessToken}`
+        } else if(refreshToken) {
+            // alert('setting refreshToken')
+            config.headers.Authorization = `Bearer ${refreshToken}`
+        }
+        return config;
+    })
 
     axiosInstance.interceptors.response.use((r) => {
         setHeadersIfExist(r)
@@ -64,7 +67,9 @@ export default function AppWrapper({ children }) {
             } else if (errorDetails.apiCode === 604) {
                 if(jwt.accessToken) {
                     jwtState[1]({refreshToken: jwt.refreshToken})
-                    return axios(error.config)
+                    const config = error.config
+                    config.headers.Authorization = `Bearer ${jwt.refreshToken}`
+                    return axios.request(config)
                 } else {
                     jwtState[1]({})
                     localStorage.setItem('fromPage', 'true')

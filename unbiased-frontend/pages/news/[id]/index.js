@@ -50,7 +50,11 @@ export default function ShowNews(props) {
   useEffect(() => {
     axios.get(`news/${props.id}`).then(res => {
       const mappedNews = newsMapper(res.data)
-      fillNewsLoggedParams([mappedNews]).then(n => setArticle(n[0]))
+      fillNewsLoggedParams([mappedNews]).then(n => {
+        setArticle(n[0])
+        console.log(n[0])
+      })
+
     })
 
   }, [articleEffectTrigger])

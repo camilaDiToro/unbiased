@@ -46,7 +46,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -233,11 +235,18 @@ public class NewsController {
     public Response createNews(@Valid final CreateNewsForm createNewsFrom){
         final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, TextUtils.convertMarkdownToHTML(createNewsFrom.getBody()), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
-
-        final News news = newsService.create(newsBuilder, Arrays.stream(createNewsFrom.getCategories()).map(Category::getByCode).collect(Collectors.toList()));
+        List<Category> categories;
+        if (createNewsFrom.getCategories() == null) {
+            categories = new ArrayList<>();
+        } else {
+            categories = Arrays.stream(createNewsFrom.getCategories()).map(Category::getByCode).collect(Collectors.toList());
+        }
+        final News news = newsService.create(newsBuilder, categories);
 
         final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(news.getNewsId())).build();
-        return Response.created(location).entity(NewsDto.fromNews(uriInfo, news)).build();
+//        return Response.created(location).entity(NewsDto.fromNews(uriInfo, news)).build();
+        return Response.created(location).build();
+
     }
 //
 //    @Consumes({MediaType.APPLICATION_JSON})
