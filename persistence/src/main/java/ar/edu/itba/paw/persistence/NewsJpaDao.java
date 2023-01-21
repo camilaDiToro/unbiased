@@ -191,11 +191,11 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public int getTotalPagesCategoryTop(Category category, TimeConstraint timeConstraint) {
-        final long elemCount = entityManager.createNativeQuery("SELECT count(*) from news NATURAL JOIN news_category f WHERE category = :category AND" +
+        final Number elemCount = (Number) entityManager.createNativeQuery("SELECT count(f) from news NATURAL JOIN news_category f WHERE category_id = :category AND" +
                         " creation_date >= " + timeConstraint.getMinimumDateQuery())
-                .setParameter("category", category).getFirstResult();
+                .setParameter("category", category.getId()).getSingleResult();
 
-        return Page.getPageCount(elemCount, PAGE_SIZE);
+        return Page.getPageCount(elemCount.longValue(), PAGE_SIZE);
     }
 
     @Override
