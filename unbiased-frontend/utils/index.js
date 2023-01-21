@@ -29,7 +29,7 @@ export const useLoggedParamsFiller =  () => {
 
     const auxFunc = async (queryParam) => {
         try {
-            const likedNewsResponse = await axios.get('news', {retry: 1,params: {[queryParam]: loggedUser.id}})
+            const likedNewsResponse = await axios.get('news', {retry: 1,params: {[queryParam]: loggedUser.id}}, {authOptional: true})
             let likedNews = (likedNewsResponse.data || []).map(n => n.id)
             let parsedLink = await parse(likedNewsResponse.headers.get('Link'))
             while (parsedLink && parsedLink.next) {
