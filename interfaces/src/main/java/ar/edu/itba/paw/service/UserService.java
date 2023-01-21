@@ -30,6 +30,13 @@ public interface UserService {
     void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange);
     Page<User> searchUsers(int page, String search);
     boolean pingNewsToggle(User currentUser, News news);
+
+    void pinNews(User user, News news);
+
+    void setUserImage(long userId, byte[] bytes, String dataType);
+
+    void unpinNews(User user, News news);
+
     ProfileCategory getProfileCategory(Optional<User> maybeCurrentUser, ProfileCategory category, final User profile);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);

@@ -44,7 +44,6 @@ export default function CreateArticle(props) {
         const id = splittedLocation[splittedLocation.length - 1]
 
         const fileRes = await axios.put(`news/${id}/image`, file)
-        console.log(fileRes)
         await router.replace(`/news/${id}`)
     }
 

@@ -24,5 +24,10 @@ public interface UserDao {
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);
     boolean pingNewsToggle(User user, News news);
+
+    void pinNews(User user, News news);
+
+    void unpinNews(User user, News news);
+
     List<User> getFollowersWithEmailPublishNewsActive(User user);
 }

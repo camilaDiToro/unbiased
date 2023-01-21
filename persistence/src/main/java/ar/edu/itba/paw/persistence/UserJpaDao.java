@@ -169,6 +169,17 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
+    public void pinNews(User user, News news) {
+        user.setPingedNews(news);
+    }
+
+    @Override
+    public void unpinNews(User user, News news) {
+        if (user.getPingedNews().equals(news))
+            user.setPingedNews(null);
+    }
+
+    @Override
     public List<User> getFollowersWithEmailPublishNewsActive(User user) {
         @SuppressWarnings("unchecked")
         final List<Long> ids = (List<Long>) entityManager.createNativeQuery("select user_id from users where user_id IN ( " +

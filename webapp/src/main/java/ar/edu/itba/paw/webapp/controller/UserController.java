@@ -21,6 +21,8 @@ import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
@@ -126,18 +128,26 @@ public class UserController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        if(userProfileForm.getImage() != null){
-            userService.updateProfile(userId, userProfileForm.getUsername(),
-                    userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
-        }else{
-            userService.updateProfile(userId, userProfileForm.getUsername(),
-                    null, null, userProfileForm.getDescription());
-        }
+        userService.updateProfile(userId, userProfileForm.getUsername(),
+                null, null, userProfileForm.getDescription());
         if(userProfileForm.getMailOptions()!=null){
             userService.updateEmailSettings(mayBeUser.get(), MailOption.getEnumCollection(userProfileForm.getMailOptions()));
         }
 
         return Response.ok(UserDto.fromUser(uriInfo, mayBeUser.get())).build();
+    }
+
+    @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("/{userId:[0-9]+}/image")
+    public Response updateUserImage(@PathParam("userId") long userId,
+                                    @FormDataParam("image") final FormDataBodyPart imageBodyPart,
+                                    @FormDataParam("image") byte[] bytes) {
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final String imageType = imageBodyPart.getMediaType().toString();
+        userService.setUserImage(userId, bytes, imageType);
+        final URI location = uriInfo.getAbsolutePathBuilder().build();
+        return Response.created(location).build();
     }
 
     @GET

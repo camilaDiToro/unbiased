@@ -2,17 +2,26 @@ import {useState} from "react";
 import {useAppContext} from "../context";
 
 export default function EditProfileForm(props) {
-    const {I18n} = useAppContext()
+    const {I18n, axios} = useAppContext()
     const [settings, setSettings] = useState({
         username: props.username,
-        image: null,
         description: props.description,
         mailOptions: props.mailOptions
     });
 
-    const handleEditFormSubmit = (e) => {
-        alert(`Edit of profile of id ${props.id} completed`)
-        props.triggerEffect()
+    const [file, setFile] = useState(new FormData())
+
+    const handleEditFormSubmit = async (e) => {
+        const res = await axios.put(`users/${props.id}`, JSON.stringify(settings),{
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+if (file.has('image')) {
+    const fileRes = await axios.put(`users/${props.id}/image`, file)
+}
+
+    props.triggerEffect()
     }
 
     props.handlerArray[0] = handleEditFormSubmit
@@ -21,6 +30,15 @@ export default function EditProfileForm(props) {
 
     const mailOptions = ["mailOption.follow", "mailOption.comment", "mailOption.folowingPublished", "mailOption.positivityChanged"]
 
+    const handleFileChange = (e) => {
+        const el = e.target
+        setFile(f => {
+            f.set('image', el.files[0])
+            return f
+        })
+        setFilename(el.files[0].name)
+
+    }
 
     const handleChange = (e) => {
         const el = e.target
@@ -33,11 +51,9 @@ export default function EditProfileForm(props) {
                 setSettings({...settings, mailOptions: settings.mailOptions.filter(c => c !== el.value)})
             }
         } else {
-            setSettings({...settings, [el.name]: el.type === "file" ? el.files[0] : el.value})
+            setSettings({...settings, [el.name]:  el.value})
         }
 
-        if (el.type === 'file')
-            setFilename(el.files[0].name)
     }
 
     return <>
@@ -58,7 +74,7 @@ export default function EditProfileForm(props) {
         <div className="input-group mb-3">
             <div className="custom-file">
                 <input id="file-input" type="file" accept="image/png, image/jpeg"
-                       className="custom-file-input" name="image" onChange={handleChange}/>
+                       className="custom-file-input" name="image" onChange={handleFileChange}/>
                 <label id="file-input-label" className="custom-file-label"
                        htmlFor="inputGroupFile01">{filename}</label>
 

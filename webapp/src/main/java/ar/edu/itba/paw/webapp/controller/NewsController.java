@@ -21,6 +21,7 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.constraints.FileSize;
 import ar.edu.itba.paw.webapp.dto.NewsDto;
+import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -236,6 +237,32 @@ public class NewsController {
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         newsService.saveNews(user, newsId);
         return Response.ok().build();
+    }
+
+    @PUT
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
+    @Path(value = "/{newsId:[0-9]+}/pinned/{userId:[0-9]+}")
+    public Response pinNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
+
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        userService.pinNews(user, news);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
+
+    }
+
+    @DELETE
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
+    @Path(value = "/{newsId:[0-9]+}/pinned/{userId:[0-9]+}")
+    public Response unpinNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
+
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        userService.unpinNews(user, news);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
+
     }
 
     @Consumes({MediaType.APPLICATION_JSON})

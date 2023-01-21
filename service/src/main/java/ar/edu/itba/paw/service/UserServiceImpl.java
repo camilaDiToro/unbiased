@@ -3,6 +3,7 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
@@ -39,15 +40,19 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final VerificationTokenService verificationTokenService;
 
+    private final ImageService imageService;
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder,final EmailService emailService,
+    public UserServiceImpl(final ImageService imageService, final UserDao userDao, final PasswordEncoder passwordEncoder,final EmailService emailService,
                            final VerificationTokenService verificationTokenService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
+        this.imageService = imageService;
     }
 
 
@@ -230,6 +235,27 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean pingNewsToggle(final User currentUser,final News news) {
         return userDao.pingNewsToggle(currentUser, news);
+    }
+
+    @Override
+    @Transactional
+    public void pinNews(final User user, final News news) {
+        userDao.pinNews(user, news);
+    }
+
+    @Override
+    @Transactional
+    public void setUserImage(final long userId, final byte[] bytes,String dataType) {
+        final User user = userDao.getUserById(userId).orElseThrow(()-> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        if(bytes!=null && bytes.length != 0){
+            userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void unpinNews(final User user, final News news) {
+        userDao.unpinNews(user, news);
     }
 
     @Override
