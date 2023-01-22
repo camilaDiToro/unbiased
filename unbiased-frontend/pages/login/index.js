@@ -82,14 +82,14 @@ export default function Login() {
 
                 <div className="d-flex mb-4">
                     <img className="size-img-modal-login align-self-center" src="/img/profile-svgrepo-com.svg" alt="..."/>
-                    <input onChange={handleChange} type="text" id="username" name="username" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
+                    <input onChange={handleChange} type="text" title="username" id="username" name="username" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
                 </div>
 
                 <div className="mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
                     <img src="/img/lock-svgrepo-com.svg" alt="..." className="size-img-modal-login align-self-center"/>
-                    <input type={passwordType} onChange={handleChange} name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
+                    <input type={passwordType} onChange={handleChange} data-testid="password" name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
                     <button className="btn  eye-button-properties" onClick={togglePassword}>
-                        { passwordType==="password"? <img src="/img/eye.svg"/> : <img src="/img/eye-slash.svg"/> }
+                        { passwordType==="password"? <img alt="eye" src="/img/eye.svg"/> : <img alt="eyeSlash" src="/img/eye-slash.svg"/> }
                     </button>
                 </div>
 
