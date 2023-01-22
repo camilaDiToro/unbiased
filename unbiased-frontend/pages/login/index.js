@@ -9,7 +9,7 @@ import {useRouter} from "next/router";
 export default function Login() {
 
     const ctx = useAppContext()
-    const [jwt, setJwt] = ctx.jwtState
+    // const [jwt, setJwt] = ctx.jwtState
     const [details, setDetails] = useState({
         username: "",
         password: "",
