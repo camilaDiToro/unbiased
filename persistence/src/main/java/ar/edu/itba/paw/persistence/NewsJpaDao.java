@@ -431,6 +431,20 @@ public class NewsJpaDao implements NewsDao {
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
     }
 
+    @Override
+    public List<News> getReportedByUserNews(long userId) {
+        Query query = entityManager.createNativeQuery("SELECT news_id FROM report n WHERE user_id = :userId")
+                .setParameter("userId", userId);
+        @SuppressWarnings("unchecked")
+        final List<Long> ids = (List<Long>) query.getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return entityManager.createQuery("SELECT n from News n WHERE n.newsId in :ids", News.class).setParameter("ids", ids).getResultList();
+    }
+
     private int getTotalPagesNewsFromUserSaved(User user) {
         final int elemCount =  entityManager.createQuery("SELECT u.savedNews.size - (case when EXISTS (select s FROM Saved s WHERE s.news = u.pingedNews AND s.userId = :user) THEN 1 ELSE 0 END) from User u WHERE u.userId = :user ",Integer.class)
                 .setParameter("user", user.getId())

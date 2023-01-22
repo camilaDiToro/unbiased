@@ -15,6 +15,6 @@ public class NotExistingReportReasonValidator implements ConstraintValidator<Not
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return Arrays.stream(ReportReason.values()).map(Enum::toString).anyMatch(s -> s.equals(value));
+        return Arrays.stream(ReportReason.values()).map(ReportReason::getInterCode).anyMatch(s -> s.equals(value));
     }
 }

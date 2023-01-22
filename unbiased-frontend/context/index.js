@@ -73,8 +73,12 @@ export default function AppWrapper({ children }) {
                 } else {
                     jwtState[1]({})
                     localStorage.setItem('fromPage', 'true')
-                    if (!error.config.authOptional)
+                    if (!error.config.authOptional) {
+                        console.log(error.config)
+                        console.log('going to home...')
                         await router.push(loginURL)
+                    }
+
                 }
             }
         }

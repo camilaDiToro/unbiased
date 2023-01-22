@@ -6,8 +6,8 @@ public enum ReportOrder {
 
     REP_COUNT_DESC("REP_COUNT_DESC", "COUNT(n.user_id) desc", "reportOrder.reportCountDesc"),
     REP_COUNT_ASC("REP_COUNT_ASC", "COUNT(n.user_id) asc", "reportOrder.reportCountAsc"),
-    REP_DATE_DESC("REP_DATE_DESC", "MAX(report_date) asc", "reportOrder.reportDateDesc"),
-    REP_DATE_ASC("REP_DATE_ASC", "MIN(report_date) desc", "reportOrder.reportDateAsc");
+    REP_DATE_DESC("REP_DATE_DESC", "MAX(report_date) desc", "reportOrder.reportDateDesc"),
+    REP_DATE_ASC("REP_DATE_ASC", "MIN(report_date) asc", "reportOrder.reportDateAsc");
 
     private final String description;
     private final String query;

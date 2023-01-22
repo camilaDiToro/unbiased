@@ -112,7 +112,7 @@ const types = {
         title: PropTypes.string.isRequired,
         subtitle: PropTypes.string.isRequired,
         datetime: PropTypes.string.isRequired,
-        reportsCount: PropTypes.number.isRequired,
+        reportCount: PropTypes.number.isRequired,
         creator: PropTypes.shape(TopCreator)
     },
     Bookmark: {

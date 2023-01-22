@@ -11,6 +11,8 @@ import Pagination from "../../../components/Pagination";
 import Link from "next/link";
 import ModerationPanel from "../../../components/ModerationPanel";
 import Head from "next/head";
+import {commentsMapper} from "../../../mappers";
+import usePagination from "../../../pagination";
 
 export async function getServerSideProps(context) {
     return {
@@ -29,15 +31,15 @@ export default function Reported_comments(props){
         {text: ctx.I18n("reportOrder.reportDateDesc"), route: "/admin/reported_comments"},
         {text: ctx.I18n("reportOrder.reportDateAsc"), route: "/admin/reported_comments"}]
     const router = useRouter()
-    const [reportedComments, setReportedComments] = useState(props.news[0].comments)
+    const [reportedComments, setReportedComments] = useState([])
     const [effectTrigger, triggerEffect] = useTriggerEffect()
-
+    const [pagination, setPagination] = usePagination()
     useEffect(() => {
-        setReportedComments(n => {
-            for (const comment of n) {
-                comment.body+= 'a'
-            }
-            return n
+        const params = {reportOrder: router.query.order, reported: true, page: router.query.page}
+        ctx.axios.get(`comments`, {params}).then(res => {
+            setPagination(res)
+            const mappedComments = res.data.map(commentsMapper)
+            setReportedComments(mappedComments)
         })
     }, [router.query, effectTrigger])
     return (
@@ -61,7 +63,7 @@ export default function Reported_comments(props){
                         }
                     </div>
                 </div>
-                <Pagination currentPage={2} lastPage={4}></Pagination>
+                <Pagination {...pagination}></Pagination>
 
             </div>
         </>

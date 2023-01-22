@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportOrder;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
@@ -12,13 +13,16 @@ import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.CommentDao;
+import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.CommentService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CommentDto;
+import ar.edu.itba.paw.webapp.dto.NewsDto;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
+import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -39,14 +43,17 @@ public class CommentController {
 
     private final UserService userService;
 
+    private final AdminService adminService;
+
     @Context
     private UriInfo uriInfo;
 
-    public CommentController(UserService userService, NewsService newsService, SecurityService securityService, CommentService commentService) {
+    public CommentController(AdminService adminService, UserService userService, NewsService newsService, SecurityService securityService, CommentService commentService) {
         this.newsService = newsService;
         this.commentService = commentService;
         this.securityService = securityService;
         this.userService = userService;
+        this.adminService = adminService;
     }
 
     @GET
@@ -58,8 +65,18 @@ public class CommentController {
             @QueryParam("order") @DefaultValue("TOP") String orderBy,
             @QueryParam("likedBy") @DefaultValue("-1") Long likedBy,
             @QueryParam("dislikedBy") @DefaultValue("-1") Long dislikedBy,
+            @QueryParam("reportedBy") @DefaultValue("-1") Long reportedBy,
             @QueryParam("reportOrder") @DefaultValue("REP_COUNT_DESC") String reportOrder) {
-
+        if (reportedBy>0) {
+            final User user = userService.getUserById(reportedBy).orElseThrow(UserNotFoundException::new);
+            List<Comment> comments = adminService.getReportedByUserComments(user);
+            if (comments.isEmpty())
+                return Response.noContent().build();
+            return Response.ok(new GenericEntity<List<CommentDto>>(comments.stream().map(n -> {
+                return CommentDto.fromComment(uriInfo, n);
+            }).collect(Collectors.toList())) {
+            }).build();
+        } else
         if (likedBy > 0 || dislikedBy > 0) {
             long userId = likedBy > 0 ? likedBy : dislikedBy;
             User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
@@ -106,6 +123,16 @@ public class CommentController {
         final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
         final CommentDto commentDto = CommentDto.fromComment(uriInfo, newsService.addComment(currentUser, newsId, form.getComment()));
         return Response.created(commentDto.getSelf()).entity(commentDto).build();
+    }
+
+    @PUT
+    @Path("/{commentId:[0-9]+}/reports/{userId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response report(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        adminService.reportComment(user, commentId, ReportReason.getByValue(reportForm.getReason()));
+        return Response.ok().build();
     }
 
     @PUT

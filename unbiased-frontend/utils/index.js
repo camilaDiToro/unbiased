@@ -41,7 +41,9 @@ export const useLoggedParamsFiller =  () => {
             return likedNews
         } catch(e) {
             console.log(e)
-            return []
+            return new Promise((resolveInner) => {
+                return []
+            })
         }
 
     }
@@ -49,28 +51,40 @@ export const useLoggedParamsFiller =  () => {
     const fillNewsLoggedParams = async (news) => {
         console.log(news)
         if (loggedUser) {
-            const likedNews = await auxFunc('news','likedBy')
-            const dislikedNews = await auxFunc('news','dislikedBy')
+            const likedNewsPromise = auxFunc('news','likedBy')
+            const dislikedNewsPromise = auxFunc('news','dislikedBy')
 
-            const savedNews = await auxFunc('news','savedBy')
-            console.log(savedNews)
+            const savedNewsPromise = auxFunc('news','savedBy')
+
+            const reportedNewsPromise = auxFunc('news','reportedBy')
+
+            const [likedNews, dislikedNews, savedNews, reportedNews] = await Promise.all([likedNewsPromise, dislikedNewsPromise, savedNewsPromise, reportedNewsPromise])
+            console.log('reported')
+            console.log(reportedNews)
 
             news.forEach(n => {
                 n.rating = likedNews.includes(n.id) ? 1 : (dislikedNews.includes(n.id) ? -1 : 0)
                 n.saved = savedNews.includes(n.id)
+
+                n.reported = reportedNews.includes(n.id)
             })
+            console.log(news)
         }
         return news
     }
 
     const fillCommentsLoggedParams = async (comments) => {
         if (loggedUser) {
-            const likedComments = await auxFunc('comments','likedBy')
-            const dislikedComments = await auxFunc('comments','dislikedBy')
+            const likedCommentsPromise =  auxFunc('comments','likedBy')
+            const dislikedCommentsPromise =  auxFunc('comments','dislikedBy')
+            const reportedCommentsPromise = auxFunc('comments','reportedBy')
+            const [likedComments, dislikedComments, reportedComments] = await Promise.all([likedCommentsPromise, dislikedCommentsPromise, reportedCommentsPromise])
 
-
+            console.log('reported coments')
+            console.log(reportedComments)
             comments.forEach(n => {
-                n.rating = likedComments.includes(n.id) ? 1 : (likedComments.includes(n.id) ? -1 : 0)
+                n.rating = likedComments.includes(n.id) ? 1 : (dislikedComments.includes(n.id) ? -1 : 0)
+                n.reported = reportedComments.includes(n.id)
             })
         }
         return comments

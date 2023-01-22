@@ -15,7 +15,7 @@ export default function Comment(props) {
       <div className="mb-4 w-100 p-4 bg-black rounded-comment">
         <div className="d-flex flex-row gap-1 align-items-center p-1 mb-1">
           <div className="img-container-comment">
-            <div className="frame-navbar">
+            <div className="frame-navbar img-container">
               <ProfilePic
                   {...props.creator}
               ></ProfilePic>
@@ -27,7 +27,7 @@ export default function Comment(props) {
           <FormattedDate datetime={props.datetime}></FormattedDate>
         </span>
 
-        <div className={`d-flex align-items-center w-auto gap-1 ${props.deleted ? 'font-italic' : ''}`}>
+        <div id={`comment-${props.id}`} className={`d-flex align-items-center w-auto gap-1 ${props.deleted ? 'font-italic' : ''}`}>
           <p className="comment-text">{ props.deleted ? I18n('showNews.deletedComment') : props.body}</p>
         </div>
         <div className="d-flex align-items-center justify-content-between float-sm-left gap-1">

@@ -22,9 +22,16 @@ import usePagination from "../../../pagination";
 
 export async function getServerSideProps(context) {
   const id = context.query.id
-  const res = await axios.get(`${baseURL.href}news/${id}`)
+  const newsPromise = axios.get(`${baseURL}news/${id}`).then((res) => newsMapper(res.data))
+  const params = {order: context.query.order, newsId: id, page: context.query.page}
+  const commentsPromise = axios.get(`${baseURL}comments`, {params}).then(res => (res.data || []).map(commentsMapper))
+
+  const result = await Promise.all([newsPromise, commentsPromise])
+  const props = {id, ...result[0], comments: result[1]}
+  if (context.query.comment)
+    props.comment = context.query.comment
   return {
-    props: newsMapper(res.data),
+    props
   }
 }
 
@@ -34,7 +41,7 @@ export default function ShowNews(props) {
   const [commentsEffectTrigger, commentsTriggerEffect] = useTriggerEffect()
   const [article, setArticle] = useState(props)
   const {fillNewsLoggedParams, fillCommentsLoggedParams} = useLoggedParamsFiller()
-  const [comments, setComments] = useState([])
+  const [comments, setComments] = useState(props.comments)
   const router = useRouter()
   const [pagination, setPagination] = usePagination()
   const isMyArticle = loggedUser && loggedUser.id === props.id
@@ -62,12 +69,25 @@ export default function ShowNews(props) {
     const params = {order: router.query.order, newsId: props.id, page: router.query.page}
     axios.get(`comments`, {params}).then(res => {
       setPagination(res)
-      const mappedComments = res.data.map(commentsMapper)
+      const mappedComments = (res.data || []).map(commentsMapper)
       fillCommentsLoggedParams(mappedComments).then(n => {
         setComments(n)
       })
     })
   }, [commentsEffectTrigger, router.query])
+
+  useEffect(() => {
+    if (props.comment) {
+      const section = document.querySelector( `#comment-${props.comment}` );
+      if (section) {
+        section.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+        const query = router.query
+        delete query['comment']
+        router.replace({pathname: router.pathname,query},undefined, { shallow: true })
+      }
+    }
+
+  }, [])
 
   return(
     <>
@@ -143,7 +163,7 @@ export default function ShowNews(props) {
           <div className="d-flex w-100 min-vh-65 align-items-center flex-column">
             <div className="article-body p-5" dangerouslySetInnerHTML={{__html: article.body}}>
             </div>
-            <CommentList newsId={props.id}  pagination={pagination} triggerEffect={commentsTriggerEffect} comments={comments}></CommentList>
+            <CommentList focusId={props.comment} newsId={props.id}  pagination={pagination} triggerEffect={commentsTriggerEffect} comments={comments}></CommentList>
         </div>
       </div>
       </div>

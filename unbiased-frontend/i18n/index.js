@@ -380,8 +380,8 @@ const strings = {
     //Tooltips
     "tooltip.clickToGoBack": "Click para volver hacia atras",
     "tooltip.deleteNews": "Borrar noticia",
-    "tooltip.articleReported": "Reportar noticia",
-    "tooltip.commentReported": "Reportar comentario",
+    "tooltip.articleReported": "Noticia reportada",
+    "tooltip.commentReported": "Comentario reportado",
     "tooltip.reportComment": "Reportar comentario",
     "tooltip.reportArticle": "Reportar noticia",
     "tooltip.articleSave": "Guardar noticia",

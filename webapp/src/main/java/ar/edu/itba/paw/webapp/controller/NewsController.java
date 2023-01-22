@@ -3,6 +3,8 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.admin.ReportOrder;
+import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
@@ -14,6 +16,7 @@ import ar.edu.itba.paw.model.news.TextUtils;
 import ar.edu.itba.paw.model.news.TimeConstraint;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
@@ -24,6 +27,7 @@ import ar.edu.itba.paw.webapp.dto.NewsDto;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
+import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -66,18 +70,21 @@ public class NewsController {
     private final NewsService newsService;
     private final SecurityService securityService;
 
+
     private final ImageService imageService;
+    private final AdminService adminService;
 
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public NewsController(UserService userService, NewsService newsService, SecurityService securityService, ImageService imageService) {
+    public NewsController(AdminService adminService, UserService userService, NewsService newsService, SecurityService securityService, ImageService imageService) {
         this.userService = userService;
         this.newsService = newsService;
         this.securityService = securityService;
         this.imageService = imageService;
+        this.adminService = adminService;
     }
 
     @GET
@@ -89,6 +96,9 @@ public class NewsController {
                              @QueryParam("likedBy") @DefaultValue("") final String likedBy,
                              @QueryParam("dislikedBy") @DefaultValue("") final String dislikedBy,
                              @QueryParam("savedBy") @DefaultValue("") final String savedBy,
+                             @QueryParam("reportedBy") @DefaultValue("-1") final long reportedBy,
+                             @QueryParam("reported") final boolean reported,
+                             @QueryParam("reportOrder") @DefaultValue("REP_COUNT_DESC") String reportOrder,
                              @QueryParam("publishedBy") @DefaultValue("") final String publishedBy) {
         Category categoryObj = Category.getByValue(category);
         NewsOrder orderObj = NewsOrder.getByValue(order);
@@ -97,11 +107,20 @@ public class NewsController {
         final int uniqueParamCount = Arrays.stream(new String[]{likedBy, dislikedBy, savedBy, publishedBy}).map(s -> s.equals("") ?0 : 1).reduce(Integer::sum).get();
 
         if (uniqueParamCount > 1) {
-
+            // throw new ...
         }
-
-        // SE PUEDE HACER MEJOR
-        if (!likedBy.equals("")) {
+        if (reportedBy>0) {
+            final User user = userService.getUserById(reportedBy).orElseThrow(UserNotFoundException::new);
+            List<News> news = adminService.getReportedByUserNews(user);
+            if (news.isEmpty())
+                return Response.noContent().build();
+            return Response.ok(new GenericEntity<List<NewsDto>>(news.stream().map(n -> {
+                return NewsDto.fromNews(uriInfo, n);
+            }).collect(Collectors.toList())) {}).build();
+        } else if (reported) {
+            final ReportOrder reportOrderObj = ReportOrder.getByValue(reportOrder);
+            newsPage = adminService.getReportedNews(page, reportOrderObj);
+        } else if (!likedBy.equals("")) {
             final ProfileCategory catObject = ProfileCategory.UPVOTED;
             final User profileUser = userService.getUserById(Long.parseLong(likedBy)).orElseThrow(UserNotFoundException::new);
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
@@ -117,9 +136,7 @@ public class NewsController {
             final ProfileCategory catObject = ProfileCategory.SAVED;
             final User profileUser = userService.getUserById(Long.parseLong(savedBy)).orElseThrow(UserNotFoundException::new);
             final Optional<User> user = securityService.getCurrentUser();
-//            if (!user.equals(profileUser)) {
-//                throw new UserNotAuthorized();
-//            }
+
             newsPage = newsService.getNewsForUserProfile(user, page, orderObj, profileUser, catObject);
         }
         else {
@@ -196,6 +213,16 @@ public class NewsController {
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
         newsService.setRating(user, news, Rating.DOWNVOTE);
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/{newsId:[0-9]+}/reports/{userId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response report(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId, @Valid final ReportNewsForm reportForm){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        adminService.reportNews(user, newsId, ReportReason.getByValue(reportForm.getReason()));
         return Response.ok().build();
     }
 

@@ -3,7 +3,7 @@ import Comment from "./Comment";
 import { useAppContext } from "../context";
 import Pagination from "./Pagination";
 import Link from "next/link";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export default function CommentList(props) {
   const {I18n, loggedUser, axios}= useAppContext();

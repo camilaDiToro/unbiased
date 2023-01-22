@@ -71,6 +71,20 @@ public class CommentJpaDao implements CommentDao{
         return getCommentsOfPage(query, page, COMMENT_PAGE_SIZE, totalPages);
     }
 
+    @Override
+    public List<Comment> getReportedByUserComments(long userId) {
+        Query query = entityManager.createNativeQuery("SELECT comment_id FROM comment_report n WHERE user_id = :userId")
+                .setParameter("userId", userId);
+        @SuppressWarnings("unchecked")
+        final List<Long> ids = (List<Long>) query.getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return entityManager.createQuery("SELECT n from Comment n WHERE n.id in :ids", Comment.class).setParameter("ids", ids).getResultList();
+    }
+
     private int getTotalPagesComments(long newsId) {
         final long count = entityManager.createQuery("SELECT COUNT(c) from Comment c WHERE c.news.newsId = :newsId", Long.class)
                 .setParameter("newsId", newsId).getSingleResult();

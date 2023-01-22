@@ -39,6 +39,16 @@ public class CommentDto {
 
     private long upvotes;
 
+    public long getNewsId() {
+        return newsId;
+    }
+
+    public void setNewsId(long newsId) {
+        this.newsId = newsId;
+    }
+
+    private long newsId;
+
     private URI reportsUri;
     private boolean deleted;
     private String datetime;
@@ -71,6 +81,7 @@ public class CommentDto {
         dto.upvotes = comment.getPositivityStats() == null ? 0: comment.getPositivityStats().getNetUpvotes();
         dto.reportsUri = uriInfo.getBaseUriBuilder().path("TODO").build();
         dto.deleted = comment.getDeleted();
+        dto.newsId = comment.getNews().getNewsId();
         if (!dto.deleted) {
             dto.body = comment.getComment();
         }
