@@ -44,7 +44,7 @@ export default function ShowNews(props) {
   const [comments, setComments] = useState(props.comments)
   const router = useRouter()
   const [pagination, setPagination] = usePagination()
-  const isMyArticle = loggedUser && loggedUser.id === props.id
+  const isMyArticle = loggedUser && loggedUser.id === props.creator.id
 
   useEffect(() => {
     axios.get(`news/${props.id}`).then(res => {

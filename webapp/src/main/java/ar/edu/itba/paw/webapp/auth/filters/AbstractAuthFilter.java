@@ -35,6 +35,7 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
             super(new OrRequestMatcher(
                     new AntPathRequestMatcher("/api/users/{\\d+}", HttpMethod.PUT),
                     new AntPathRequestMatcher("/api/news", HttpMethod.POST),
+                    new AntPathRequestMatcher("/api/news/{\\d+}", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/api/users/{\\d+}/pingNews/{\\d+}", HttpMethod.PUT),
                     new RegexRequestMatcher("/api/news?(.)*savedBy=(.)+", HttpMethod.GET),
                     new AntPathRequestMatcher("/api/news/{\\d+}/likes/{\\d+}", HttpMethod.PUT),

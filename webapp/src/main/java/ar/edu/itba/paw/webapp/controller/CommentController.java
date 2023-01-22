@@ -156,6 +156,14 @@ public class CommentController {
     }
 
     @DELETE
+    @Path("/{commentId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.canDeleteComment(#commentId)")
+    public Response delete(@PathParam("commentId") final long commentId){
+        newsService.deleteComment(commentId);
+        return Response.ok().build();
+    }
+
+    @DELETE
     @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){

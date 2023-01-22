@@ -31,27 +31,29 @@ export default function Comment(props) {
           <p className="comment-text">{ props.deleted ? I18n('showNews.deletedComment') : props.body}</p>
         </div>
         <div className="d-flex align-items-center justify-content-between float-sm-left gap-1">
-          <UpvoteButtons comment
-                         id={props.id}
-            upvotes={props.upvotes}
-            triggerEffect={props.triggerEffect}
-            rating={props.rating}
-          ></UpvoteButtons>
+          {props.deleted ? <></> : <UpvoteButtons comment
+                                                  id={props.id}
+                                                  upvotes={props.upvotes}
+                                                  triggerEffect={props.triggerEffect}
+                                                  rating={props.rating}
+          ></UpvoteButtons>}
         </div>
         <div className="d-flex gap-1 align-items-center justify-content-between float-sm-right">
-          <DeleteButton
-            creatorId={props.creator.id}
-            id={props.id}
-            comment
-            triggerEffect={props.triggerEffect}
-          ></DeleteButton>
+          {props.deleted ? <></> : <>
+            <DeleteButton
+                creatorId={props.creator.id}
+                id={props.id}
+                comment
+                triggerEffect={props.triggerEffect}
+            ></DeleteButton>
 
-          <ReportFlag
-            id={props.id}
-            reported={props.reported}
-            comment
-            triggerEffect={props.triggerEffect}
-          ></ReportFlag>
+            <ReportFlag
+                id={props.id}
+                reported={props.reported}
+                comment
+                triggerEffect={props.triggerEffect}
+            ></ReportFlag>
+          </>}
         </div>
       </div>
     </>

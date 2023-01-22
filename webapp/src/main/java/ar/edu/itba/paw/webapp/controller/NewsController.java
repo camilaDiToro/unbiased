@@ -216,6 +216,15 @@ public class NewsController {
         return Response.ok().build();
     }
 
+    @DELETE
+    @Path("/{newsId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.canDeleteNews(#newsId)")
+    public Response delete(@PathParam("newsId") final long newsId){
+        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        newsService.deleteNews(news);
+        return Response.ok().build();
+    }
+
     @PUT
     @Path("/{newsId:[0-9]+}/reports/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")

@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 
+import ar.edu.itba.paw.model.admin.ReportDetail;
+import ar.edu.itba.paw.model.admin.ReportedNews;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.PositivityStats;
@@ -13,6 +15,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.net.URI;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class NewsDto {
@@ -49,12 +52,24 @@ public class NewsDto {
 
     private URI image;
 
+    public long getReportCount() {
+        return reportCount;
+    }
+
+    public void setReportCount(long reportCount) {
+        this.reportCount = reportCount;
+    }
+
+    private long reportCount;
+
     public static NewsDto fromNews(final UriInfo uriInfo, final News news) {
         NewsDto n = new NewsDto();
         n.id = news.getNewsId();
         PositivityStats p = news.getPositivityStats();
         n.upvotes = p.getNetUpvotes();
         n.hasImage = news.hasImage();
+        List<ReportDetail> reportedNewsList = news.getReports();
+        n.reportCount = reportedNewsList == null ? 0 : reportedNewsList.size();
         n.categories = news.getCategories().stream().map(Category::getInterCode).collect(Collectors.toList()).toArray(new String[]{});
         if (n.hasImage) {
             n.image = uriInfo.getBaseUriBuilder().path("api").path("news").path(String.valueOf(news.getNewsId())).path("image").build();
