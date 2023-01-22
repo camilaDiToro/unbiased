@@ -102,12 +102,11 @@ export default function AddAdmin(props){
 
                             <div data-toggle="tooltip" data-placement="bottom" title={i18n("tooltip.addAdmin")}>
                                 <button data-toggle="modal" data-target="#addAdminModal"
-                                        className="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent"
+                                        className="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent none-focus-outline"
                                         style={{backgroundImage: "url(/img/plus-svgrepo-com.svg)"}} >
                                 </button>
                             </div>
 
-                            {/*TODO: modal*/}
                         </div>
                         <div className="container-fluid">
                             <MainCardsContainer rows={3}>
