@@ -163,19 +163,7 @@ public class NewsServiceImpl implements NewsService {
         }
     }
 
-    @Override
-    @Transactional
-    public void setCommentRating(final User currentUser, Comment comment, Rating rating) {
-        Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
-        if (rating.equals(Rating.NO_RATING)) {
-            upvoteMap.remove(currentUser.getId());
-            return;
-        }
-        final long userId = currentUser.getId();
 
-        upvoteMap.putIfAbsent(userId, new CommentUpvote(comment, currentUser.getId()));
-        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
-    }
 
     @Override
     @Transactional
@@ -309,8 +297,8 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, final Boolean reported, ReportOrder reportOrder) {
-        if(reported == null){
+    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, final boolean reported, ReportOrder reportOrder) {
+        if(!reported){
             if (orderByObj.equals(NewsOrder.NEW)) {
                 return commentDao.getNewComments(newsId, page);
             }

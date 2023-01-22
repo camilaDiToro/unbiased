@@ -27,12 +27,12 @@ export default function Comment(props) {
           <FormattedDate datetime={props.datetime}></FormattedDate>
         </span>
 
-        <div className="d-flex align-items-center w-auto gap-1">
-          <p className="comment-text">{props.body}</p>
+        <div className={`d-flex align-items-center w-auto gap-1 ${props.deleted ? 'font-italic' : ''}`}>
+          <p className="comment-text">{ props.deleted ? I18n('showNews.deletedComment') : props.body}</p>
         </div>
         <div className="d-flex align-items-center justify-content-between float-sm-left gap-1">
-          <UpvoteButtons
-              comment
+          <UpvoteButtons comment
+                         id={props.id}
             upvotes={props.upvotes}
             triggerEffect={props.triggerEffect}
             rating={props.rating}

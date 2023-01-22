@@ -15,7 +15,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -133,6 +136,35 @@ public class CommentJpaDao implements CommentDao{
         final TypedQuery<ReportedComment> objectQuery = entityManager.createQuery("SELECT n from ReportedComment n WHERE n.id IN :ids " , ReportedComment.class);
 
         return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, ReportedComment::getId);
+    }
+
+    @Override
+    public List<Comment> getCommentsUpvotedByUser(User user) {
+        final Query idsQuery = entityManager.createNativeQuery(
+                "SELECT comment_id FROM comment_upvotes WHERE user_id = :userId AND upvote = true").setParameter("userId", user.getUserId());
+
+        @SuppressWarnings("unchecked")
+        final List<Long> ids = (List<Long>) idsQuery.getResultList().stream()
+                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+
+        if (ids.isEmpty())
+            return new ArrayList<>();
+
+        return entityManager.createQuery("SELECT c from Comment c  WHERE c.id IN :ids", Comment.class).setParameter("ids", ids).getResultList();
+    }
+
+    @Override
+    public List<Comment> getCommentsDownvotedByUser(User user) {
+        final Query idsQuery = entityManager.createNativeQuery(
+                "SELECT comment_id FROM comment_upvotes WHERE user_id = :userId AND upvote = false").setParameter("userId", user.getUserId());
+
+        @SuppressWarnings("unchecked")
+        final List<Long> ids = (List<Long>) idsQuery.getResultList().stream()
+                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+
+        if (ids.isEmpty())
+            return new ArrayList<>();
+        return entityManager.createQuery("SELECT c from Comment c  WHERE c.id IN :ids", Comment.class).setParameter("ids", ids).getResultList();
     }
 
 }

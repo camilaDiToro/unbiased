@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {useAppContext} from "../../context";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import baseURL from "../back";
 import {useRouter} from "next/router";
@@ -9,14 +9,19 @@ import {useRouter} from "next/router";
 export default function Login() {
 
     const ctx = useAppContext()
+    const router = useRouter()
     const [jwt, setJwt] = ctx.jwtState
     const [details, setDetails] = useState({
         username: "",
         password: "",
         rememberMe: false
     })
+    useEffect(() => {
+        if (router.pathname !== '/login')
+            localStorage.removeItem('fromPage')
+
+    }, [router.pathname])
     const [passwordType, setPasswordType] = useState("password");
-    const router = useRouter()
     const handleChange = (e) => {
 
         const {name, value} = e.target
@@ -71,7 +76,6 @@ export default function Login() {
     return(
         <div className="d-flex flex-column justify-content-center align-items-center height-100vh">
 
-            {/*TODO: i18n to all inputs*/}
             <div className="form-signIn d-flex flex-column align-items-center " onSubmit={(e)=>{handleSubmit(e)}}>
 
                 <h1 id="title-log" className="logo mb-5">

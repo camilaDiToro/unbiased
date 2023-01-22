@@ -2,12 +2,10 @@ import Head from "next/head";
 import CommentList from "../../../components/CommentList";
 import { useAppContext } from "../../../context";
 import types from "../../../types";
-import {news, users} from "../../../hardcoded";
 import PositivityIndicator from "../../../components/PositivityIndicator";
 import FormattedDate from "../../../components/FormattedDate";
 import ProfilePic from "../../../components/ProfilePic";
 import NewsCategoryPills from "../../../components/NewsCategoryPills";
-import Link from "next/link";
 import ProfileLink from "../../../components/ProfileLink";
 import Bookmark from "../../../components/Bookmark";
 import ReportFlag from "../../../components/ReportFlag";
@@ -17,9 +15,10 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import DeleteButton from "../../../components/DeleteButton";
 import PinButton from "../../../components/PinButton";
-import {newsMapper} from "../../../mappers";
+import {commentsMapper, newsMapper} from "../../../mappers";
 import axios from "axios";
 import baseURL from "../../back";
+import usePagination from "../../../pagination";
 
 export async function getServerSideProps(context) {
   const id = context.query.id
@@ -34,9 +33,10 @@ export default function ShowNews(props) {
   const [articleEffectTrigger, articleTriggerEffect] = useTriggerEffect()
   const [commentsEffectTrigger, commentsTriggerEffect] = useTriggerEffect()
   const [article, setArticle] = useState(props)
-  const fillNewsLoggedParams = useLoggedParamsFiller()
-  const [comments, setComments] = useState(news[0].comments)
+  const {fillNewsLoggedParams, fillCommentsLoggedParams} = useLoggedParamsFiller()
+  const [comments, setComments] = useState([])
   const router = useRouter()
+  const [pagination, setPagination] = usePagination()
   const isMyArticle = loggedUser && loggedUser.id === props.id
 
   useEffect(() => {
@@ -59,10 +59,13 @@ export default function ShowNews(props) {
   }, [articleEffectTrigger])
 
   useEffect(() => {
-    console.log('comment refresh')
-    setComments(c => {
-      c[0].upvotes++
-      return c
+    const params = {order: router.query.order, newsId: props.id, page: router.query.page}
+    axios.get(`comments`, {params}).then(res => {
+      setPagination(res)
+      const mappedComments = res.data.map(commentsMapper)
+      fillCommentsLoggedParams(mappedComments).then(n => {
+        setComments(n)
+      })
     })
   }, [commentsEffectTrigger, router.query])
 
@@ -140,7 +143,7 @@ export default function ShowNews(props) {
           <div className="d-flex w-100 min-vh-65 align-items-center flex-column">
             <div className="article-body p-5" dangerouslySetInnerHTML={{__html: article.body}}>
             </div>
-            <CommentList triggerEffect={commentsTriggerEffect} comments={comments}></CommentList>
+            <CommentList newsId={props.id}  pagination={pagination} triggerEffect={commentsTriggerEffect} comments={comments}></CommentList>
         </div>
       </div>
       </div>

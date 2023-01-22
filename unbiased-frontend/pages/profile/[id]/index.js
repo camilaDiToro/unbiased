@@ -84,7 +84,7 @@ export default function Profile(props) {
   const [useNews, setNews] = useState(props.news)
   const [pagination, setPagination] = usePagination()
   const [profileInfo, setProfileInfo] = useState(props.userInfo)
-  const fillNewsLoggedParams = useLoggedParamsFiller()
+  const {fillNewsLoggedParams} = useLoggedParamsFiller()
 
   const queryParamMap = {
     MY_POSTS: 'publishedBy',

@@ -10,7 +10,7 @@ import ProfilePic from "./ProfilePic";
 
 
 export default function Navbar(props) {
-    const {I18n, loggedUser} = useAppContext()
+    const {I18n, loggedUser, jwtState} = useAppContext()
     const router = useRouter()
     const [query, setQuery] = useState(router.query.search || '')
     const goToSearchPage = (e) => {
@@ -106,13 +106,13 @@ export default function Navbar(props) {
                         </Link>: <></>}
 
 
-                        <Link className="dropdown-item " href="/logout">
+                        <button className="dropdown-item " onClick={() => jwtState[1]({})}>
                             <div className="text-decoration-none text-white" >
                                 <img className="moderation-img"
                                      src="/img/log-out-svgrepo-com.svg" alt="..."/>
                                 {I18n("navbar.logout")}
                             </div>
-                        </Link>
+                        </button>
                     </div>
 
                 </div>

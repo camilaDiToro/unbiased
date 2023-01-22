@@ -27,9 +27,9 @@ export const useLoggedParamsFiller =  () => {
     const {axios, loggedUser} = useAppContext()
 
 
-    const auxFunc = async (queryParam) => {
+    const auxFunc = async (entity, queryParam) => {
         try {
-            const likedNewsResponse = await axios.get('news', {retry: 1,params: {[queryParam]: loggedUser.id}}, {authOptional: true})
+            const likedNewsResponse = await axios.get(entity, {params: {[queryParam]: loggedUser.id}}, {authOptional: true})
             let likedNews = (likedNewsResponse.data || []).map(n => n.id)
             let parsedLink = await parse(likedNewsResponse.headers.get('Link'))
             while (parsedLink && parsedLink.next) {
@@ -46,13 +46,13 @@ export const useLoggedParamsFiller =  () => {
 
     }
 
-    const fillLoggedParams = async (news) => {
+    const fillNewsLoggedParams = async (news) => {
         console.log(news)
         if (loggedUser) {
-            const likedNews = await auxFunc('likedBy')
-            const dislikedNews = await auxFunc('dislikedBy')
+            const likedNews = await auxFunc('news','likedBy')
+            const dislikedNews = await auxFunc('news','dislikedBy')
 
-            const savedNews = await auxFunc('savedBy')
+            const savedNews = await auxFunc('news','savedBy')
             console.log(savedNews)
 
             news.forEach(n => {
@@ -63,6 +63,19 @@ export const useLoggedParamsFiller =  () => {
         return news
     }
 
-    return fillLoggedParams
+    const fillCommentsLoggedParams = async (comments) => {
+        if (loggedUser) {
+            const likedComments = await auxFunc('comments','likedBy')
+            const dislikedComments = await auxFunc('comments','dislikedBy')
+
+
+            comments.forEach(n => {
+                n.rating = likedComments.includes(n.id) ? 1 : (likedComments.includes(n.id) ? -1 : 0)
+            })
+        }
+        return comments
+    }
+
+    return {fillNewsLoggedParams, fillCommentsLoggedParams}
 
 }

@@ -47,23 +47,11 @@ export default function Home(props) {
 
   const {I18n, axios, loggedUser, jwtState} = useAppContext()
   const [jwt, setJwt] = jwtState
-  const fillNewsLoggedParams = useLoggedParamsFiller()
+  const {fillNewsLoggedParams} = useLoggedParamsFiller()
 
   const getUsersData = async res => {
-    const data = res.data
-    // setPagination(res)
-    // const promises = data.map(d => {
-    //   if (d && d.newsStats) {
-    //     return axios.get(d.newsStats).then(newsStats =>  {
-    //       // alert(JSON.stringify(newsStats.data))
-    //       d.newsStats = newsStats.data
-    //       return d
-    //     })
-    //   } else {
-    //     return d
-    //   }
-    // })
-    // const finalData = await Promise.all(promises);
+    const data = res.data || []
+
     const finalData = data.map(d => {
       const aux = d
       delete aux['newsStats']

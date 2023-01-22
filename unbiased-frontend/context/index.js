@@ -55,7 +55,7 @@ export default function AppWrapper({ children }) {
     axiosInstance.interceptors.response.use((r) => {
         setHeadersIfExist(r)
         return r;
-    }, (error) => {
+    }, async (error) => {
         setHeadersIfExist(error.response)
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
@@ -74,7 +74,7 @@ export default function AppWrapper({ children }) {
                     jwtState[1]({})
                     localStorage.setItem('fromPage', 'true')
                     if (!error.config.authOptional)
-                        router.push(loginURL)
+                        await router.push(loginURL)
                 }
             }
         }
@@ -103,7 +103,6 @@ export default function AppWrapper({ children }) {
         }
         if (!jwt.accessToken && !jwt.refreshToken) {
             setLoggedUser(null)
-            router.push('/login')
         }
         // alert(JSON.stringify(jwt))
     }, [jwt])
