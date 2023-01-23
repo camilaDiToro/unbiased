@@ -120,7 +120,7 @@ export default function Navbar(props) {
                         <Link className="btn btn-primary" href="/login">
                             {I18n("navbar.logIn")}
                         </Link>
-                        <Link  className="btn btn-primary" href="/create">
+                        <Link  className="btn btn-primary" href="/register">
                             {I18n("navbar.register")}
                         </Link></>}
 

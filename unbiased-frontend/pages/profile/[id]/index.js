@@ -84,6 +84,7 @@ export default function Profile(props) {
   const [useNews, setNews] = useState(props.news)
   const [pagination, setPagination] = usePagination()
   const [profileInfo, setProfileInfo] = useState(props.userInfo)
+  const [pinned, setPinned] = useState(undefined)
   const {fillNewsLoggedParams} = useLoggedParamsFiller()
 
   const queryParamMap = {
@@ -101,6 +102,26 @@ export default function Profile(props) {
     }
     return {params}
   }
+
+  useEffect(() => {
+    axios.get(`news`, {params: {pinnedBy: props.id}}).then(res => {
+      const maybePinned = res.data
+      console.log('pinned')
+      console.log(res.data)
+      if (maybePinned)
+        setPinned(newsMapper(maybePinned))
+    })
+
+    axios.get(`users/${props.id}/following`).then(res => {
+      const following = res.data
+      console.log('following')
+      console.log(following)
+      if (following) {
+        const isLoggedUserFollowing = following.map(u => u.id).includes(props.id)
+        setProfileInfo(i => ({...i, isLoggedUserFollowing}))
+      }
+    })
+  }, [newsEffectTrigger])
 
   useEffect(() => {
     axios.get('news', getQueryParams()).then(res => {
@@ -220,7 +241,7 @@ export default function Profile(props) {
       <div className="tab">
         <div className="container-fluid">
           <div className="row row-cols-1">
-            {/*{JSON.stringify(profileInfo)}*/}
+            {pinned ? <Article pinned triggerEffect={newsTriggerEffect} profileArticle {...pinned} key={pinned.id} id={pinned.id}></Article> : <></>}
 
             {useNews.map((n) => (
                 <Article triggerEffect={newsTriggerEffect} profileArticle {...n} key={n.id} id={n.id}></Article>

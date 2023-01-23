@@ -25,6 +25,9 @@ public interface NewsService {
 
     Optional<News> getById(long id);
     Optional<Comment> getCommentById(long id);
+
+    Optional<News> getPinnedByUserNews(User user);
+
     Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query);
     void setRating(final User currentUser, News news, Rating rating);
 

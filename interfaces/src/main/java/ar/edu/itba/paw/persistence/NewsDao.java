@@ -41,6 +41,8 @@ public interface NewsDao {
 
     List<News> getReportedByUserNews(long userId);
 
+    Optional<News> getPinnedByUserNews(long userId);
+
     void reportNews(News news, User reporter, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsId);

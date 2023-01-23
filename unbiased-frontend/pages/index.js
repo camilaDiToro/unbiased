@@ -81,11 +81,16 @@ export default function Home(props) {
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {
-    // const aux = props.topCreators
-    // const first = aux[0]
-    // aux[0] = aux[1]
-    // aux[1] = first
-    // setTopCreators(aux)
+    const params = {...router.query, topCreators: true}
+    delete params['type']
+
+      axios.get('users', {params}).then(res => {
+        const topCreators = res.data.map(u => {
+          delete u['newsStats']
+          return userMapper(u)
+        })
+        setTopCreators(topCreators)
+      })
   }, [newsEffectTrigger])
 
   return (

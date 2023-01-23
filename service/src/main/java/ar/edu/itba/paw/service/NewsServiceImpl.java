@@ -78,6 +78,12 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public Optional<News> getPinnedByUserNews(User user) {
+        Optional<News> maybePinned =  newsDao.getPinnedByUserNews(user.getUserId());
+        return maybePinned;
+    }
+
+    @Override
     @Transactional
     public Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query) {
         final int totalPages;

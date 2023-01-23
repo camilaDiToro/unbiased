@@ -37,6 +37,12 @@ public interface UserService {
 
     void unpinNews(User user, News news);
 
+    void unpinNews(User user);
+
+    List<User> getFollowing(User user);
+
+    List<User> getFollowedBy(User user);
+
     ProfileCategory getProfileCategory(Optional<User> maybeCurrentUser, ProfileCategory category, final User profile);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);

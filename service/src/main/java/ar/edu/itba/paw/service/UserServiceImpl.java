@@ -3,7 +3,6 @@ package ar.edu.itba.paw.service;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.InvalidFilterException;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
@@ -256,6 +255,22 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void unpinNews(final User user, final News news) {
         userDao.unpinNews(user, news);
+    }
+
+    @Override
+    @Transactional
+    public void unpinNews(final User user) {
+        userDao.unpinNews(user);
+    }
+
+    @Override
+    public List<User> getFollowing(User user) {
+        return userDao.getFollowing(user.getUserId());
+    }
+
+    @Override
+    public List<User> getFollowedBy(User user) {
+        return userDao.getFollowedBy(user.getUserId());
     }
 
     @Override

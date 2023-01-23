@@ -14,7 +14,6 @@ export default function Login() {
     const [details, setDetails] = useState({
         username: "",
         password: "",
-        rememberMe: false
     })
     useEffect(() => {
         if (router.pathname !== '/login')
@@ -28,10 +27,6 @@ export default function Login() {
         if (name !== "rememberMe") {
             setDetails((prev) => {
                 return {...prev, [name]: value}
-            })
-        } else {
-            setDetails((prev) => {
-                return {...prev, [name]: !details.rememberMe}
             })
         }
 
@@ -50,11 +45,9 @@ export default function Login() {
         ctx.axios({
             // headers: {'Content-Type': 'application/json'},
             method: 'put',
-            url: 'users/13/pingNews/4',
-            auth: {
-                username: 'kevincatino18@gmail.com',
-                password: '123'
-            }
+            url: 'users/0/pinnedNews',
+            auth: details,
+            params: {newsId: 0}
         }).then(res => {
             console.log(res.data)
             console.log(res.headers)
@@ -89,7 +82,7 @@ export default function Login() {
                     <input onChange={handleChange} type="text" id="username" name="username" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
                 </div>
 
-                <div className="mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
+                <div className=" mb-2 mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
                     <img src="/img/lock-svgrepo-com.svg" alt="..." className="size-img-modal-login align-self-center"/>
                     <input type={passwordType} onChange={handleChange} name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
                     <button className="btn  eye-button-properties" onClick={togglePassword}>
@@ -97,12 +90,12 @@ export default function Login() {
                     </button>
                 </div>
 
-                <div className="checkbox mb-3">
-                    <label className="text-light">
-                        <input onChange={handleChange} className="mr-1" type="checkbox" name="rememberMe"/>
-                        Remember me
-                    </label>
-                </div>
+                {/*<div className="checkbox mb-3">*/}
+                {/*    <label className="text-light">*/}
+                {/*        <input onChange={handleChange} className="mr-1" type="checkbox" name="rememberMe"/>*/}
+                {/*        Remember me*/}
+                {/*    </label>*/}
+                {/*</div>*/}
 
                 <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">Log in</button>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>

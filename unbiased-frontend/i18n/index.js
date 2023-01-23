@@ -62,7 +62,7 @@ const strings = {
     "profile.pin.question": "Are you sure you want to pin the article?",
     "profile.pin.body": "Pinning this article it will appear on top of the rest of the news. Are you sure you would like to continue?",
     "profile.unpin.question": "Are you sure you want to unpin the article?",
-    "profile.unpin.body": "Unpinning this article it will appear on top of the rest of the news. Are you sure you would like to continue?",
+    "profile.unpin.body": "Unpinning this article it will stop appearinf on top of the rest of the news. Are you sure you would like to continue?",
     "profile.followers": "Followers",
     "profileCategories.saved": "Saved",
     "profileCategories.upvoted": "Upvoted",

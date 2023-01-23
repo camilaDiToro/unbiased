@@ -56,9 +56,54 @@ public class UserController {
         this.securityService = securityService;
     }
 
+    @PUT
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
+    @Path(value = "/{userId:[0-9]+}/pinnedNews")
+    public Response pinNews(@PathParam("userId") final long userId, @QueryParam("newsId") final long newsId) {
+
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        userService.pinNews(user, news);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
+
+    }
+
+    @DELETE
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @Path(value = "/{userId:[0-9]+}/pinnedNews")
+    public Response unpinNews(@PathParam("userId") final long userId) {
+
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        userService.unpinNews(user);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinned the news", user.getUsername()))).build();
+
+    }
+
+    @GET
+    @Path(value = "/{userId:[0-9]+}/following")
+    @Produces(value = {CustomMediaType.USER_LIST_V1})
+    public Response following(@PathParam("userId")  final long userId) {
+
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        List<UserDto> users = userService.getFollowing(user).stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
+
+        if (users.isEmpty()) {
+            return Response.noContent().build();
+        }
+        return Response.ok(new GenericEntity<List<UserDto>>(users){}).build();
+    }
+
     @GET
     @Produces(value = {CustomMediaType.USER_LIST_V1})
-    public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search) {
+    public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search,
+                              @QueryParam("topCreators") final boolean topCreators) {
+
+        if (topCreators) {
+            List<UserDto> creatorList =  userService.getTopCreators(5).stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
+            return Response.ok(new GenericEntity<List<UserDto>>(creatorList) {}).build();
+        }
         final Page<User> userPage = userService.searchUsers(page, search);
 
         if(userPage.getContent().isEmpty()){
@@ -88,7 +133,7 @@ public class UserController {
         final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
 
         final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newUser.getId())).build();
-        return Response.created(location).entity(UserDto.fromUser(uriInfo, newUser)).build();
+        return Response.created(location).build();
     }
 
     @GET

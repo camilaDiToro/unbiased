@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
@@ -24,6 +25,7 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.constraints.FileSize;
 import ar.edu.itba.paw.webapp.dto.NewsDto;
+import ar.edu.itba.paw.webapp.dto.ReportDetailDto;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
@@ -93,22 +95,30 @@ public class NewsController {
                              @QueryParam("cat") @DefaultValue("ALL") final String category,
                              @QueryParam("order") @DefaultValue("TOP") final String order,
                              @QueryParam("time") @DefaultValue("WEEK") final String time,
-                             @QueryParam("likedBy") @DefaultValue("") final String likedBy,
-                             @QueryParam("dislikedBy") @DefaultValue("") final String dislikedBy,
-                             @QueryParam("savedBy") @DefaultValue("") final String savedBy,
+                             @QueryParam("likedBy") @DefaultValue("-1") final long  likedBy,
+                             @QueryParam("dislikedBy") @DefaultValue("-1") final long  dislikedBy,
+                             @QueryParam("pinnedBy") @DefaultValue("-1") final long pinnedBy,
+                             @QueryParam("savedBy") @DefaultValue("-1") final long  savedBy,
                              @QueryParam("reportedBy") @DefaultValue("-1") final long reportedBy,
                              @QueryParam("reported") final boolean reported,
                              @QueryParam("reportOrder") @DefaultValue("REP_COUNT_DESC") String reportOrder,
-                             @QueryParam("publishedBy") @DefaultValue("") final String publishedBy) {
+                             @QueryParam("publishedBy") @DefaultValue("-1") final long  publishedBy) {
         Category categoryObj = Category.getByValue(category);
         NewsOrder orderObj = NewsOrder.getByValue(order);
         TimeConstraint timeObj = TimeConstraint.getByValue(time);
         final Page<News> newsPage;
-        final int uniqueParamCount = Arrays.stream(new String[]{likedBy, dislikedBy, savedBy, publishedBy}).map(s -> s.equals("") ?0 : 1).reduce(Integer::sum).get();
+        final long uniqueParamCount = Arrays.stream(new long[]{likedBy, dislikedBy, savedBy, publishedBy}).map(s -> s > 0 ? 1 : 0).reduce(Long::sum).getAsLong();
 
         if (uniqueParamCount > 1) {
             // throw new ...
         }
+        if (pinnedBy>0) {
+            final User user = userService.getUserById(pinnedBy).orElseThrow(UserNotFoundException::new);
+            Optional<News> news = newsService.getPinnedByUserNews(user);
+            if (!news.isPresent())
+                return Response.noContent().build();
+            return Response.ok(NewsDto.fromNews(uriInfo, news.get())).build();
+        } else
         if (reportedBy>0) {
             final User user = userService.getUserById(reportedBy).orElseThrow(UserNotFoundException::new);
             List<News> news = adminService.getReportedByUserNews(user);
@@ -120,21 +130,21 @@ public class NewsController {
         } else if (reported) {
             final ReportOrder reportOrderObj = ReportOrder.getByValue(reportOrder);
             newsPage = adminService.getReportedNews(page, reportOrderObj);
-        } else if (!likedBy.equals("")) {
+        } else if (likedBy > 0) {
             final ProfileCategory catObject = ProfileCategory.UPVOTED;
-            final User profileUser = userService.getUserById(Long.parseLong(likedBy)).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(likedBy).orElseThrow(UserNotFoundException::new);
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
-        } else if (!dislikedBy.equals(""))  {
+        } else if (dislikedBy > 0)  {
             final ProfileCategory catObject = ProfileCategory.DOWNVOTED;
-            final User profileUser = userService.getUserById(Long.parseLong(dislikedBy)).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(dislikedBy).orElseThrow(UserNotFoundException::new);
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
-        } else if (!publishedBy.equals("")) {
+        } else if (publishedBy > 0) {
             final ProfileCategory catObject = ProfileCategory.MY_POSTS;
-            final User profileUser = userService.getUserById(Long.parseLong(publishedBy)).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(publishedBy).orElseThrow(UserNotFoundException::new);
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
-        } else if (!savedBy.equals("")) {
+        } else if (savedBy > 0) {
             final ProfileCategory catObject = ProfileCategory.SAVED;
-            final User profileUser = userService.getUserById(Long.parseLong(savedBy)).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(savedBy).orElseThrow(UserNotFoundException::new);
             final Optional<User> user = securityService.getCurrentUser();
 
             newsPage = newsService.getNewsForUserProfile(user, page, orderObj, profileUser, catObject);
@@ -181,6 +191,15 @@ public class NewsController {
 
         NewsDto newsDto = NewsDto.fromNews(uriInfo, news);
         return Response.ok(newsDto).build();
+    }
+
+    @GET
+    @Path("/{newsId:[0-9]+}/reports")
+    @Produces(value = {CustomMediaType.USER_V1})
+    public Response getNewsReportDetail(@PathParam("newsId") final long newsId){
+        News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        List<ReportDetailDto> reportList = news.getReports().stream().map(d -> ReportDetailDto.fromReportDetail(uriInfo, d)).collect(Collectors.toList());
+        return Response.ok(new GenericEntity<List<ReportDetailDto>>(reportList) {}).build();
     }
 
     @PUT
@@ -275,31 +294,7 @@ public class NewsController {
         return Response.ok().build();
     }
 
-    @PUT
-    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
-    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
-    @Path(value = "/{newsId:[0-9]+}/pinned/{userId:[0-9]+}")
-    public Response pinNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
 
-        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
-        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
-        userService.pinNews(user, news);
-        return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
-
-    }
-
-    @DELETE
-    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
-    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
-    @Path(value = "/{newsId:[0-9]+}/pinned/{userId:[0-9]+}")
-    public Response unpinNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
-
-        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
-        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
-        userService.unpinNews(user, news);
-        return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
-
-    }
 
     @Consumes({MediaType.APPLICATION_JSON})
     @POST
