@@ -5,19 +5,19 @@ import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorExceptionInt;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 
-public class InvalidJwtClaimExceptionInt extends AuthenticationException implements ApiErrorExceptionInt {
+public class InvalidJwtClaimException extends AuthenticationException implements ApiErrorExceptionInt {
 
     private static final String MSG = "Invalid JWT claim: %s";
     private static final ApiErrorCode CODE = ApiErrorCode.INVALID_JWT_CLAIM;
     private static final HttpStatus STATUS = HttpStatus.UNAUTHORIZED;
     private final String details;
 
-    public InvalidJwtClaimExceptionInt(String s, Throwable t) {
+    public InvalidJwtClaimException(String s, Throwable t) {
         super(String.format(MSG, s), t);
         this.details = s;
     }
 
-    public InvalidJwtClaimExceptionInt(String s) {
+    public InvalidJwtClaimException(String s) {
         super(String.format(MSG, s));
         this.details = s;
     }

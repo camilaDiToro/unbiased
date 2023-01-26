@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
-import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorException;
-import org.springframework.http.HttpStatus;
-
-import javax.validation.ConstraintViolation;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorExceptionInt;
 
 public class ApiErrorDto {
 
@@ -22,7 +19,7 @@ public class ApiErrorDto {
     }
 
 
-    public static ApiErrorDto fromApiErrorException(final ApiErrorException apiErrorException){
+    public static ApiErrorDto fromApiErrorException(final ApiErrorExceptionInt apiErrorException){
         return new ApiErrorDto(
                 apiErrorException.getApiErrorMessage(),
                 apiErrorException.getApiCode(),

@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.auth.jwt;
 
 import ar.edu.itba.paw.model.user.Role;
-import ar.edu.itba.paw.model.user.Tier;
 import ar.edu.itba.paw.webapp.auth.CustomUserDetails;
 import ar.edu.itba.paw.webapp.auth.exceptions.ExpiredJwtTokenException;
 import ar.edu.itba.paw.webapp.auth.exceptions.InvalidJwtClaimException;
@@ -15,13 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;

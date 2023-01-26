@@ -12,8 +12,11 @@ import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.OwnerService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
+import ar.edu.itba.paw.webapp.api.exceptions.CustomBadRequestException;
 import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
@@ -44,15 +47,17 @@ public class UserController {
     private final UserService userService;
     private final NewsService newsService;
     private final SecurityService securityService;
+    private final OwnerService ownerService;
 
     @Context
     private UriInfo uriInfo;
 
     @Autowired
-    public UserController(UserService userService, NewsService newsService, SecurityService securityService) {
+    public UserController(UserService userService, NewsService newsService, SecurityService securityService, OwnerService ownerService) {
         this.userService = userService;
         this.newsService = newsService;
         this.securityService = securityService;
+        this.ownerService = ownerService;
     }
 
     @PUT
@@ -238,6 +243,44 @@ public class UserController {
         }
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] did not follow user of id %d", currentUser, currentUser.getUserId(), userId))).build();
     }
+
+
+    /// ------------------------------------------------------------------------------------------
+    /// -------------------------------- OWNER ---------------------------------------------------
+    /// ------------------------------------------------------------------------------------------
+
+    @PUT
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path(value = "/{userId:[0-9]+}/role")
+    public Response addRole(@PathParam("userId") final long userId, @QueryParam("role") final String role) {
+        if(!role.equals(Role.ROLE_ADMIN.getRole())){
+            throw new CustomBadRequestException(
+                    ApiErrorCode.INVALID_ROLE,
+                    "Trying to add an invalid role to an user",
+                    String.format("The role %s can not be manually added to the user of id %d", role, userId));
+        }
+        if(ownerService.makeUserAdmin(userId)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("User of id %d is now admin", userId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("User of id %d was already admin", userId))).build();
+    }
+
+    @DELETE
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path(value = "/{userId:[0-9]+}/role")
+    public Response deleteRole(@PathParam("userId") final long userId, @QueryParam("role") final String role) {
+        if(!role.equals(Role.ROLE_ADMIN.getRole())){
+            throw new CustomBadRequestException(
+                    ApiErrorCode.INVALID_ROLE,
+                    "Trying to delete an invalid role from an user",
+                    String.format("The role %s can not be manually deleted from the user of id %d", role, userId));
+        }
+        if(ownerService.deleteUserAdmin(userId)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("User of id %d is not admin anymore", userId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("User of id %d was not an admin", userId))).build();
+    }
+
 
 }
 
