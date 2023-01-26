@@ -101,7 +101,7 @@ public class CommentController {
 
     @GET
     @Path("/{commentId:[0-9]+}/reports")
-    @Produces(value = {CustomMediaType.USER_V1})
+    @Produces(value = {CustomMediaType.COMMENT_REPORT_DETAIL_LIST_V1})
     public Response getNewsReportDetail(@PathParam("commentId") final long commentId){
         Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
         List<ReportDetailDto> reportList = comment.getReports().stream().map(d -> ReportDetailDto.fromReportedComment(uriInfo, d)).collect(Collectors.toList());
@@ -109,7 +109,7 @@ public class CommentController {
     }
 
     @POST
-    @Consumes(value = {MediaType.APPLICATION_JSON})
+    @Consumes(value = {CustomMediaType.COMMENT_V1})
     @Produces(value = {CustomMediaType.COMMENT_V1})
     public Response postComment(
             @QueryParam("newsId") final long newsId,
@@ -124,6 +124,7 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response report(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        //TODO: Check if getting this object here is necessary
         Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
         adminService.reportComment(user, commentId, ReportReason.getByValue(reportForm.getReason()));
         return Response.ok().build();
