@@ -8,7 +8,6 @@ import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.CategoryStatistics;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
@@ -112,22 +111,11 @@ public class UserController {
 
         final List<UserDto> allUsers = userPage.getContent().stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
 
-        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<UserDto>>(allUsers) {})
-                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", userPage.getTotalPages()).build(), "last")
-                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", 1).build(), "first");
-
-        if(page != 1){
-            responseBuilder.link(uriInfo.getAbsolutePathBuilder().queryParam("page", page-1).build(), "prev");
-        }
-
-        if(page != userPage.getTotalPages()){
-            responseBuilder.link(uriInfo.getAbsolutePathBuilder().queryParam("page", page+1).build(), "next");
-        }
-
-        return responseBuilder.build();
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<UserDto>>(allUsers) {});
+        return PagingUtils.pagedResponse(userPage, responseBuilder, uriInfo);
     }
 
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes({CustomMediaType.USER_V1})
     @POST
     public Response createUser(@Valid final UserForm userForm){
         final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
@@ -148,7 +136,7 @@ public class UserController {
 
     @GET
     @Path("/{userId:[0-9]+}/news-stats")
-    @Produces(value = { MediaType.APPLICATION_JSON})
+    @Produces(value = { CustomMediaType.CATEGORY_STATISTICS_V1})
     public Response getUserNewsStats(@PathParam("userId") final long userId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         if (!user.getRoles().contains(Role.ROLE_JOURNALIST)) {
