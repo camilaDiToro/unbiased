@@ -39,11 +39,8 @@ public class CommentController {
 
     private final NewsService newsService;
     private final SecurityService securityService;
-
     private final CommentService commentService;
-
     private final UserService userService;
-
     private final AdminService adminService;
 
     @Context
@@ -98,21 +95,8 @@ public class CommentController {
         }
 
         final List<CommentDto> comments = commentPage.getContent().stream().map(c -> CommentDto.fromComment(uriInfo, c)).collect(Collectors.toList());
-
-        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CommentDto>>(comments) {})
-                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", commentPage.getTotalPages()).build(), "last")
-                .link(uriInfo.getAbsolutePathBuilder().queryParam("page", 1).build(), "first");
-
-        if(page != 1){
-            responseBuilder.link(uriInfo.getAbsolutePathBuilder().queryParam("page", page-1).build(), "prev");
-        }
-
-        if(page != commentPage.getTotalPages()){
-            responseBuilder.link(uriInfo.getAbsolutePathBuilder().queryParam("page", page+1).build(), "next");
-        }
-
-        return responseBuilder.build();
-
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CommentDto>>(comments) {});
+        return PagingUtils.pagedResponse(commentPage, responseBuilder, uriInfo);
     }
 
     @GET
