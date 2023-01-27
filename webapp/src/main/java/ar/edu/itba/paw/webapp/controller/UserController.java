@@ -102,13 +102,19 @@ public class UserController {
     @GET
     @Produces(value = {CustomMediaType.USER_LIST_V1})
     public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search,
-                              @QueryParam("topCreators") final boolean topCreators) {
+                              @QueryParam("topCreators") final boolean topCreators, @QueryParam("admins") final boolean admins) {
 
         if (topCreators) {
             List<UserDto> creatorList =  userService.getTopCreators(5).stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
             return Response.ok(new GenericEntity<List<UserDto>>(creatorList) {}).build();
         }
-        final Page<User> userPage = userService.searchUsers(page, search);
+
+        Page<User> userPage;
+        if(admins){
+            userPage = ownerService.getAdmins(page, search);
+        }else{
+            userPage = userService.searchUsers(page, search);
+        }
 
         if(userPage.getContent().isEmpty()){
             return Response.noContent().build();
