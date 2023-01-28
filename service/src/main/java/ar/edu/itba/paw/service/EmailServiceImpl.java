@@ -47,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
 
     private String getUrl(String subdir){
         try {
-            return new URL(environment.getRequiredProperty("mail.url.schema"), environment.getRequiredProperty("mail.url.domain"), environment.getRequiredProperty("mail.url.baseDir") + subdir).toString();
+            return new URL(environment.getRequiredProperty("url.schema"), environment.getRequiredProperty("url.domain"), environment.getRequiredProperty("url.baseDir") + subdir).toString();
         } catch (MalformedURLException e) {
             LOGGER.warn("Malformed url exeption in email verification {}", e);
         }

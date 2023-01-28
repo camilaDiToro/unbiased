@@ -24,6 +24,13 @@ public class UserDto {
     private URI self;
     private URI news;
     private URI image;
+    private String tier;
+    private boolean hasImage;
+    private boolean isJournalist;
+    private String description;
+    private long id;
+    private boolean hasPositivity;
+    private String[] mailOptions = new String[]{};
 
     public boolean isHasImage() {
         return hasImage;
@@ -41,15 +48,6 @@ public class UserDto {
         this.tier = tier;
     }
 
-    private String tier;
-
-    private boolean hasImage;
-
-
-
-
-
-
     public boolean isJournalist() {
         return isJournalist;
     }
@@ -57,8 +55,6 @@ public class UserDto {
     public void setJournalist(boolean journalist) {
         isJournalist = journalist;
     }
-
-    private boolean isJournalist;
 
     public String getDescription() {
         return description;
@@ -68,8 +64,6 @@ public class UserDto {
         this.description = description;
     }
 
-    private String description;
-
     public long getId() {
         return id;
     }
@@ -77,8 +71,6 @@ public class UserDto {
     public void setId(long id) {
         this.id = id;
     }
-
-    private long id;
 
     public boolean isHasPositivity() {
         return hasPositivity;
@@ -88,8 +80,6 @@ public class UserDto {
         this.hasPositivity = hasPositivity;
     }
 
-    private boolean hasPositivity;
-
     public String[] getMailOptions() {
         return mailOptions;
     }
@@ -97,9 +87,6 @@ public class UserDto {
     public void setMailOptions(String[] mailOptions) {
         this.mailOptions = mailOptions;
     }
-
-    private String[] mailOptions = new String[]{};
-
 
     public HashMap<String, String> getStats() {
         return stats;
@@ -151,10 +138,7 @@ public class UserDto {
             dto.stats.put("interactions", Long.toString(p.getInteractions()));
         }
         dto.id = user.getUserId();
-            dto.mailOptions = user.getEmailSettings().getOptionsArray();
-
-
-
+        dto.mailOptions = user.getEmailSettings().getOptionsArray();
         return dto;
     }
 
