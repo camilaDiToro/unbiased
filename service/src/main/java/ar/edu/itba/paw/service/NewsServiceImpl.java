@@ -42,13 +42,16 @@ public class NewsServiceImpl implements NewsService {
     private final UserDao userDao;
     private final CommentDao commentDao;
 
+    private final ImageService imageService;
+
     @Autowired
-    public NewsServiceImpl(NewsDao newsDao, UserService userService, EmailService emailService, UserDao userDao, CommentDao commentDao) {
+    public NewsServiceImpl(NewsDao newsDao, UserService userService, EmailService emailService, UserDao userDao, CommentDao commentDao, ImageService imageService) {
         this.newsDao = newsDao;
         this.userService = userService;
         this.emailService = emailService;
         this.userDao = userDao;
         this.commentDao = commentDao;
+        this.imageService = imageService;
     }
 
     @Override
@@ -72,6 +75,12 @@ public class NewsServiceImpl implements NewsService {
             emailService.sendNewPublishedNewsByFollowing(u,createdNews,u.getEmailSettings().getLocale());
         }
         return createdNews;
+    }
+
+    @Override
+    public Optional<News> getPinnedByUserNews(User user) {
+        Optional<News> maybePinned =  newsDao.getPinnedByUserNews(user.getUserId());
+        return maybePinned;
     }
 
     @Override
@@ -160,18 +169,28 @@ public class NewsServiceImpl implements NewsService {
         }
     }
 
+
+
     @Override
     @Transactional
-    public void setCommentRating(final User currentUser, Comment comment, Rating rating) {
-        Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
-        if (rating.equals(Rating.NO_RATING)) {
-            upvoteMap.remove(currentUser.getId());
-            return;
-        }
-        final long userId = currentUser.getId();
+    public void saveNews(final User currentUser, long newsId) {
 
-        upvoteMap.putIfAbsent(userId, new CommentUpvote(comment, currentUser.getId()));
-        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
+        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+
+        newsDao.saveNews(news, currentUser);
+        news.setUserSpecificVariables(currentUser.getId());
+
+    }
+
+    @Override
+    @Transactional
+    public void unsaveNews(final User currentUser, long newsId) {
+
+        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+
+        newsDao.removeSaved(news, currentUser);
+        news.setUserSpecificVariables(currentUser.getId());
+
     }
 
     @Override
@@ -232,6 +251,14 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+    public void setNewsImage(final long newsId, final byte[] image,String dataType) {
+        final News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        final long imageId = imageService.uploadImage(image, dataType);
+        news.setImageId(imageId);
+    }
+
+    @Override
+    @Transactional
     public Optional<News> getById(long id) {
         return newsDao.getById(id);
     }
@@ -276,8 +303,8 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, final Boolean reported, ReportOrder reportOrder) {
-        if(reported == null){
+    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, final boolean reported, ReportOrder reportOrder) {
+        if(!reported){
             if (orderByObj.equals(NewsOrder.NEW)) {
                 return commentDao.getNewComments(newsId, page);
             }

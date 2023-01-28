@@ -15,6 +15,8 @@ public class NotExistingNewsCategoryValidator implements ConstraintValidator<Not
 
     @Override
     public boolean isValid(String[] value, ConstraintValidatorContext context) {
+        if (value == null)
+            return true;
         for (String val : value) {
             if(Arrays.stream(Category.values()).map(Category::getInterCode).noneMatch(s -> s.equals(val)))
                 return false;

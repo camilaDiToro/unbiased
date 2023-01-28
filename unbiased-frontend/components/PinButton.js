@@ -5,18 +5,18 @@ import ModalTrigger from "./ModalTrigger";
 import Modal from "./Modal";
 
 export default function PinButton(props) {
-    const {I18n, loggedUser} = useAppContext()
+    const {I18n, loggedUser, axios} = useAppContext()
     const isMyProfile = loggedUser && props.creatorId === loggedUser.id
-    const onPinOrUnpin = (e) => {
+    const onPinOrUnpin = async (e) => {
         if (props.pinned) {
-            alert(`Pinned article of id ${props.id}`)
+            await axios.delete(`/news/${props.creatorId}/pinnedNews`)
         } else {
-            alert(`Unpinned article of id ${props.id}`)
+            await axios.put(`/users/${props.creatorId}/pinnedNews`,null, {params: {newsId: props.id}})
         }
         props.triggerEffect()
     }
     return isMyProfile ? <>
-        <Modal onClickHandler={onPinOrUnpin} id={`pingModal${props.id}`} title={I18n("profile.pin.question")} body={I18n("profile.pin.body")}/>
+        <Modal onClickHandler={onPinOrUnpin} id={`pingModal${props.id}`} title={props.pinned ? I18n("profile.unpin.question") : I18n("profile.pin.question")} body={props.pinned ? I18n("profile.unpin.body"): I18n("profile.pin.body")}/>
 
         <ModalTrigger modalId={`pingModal${props.id}`}>
             <div className="svg-btn hover-hand h-fit">

@@ -9,9 +9,16 @@ import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 
+import java.util.List;
+
 public interface AdminService {
     void reportNews(final User currentUser, long newsId, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
+
+    List<News> getReportedByUserNews(User user);
+
+    List<Comment> getReportedByUserComments(User user);
+
     void reportComment(final User currentUser, long commentId, ReportReason reportReason);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsIs);
     void deleteNews(long newsId);

@@ -19,45 +19,6 @@ export default function Article(props) {
 
     const isMyProfile = loggedUser && loggedUser.id === props.creator.id
 
-    const handleUpvote = async (e) => {
-        // if (useUpvote > 0) {
-        //     setUpvote(0)
-        // } else {
-        //     setUpvote(1)
-        // }
-        props.triggerEffect()
-    }
-
-    const handleDownvote = async (e) => {
-        // if (useUpvote < 0) {
-        //     setUpvote(0)
-        // } else {
-        //     setUpvote(-1)
-        // }
-        props.triggerEffect()
-
-    }
-
-    const handleSave = async (e) => {
-        // if (useSaved) {
-        //     setSaved(false)
-        // } else {
-        //     setSaved(true)
-        // }
-        props.triggerEffect()
-
-    }
-
-    const handlePin = async (e) => {
-        // if (usePinned) {
-        //     setPinned(false)
-        // } else {
-        //     setPinned(true)
-        // }
-        props.triggerEffect()
-
-    }
-
 
 
     return <>
@@ -69,7 +30,7 @@ export default function Article(props) {
                     <div className="d-flex w-100">
                         <UpvoteButtons id={props.id} triggerEffect={props.triggerEffect} upvotes={props.upvotes} rating={props.rating}></UpvoteButtons>
                         <div className="card-body-home">
-                            <Link className="link max-h-10" href={`/news/${props.id}`}>
+                            <Link shallow className="link max-h-10" href={`/news/${props.id}`}>
                                 <h5 className="link-text text-ellipsis">
                                     {props.title}
                                 </h5>
@@ -92,7 +53,7 @@ export default function Article(props) {
                             <div className="img-container-article">
                                 <ProfilePic {...props.creator}></ProfilePic>
                             </div>
-                            <ProfileLink {...props.creator}></ProfileLink>
+                            <ProfileLink shorten={props.hasImage} {...props.creator}></ProfileLink>
                         </div>
                         <div className="d-flex align-items-center" role="group">
 
@@ -100,7 +61,7 @@ export default function Article(props) {
 
                             {props.profileArticle ? <PinButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>}
 
-                            {props.profileArticle ? <></> : <CommentButton triggerEffect={props.triggerEffect}></CommentButton>}
+                            {props.profileArticle ? <></> : <CommentButton id={props.id} triggerEffect={props.triggerEffect}></CommentButton>}
 
                             <Bookmark id={props.id} triggerEffect={props.triggerEffect} saved={props.saved} ></Bookmark>
                         </div>
@@ -109,7 +70,7 @@ export default function Article(props) {
                 {props.hasImage ? <div className="bg-secondary position-relative w-40 border-15px">
 
 
-                    <img src={`/news/${props.id}/image`} className="object-fit-cover"
+                    <img src={props.image} className="object-fit-cover"
                          alt="..."/>
 
                 </div> : <></>}

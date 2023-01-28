@@ -297,6 +297,11 @@
         <version>${jersey.version}</version>
       </dependency>
       <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-multipart</artifactId>
+        <version>${jersey.version}</version>
+    </dependency>
+      <dependency>
         <groupId>com.auth0</groupId>
         <artifactId>java-jwt</artifactId>
         <version>${jwt.version}</version>

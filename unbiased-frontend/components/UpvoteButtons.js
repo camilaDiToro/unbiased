@@ -19,9 +19,9 @@ export default function UpvoteButtons(props) {
         } else {
             try {
                 if (props.rating === 0 || props.rating > 0 && s === 'dislikes' || props.rating < 0 && s === 'likes') {
-                    await axios.put(`/news/${props.id}/${s}/${loggedUser.id}`)
+                    await axios.put(`/${props.comment ? 'comments' : 'news'}/${props.id}/${s}/${loggedUser.id}`)
                 } else {
-                    await axios.delete(`/news/${props.id}/${s}/${loggedUser.id}`)
+                    await axios.delete(`/${props.comment ? 'comments' : 'news'}/${props.id}/${s}/${loggedUser.id}`)
                 }
                 props.triggerEffect()
             } catch(e) {

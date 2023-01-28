@@ -17,6 +17,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -45,6 +46,16 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public Page<News> getReportedNews(int page, ReportOrder reportOrder) {
        return newsDao.getReportedNews(page, reportOrder);
+    }
+
+    @Override
+    public List<News> getReportedByUserNews(User user) {
+        return newsDao.getReportedByUserNews(user.getUserId());
+    }
+
+    @Override
+    public List<Comment> getReportedByUserComments(User user) {
+        return commentDao.getReportedByUserComments(user.getUserId());
     }
 
     @Override

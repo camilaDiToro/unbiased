@@ -17,9 +17,9 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import EditProfileForm from "../../../components/EditProfileForm";
 import UserPrivileges from "../../../components/UserPrivileges";
-import {useTriggerEffect, useURLWithParams} from "../../../utils"
+import {useLoggedParamsFiller, useTriggerEffect, useURLWithParams} from "../../../utils"
 import Pagination from "../../../components/Pagination";
-import {userMapper} from "../../../mappers";
+import {newsMapper, userMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
 import baseURL from "../../back";
 import axios from "axios";
@@ -71,6 +71,8 @@ export async function getServerSideProps(context) {
 }
 
 
+
+
 export default function Profile(props) {
 
   const {I18n, loggedUser, axios}= useAppContext();
@@ -82,20 +84,51 @@ export default function Profile(props) {
   const [useNews, setNews] = useState(props.news)
   const [pagination, setPagination] = usePagination()
   const [profileInfo, setProfileInfo] = useState(props.userInfo)
+  const [pinned, setPinned] = useState(undefined)
+  const {fillNewsLoggedParams} = useLoggedParamsFiller()
 
+  const queryParamMap = {
+    MY_POSTS: 'publishedBy',
+    SAVED: 'savedBy',
+    UPVOTED: 'likedBy',
+    DOWNVOTED: 'dislikedBy'
+  }
+
+  const getQueryParams = () => {
+    const params = {order: router.query.order, page: router.query.page}
+
+    if (loggedUser) {
+      params[queryParamMap[router.query.cat] || queryParamMap.MY_POSTS] = loggedUser.id
+    }
+    return {params}
+  }
 
   useEffect(() => {
-    setNews(n => {
-      for (const news of n) {
-        switch(news.rating) {
-          case 1: news.rating = 0;
-          break;
-          case 0: news.rating = -1;
-          break;
-          case -1:news.rating =  1;
-        }
+    axios.get(`news`, {params: {pinnedBy: props.id}}).then(res => {
+      const maybePinned = res.data
+      console.log('pinned')
+      console.log(res.data)
+      if (maybePinned)
+        setPinned(newsMapper(maybePinned))
+    })
+
+    axios.get(`users/${props.id}/following`).then(res => {
+      const following = res.data
+      console.log('following')
+      console.log(following)
+      if (following) {
+        const isLoggedUserFollowing = following.map(u => u.id).includes(props.id)
+        setProfileInfo(i => ({...i, isLoggedUserFollowing}))
       }
-      return n
+    })
+  }, [newsEffectTrigger])
+
+  useEffect(() => {
+    axios.get('news', getQueryParams()).then(res => {
+      console.log(res)
+      setPagination(res)
+      const mappedNews = (res.data || []).map(newsMapper)
+      fillNewsLoggedParams(mappedNews).then(n => setNews(n))
     })
   }, [router.query, newsEffectTrigger])
 
@@ -123,7 +156,6 @@ export default function Profile(props) {
       className="d-flex flex-column w-30 justify-content-start pr-5">
     <div className="card right-card" id="right-card">
       <div className="profile">
-
         {isMyProfile ? <ModalTrigger modalId="profileModal">
           <span
               className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
@@ -209,7 +241,7 @@ export default function Profile(props) {
       <div className="tab">
         <div className="container-fluid">
           <div className="row row-cols-1">
-            {/*{JSON.stringify(profileInfo)}*/}
+            {pinned ? <Article pinned triggerEffect={newsTriggerEffect} profileArticle {...pinned} key={pinned.id} id={pinned.id}></Article> : <></>}
 
             {useNews.map((n) => (
                 <Article triggerEffect={newsTriggerEffect} profileArticle {...n} key={n.id} id={n.id}></Article>

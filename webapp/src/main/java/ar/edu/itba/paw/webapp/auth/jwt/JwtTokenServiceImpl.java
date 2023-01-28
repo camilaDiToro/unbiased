@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.auth.jwt;
 
 import ar.edu.itba.paw.model.user.Role;
+import ar.edu.itba.paw.model.user.Tier;
 import ar.edu.itba.paw.webapp.auth.CustomUserDetails;
 import ar.edu.itba.paw.webapp.auth.exceptions.ExpiredJwtTokenException;
 import ar.edu.itba.paw.webapp.auth.exceptions.InvalidJwtClaimException;
@@ -44,6 +45,8 @@ public class JwtTokenServiceImpl implements JwtTokenService{
     private static final String USER_ID_CLAIM = "userId";
     private static final String IMAGE_LINK_CLAIM = "imageLink";
 
+    private static final String TIER_CLAIM = "tier";
+
 
     @Autowired
     public JwtTokenServiceImpl(Environment environment) {
@@ -65,6 +68,7 @@ public class JwtTokenServiceImpl implements JwtTokenService{
 
     private String createToken(final Date expiresAt, final CustomUserDetails userDetails, final JwtTokenType tokenType) throws MalformedURLException {
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+
         return JWT.create()
                 .withJWTId(generateTokenIdentifier())
                 .withSubject(userDetails.getUsername())
@@ -76,6 +80,7 @@ public class JwtTokenServiceImpl implements JwtTokenService{
                 .withClaim(IS_ADMIN_CLAIM , roles.contains(Role.ROLE_ADMIN.getRole()) || roles.contains(Role.ROLE_OWNER.getRole()))
                 .withClaim(USERNAME_CLAIM, userDetails.getPageName())
                 .withClaim(USER_ID_CLAIM, userDetails.getUserId())
+                .withClaim(TIER_CLAIM, userDetails.getTier())
                 .withClaim(IMAGE_LINK_CLAIM, new URL(   environment.getRequiredProperty("url.schema"),
                                                         environment.getRequiredProperty("url.domain"),
                                                         Integer.parseInt(environment.getRequiredProperty("url.port")),

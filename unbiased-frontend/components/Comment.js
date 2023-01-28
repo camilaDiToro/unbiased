@@ -15,7 +15,7 @@ export default function Comment(props) {
       <div className="mb-4 w-100 p-4 bg-black rounded-comment">
         <div className="d-flex flex-row gap-1 align-items-center p-1 mb-1">
           <div className="img-container-comment">
-            <div className="frame-navbar">
+            <div className="frame-navbar img-container">
               <ProfilePic
                   {...props.creator}
               ></ProfilePic>
@@ -27,31 +27,33 @@ export default function Comment(props) {
           <FormattedDate datetime={props.datetime}></FormattedDate>
         </span>
 
-        <div className="d-flex align-items-center w-auto gap-1">
-          <p className="comment-text">{props.body}</p>
+        <div id={`comment-${props.id}`} className={`d-flex align-items-center w-auto gap-1 ${props.deleted ? 'font-italic' : ''}`}>
+          <p className="comment-text">{ props.deleted ? I18n('showNews.deletedComment') : props.body}</p>
         </div>
         <div className="d-flex align-items-center justify-content-between float-sm-left gap-1">
-          <UpvoteButtons
-              comment
-            upvotes={props.upvotes}
-            triggerEffect={props.triggerEffect}
-            rating={props.rating}
-          ></UpvoteButtons>
+          {props.deleted ? <></> : <UpvoteButtons comment
+                                                  id={props.id}
+                                                  upvotes={props.upvotes}
+                                                  triggerEffect={props.triggerEffect}
+                                                  rating={props.rating}
+          ></UpvoteButtons>}
         </div>
         <div className="d-flex gap-1 align-items-center justify-content-between float-sm-right">
-          <DeleteButton
-            creatorId={props.creator.id}
-            id={props.id}
-            comment
-            triggerEffect={props.triggerEffect}
-          ></DeleteButton>
+          {props.deleted ? <></> : <>
+            <DeleteButton
+                creatorId={props.creator.id}
+                id={props.id}
+                comment
+                triggerEffect={props.triggerEffect}
+            ></DeleteButton>
 
-          <ReportFlag
-            id={props.id}
-            reported={props.reported}
-            comment
-            triggerEffect={props.triggerEffect}
-          ></ReportFlag>
+            <ReportFlag
+                id={props.id}
+                reported={props.reported}
+                comment
+                triggerEffect={props.triggerEffect}
+            ></ReportFlag>
+          </>}
         </div>
       </div>
     </>

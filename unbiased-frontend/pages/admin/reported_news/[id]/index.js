@@ -8,24 +8,28 @@ import Modal from "../../../../components/Modal";
 import {useTriggerEffect} from "../../../../utils";
 import ReportReason from "../../../../components/ReportReason";
 import Head from "next/head";
+import axios from "axios";
+import baseURL from "../../../back";
 
 export async function getServerSideProps(context) {
+    const id = parseInt(context.query.id)
+    const res = await axios.get(`${baseURL}news/${id}/reports`)
     return {
         props: {
-            reportInfo,
-            id: parseInt(context.query.id)
+            reportInfo: res.data,
+            id
         }, // will be passed to the page component as props
     }
 }
 
 export default function ReportedNewsDetail(props){
-    const {I18n} = useAppContext()
+    const {I18n, axios} = useAppContext()
     const actualReportInfo = props.reportInfo
     const router = useRouter()
 
-    const onDelete = () => {
-        alert(`deleted article of id = ${props.id}`)
-        router.push('/admin/reported_news')
+    const onDelete = async () => {
+        await axios.delete(`news/${props.id}`)
+        await router.push('/admin/reported_news')
     }
     return (<>
             <Head>

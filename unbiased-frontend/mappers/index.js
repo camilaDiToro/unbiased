@@ -7,6 +7,10 @@ return {
 }
 }
 
+export const commentsMapper = (c) => {
+    return {...c}
+}
+
 export const userMapper = (u) => {
     return {
         nameOrEmail: u.username || u.email,

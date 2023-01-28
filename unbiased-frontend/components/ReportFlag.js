@@ -15,9 +15,10 @@ export default function ReportFlag(props) {
         {true: I18n("tooltip.commentReported"), false: I18n("tooltip.reportComment")}
     return <>
         <ModalTrigger modalId={`report${props.comment ? 'Comment' : 'Article'}${props.id}`}>
+            {/*{JSON.stringify(tooltipMap)}*/}
             <Tooltip text={tooltipMap[`${!!props.reported}`]} position="bottom" >
                 <img id="save"
-                     className={`icon-index ${props.reported ? '' : 'svg-btn'} svg-bookmark bookmark`}
+                     className={`icon-index ${props.reported ? '' : 'svg-btn'} svg-bookmark`}
                      src={`/img/flag${props.reported ? '-clicked' : ''}.svg`}/>
             </Tooltip>
         </ModalTrigger>

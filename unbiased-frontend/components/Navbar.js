@@ -4,12 +4,13 @@ import { useRouter } from "next/router";
 import {useAppContext} from "../context";
 import types from "../types";
 import {useState} from "react";
+import ProfilePic from "./ProfilePic";
 
 
 
 
 export default function Navbar(props) {
-    const {I18n, loggedUser} = useAppContext()
+    const {I18n, loggedUser, jwtState} = useAppContext()
     const router = useRouter()
     const [query, setQuery] = useState(router.query.search || '')
     const goToSearchPage = (e) => {
@@ -71,10 +72,8 @@ export default function Navbar(props) {
 
                             <div className="img-container-navbar">
 
-                                <div className="frame-navbar">
-                                    <img src="/img/profile-image.png"
-                                         className="rounded-circle object-fit-cover mr-1"/>
-                                </div>
+                                <ProfilePic {...loggedUser}></ProfilePic>
+
                             </div>
 
 
@@ -107,13 +106,13 @@ export default function Navbar(props) {
                         </Link>: <></>}
 
 
-                        <Link className="dropdown-item " href="/logout">
+                        <button className="dropdown-item " onClick={() => jwtState[1]({})}>
                             <div className="text-decoration-none text-white" >
                                 <img className="moderation-img"
                                      src="/img/log-out-svgrepo-com.svg" alt="..."/>
                                 {I18n("navbar.logout")}
                             </div>
-                        </Link>
+                        </button>
                     </div>
 
                 </div>
@@ -121,7 +120,7 @@ export default function Navbar(props) {
                         <Link className="btn btn-primary" href="/login">
                             {I18n("navbar.logIn")}
                         </Link>
-                        <Link  className="btn btn-primary" href="/create">
+                        <Link  className="btn btn-primary" href="/register">
                             {I18n("navbar.register")}
                         </Link></>}
 
