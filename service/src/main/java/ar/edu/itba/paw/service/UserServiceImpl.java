@@ -100,7 +100,6 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.EXPIRED;
         }
         userDao.verifyEmail(vt.getUserId());
-        login(vt.getUserId());
         verificationTokenService.deleteEmailToken(vt.getUserId());
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
@@ -209,14 +208,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isFollowing(final User currentUser, long userId) {
         return userDao.isFollowing(currentUser.getId(), userId);
-    }
-
-    /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
-    private void login(long userId) {
-        final User user = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
-        final Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        LOGGER.debug("User {} has loged in automatically", user);
     }
 
     @Override

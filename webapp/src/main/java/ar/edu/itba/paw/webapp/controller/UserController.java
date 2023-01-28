@@ -132,7 +132,7 @@ public class UserController {
         final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
 
         final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newUser.getId())).build();
-        return Response.created(location).build();
+        return Response.created(location).entity(UserDto.fromUser(uriInfo, newUser)).build();
     }
 
     @GET
