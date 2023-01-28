@@ -27,20 +27,26 @@ public class OwnerServiceImpl implements OwnerService{
 
     @Override
     @Transactional
-    public void makeUserAdmin(String email) {
-        final User user = userDao.findByEmail(email).orElseThrow( () -> new UserNotFoundException(String.format(UserNotFoundException.EMAIL_MSG, email)));
+    public boolean makeUserAdmin(long userId) {
+        final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
         if(!user.getRoles().contains(Role.ROLE_ADMIN)){
             user.addRole(Role.ROLE_ADMIN);
             final Locale locale = user.getEmailSettings() != null ? user.getEmailSettings().getLocale() : LocaleContextHolder.getLocale();
             emailService.sendAdminEmail(user, locale);
+            return true;
         }
+        return false;
     }
 
     @Override
     @Transactional
-    public void deleteUserAdmin(long userId) {
+    public boolean deleteUserAdmin(long userId) {
         final User user = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        if(!user.getRoles().contains(Role.ROLE_ADMIN)){
+            return false;
+        }
         user.removeAdminRole();
+        return true;
     }
 
     @Override

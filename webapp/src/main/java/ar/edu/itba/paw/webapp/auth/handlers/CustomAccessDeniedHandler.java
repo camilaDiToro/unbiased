@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.auth.handlers;
 
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
-import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorException;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorExceptionInt;
 import ar.edu.itba.paw.webapp.dto.ApiErrorDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         ApiErrorDto apiErrorDto;
 
-        if (e instanceof ApiErrorException) {
-            apiErrorDto = ApiErrorDto.fromApiErrorException((ApiErrorException) e);
+        if (e instanceof ApiErrorExceptionInt) {
+            apiErrorDto = ApiErrorDto.fromApiErrorException((ApiErrorExceptionInt) e);
         }else{
             apiErrorDto = new ApiErrorDto("Access denied", ApiErrorCode.ACCESS_DENIED, e.getMessage());
         }

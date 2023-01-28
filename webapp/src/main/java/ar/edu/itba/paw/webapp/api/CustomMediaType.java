@@ -8,6 +8,9 @@ public class CustomMediaType {
     public static final String SIMPLE_MESSAGE_V1 = "application/vnd.unbiased.simpleMessage.v1+json";
     public static final String COMMENT_LIST_V1 = "application/vnd.unbiased.commentList.v1+json";
     public static final String COMMENT_V1 = "application/vnd.unbiased.comment.v1+json";
+    public static final String COMMENT_REPORT_DETAIL_LIST_V1 = "application/vnd.unbiased.commentReportDetailList.v1+json";
+    public static final String COMMENT_REPORT_DETAIL_V1 = "application/vnd.unbiased.commentReportDetail.v1+json";
+    public static final String CATEGORY_STATISTICS_V1 = "application/vnd.unbiased.categoryStatistics.v1+json";
     private CustomMediaType(){
 
     }

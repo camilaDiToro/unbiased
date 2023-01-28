@@ -2,7 +2,7 @@ package ar.edu.itba.paw.webapp.auth.handlers;
 
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
-import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorException;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorExceptionInt;
 import ar.edu.itba.paw.webapp.dto.ApiErrorDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,8 @@ public class AuthFailureHandler extends SimpleUrlAuthenticationFailureHandler {
             throws IOException {
         ApiErrorDto apiErrorDto;
 
-        if (authException instanceof ApiErrorException) {
-            apiErrorDto = ApiErrorDto.fromApiErrorException((ApiErrorException) authException);
+        if (authException instanceof ApiErrorExceptionInt) {
+            apiErrorDto = ApiErrorDto.fromApiErrorException((ApiErrorExceptionInt) authException);
         }else{
             apiErrorDto = new ApiErrorDto("Unauthorized", ApiErrorCode.UNAUTHORIZED, authException.getMessage());
         }
