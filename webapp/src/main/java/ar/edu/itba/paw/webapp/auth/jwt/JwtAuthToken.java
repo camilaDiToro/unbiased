@@ -27,6 +27,7 @@ public class JwtAuthToken extends AbstractAuthenticationToken {
         this.eraseCredentials();
         this.userDetails = userDetails;
         this.jwtTokenDetails = jwtTokenDetails;
+        this.jwtAuthToken = jwtTokenDetails.getToken();
         super.setAuthenticated(true);
     }
 
@@ -46,7 +47,7 @@ public class JwtAuthToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return this.userDetails;
+        return userDetails;
     }
 
     @Override
@@ -57,6 +58,6 @@ public class JwtAuthToken extends AbstractAuthenticationToken {
     @Override
     public void eraseCredentials() {
         super.eraseCredentials();
-        this.jwtAuthToken = null;
+        jwtAuthToken = null;
     }
 }

@@ -12,18 +12,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAuthProvider implements AuthenticationProvider {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
+    private final JwtTokenService jwtTokenService;
 
     @Autowired
-    private JwtTokenService jwtTokenService;
+    public JwtAuthProvider(UserDetailsService userDetailsService, JwtTokenService jwtTokenService) {
+        this.userDetailsService = userDetailsService;
+        this.jwtTokenService = jwtTokenService;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         String authenticationToken = (String) authentication.getCredentials();
         JwtTokenDetails authenticationTokenDetails = jwtTokenService.validateTokenAndGetDetails(authenticationToken);
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationTokenDetails.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationTokenDetails.getEmail());
 
         return new JwtAuthToken(userDetails, authenticationTokenDetails, userDetails.getAuthorities());
     }

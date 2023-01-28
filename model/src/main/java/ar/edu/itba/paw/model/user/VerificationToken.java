@@ -79,18 +79,20 @@ public class VerificationToken {
     }
 
     public enum Status{
-        SUCCESFFULLY_VERIFIED("SUCCESFULLY_VERIFIED", "verificationToken.succesfullyVerified"),
-        SUCCESSFULLY_RESENDED("SUCCESSFULLY_RESENDED","verificationToken.succesfullyResended"),
-        EXPIRED("EXPIRED","verificationToken.expired"),
-        NOT_EXISTS("NOT_EXISTS","verificationToken.notExists"),
-        ALREADY_VERIFIED("ALREADY_VERIFIED","verificationToken.alreadyVerified");
+        SUCCESFFULLY_VERIFIED("SUCCESFULLY_VERIFIED", "verificationToken.succesfullyVerified", "Email successfully verified"),
+        SUCCESSFULLY_RESENDED("SUCCESSFULLY_RESENDED","verificationToken.succesfullyResended", "Email successfully resented"),
+        EXPIRED("EXPIRED","verificationToken.expired", "Expired token"),
+        NOT_EXISTS("NOT_EXISTS","verificationToken.notExists", "The token does not exist"),
+        ALREADY_VERIFIED("ALREADY_VERIFIED","verificationToken.alreadyVerified", "The user is already verified");
 
         private final String status;
         private final String code;
+        private final String msg;
 
-        Status(String status, String code){
+        Status(String status, String code, String msg){
             this.status = status;
             this.code = code;
+            this.msg=msg;
         }
 
         public String getStatus() {
@@ -99,6 +101,10 @@ public class VerificationToken {
 
         public String getCode() {
             return code;
+        }
+
+        public String getMsg() {
+            return msg;
         }
     }
 }

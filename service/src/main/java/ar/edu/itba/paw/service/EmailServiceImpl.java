@@ -19,6 +19,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -57,7 +58,8 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendVerificationEmail(final User user, final VerificationToken token, Locale locale) {
         final String to = user.getEmail();
-        final String url = getUrl("verify_email?token=" + token.getToken());
+        final String encodedToken = Base64.getEncoder().encodeToString((to + ":" + token.getToken()).getBytes());
+        final String url = getUrl("verify_email?token=" + encodedToken);
         final String subject = messageSource.getMessage("email.verification.subject",null,locale);
         final Map<String, Object> data = new HashMap<>();
         data.put("verificationUrl",url);

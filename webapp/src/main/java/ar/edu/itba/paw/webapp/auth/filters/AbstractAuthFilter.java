@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.auth.filters;
 
 import ar.edu.itba.paw.webapp.auth.Credentials;
+import ar.edu.itba.paw.webapp.auth.email.EmailAuthToken;
 import ar.edu.itba.paw.webapp.auth.jwt.JwtAuthToken;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ import java.util.Base64;
 public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
         private static final int BASIC_LENGTH = 6;
         private static final int JWT_LENGTH = 7;
+        private static final int EMAIL_LENGTH = 6;
 
 
         @Override
@@ -78,6 +80,9 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
             else if (authHeader.startsWith("Bearer ")) {
                 final String authToken = authHeader.substring(JWT_LENGTH);
                 return getAuthenticationManager().authenticate(new JwtAuthToken(authToken));
+            }else if(authHeader.startsWith("Email ")){
+                final String authToken = authHeader.substring(EMAIL_LENGTH);
+                return getAuthenticationManager().authenticate(new EmailAuthToken(authToken));
             }
 
             throw new InsufficientAuthenticationException("No authorization token provided");
