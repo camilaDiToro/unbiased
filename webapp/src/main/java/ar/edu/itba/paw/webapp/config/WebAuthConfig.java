@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.CustomAuthenticationEntryPoint;
+import ar.edu.itba.paw.webapp.auth.email.EmailAuthProvider;
 import ar.edu.itba.paw.webapp.auth.filters.AbstractAuthFilter;
 import ar.edu.itba.paw.webapp.auth.handlers.AuthFailureHandler;
 import ar.edu.itba.paw.webapp.auth.handlers.AuthSuccessHandler;
@@ -71,6 +72,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthProvider jwtAuthProvider;
 
+    @Autowired
+    private EmailAuthProvider emailAuthProvider;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -91,7 +95,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-        auth.authenticationProvider(jwtAuthProvider);
+        auth.authenticationProvider(jwtAuthProvider).authenticationProvider(emailAuthProvider);
     }
 
 

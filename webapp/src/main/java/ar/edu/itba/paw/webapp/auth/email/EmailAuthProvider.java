@@ -4,16 +4,20 @@ import ar.edu.itba.paw.model.user.VerificationToken;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.service.VerificationTokenService;
 import ar.edu.itba.paw.webapp.auth.exceptions.InvalidEmailTokenException;
+import ar.edu.itba.paw.webapp.auth.jwt.JwtAuthToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+
+@Component
 public class EmailAuthProvider implements AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
@@ -39,7 +43,7 @@ public class EmailAuthProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return false;
+        return (EmailAuthToken.class.isAssignableFrom(aClass));
     }
 
     private EmailCredentials getEmailCredentialsFromBasic(String token){
