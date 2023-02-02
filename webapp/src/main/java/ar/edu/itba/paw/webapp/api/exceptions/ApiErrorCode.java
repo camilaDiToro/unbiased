@@ -21,7 +21,11 @@ public enum ApiErrorCode {
     USER_NOT_FOUND(801),
     NEWS_NOT_FOUND(802),
     COMMENT_NOT_FOUND(803),
-    IMAGE_NOT_FOUND(804);
+    IMAGE_NOT_FOUND(804),
+
+    INVALID_CATEGORY(820),
+    INVALID_FILTER(821),
+    INVALID_ORDER(822);
 
 
     private final int errorCode;

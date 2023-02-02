@@ -2,10 +2,13 @@ package ar.edu.itba.paw.model.exeptions;
 
 public class InvalidCategoryException extends RuntimeException{
 
-    public InvalidCategoryException() {
+    public static final String STRING_MSG = "The category %s is invalid";
+
+    public InvalidCategoryException(String s) {
+        super(s);
     }
 
-    public InvalidCategoryException(Throwable var1) {
-        super(var1);
+    public InvalidCategoryException(String s, Throwable var1) {
+        super(s,var1);
     }
 }
