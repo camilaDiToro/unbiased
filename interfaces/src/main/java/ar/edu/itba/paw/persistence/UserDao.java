@@ -26,6 +26,7 @@ public interface UserDao {
     List<User> getFollowedBy(long userId);
 
     Page<User> getAdmins(int page, String search);
+    Page<User> getNotAdmins(int page, String search);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);
     boolean pingNewsToggle(User user, News news);

@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     private final ImageService imageService;
 
-
+    private static final int TOP_CREATORS_COUNT = 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
@@ -211,13 +211,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getTopCreators(int qty) {
-        return userDao.getTopCreators(qty);
-    }
-
-    @Override
-    public Page<User> searchUsers(int page, String search) {
-        return userDao.searchUsers(page, search);
+    public Page<User> searchUsers(int page, String search, boolean topCreators, Boolean admins) {
+        if(topCreators){
+            return new Page<>(userDao.getTopCreators(TOP_CREATORS_COUNT), 1, 1);
+        }
+        if(admins == null){
+            return userDao.searchUsers(page, search);
+        }
+        if(admins)
+            return userDao.getAdmins(page,search);
+        return userDao.getNotAdmins(page,search);
     }
 
 

@@ -17,7 +17,6 @@ public interface UserService {
     Optional<User> getRegisteredUserById(long id);
     User create(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
-    List<User> getTopCreators(int qty);
     VerificationToken.Status verifyUserEmail(String token);
     VerificationToken.Status resendEmailVerification(String email);
     void addRole(long userId, Role role);
@@ -28,7 +27,7 @@ public interface UserService {
     boolean followUser(final User currentUser, long userId);
     boolean unfollowUser(final User currentUser, long userId);
     void updateEmailSettings(User currentUser, boolean follow, boolean comment, boolean followingPublished, boolean positivityChange);
-    Page<User> searchUsers(int page, String search);
+    Page<User> searchUsers(int page, String search, boolean topCreators, Boolean admins);
     boolean pingNewsToggle(User currentUser, News news);
 
     void pinNews(User user, News news);

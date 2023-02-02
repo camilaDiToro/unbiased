@@ -17,6 +17,7 @@ import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
 import ar.edu.itba.paw.webapp.api.exceptions.CustomBadRequestException;
+import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
 import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
@@ -101,20 +102,16 @@ public class UserController {
 
     @GET
     @Produces(value = {CustomMediaType.USER_LIST_V1})
-    public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search,
-                              @QueryParam("topCreators") final boolean topCreators, @QueryParam("admins") final boolean admins) {
+    public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page,
+                              @QueryParam("search") @DefaultValue("") final String search,
+                              @QueryParam("topCreators") final boolean topCreators,
+                              @QueryParam("admins") final Boolean admins) {
 
-        if (topCreators) {
-            List<UserDto> creatorList =  userService.getTopCreators(5).stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
-            return Response.ok(new GenericEntity<List<UserDto>>(creatorList) {}).build();
+        if(topCreators && admins!=null){
+            throw new InvalidRequestParamsException("topCreators and admins params can not be sent together");
         }
 
-        Page<User> userPage;
-        if(admins){
-            userPage = ownerService.getAdmins(page, search);
-        }else{
-            userPage = userService.searchUsers(page, search);
-        }
+        Page<User> userPage = userService.searchUsers(page, search, topCreators, admins);
 
         if(userPage.getContent().isEmpty()){
             return Response.noContent().build();
