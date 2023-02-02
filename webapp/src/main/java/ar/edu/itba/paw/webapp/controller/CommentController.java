@@ -103,7 +103,7 @@ public class CommentController {
     @Path("/{commentId:[0-9]+}/reports")
     @Produces(value = {CustomMediaType.COMMENT_REPORT_DETAIL_LIST_V1})
     public Response getNewsReportDetail(@PathParam("commentId") final long commentId){
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)));
         List<ReportDetailDto> reportList = comment.getReports().stream().map(d -> ReportDetailDto.fromReportedComment(uriInfo, d)).collect(Collectors.toList());
         return Response.ok(new GenericEntity<List<ReportDetailDto>>(reportList) {}).build();
     }
@@ -126,7 +126,7 @@ public class CommentController {
     public Response report(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         //TODO: Check if getting this object here is necessary
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)));
         adminService.reportComment(user, commentId, ReportReason.getByValue(reportForm.getReason()));
         return Response.ok().build();
     }
@@ -136,7 +136,7 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)));
         commentService.setCommentRating(user, comment, Rating.UPVOTE);
         return Response.ok().build();
     }
@@ -146,7 +146,7 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)));
         commentService.setCommentRating(user, comment, Rating.DOWNVOTE);
         return Response.ok().build();
     }
@@ -164,7 +164,7 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)));
         commentService.setCommentRating(user, comment, Rating.NO_RATING);
         return Response.ok().build();
     }
@@ -174,7 +174,7 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)));
         commentService.setCommentRating(user, comment, Rating.NO_RATING);
         return Response.ok().build();
     }

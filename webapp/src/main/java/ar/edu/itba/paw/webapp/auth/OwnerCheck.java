@@ -45,7 +45,8 @@ public class OwnerCheck {
     }
 
     public boolean checkCommentOwnership(long commentId) {
-        return newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new).getUser().getId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+        return newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)))
+                .getUser().getId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
     }
 
     public boolean checkNewsOwnership(long newsId) {
