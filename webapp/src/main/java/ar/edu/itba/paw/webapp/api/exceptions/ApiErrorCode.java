@@ -20,7 +20,9 @@ public enum ApiErrorCode {
     //Backend
     USER_NOT_FOUND(801),
     NEWS_NOT_FOUND(802),
-    COMMENT_NOT_FOUND(803);
+    COMMENT_NOT_FOUND(803),
+    IMAGE_NOT_FOUND(804);
+
 
     private final int errorCode;
 

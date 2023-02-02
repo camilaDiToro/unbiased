@@ -435,7 +435,7 @@ public class NewsController {
 
         if (!maybeImageId.isPresent())
             return Response.noContent().build();
-        final Image image = imageService.getImageById(maybeImageId.get()).orElseThrow(ImageNotFoundException::new);
+        final Image image = imageService.getImageById(maybeImageId.get()).orElseThrow(()-> new ImageNotFoundException(String.format(ImageNotFoundException.ID_MSG, maybeImageId.get())));
 
         return Response
                 .ok(new ByteArrayInputStream(image.getBytes()))
