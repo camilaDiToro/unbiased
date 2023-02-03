@@ -32,7 +32,11 @@ public class OwnerCheck {
 
     public boolean newsOwnership(long newsId, long userId) {
         long creatorId = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId))).getCreatorId();
-        long currentUserId = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+        Optional<User> mbUser = securityService.getCurrentUser();
+        if(!mbUser.isPresent()){
+            return false;
+        }
+        long currentUserId = mbUser.get().getId();
         return creatorId==currentUserId && currentUserId == userId;
     }
 
@@ -45,12 +49,20 @@ public class OwnerCheck {
     }
 
     public boolean checkCommentOwnership(long commentId) {
+        Optional<User> mbUser = securityService.getCurrentUser();
+        if(!mbUser.isPresent()){
+            return false;
+        }
         return newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)))
-                .getUser().getId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+                .getUser().getId()==mbUser.get().getId();
     }
 
     public boolean checkNewsOwnership(long newsId) {
-        return newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getUser().getId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+        Optional<User> mbUser = securityService.getCurrentUser();
+        if(!mbUser.isPresent()){
+            return false;
+        }
+        return newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getUser().getId()==mbUser.get().getId();
     }
 
     public boolean checkSavedNewsAccess(String category, long userId){
