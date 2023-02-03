@@ -5,7 +5,7 @@ import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.CategoryStatistics;
 import ar.edu.itba.paw.model.news.Comment;
@@ -103,7 +103,7 @@ public class NewsServiceImpl implements NewsService {
             }
         } else if (category.equals(Category.FOR_ME)) {
             if (!isPresent)
-                throw new UserNotAuthorized();
+                throw new UserNotAuthorizedException();
             final User currentUser = maybeCurrentUser.get();
             if(newsOrder.equals(NewsOrder.NEW)) {
                 totalPages = newsDao.getRecommendationNewsPageCountNew(currentUser);

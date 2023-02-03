@@ -5,14 +5,11 @@ import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
-import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.persistence.CommentDao;
 import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.CommentService;
 import ar.edu.itba.paw.service.NewsService;
@@ -20,7 +17,6 @@ import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CommentDto;
-import ar.edu.itba.paw.webapp.dto.NewsDto;
 import ar.edu.itba.paw.webapp.dto.ReportDetailDto;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
@@ -114,7 +110,7 @@ public class CommentController {
     public Response postComment(
             @QueryParam("newsId") final long newsId,
             @Valid CommentNewsForm form){
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorizedException::new);
         final CommentDto commentDto = CommentDto.fromComment(uriInfo, newsService.addComment(currentUser, newsId, form.getComment()));
         return Response.created(commentDto.getSelf()).entity(commentDto).build();
     }
