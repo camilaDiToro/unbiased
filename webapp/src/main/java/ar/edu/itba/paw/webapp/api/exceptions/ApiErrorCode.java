@@ -26,7 +26,10 @@ public enum ApiErrorCode {
     INVALID_CATEGORY(820),
     INVALID_FILTER(821),
     INVALID_ORDER(822),
-    INVALID_TIME_CONSTRAINT(823);
+    INVALID_TIME_CONSTRAINT(823),
+
+    UNKNOWN(900),
+    WEB_APP_ERROR(901);
 
 
     private final int errorCode;
