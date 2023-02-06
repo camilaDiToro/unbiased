@@ -10,7 +10,7 @@ export default function Login() {
 
     const ctx = useAppContext()
     const router = useRouter()
-    const [jwt, setJwt] = ctx.jwtState
+    // const [jwt, setJwt] = ctx.jwtState
     const [details, setDetails] = useState({
         username: "",
         password: "",
