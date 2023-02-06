@@ -21,6 +21,8 @@ import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
@@ -54,9 +56,54 @@ public class UserController {
         this.securityService = securityService;
     }
 
+    @PUT
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
+    @Path(value = "/{userId:[0-9]+}/pinnedNews")
+    public Response pinNews(@PathParam("userId") final long userId, @QueryParam("newsId") final long newsId) {
+
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        userService.pinNews(user, news);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
+
+    }
+
+    @DELETE
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @Path(value = "/{userId:[0-9]+}/pinnedNews")
+    public Response unpinNews(@PathParam("userId") final long userId) {
+
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        userService.unpinNews(user);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinned the news", user.getUsername()))).build();
+
+    }
+
+    @GET
+    @Path(value = "/{userId:[0-9]+}/following")
+    @Produces(value = {CustomMediaType.USER_LIST_V1})
+    public Response following(@PathParam("userId")  final long userId) {
+
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        List<UserDto> users = userService.getFollowing(user).stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
+
+        if (users.isEmpty()) {
+            return Response.noContent().build();
+        }
+        return Response.ok(new GenericEntity<List<UserDto>>(users){}).build();
+    }
+
     @GET
     @Produces(value = {CustomMediaType.USER_LIST_V1})
-    public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search) {
+    public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search,
+                              @QueryParam("topCreators") final boolean topCreators) {
+
+        if (topCreators) {
+            List<UserDto> creatorList =  userService.getTopCreators(5).stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
+            return Response.ok(new GenericEntity<List<UserDto>>(creatorList) {}).build();
+        }
         final Page<User> userPage = userService.searchUsers(page, search);
 
         if(userPage.getContent().isEmpty()){
@@ -86,7 +133,7 @@ public class UserController {
         final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
 
         final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newUser.getId())).build();
-        return Response.created(location).entity(UserDto.fromUser(uriInfo, newUser)).build();
+        return Response.created(location).build();
     }
 
     @GET
@@ -126,18 +173,26 @@ public class UserController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        if(userProfileForm.getImage() != null){
-            userService.updateProfile(userId, userProfileForm.getUsername(),
-                    userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
-        }else{
-            userService.updateProfile(userId, userProfileForm.getUsername(),
-                    null, null, userProfileForm.getDescription());
-        }
+        userService.updateProfile(userId, userProfileForm.getUsername(),
+                null, null, userProfileForm.getDescription());
         if(userProfileForm.getMailOptions()!=null){
             userService.updateEmailSettings(mayBeUser.get(), MailOption.getEnumCollection(userProfileForm.getMailOptions()));
         }
 
         return Response.ok(UserDto.fromUser(uriInfo, mayBeUser.get())).build();
+    }
+
+    @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("/{userId:[0-9]+}/image")
+    public Response updateUserImage(@PathParam("userId") long userId,
+                                    @FormDataParam("image") final FormDataBodyPart imageBodyPart,
+                                    @FormDataParam("image") byte[] bytes) {
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final String imageType = imageBodyPart.getMediaType().toString();
+        userService.setUserImage(userId, bytes, imageType);
+        final URI location = uriInfo.getAbsolutePathBuilder().build();
+        return Response.created(location).build();
     }
 
     @GET

@@ -99,6 +99,8 @@ public class Comment implements Serializable {
     }
 
     public PositivityStats getPositivityStats() {
+        if (upvoteMap == null)
+            return new PositivityStats(0,0);
         final Collection<CommentUpvote> set = upvoteMap.values();
         final int total = set.size();
         final int upvotes =

@@ -143,6 +143,34 @@ public class UserJpaDao implements UserDao{
     }
 
     @Override
+    public List<User> getFollowing(long userId) {
+
+        final Query queryObj = entityManager.createNativeQuery("SELECT follows FROM follows WHERE user_id = :userId").setParameter("userId", userId);
+        @SuppressWarnings("unchecked")
+        final List<Long> ids = (List<Long>) queryObj.getResultList().stream()
+                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+
+        final List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.userId IN :ids", User.class)
+                .setParameter("ids", ids).getResultList();
+
+        return users;
+    }
+
+    @Override
+    public List<User> getFollowedBy(long userId) {
+
+        final Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM follows WHERE follows = :userId").setParameter("userId", userId);
+        @SuppressWarnings("unchecked")
+        final List<Long> ids = (List<Long>) queryObj.getResultList().stream()
+                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+
+        final List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.userId IN :ids", User.class)
+                .setParameter("ids", ids).getResultList();
+
+        return users;
+    }
+
+    @Override
     public Page<User> getAdmins(int page, String search) {
 
         page = Math.max(page, 1);
@@ -166,6 +194,22 @@ public class UserJpaDao implements UserDao{
             user.setPingedNews(news);
             return true;
         }
+    }
+
+    @Override
+    public void pinNews(User user, News news) {
+        user.setPingedNews(news);
+    }
+
+    @Override
+    public void unpinNews(User user, News news) {
+        if (user.getPingedNews().equals(news))
+            user.setPingedNews(null);
+    }
+
+    @Override
+    public void unpinNews(User user) {
+            user.setPingedNews(null);
     }
 
     @Override

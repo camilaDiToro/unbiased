@@ -4,20 +4,20 @@ import {useAppContext} from "../context";
 export default function NewsCategoryPills(props) {
     const {I18n} = useAppContext()
     const categoryMap = {
-        TOURISM: I18n("categories.tourism"),
-        SHOW: I18n("categories.entertainment"),
-        POLITICS:I18n("categories.politics"),
-        ECONOMICS: I18n("categories.economics"),
-        SPORTS:  I18n("categories.sports"),
-        TECHNOLOGY: I18n("categories.technology")
+        "categories.tourism": "TOURISM",
+        "categories.entertainment": "SHOW",
+        "categories.politics": "POLITICS",
+        "categories.economics": "ECONOMICS",
+        "categories.sports": "SPORTS",
+        "categories.technology": "TECHNOLOGY"
     }
    return <>
         { props.categories.map(c => <Link key={c} href={{
             pathname: "/",
-            query: { cat: c },
+            query: { cat: categoryMap[c] },
         }}>
             <span id="span_category" className="badge badge-pill badge-info">
-                {categoryMap[c]}
+                {I18n(c)}
             </span>
         </Link>)}
     </>

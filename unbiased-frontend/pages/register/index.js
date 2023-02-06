@@ -1,14 +1,15 @@
 import Link from "next/link";
 import {useAppContext} from "../../context";
 import {useState} from "react";
+import {useRouter} from "next/router";
 
 export default function Login() {
-
+    const router = useRouter()
     const ctx = useAppContext()
+    const axios = ctx.axios
     const [details, setDetails] = useState({
-        username: "",
-        password: "",
-        rememberMe: false
+        email: "",
+        password: ""
     })
     const [passwordType, setPasswordType] = useState("password");
 
@@ -16,7 +17,7 @@ export default function Login() {
 
         const {name, value} = e.target
 
-        console.log(name, value)
+
 
         if (name !== "rememberMe") {
             setDetails((prev) => {
@@ -24,9 +25,7 @@ export default function Login() {
             })
         }
 
-        setDetails((prev) => {
-            return {...prev, [name]: !details.rememberMe}
-        })
+
     }
 
     const togglePassword = () => {
@@ -37,9 +36,14 @@ export default function Login() {
         setPasswordType("password")
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault()
-        //TODO: post del objeto
+        await axios.post('users',JSON.stringify(details),{
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        await router.push('/login')
     }
 
     return(
@@ -58,10 +62,10 @@ export default function Login() {
 
                 <div className="d-flex mb-4">
                     <img className="size-img-modal-login align-self-center" src="/img/profile-svgrepo-com.svg" alt="..."/>
-                    <input onChange={handleChange} type="text" id="username" name="username" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
+                    <input onChange={handleChange} type="text" id="email" name="email" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
                 </div>
 
-                <div className="mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
+                <div className="mb-2 mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
                     <img src="/img/lock-svgrepo-com.svg" alt="..." className="size-img-modal-login align-self-center"/>
                     <input type={passwordType} onChange={handleChange} name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
                     <button className="btn  eye-button-properties" onClick={togglePassword}>
@@ -69,14 +73,14 @@ export default function Login() {
                     </button>
                 </div>
 
-                <div className="checkbox mb-3">
-                    <label className="text-light">
-                        <input onChange={handleChange} className="mr-1" type="checkbox" name="rememberMe"/>
-                        Remember me
-                    </label>
-                </div>
+                {/*<div className="checkbox mb-3">*/}
+                {/*    <label className="text-light">*/}
+                {/*        <input onChange={handleChange} className="mr-1" type="checkbox" name="rememberMe"/>*/}
+                {/*        Remember me*/}
+                {/*    </label>*/}
+                {/*</div>*/}
 
-                <button type="submit" className="btn btn-md btn-info btn-block">Log in</button>
+                <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">{ctx.I18n("navbar.register")}</button>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>
             </div>
         </div>

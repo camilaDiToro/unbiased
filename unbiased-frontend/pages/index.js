@@ -47,23 +47,11 @@ export default function Home(props) {
 
   const {I18n, axios, loggedUser, jwtState} = useAppContext()
   const [jwt, setJwt] = jwtState
-  const fillNewsLoggedParams = useLoggedParamsFiller()
+  const {fillNewsLoggedParams} = useLoggedParamsFiller()
 
   const getUsersData = async res => {
-    const data = res.data
-    // setPagination(res)
-    // const promises = data.map(d => {
-    //   if (d && d.newsStats) {
-    //     return axios.get(d.newsStats).then(newsStats =>  {
-    //       // alert(JSON.stringify(newsStats.data))
-    //       d.newsStats = newsStats.data
-    //       return d
-    //     })
-    //   } else {
-    //     return d
-    //   }
-    // })
-    // const finalData = await Promise.all(promises);
+    const data = res.data || []
+
     const finalData = data.map(d => {
       const aux = d
       delete aux['newsStats']
@@ -83,7 +71,8 @@ export default function Home(props) {
       axios.get('users', {params}).then(getUsersData)
 
     } else {
-        const news = axios.get('news', {params}).then(res => {
+        axios.get('news', {params}).then(res => {
+          setPagination(res)
         const mappedNews = (res.data || []).map(newsMapper)
           fillNewsLoggedParams(mappedNews).then(n => setNews(n))
       })
@@ -92,11 +81,16 @@ export default function Home(props) {
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {
-    // const aux = props.topCreators
-    // const first = aux[0]
-    // aux[0] = aux[1]
-    // aux[1] = first
-    // setTopCreators(aux)
+    const params = {...router.query, topCreators: true}
+    delete params['type']
+
+      axios.get('users', {params}).then(res => {
+        const topCreators = res.data.map(u => {
+          delete u['newsStats']
+          return userMapper(u)
+        })
+        setTopCreators(topCreators)
+      })
   }, [newsEffectTrigger])
 
   return (

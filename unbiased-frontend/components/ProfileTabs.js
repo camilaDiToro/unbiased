@@ -14,12 +14,16 @@ export default function ProfileTabs(props) {
         { text: I18n("profileCategories.downvoted"), params: {cat: 'DOWNVOTED'}}
     ];
 
+    if (typeof window !== 'undefined') {
+
+    }
+
     if (!loggedUser || loggedUser.id !== props.userId) {
         orders.splice(1, 0)
     }
 
-    const orderMap = orders.reduce((a,v) => ({...a, [v.params.order]: v.text}), {})
-    const selectedOrder = orderMap[router.query.order] || I18n("profileCategories.myPosts");
+    const orderMap = orders.reduce((a,v) => ({...a, [v.params.cat]: v.text}), {})
+    const selectedOrder = orderMap[router.query.cat] || I18n("profileCategories.myPosts");
 
     return  <Tabs items={orders} selected={selectedOrder}></Tabs>
 }

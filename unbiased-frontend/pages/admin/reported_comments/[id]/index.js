@@ -6,26 +6,30 @@ import ModerationPanel from "../../../../components/ModerationPanel";
 import Link from "next/link";
 import ReportReason from "../../../../components/ReportReason";
 import {reportInfo} from "../../../../hardcoded";
+import axios from "axios";
+import baseURL from "../../../back";
 
 
 export async function getServerSideProps(context) {
+    const id = parseInt(context.query.id)
+    const res = await axios.get(`${baseURL}comments/${id}/reports`)
     return {
         props: {
-            reportInfo,
-            id: parseInt(context.query.id)
+            reportInfo: res.data,
+            id
         }, // will be passed to the page component as props
     }
 }
 
 export default function ReportedCommentDetail(props){
 
-    const {I18n} = useAppContext()
+    const {I18n, axios} = useAppContext()
     const actualReportInfo = props.reportInfo
     const router = useRouter()
 
-    const onDelete = () => {
-        alert(`deleted comment of id = ${props.id}`)
-        router.push('/admin/reported_comments')
+    const onDelete = async () => {
+        await axios.delete(`comments/${props.id}`)
+        await router.push('/admin/reported_comments')
     }
     return (<>
             <Head>

@@ -8,6 +8,9 @@ const nextConfig = {
     locales: ["en-US","es-ES"],
     defaultLocale: "en-US",
   },
+  experimental: {
+    scrollRestoration: true
+  }
   // esmExternals: true
 }
 

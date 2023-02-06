@@ -21,19 +21,10 @@ export default function AppWrapper({ children }) {
     // }, [])
     const router = useRouter()
     const axiosInstance = axios.create({
-        baseURL: baseURL.href,
-        transformRequest: [function (data, headers) {
-            // Do whatever you want to transform the data
-            const {accessToken, refreshToken} = jwt
-            if (accessToken) {
-                headers.Authorization = `Bearer ${accessToken}`
-            } else if(refreshToken) {
-                // alert('setting refreshToken')
-                headers.Authorization = `Bearer ${refreshToken}`
-            }
-            return data;
-        }]
+        baseURL: baseURL.href
     })
+
+
 
     const setHeadersIfExist = (response) => {
         if (response) {
@@ -49,25 +40,45 @@ export default function AppWrapper({ children }) {
         }
     }
 
+    axiosInstance.interceptors.request.use(function (config) {
+        // Do whatever you want to transform the data
+        const {accessToken, refreshToken} = jwt
+        if (accessToken) {
+            config.headers.Authorization = `Bearer ${accessToken}`
+        } else if(refreshToken) {
+            // alert('setting refreshToken')
+            config.headers.Authorization = `Bearer ${refreshToken}`
+        }
+        return config;
+    })
+
     axiosInstance.interceptors.response.use((r) => {
         setHeadersIfExist(r)
         return r;
-    }, (error) => {
+    }, async (error) => {
         setHeadersIfExist(error.response)
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
         const loginURL = '/login'
         const errorDetails = error.response.data
         if (errorDetails.apiCode && router.pathname !== loginURL) {
-            if (errorDetails.apiCode === 606 || errorDetails.apiCode === 603 || errorDetails.apiCode === 605) {
+            if (errorDetails.apiCode === 606 || errorDetails.apiCode === 603 || errorDetails.apiCode === 605|| errorDetails.apiCode === 600) {
                 jwtState[1]({})
             } else if (errorDetails.apiCode === 604) {
                 if(jwt.accessToken) {
                     jwtState[1]({refreshToken: jwt.refreshToken})
+                    const config = error.config
+                    config.headers.Authorization = `Bearer ${jwt.refreshToken}`
+                    return axios.request(config)
                 } else {
                     jwtState[1]({})
                     localStorage.setItem('fromPage', 'true')
-                    router.push(loginURL)
+                    if (!error.config.authOptional) {
+                        console.log(error.config)
+                        console.log('going to home...')
+                        await router.push(loginURL)
+                    }
+
                 }
             }
         }
@@ -96,7 +107,6 @@ export default function AppWrapper({ children }) {
         }
         if (!jwt.accessToken && !jwt.refreshToken) {
             setLoggedUser(null)
-            router.push('/login')
         }
         // alert(JSON.stringify(jwt))
     }, [jwt])

@@ -3,18 +3,21 @@ import {useAppContext} from "../context";
 import types from "../types";
 import ModalTrigger from "./ModalTrigger";
 import Modal from "./Modal";
+import {useRouter} from "next/router";
 
 export default function DeleteButton(props) {
-    const {I18n, loggedUser} = useAppContext()
+    const {I18n, loggedUser, axios} = useAppContext()
+    const router = useRouter()
     const isMyProfile = loggedUser && props.creatorId === loggedUser.id
     const showButton = props.admin || isMyProfile
-    const onDelete = (e) => {
-        if (props.admin) {
-            alert(`Deleted ${props.comment ? 'comment' : 'article'} of id ${props.id} as admin`)
+    const onDelete = async (e) => {
+        await axios.delete(`${props.comment ? 'comments' : 'news'}/${props.id}`)
+        let splitted = router.pathname.split('/')
+        if (splitted[1] === 'news' && !props.comment) {
+            await router.push('/', undefined, {shallow:true})
         } else {
-            alert(`Deleted ${props.comment ? 'comment' : 'article'} of id ${props.id}`)
+            props.triggerEffect()
         }
-        props.triggerEffect()
     }
     return showButton ? <>
         <Modal onClickHandler={onDelete} id={`binModal${props.id}`} title={I18n(props.comment ? "showNews.deleteCommentQuestion" : "profile.modal.question")} body={I18n(props.comment ? "showNews.deleteCommentBody" : "profile.modal.msg")}

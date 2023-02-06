@@ -52,6 +52,10 @@ public class News implements Serializable {
     @Column(name = "news_id")
     private Long newsId;
 
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
+    }
+
     @Column(name = "image_id")
     private Long imageId;
 

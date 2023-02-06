@@ -10,7 +10,9 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 @XmlRootElement
 public class UserDto {
@@ -134,12 +136,12 @@ public class UserDto {
         dto.following = following;
         dto.followers = followers;
         dto.tier = Tier.getTier(followers).toString();
-        dto.isJournalist = user.getRoles().contains(Role.ROLE_JOURNALIST);
+        Collection<Role> roles = user.getRoles();
+        dto.isJournalist = roles != null && roles.contains(Role.ROLE_JOURNALIST);
         if (dto.isJournalist) {
             dto.newsStats = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).path("news-stats").build();
         }
         PositivityStats stats = user.getPositivityStats();
-        dto.isJournalist = user.getRoles() != null && user.getRoles().contains(Role.ROLE_JOURNALIST);
         dto.description = user.getDescription();
         dto.hasPositivity = user.hasPositivityStats();
         if (dto.hasPositivity) {
@@ -149,7 +151,6 @@ public class UserDto {
             dto.stats.put("interactions", Long.toString(p.getInteractions()));
         }
         dto.id = user.getUserId();
-        // TODO if user == loggedInUser
             dto.mailOptions = user.getEmailSettings().getOptionsArray();
 
 

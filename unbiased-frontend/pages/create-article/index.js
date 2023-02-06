@@ -27,12 +27,39 @@ export default function CreateArticle(props) {
         title: '',
         subtitle: '',
         body: '',
-        image: null,
+        // image: null,
         categories: []
     });
-    const {I18n} = useAppContext()
+    const {I18n, axios} = useAppContext()
+
+
+    const handleSubmit = async () => {
+        console.log(article)
+        const res = await axios.post('news', JSON.stringify(article),{
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        const splittedLocation = res.headers.location.split('/')
+        const id = splittedLocation[splittedLocation.length - 1]
+
+        const fileRes = await axios.put(`news/${id}/image`, file)
+        await router.replace(`/news/${id}`)
+    }
 
     const [filename, setFilename] = useState(I18n("createArticle.selectFile"))
+
+    const [file, setFile] = useState(new FormData())
+
+    const handleFileChange = (e) => {
+        const el = e.target
+        setFile(f => {
+            f.set('image', el.files[0])
+            return f
+        })
+
+        setFilename(el.files[0].name)
+    }
 
     const handleChange = (e) => {
         const el = e.target
@@ -48,8 +75,7 @@ export default function CreateArticle(props) {
             setArticle({...article, [el.name]: el.type === "file" ? el.files[0] : el.value})
         }
 
-        if (el.type === 'file')
-            setFilename(el.files[0].name)
+
     }
 
     const categories = [
@@ -111,7 +137,7 @@ export default function CreateArticle(props) {
                     <div className="custom-file">
                         {/*usar clases is-valid e is-invalid*/}
                         <input id="fileInput" name="image" className="custom-file-input" type="file"
-                               accept="image/png, image/jpeg" onChange={handleChange}/>
+                               accept="image/png, image/jpeg" onChange={handleFileChange}/>
                             <label htmlFor="inputGroupFile01" className="custom-file-label custom-file-input-label">{filename}</label>
                     </div>
                 </div>
@@ -136,7 +162,7 @@ export default function CreateArticle(props) {
                 </div>
 
                 <div className="w-100 d-flex justify-content-end">
-                    <button className="btn btn-info" type="submit">{I18n("createArticle.save")}</button>
+                    <button onClick={handleSubmit} className="btn btn-info" type="submit">{I18n("createArticle.save")}</button>
                 </div>
             </div>
 

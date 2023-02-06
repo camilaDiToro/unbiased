@@ -94,6 +94,11 @@ div#__next > div {
 
 .card-name-text {
     font-size: 14px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 130px;
+    height: 1.2em;
+    white-space: nowrap;
 }
 
 .card-btn {

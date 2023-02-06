@@ -10,6 +10,8 @@ import {useRouter} from "next/router";
 import AdminOrderTabs from "../../../components/AdminOrderTabs";
 import Pagination from "../../../components/Pagination";
 import Head from "next/head";
+import {newsMapper} from "../../../mappers";
+import usePagination from "../../../pagination";
 
 export async function getServerSideProps(context) {
     return {
@@ -20,18 +22,18 @@ export async function getServerSideProps(context) {
 }
 
 export default function Reported_news(props){
-    const {I18n}= useAppContext()
-
+    const {I18n, axios}= useAppContext()
+    const [pagination, setPagination] = usePagination()
     const router = useRouter()
-    const [reportedNews, setReportedNews] = useState(props.news)
+    const [reportedNews, setReportedNews] = useState([])
     const [effectTrigger, triggerEffect] = useTriggerEffect()
 
     useEffect(() => {
-        setReportedNews(n => {
-            for (const news of n) {
-                news.title += 'a'
-            }
-            return n
+        const params = {page: router.query.page, reportOrder: router.query.order, reported: true}
+        axios.get('news', {params}).then(res => {
+            setPagination(res)
+            const mappedNews = (res.data || []).map(newsMapper)
+            setReportedNews(mappedNews)
         })
     }, [router.query, effectTrigger])
 
@@ -55,8 +57,7 @@ export default function Reported_news(props){
 
                     </div>
                 </div>
-                {/*TODO: if not empty newList and pagination*/}
-                <Pagination currentPage={2} lastPage={4}></Pagination>
+                <Pagination {...pagination}></Pagination>
             </div>
         </>
     )
