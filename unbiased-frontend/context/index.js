@@ -3,7 +3,7 @@ import I18n from "../i18n"
 import axios from "axios";
 import baseURL from "../pages/back";
 import {useRouter} from "next/router";
-const AppContext = createContext(null);
+export const AppContext = createContext(null);
 
 export default function AppWrapper({ children }) {
     const [errorDetails, setErrorDetails] = useState({})
