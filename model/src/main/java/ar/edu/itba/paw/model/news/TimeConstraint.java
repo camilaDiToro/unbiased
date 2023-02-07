@@ -35,7 +35,7 @@ public enum TimeConstraint {
         try{
             return TimeConstraint.valueOf(value);
         }catch (IllegalArgumentException e){
-            throw new InvalidTimeConstraintException(String.format(InvalidTimeConstraintException.STRING_MSG, value),e);
+            throw new InvalidTimeConstraintException(value,e);
         }
     }
 }
