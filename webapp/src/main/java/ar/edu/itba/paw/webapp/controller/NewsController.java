@@ -315,10 +315,11 @@ public class NewsController {
         final News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(UserNotFoundException.ID_MSG, newsId)));
         final Optional<Long> maybeImageId = news.getImageId();
 
-        if (!maybeImageId.isPresent())
+        if (!maybeImageId.isPresent()){
             return Response.noContent().build();
-        final Image image = imageService.getImageById(maybeImageId.get()).orElseThrow(()-> new ImageNotFoundException(String.format(ImageNotFoundException.ID_MSG, maybeImageId.get())));
+        }
 
+        final Image image = imageService.getImageById(maybeImageId.get()).orElseThrow(()-> new ImageNotFoundException(maybeImageId.get()));
         return Response
                 .ok(new ByteArrayInputStream(image.getBytes()))
                 .type(image.getDataType())
