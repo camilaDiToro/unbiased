@@ -35,7 +35,7 @@ public enum ReportOrder {
         try{
             return ReportOrder.valueOf(value);
         }catch (IllegalArgumentException e){
-            throw new InvalidOrderException(String.format(InvalidOrderException.STRING_MSG, value),e);
+            throw new InvalidOrderException(value,e);
         }
     }
 }
