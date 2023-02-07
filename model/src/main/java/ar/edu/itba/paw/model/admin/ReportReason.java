@@ -30,6 +30,6 @@ public enum ReportReason {
             if (reason.getInterCode().equals(value))
                 return reason;
         }
-        throw new InvalidCategoryException(String.format(InvalidCategoryException.STRING_MSG, value));
+        throw new InvalidCategoryException(value);
     }
 }

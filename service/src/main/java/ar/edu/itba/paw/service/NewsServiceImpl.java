@@ -63,7 +63,7 @@ public class NewsServiceImpl implements NewsService {
 
         for(Category c : categories){
             if(c == null || !c.isTrueCategory()){
-                throw new InvalidCategoryException(String.format(InvalidCategoryException.STRING_MSG,c));
+                throw new InvalidCategoryException(c);
             }
             newsBuilder.addCategory(c);
         }
