@@ -9,7 +9,7 @@ import {useTriggerEffect} from "../../../../utils";
 import ReportReason from "../../../../components/ReportReason";
 import Head from "next/head";
 import axios from "axios";
-import baseURL from "../../../back";
+import {baseURL} from "../../../../constants";
 
 export async function getServerSideProps(context) {
     const id = parseInt(context.query.id)

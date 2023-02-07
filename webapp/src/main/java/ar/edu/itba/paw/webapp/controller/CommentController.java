@@ -5,14 +5,11 @@ import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
-import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
-import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.persistence.CommentDao;
 import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.CommentService;
 import ar.edu.itba.paw.service.NewsService;
@@ -20,7 +17,6 @@ import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CommentDto;
-import ar.edu.itba.paw.webapp.dto.NewsDto;
 import ar.edu.itba.paw.webapp.dto.ReportDetailDto;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
@@ -103,7 +99,7 @@ public class CommentController {
     @Path("/{commentId:[0-9]+}/reports")
     @Produces(value = {CustomMediaType.COMMENT_REPORT_DETAIL_LIST_V1})
     public Response getNewsReportDetail(@PathParam("commentId") final long commentId){
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         List<ReportDetailDto> reportList = comment.getReports().stream().map(d -> ReportDetailDto.fromReportedComment(uriInfo, d)).collect(Collectors.toList());
         return Response.ok(new GenericEntity<List<ReportDetailDto>>(reportList) {}).build();
     }
@@ -114,7 +110,7 @@ public class CommentController {
     public Response postComment(
             @QueryParam("newsId") final long newsId,
             @Valid CommentNewsForm form){
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorizedException::new);
         final CommentDto commentDto = CommentDto.fromComment(uriInfo, newsService.addComment(currentUser, newsId, form.getComment()));
         return Response.created(commentDto.getSelf()).entity(commentDto).build();
     }
@@ -126,7 +122,7 @@ public class CommentController {
     public Response report(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
         //TODO: Check if getting this object here is necessary
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         adminService.reportComment(user, commentId, ReportReason.getByValue(reportForm.getReason()));
         return Response.ok().build();
     }
@@ -136,7 +132,7 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.UPVOTE);
         return Response.ok().build();
     }
@@ -146,7 +142,7 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.DOWNVOTE);
         return Response.ok().build();
     }
@@ -164,7 +160,7 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.NO_RATING);
         return Response.ok().build();
     }
@@ -174,15 +170,9 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        Comment comment = commentService.getById(commentId).orElseThrow(CommentNotFoundException::new);
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.NO_RATING);
         return Response.ok().build();
     }
-
-    /*@DELETE
-    @Path("/{commentId:[0-9]+}")
-    public Response deleteComment(@PathParam("newsId") final long newsId, @PathParam("commentId") final long commentId) {
-        newsService.deleteComment(commentId);
-    }*/
 
 }

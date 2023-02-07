@@ -48,7 +48,7 @@ export default function CreateArticle(props) {
     }
 
     const [filename, setFilename] = useState(I18n("createArticle.selectFile"))
-
+    const FormData = require('form-data');
     const [file, setFile] = useState(new FormData())
 
     const handleFileChange = (e) => {

@@ -3,7 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.CategoryStatistics;
@@ -17,6 +17,7 @@ import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
 import ar.edu.itba.paw.webapp.api.exceptions.CustomBadRequestException;
+import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
 import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
@@ -60,6 +61,108 @@ public class UserController {
         this.ownerService = ownerService;
     }
 
+    @GET
+    @Produces(value = {CustomMediaType.USER_LIST_V1})
+    public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page,
+                              @QueryParam("search") @DefaultValue("") final String search,
+                              @QueryParam("topCreators") final boolean topCreators,
+                              @QueryParam("admins") final Boolean admins) {
+
+        if(topCreators && admins!=null){
+            throw new InvalidRequestParamsException("topCreators and admins params can not be sent together");
+        }
+
+        Page<User> userPage = userService.searchUsers(page, search, topCreators, admins);
+
+        if(userPage.getContent().isEmpty()){
+            return Response.noContent().build();
+        }
+
+        final List<UserDto> allUsers = userPage.getContent().stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
+
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<UserDto>>(allUsers) {});
+        return PagingUtils.pagedResponse(userPage, responseBuilder, uriInfo);
+    }
+
+    @Consumes({CustomMediaType.USER_V1})
+    @POST
+    public Response createUser(@Valid final UserForm userForm){
+        final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
+
+        final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newUser.getId())).build();
+        return Response.created(location).build();
+    }
+
+    @GET
+    @Path("/{userId:[0-9]+}")
+    @Produces(value = {CustomMediaType.USER_V1})
+    public Response getUser(@PathParam("userId") final long userId){
+        User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+
+        UserDto userDto = UserDto.fromUser(uriInfo, user);
+        return Response.ok(userDto).build();
+    }
+
+    @GET
+    @Path("/{userId:[0-9]+}/news-stats")
+    @Produces(value = { CustomMediaType.CATEGORY_STATISTICS_V1})
+    public Response getUserNewsStats(@PathParam("userId") final long userId){
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        if (!user.getRoles().contains(Role.ROLE_JOURNALIST)) {
+            return Response.noContent().build();
+        }
+
+        Map<Category, CategoryStatistics.Statistic> newsCategoryMap = newsService.getCategoryStatistics(user.getUserId()).getStatiscticsMap();
+        List<CategoryStatisticsDto> newsStats = newsCategoryMap.entrySet().stream().map(CategoryStatisticsDto::fromCategoryStatistic).collect(Collectors.toList());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CategoryStatisticsDto>>(newsStats) {});
+        return responseBuilder.build();
+    }
+
+
+    @PUT
+    @Path("/{userId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @Produces(value = { CustomMediaType.USER_V1})
+    public Response editUser(@PathParam("userId") final long userId, @Valid final UserProfileForm userProfileForm) throws IOException {
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+
+        userService.updateProfile(userId, userProfileForm.getUsername(),
+                null, null, userProfileForm.getDescription());
+        if(userProfileForm.getMailOptions()!=null){
+            userService.updateEmailSettings(user, MailOption.getEnumCollection(userProfileForm.getMailOptions()));
+        }
+
+        return Response.ok(UserDto.fromUser(uriInfo, user)).build();
+    }
+
+    @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("/{userId:[0-9]+}/image")
+    public Response updateUserImage(@PathParam("userId") long userId,
+                                    @FormDataParam("image") final FormDataBodyPart imageBodyPart,
+                                    @FormDataParam("image") byte[] bytes) {
+        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final String imageType = imageBodyPart.getMediaType().toString();
+        userService.setUserImage(userId, bytes, imageType);
+        final URI location = uriInfo.getAbsolutePathBuilder().build();
+        return Response.created(location).build();
+    }
+
+    @GET
+    @Path("/{userId:[0-9]+}/image")
+    public Response profileImage(@PathParam("userId") final long userId) {
+        final Image image = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId))).getImage();
+
+        if (image.getBytes().length == 0)
+            return Response.noContent().build();
+
+        return Response
+                .ok(new ByteArrayInputStream(image.getBytes()))
+                .type(image.getDataType())
+                .build();
+    }
+
+
     @PUT
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
@@ -67,7 +170,7 @@ public class UserController {
     public Response pinNews(@PathParam("userId") final long userId, @QueryParam("newsId") final long newsId) {
 
         final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
-        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         userService.pinNews(user, news);
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
 
@@ -99,133 +202,6 @@ public class UserController {
         return Response.ok(new GenericEntity<List<UserDto>>(users){}).build();
     }
 
-    @GET
-    @Produces(value = {CustomMediaType.USER_LIST_V1})
-    public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search,
-                              @QueryParam("topCreators") final boolean topCreators, @QueryParam("admins") final boolean admins) {
-
-        if (topCreators) {
-            List<UserDto> creatorList =  userService.getTopCreators(5).stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
-            return Response.ok(new GenericEntity<List<UserDto>>(creatorList) {}).build();
-        }
-
-        Page<User> userPage;
-        if(admins){
-            userPage = ownerService.getAdmins(page, search);
-        }else{
-            userPage = userService.searchUsers(page, search);
-        }
-
-        if(userPage.getContent().isEmpty()){
-            return Response.noContent().build();
-        }
-
-        final List<UserDto> allUsers = userPage.getContent().stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
-
-        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<UserDto>>(allUsers) {});
-        return PagingUtils.pagedResponse(userPage, responseBuilder, uriInfo);
-    }
-
-    @Consumes({CustomMediaType.USER_V1})
-    @POST
-    public Response createUser(@Valid final UserForm userForm){
-        final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
-
-        final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newUser.getId())).build();
-        return Response.created(location)/*.entity(UserDto.fromUser(uriInfo,newUser))*/.build();
-    }
-
-    @GET
-    @Path("/{userId:[0-9]+}")
-    @Produces(value = {CustomMediaType.USER_V1})
-    public Response getUser(@PathParam("userId") final long userId){
-        User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
-
-        UserDto userDto = UserDto.fromUser(uriInfo, user);
-        return Response.ok(userDto).build();
-    }
-
-    @GET
-    @Path("/{userId:[0-9]+}/news-stats")
-    @Produces(value = { CustomMediaType.CATEGORY_STATISTICS_V1})
-    public Response getUserNewsStats(@PathParam("userId") final long userId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        if (!user.getRoles().contains(Role.ROLE_JOURNALIST)) {
-            return Response.status(404).build();
-        }
-
-        Map<Category, CategoryStatistics.Statistic> newsCategoryMap = newsService.getCategoryStatistics(user.getUserId()).getStatiscticsMap();
-        List<CategoryStatisticsDto> newsStats = newsCategoryMap.entrySet().stream().map(CategoryStatisticsDto::fromCategoryStatistic).collect(Collectors.toList());
-        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CategoryStatisticsDto>>(newsStats) {});
-        return responseBuilder.build();
-    }
-
-
-    @PUT
-    @Path("/{userId:[0-9]+}")
-    @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    @Produces(value = { CustomMediaType.USER_V1})
-    public Response editUser(@PathParam("userId") final long userId, @Valid final UserProfileForm userProfileForm) throws IOException {
-        Optional<User> mayBeUser = userService.getUserById(userId);
-
-        if(!mayBeUser.isPresent()){
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        userService.updateProfile(userId, userProfileForm.getUsername(),
-                null, null, userProfileForm.getDescription());
-        if(userProfileForm.getMailOptions()!=null){
-            userService.updateEmailSettings(mayBeUser.get(), MailOption.getEnumCollection(userProfileForm.getMailOptions()));
-        }
-
-        return Response.ok(UserDto.fromUser(uriInfo, mayBeUser.get())).build();
-    }
-
-    @PUT
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Path("/{userId:[0-9]+}/image")
-    public Response updateUserImage(@PathParam("userId") long userId,
-                                    @FormDataParam("image") final FormDataBodyPart imageBodyPart,
-                                    @FormDataParam("image") byte[] bytes) {
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        final String imageType = imageBodyPart.getMediaType().toString();
-        userService.setUserImage(userId, bytes, imageType);
-        final URI location = uriInfo.getAbsolutePathBuilder().build();
-        return Response.created(location).build();
-    }
-
-    @GET
-    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
-    @Path("/{userId:[0-9]+}/image")
-    public Response profileImage(@PathParam("userId") final long userId) {
-        final Image image = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId))).getImage();
-
-        if (image.getBytes().length == 0)
-            return Response.noContent().build();
-
-        return Response
-                .ok(new ByteArrayInputStream(image.getBytes()))
-                .type(image.getDataType())
-                .build();
-    }
-
-
-    @PUT
-    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
-    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
-    @Path(value = "/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}")
-    public Response pingNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
-
-        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
-        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
-
-        if(userService.pingNewsToggle(user,news)){
-            return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinged the news of id %d", user.getUsername(), news.getNewsId()))).build();
-        }else{
-            return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinged the news of id %d", user.getUsername(), news.getNewsId()))).build();
-        }
-    }
-
     @PUT
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#followerId)")
@@ -243,7 +219,7 @@ public class UserController {
     @PreAuthorize("@ownerCheck.userMatches(#followerId)")
     @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
     public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorizedException::new);
         if(userService.unfollowUser(currentUser, userId)){
             return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] unfollowed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
         }
