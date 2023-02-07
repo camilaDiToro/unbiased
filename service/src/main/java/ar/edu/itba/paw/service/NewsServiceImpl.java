@@ -175,7 +175,7 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public void saveNews(final User currentUser, long newsId) {
 
-        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
 
         newsDao.saveNews(news, currentUser);
         news.setUserSpecificVariables(currentUser.getId());
@@ -186,7 +186,7 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public void unsaveNews(final User currentUser, long newsId) {
 
-        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
 
         newsDao.removeSaved(news, currentUser);
         news.setUserSpecificVariables(currentUser.getId());
@@ -197,7 +197,7 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public boolean toggleSaveNews(final User currentUser, long newsId) {
 
-        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
 
         boolean returnValue;
         if (news.getLoggedUserParameters().isSaved()) {
@@ -252,7 +252,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public void setNewsImage(final long newsId, final byte[] image,String dataType) {
-        final News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        final News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final long imageId = imageService.uploadImage(image, dataType);
         news.setImageId(imageId);
     }
@@ -291,7 +291,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public Comment addComment(final User currentUser, long newsId, String comment) {
-        final News news = getById(currentUser, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        final News news = getById(currentUser, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final Comment commentObj = commentDao.addComment(currentUser, news, comment);
         final User newsOwner = news.getCreator();
         final EmailSettings emailSettings = newsOwner.getEmailSettings();

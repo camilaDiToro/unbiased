@@ -181,7 +181,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}")
     @Produces(value = {CustomMediaType.USER_V1})
     public Response getNews(@PathParam("newsId") final long newsId){
-        News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
 
         NewsDto newsDto = NewsDto.fromNews(uriInfo, news);
         return Response.ok(newsDto).build();
@@ -191,7 +191,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/reports")
     @Produces(value = {CustomMediaType.USER_V1})
     public Response getNewsReportDetail(@PathParam("newsId") final long newsId){
-        News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         List<ReportDetailDto> reportList = news.getReports().stream().map(d -> ReportDetailDto.fromReportDetail(uriInfo, d)).collect(Collectors.toList());
         return Response.ok(new GenericEntity<List<ReportDetailDto>>(reportList) {}).build();
     }
@@ -202,7 +202,7 @@ public class NewsController {
     public Response updateNewsImage(@PathParam("newsId") long newsId,
                                  @FormDataParam("image") final FormDataBodyPart newsBodyPart,
                                  @FormDataParam("image") byte[] bytes) {
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final String imageType = newsBodyPart.getMediaType().toString();
         newsService.setNewsImage(news.getNewsId(), bytes, imageType);
         final URI location = uriInfo.getAbsolutePathBuilder().build();
@@ -214,7 +214,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.UPVOTE);
         return Response.ok().build();
     }
@@ -224,7 +224,7 @@ public class NewsController {
   @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.DOWNVOTE);
         return Response.ok().build();
     }
@@ -233,7 +233,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}")
     @PreAuthorize("@ownerCheck.canDeleteNews(#newsId)")
     public Response delete(@PathParam("newsId") final long newsId){
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.deleteNews(news);
         return Response.ok().build();
     }
@@ -243,7 +243,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response report(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId, @Valid final ReportNewsForm reportForm){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         adminService.reportNews(user, newsId, ReportReason.getByValue(reportForm.getReason()));
         return Response.ok().build();
     }
@@ -253,7 +253,7 @@ public class NewsController {
         @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.NO_RATING);
         return Response.ok().build();
     }
@@ -263,7 +263,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.NO_RATING);
         return Response.ok().build();
     }
@@ -273,7 +273,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeBookmark(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.unsaveNews(user, newsId);
         return Response.ok().build();
     }
@@ -283,7 +283,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response save(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.saveNews(user, newsId);
         return Response.ok().build();
     }
@@ -312,7 +312,7 @@ public class NewsController {
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path("/{newsId:[0-9]+}/image")
     public Response profileImage(@PathParam("newsId") final long newsId) {
-        final News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(UserNotFoundException.ID_MSG, newsId)));
+        final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final Optional<Long> maybeImageId = news.getImageId();
 
         if (!maybeImageId.isPresent()){

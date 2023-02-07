@@ -29,7 +29,7 @@ public class OwnerCheck {
     }
 
     public boolean newsOwnership(long newsId, long userId) {
-        long creatorId = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId))).getCreatorId();
+        long creatorId = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId)).getCreatorId();
         Optional<User> mbUser = securityService.getCurrentUser();
         if(!mbUser.isPresent()){
             return false;
@@ -60,7 +60,7 @@ public class OwnerCheck {
         if(!mbUser.isPresent()){
             return false;
         }
-        return newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getUser().getId()==mbUser.get().getId();
+        return newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId)).getUser().getId()==mbUser.get().getId();
     }
 
     public boolean checkSavedNewsAccess(String category, long userId){

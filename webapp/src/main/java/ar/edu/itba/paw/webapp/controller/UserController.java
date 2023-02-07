@@ -170,7 +170,7 @@ public class UserController {
     public Response pinNews(@PathParam("userId") final long userId, @QueryParam("newsId") final long newsId) {
 
         final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
-        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         userService.pinNews(user, news);
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
 
