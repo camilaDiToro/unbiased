@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.config;
 
 import ar.edu.itba.paw.webapp.auth.CustomAuthenticationEntryPoint;
+import ar.edu.itba.paw.webapp.auth.email.EmailAuthProvider;
 import ar.edu.itba.paw.webapp.auth.filters.AbstractAuthFilter;
 import ar.edu.itba.paw.webapp.auth.handlers.AuthFailureHandler;
 import ar.edu.itba.paw.webapp.auth.handlers.AuthSuccessHandler;
@@ -71,6 +72,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthProvider jwtAuthProvider;
 
+    @Autowired
+    private EmailAuthProvider emailAuthProvider;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -91,7 +95,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-        auth.authenticationProvider(jwtAuthProvider);
+        auth.authenticationProvider(jwtAuthProvider).authenticationProvider(emailAuthProvider);
     }
 
 
@@ -157,14 +161,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().headers().cacheControl().disable().and().authorizeRequests()
-//                .regexMatchers("/api/news\\?(.)*savedBy=(.)+").authenticated()
                 .and().authorizeRequests()
-                .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
-                    .antMatchers("/owner/**").hasRole("OWNER")
-                    .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
-                            "/news/{\\d+}/delete", "/news/{\\d+}/comment").authenticated()
-                .antMatchers(HttpMethod.PUT,"/news/{\\d+}/likes/{\\d+}","/news/{\\\\d+}/dislikes/{\\\\d+}").authenticated()
-                    .antMatchers("/api/**")
+                //.antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
+                .antMatchers("/api/users/{\\d+}/role").access("hasRole('OWNER')")
+//                .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
+//                            "/news/{\\d+}/delete", "/news/{\\d+}/comment").authenticated()
+//                .antMatchers(HttpMethod.PUT,"/news/{\\d+}/likes/{\\d+}","/news/{\\\\d+}/dislikes/{\\\\d+}").authenticated()
+                .antMatchers("/api/**")
                 .permitAll()
                 .and().addFilterBefore(abstractAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf()

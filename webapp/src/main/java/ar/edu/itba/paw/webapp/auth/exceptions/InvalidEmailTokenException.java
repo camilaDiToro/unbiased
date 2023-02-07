@@ -5,19 +5,19 @@ import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorExceptionInt;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 
-public class ExpiredJwtTokenException extends AuthenticationException implements ApiErrorExceptionInt {
+public class InvalidEmailTokenException extends AuthenticationException implements ApiErrorExceptionInt {
 
-    private static final String MSG = "Invalid authentication JWT token";
-    private static final ApiErrorCode CODE = ApiErrorCode.EXPIRED_JWT_TOKEN;
+    private static final String MSG = "Invalid authentication email token";
+    private static final ApiErrorCode CODE = ApiErrorCode.INVALID_EMAIL_TOKEN;
     private static final HttpStatus STATUS = HttpStatus.UNAUTHORIZED;
     private final String details;
 
-    public ExpiredJwtTokenException(String s, Throwable t) {
+    public InvalidEmailTokenException(String s, Throwable t) {
         super(MSG, t);
         this.details = s;
     }
 
-    public ExpiredJwtTokenException(String s) {
+    public InvalidEmailTokenException(String s) {
         super(MSG);
         this.details = s;
     }
@@ -41,5 +41,4 @@ public class ExpiredJwtTokenException extends AuthenticationException implements
     public String getDetails() {
         return details;
     }
-
 }

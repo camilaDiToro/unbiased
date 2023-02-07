@@ -1,11 +1,11 @@
 package ar.edu.itba.paw.webapp.auth.exceptions;
 
 import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
-import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorException;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorExceptionInt;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 
-public class InvalidJwtTokenException extends AuthenticationException implements ApiErrorException {
+public class InvalidJwtTokenException extends AuthenticationException implements ApiErrorExceptionInt {
 
     private static final String MSG = "Invalid JWT token: %s";
     private static final ApiErrorCode CODE = ApiErrorCode.INVALID_JWT_CLAIM;

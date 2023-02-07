@@ -10,6 +10,8 @@ import {users} from "../../../hardcoded";
 import MainCardsContainer from "../../../components/MainCardsContainer";
 import Creator from "../../../components/Creator";
 import Modal from "../../../components/Modal";
+import {userMapper} from "../../../mappers";
+import usePagination from "../../../pagination";
 
 export async function getServerSideProps(context) {
     return {
@@ -23,17 +25,28 @@ export default function AddAdmin(props){
 
     const ctx = useAppContext()
     const I18n = ctx.I18n
+    const axios = ctx.axios
     const router = useRouter()
 
     const [details, setDetails] = useState(router.query.query || '')
     const [email, setEmail] = useState('')
     const [userList, setUserList] = useState(props.users)
+    const [pagination, setPagination] = usePagination()
 
     const [effectTrigger, triggerEffect] = useTriggerEffect()
 
     useEffect(() => {
         // alert(props.users[0].nameOrEmail)
-        setUserList(props.users.filter(user => user.nameOrEmail.includes(details)))
+        const params = {...router.query, admins: true}
+
+        axios.get('users', {params}).then(res => {
+            setPagination(res)
+            const admins = res.data.map(u => {
+                delete u['newsStats']
+                return userMapper(u)
+            })
+            setUserList(admins)
+        })
         // setUserList(props.users)
 
     }, [router.query, effectTrigger])
@@ -51,8 +64,13 @@ export default function AddAdmin(props){
         setDetails(e.target.value)
     }
 
-    const addAdmin = () => {
-        alert(`added user ${email} as admin`)
+    const addAdmin = async () => {
+        const res = await axios.put(`users/${props.id}/role`, undefined,{
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            params: {role: 'ROLE_ADMIN'}
+        })
         triggerEffect()
     }
 
@@ -118,7 +136,7 @@ export default function AddAdmin(props){
                     </div>
 
                 </div>
-                <Pagination currentPage={2} lastPage={4}></Pagination>
+                <Pagination {...pagination}></Pagination>
 
             </div>
         </>

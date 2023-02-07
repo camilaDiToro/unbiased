@@ -10,9 +10,11 @@ public enum ApiErrorCode {
     EXPIRED_JWT_TOKEN(604),
     FORBIDDEN(605),
     UNAUTHORIZED(606),
+    INVALID_EMAIL_TOKEN(607),
 
     //Validation
     VALIDATION(701),
+    INVALID_ROLE(702),
 
     //Backend
     USER_NOT_FOUND(801),
