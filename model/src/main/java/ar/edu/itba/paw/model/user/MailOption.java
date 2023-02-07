@@ -52,7 +52,7 @@ public enum MailOption {
         try{
             return MailOption.valueOf(value);
         }catch (IllegalArgumentException e){
-            throw new InvalidCategoryException(e);
+            throw new InvalidCategoryException(value, e);
         }
     }
 

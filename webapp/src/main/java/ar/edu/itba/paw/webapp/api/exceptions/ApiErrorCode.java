@@ -15,10 +15,23 @@ public enum ApiErrorCode {
     //Validation
     VALIDATION(701),
     INVALID_ROLE(702),
+    INVALID_PARAMETERS(703),
+    INVALID_GET_USERS_FILTER(704),
 
     //Backend
     USER_NOT_FOUND(801),
-    NEWS_NOT_FOUND(802);
+    NEWS_NOT_FOUND(802),
+    COMMENT_NOT_FOUND(803),
+    IMAGE_NOT_FOUND(804),
+
+    INVALID_CATEGORY(820),
+    INVALID_FILTER(821),
+    INVALID_ORDER(822),
+    INVALID_TIME_CONSTRAINT(823),
+
+    UNKNOWN(900),
+    WEB_APP_ERROR(901);
+
 
     private final int errorCode;
 

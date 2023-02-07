@@ -20,21 +20,15 @@ public interface UserDao {
     void unfollow(long userId, long follows);
     boolean isFollowing(long userId, long followId);
     Page<User> searchUsers(int page, String search);
-
-    List<User> getFollowing(long userId);
-
+    Page<User> getFollowing(int page, long userId);
     List<User> getFollowedBy(long userId);
-
     Page<User> getAdmins(int page, String search);
+    Page<User> getNotAdmins(int page, String search);
     long getFollowingCount(long userId);
     long getFollowersCount(long userId);
     boolean pingNewsToggle(User user, News news);
-
     void pinNews(User user, News news);
-
     void unpinNews(User user, News news);
-
     void unpinNews(User user);
-
     List<User> getFollowersWithEmailPublishNewsActive(User user);
 }

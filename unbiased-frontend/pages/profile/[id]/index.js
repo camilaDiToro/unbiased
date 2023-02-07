@@ -21,7 +21,7 @@ import {useLoggedParamsFiller, useTriggerEffect, useURLWithParams} from "../../.
 import Pagination from "../../../components/Pagination";
 import {newsMapper, userMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
-import baseURL from "../../back";
+import {baseURL} from "../../../constants";
 import axios from "axios";
 
 export async function getServerSideProps(context) {

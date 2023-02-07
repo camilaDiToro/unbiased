@@ -67,7 +67,7 @@ public enum Category {
         try{
             return Category.valueOf(value);
         }catch (IllegalArgumentException e){
-            throw new InvalidCategoryException(e);
+            throw new InvalidCategoryException(value);
         }
     }
 

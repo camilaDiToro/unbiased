@@ -14,7 +14,7 @@ import CancelSearchLink from "../components/CancelSearchLink";
 import ProfileCardTypeTab from "../components/ProfileCardTypeTab";
 import Creator from "../components/Creator";
 import Pagination from "../components/Pagination";
-import baseURL from "./back";
+import {baseURL} from "../constants";
 import usePagination from "../pagination";
 import {newsMapper, userMapper} from "../mappers"
 import TimeSelector from "../components/TimeSelector";

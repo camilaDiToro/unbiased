@@ -2,11 +2,9 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
@@ -31,8 +29,12 @@ public class OwnerCheck {
     }
 
     public boolean newsOwnership(long newsId, long userId) {
-        long creatorId = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId))).getCreatorId();
-        long currentUserId = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+        long creatorId = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId)).getCreatorId();
+        Optional<User> mbUser = securityService.getCurrentUser();
+        if(!mbUser.isPresent()){
+            return false;
+        }
+        long currentUserId = mbUser.get().getId();
         return creatorId==currentUserId && currentUserId == userId;
     }
 
@@ -45,11 +47,20 @@ public class OwnerCheck {
     }
 
     public boolean checkCommentOwnership(long commentId) {
-        return newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new).getUser().getId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+        Optional<User> mbUser = securityService.getCurrentUser();
+        if(!mbUser.isPresent()){
+            return false;
+        }
+        return newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId))
+                .getUser().getId()==mbUser.get().getId();
     }
 
     public boolean checkNewsOwnership(long newsId) {
-        return newsService.getById(newsId).orElseThrow(NewsNotFoundException::new).getUser().getId()==securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new).getId();
+        Optional<User> mbUser = securityService.getCurrentUser();
+        if(!mbUser.isPresent()){
+            return false;
+        }
+        return newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId)).getUser().getId()==mbUser.get().getId();
     }
 
     public boolean checkSavedNewsAccess(String category, long userId){

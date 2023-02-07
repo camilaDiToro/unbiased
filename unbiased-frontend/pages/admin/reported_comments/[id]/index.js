@@ -7,7 +7,7 @@ import Link from "next/link";
 import ReportReason from "../../../../components/ReportReason";
 import {reportInfo} from "../../../../hardcoded";
 import axios from "axios";
-import baseURL from "../../../back";
+import {baseURL} from "../../../../constants";
 
 
 export async function getServerSideProps(context) {

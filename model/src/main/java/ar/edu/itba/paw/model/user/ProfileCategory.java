@@ -30,7 +30,7 @@ public enum ProfileCategory {
         try{
             return ProfileCategory.valueOf(value);
         }catch (IllegalArgumentException e){
-            throw new InvalidFilterException(e);
+            throw new InvalidFilterException(value,  e);
         }
     }
 

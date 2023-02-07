@@ -17,7 +17,7 @@ import DeleteButton from "../../../components/DeleteButton";
 import PinButton from "../../../components/PinButton";
 import {commentsMapper, newsMapper} from "../../../mappers";
 import axios from "axios";
-import baseURL from "../../back";
+import {baseURL} from "../../../constants";
 import usePagination from "../../../pagination";
 
 export async function getServerSideProps(context) {

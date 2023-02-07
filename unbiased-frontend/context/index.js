@@ -1,7 +1,7 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import I18n from "../i18n"
 import axios from "axios";
-import baseURL from "../pages/back";
+import {baseURL} from "../constants";
 import {useRouter} from "next/router";
 export const AppContext = createContext(null);
 

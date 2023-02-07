@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
     private final ImageService imageService;
 
-
+    private static final int TOP_CREATORS_COUNT = 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
@@ -130,13 +130,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addRole(long userId, Role role) {
-        userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId))).addRole(role);
+        userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
     }
 
     @Override
     @Transactional
     public void updateProfile(long userId, String username, final byte[] bytes, String dataType, String description) {
-        final User user = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
         if(isFollowing(currentUser,userId)){
             return false;
         }
-        final User following = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User following = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         userDao.addFollow(currentUser.getId(), userId);
         final EmailSettings emailSettings = following.getEmailSettings();
         if(emailSettings!= null && emailSettings.isFollow()){
@@ -211,13 +211,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getTopCreators(int qty) {
-        return userDao.getTopCreators(qty);
+    public Page<User> searchUsers(int page, String search) {
+        return userDao.searchUsers(page, search);
     }
 
     @Override
-    public Page<User> searchUsers(int page, String search) {
-        return userDao.searchUsers(page, search);
+    public Page<User> getAdmins(int page, String search) {
+        return userDao.getAdmins(page,search);
+    }
+
+    @Override
+    public Page<User> getNotAdmins(int page, String search) {
+        return userDao.getNotAdmins(page,search);
+    }
+
+    @Override
+    public Page<User> getTopCreators() {
+        return new Page<>(userDao.getTopCreators(TOP_CREATORS_COUNT), 1, 1);
     }
 
 
@@ -236,7 +246,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void setUserImage(final long userId, final byte[] bytes,String dataType) {
-        final User user = userDao.getUserById(userId).orElseThrow(()-> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
@@ -255,8 +265,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getFollowing(User user) {
-        return userDao.getFollowing(user.getUserId());
+    public Page<User> getFollowing(int page, long userId) {
+        userDao.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        return userDao.getFollowing(page, userId);
     }
 
     @Override
@@ -269,12 +280,12 @@ public class UserServiceImpl implements UserService {
 
 
         if (!profile.getRoles().contains(Role.ROLE_JOURNALIST) && category.equals(ProfileCategory.MY_POSTS)){
-            throw new InvalidFilterException();
+            throw new InvalidFilterException(String.format("The user %s is not a journalist, so it is not posible to retrieve his posts", profile.toString()));
         }
 
         if (category.equals(ProfileCategory.SAVED) &&
                 !(maybeCurrentUser.isPresent() && maybeCurrentUser.get().equals(profile))){
-            throw new InvalidFilterException();
+            throw new InvalidFilterException("Saved articles can just be retrieved by the user who saved them");
         }
 
         return category;

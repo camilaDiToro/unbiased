@@ -2,7 +2,6 @@ import Link from "next/link";
 import {useAppContext} from "../../context";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import baseURL from "../back";
 import {useRouter} from "next/router";
 
 
