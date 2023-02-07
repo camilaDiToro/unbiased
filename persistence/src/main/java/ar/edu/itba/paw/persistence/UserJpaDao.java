@@ -142,18 +142,24 @@ public class UserJpaDao implements UserDao{
         return new Page<>(users, page,totalPages);
     }
 
+    private int getTotalFollowingUsers(long userId){
+        final long count = entityManager.createNativeQuery("SELECT COUNT(*) FROM follows WHERE user_id = :userId").getFirstResult();
+        return Page.getPageCount(count, SEARCH_PAGE_SIZE);
+    }
+
     @Override
-    public List<User> getFollowing(long userId) {
+    public Page<User> getFollowing(int page, long userId) {
 
-        final Query queryObj = entityManager.createNativeQuery("SELECT follows FROM follows WHERE user_id = :userId").setParameter("userId", userId);
-        @SuppressWarnings("unchecked")
-        final List<Long> ids = (List<Long>) queryObj.getResultList().stream()
-                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+        page = Math.max(page, 1);
 
-        final List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.userId IN :ids", User.class)
-                .setParameter("ids", ids).getResultList();
+        final int totalPages = getTotalFollowingUsers(userId);
+        page = Math.min(page, totalPages);
 
-        return users;
+        final Query queryObj = entityManager.createNativeQuery("SELECT follows FROM follows WHERE user_id = :userId LIMIT :pageSize OFFSET :offset").setParameter("userId", userId);
+
+        final List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
+
+        return new Page<>(users, page,totalPages);
     }
 
     @Override

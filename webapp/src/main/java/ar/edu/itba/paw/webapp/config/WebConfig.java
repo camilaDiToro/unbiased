@@ -12,6 +12,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.http.CacheControl;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -40,32 +41,17 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.service", "ar.edu.itba.paw.persistence"})
-//@EnableWebMvc
 @EnableTransactionManagement
 @EnableAsync
 @PropertySource("classpath:application.properties")
 @Configuration
-public class WebConfig /*extends WebMvcConfigurerAdapter*/ {
+public class WebConfig {
 
     @Value("classpath:sql/schema.sql")
     private Resource schemaSql;
 
     @Autowired
     private Environment environment;
-
-    /*@Autowired
-    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;*/
-
-    /*@PostConstruct
-    public void init() {
-        requestMappingHandlerAdapter.setIgnoreDefaultModelOnRedirect(true);
-    }
-
-    @Override
-    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/").setCacheControl(CacheControl.maxAge(0, TimeUnit.SECONDS) )
-                .resourceChain(false);
-    }*/
 
     @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
@@ -86,16 +72,6 @@ public class WebConfig /*extends WebMvcConfigurerAdapter*/ {
         factoryBean.setJpaProperties(properties);
         return factoryBean;
     }
-
-    /*@Bean
-    public ViewResolver viewResolver() {
-        final InternalResourceViewResolver viewResolver =
-                new InternalResourceViewResolver();
-        viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("/WEB-INF/views/");
-        viewResolver.setSuffix(".jsp");
-        return viewResolver;
-    }*/
 
     @Bean
     public TaskExecutor taskExecutor() {
@@ -184,5 +160,4 @@ public class WebConfig /*extends WebMvcConfigurerAdapter*/ {
         templateEngine.setTemplateEngineMessageSource(messageSource());
         return templateEngine;
     }
-
 }

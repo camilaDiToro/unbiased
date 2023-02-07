@@ -211,16 +211,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> searchUsers(int page, String search, boolean topCreators, Boolean admins) {
-        if(topCreators){
-            return new Page<>(userDao.getTopCreators(TOP_CREATORS_COUNT), 1, 1);
-        }
-        if(admins == null){
-            return userDao.searchUsers(page, search);
-        }
-        if(admins)
-            return userDao.getAdmins(page,search);
+    public Page<User> searchUsers(int page, String search) {
+        return userDao.searchUsers(page, search);
+    }
+
+    @Override
+    public Page<User> getAdmins(int page, String search) {
+        return userDao.getAdmins(page,search);
+    }
+
+    @Override
+    public Page<User> getNotAdmins(int page, String search) {
         return userDao.getNotAdmins(page,search);
+    }
+
+    @Override
+    public Page<User> getTopCreators() {
+        return new Page<>(userDao.getTopCreators(TOP_CREATORS_COUNT), 1, 1);
     }
 
 
@@ -258,8 +265,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getFollowing(User user) {
-        return userDao.getFollowing(user.getUserId());
+    public Page<User> getFollowing(int page, long userId) {
+        userDao.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        return userDao.getFollowing(page, userId);
     }
 
     @Override

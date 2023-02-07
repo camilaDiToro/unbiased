@@ -18,6 +18,7 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
 import ar.edu.itba.paw.webapp.api.exceptions.CustomBadRequestException;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetUsersFilter;
 import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Enumerated;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -38,7 +40,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("/api/users")
@@ -64,15 +65,16 @@ public class UserController {
     @GET
     @Produces(value = {CustomMediaType.USER_LIST_V1})
     public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page,
-                              @QueryParam("search") @DefaultValue("") final String search,
-                              @QueryParam("topCreators") final boolean topCreators,
-                              @QueryParam("admins") final Boolean admins) {
+                              @QueryParam("filter") @DefaultValue("NO_FILTER") final String filter,
+                              @QueryParam("search") final String search,
+                              @QueryParam("id") final Long id) {
 
-        if(topCreators && admins!=null){
-            throw new InvalidRequestParamsException("topCreators and admins params can not be sent together");
+        final GetUsersFilter objFilter = GetUsersFilter.fromString(filter);
+        if(!objFilter.areParamsValid(search,id)){
+            throw new InvalidRequestParamsException(objFilter.getInvalidParamsMsg(search, id));
         }
 
-        Page<User> userPage = userService.searchUsers(page, search, topCreators, admins);
+        Page<User> userPage = objFilter.getUsers(userService,page,search,id);
 
         if(userPage.getContent().isEmpty()){
             return Response.noContent().build();
@@ -188,7 +190,7 @@ public class UserController {
 
     }
 
-    @GET
+    /*@GET
     @Path(value = "/{userId:[0-9]+}/following")
     @Produces(value = {CustomMediaType.USER_LIST_V1})
     public Response following(@PathParam("userId")  final long userId) {
@@ -200,7 +202,7 @@ public class UserController {
             return Response.noContent().build();
         }
         return Response.ok(new GenericEntity<List<UserDto>>(users){}).build();
-    }
+    }*/
 
     @PUT
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
