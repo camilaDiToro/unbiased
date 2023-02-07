@@ -62,7 +62,7 @@ public class CommentController {
             @QueryParam("reportedBy") @DefaultValue("-1") Long reportedBy,
             @QueryParam("reportOrder") @DefaultValue("REP_COUNT_DESC") String reportOrder) {
         if (reportedBy>0) {
-            final User user = userService.getUserById(reportedBy).orElseThrow(UserNotFoundException::new);
+            final User user = userService.getUserById(reportedBy).orElseThrow(()-> new UserNotFoundException(reportedBy));
             List<Comment> comments = adminService.getReportedByUserComments(user);
             if (comments.isEmpty())
                 return Response.noContent().build();
@@ -73,7 +73,7 @@ public class CommentController {
         } else
         if (likedBy > 0 || dislikedBy > 0) {
             long userId = likedBy > 0 ? likedBy : dislikedBy;
-            User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+            User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
             List<Comment> comments = likedBy > 0 ? commentService.getCommentsUpvotedByUser(user) : commentService.getCommentsDownvotedByUser(user);
             final List<CommentDto> dtoComments = comments.stream().map(c -> CommentDto.fromComment(uriInfo, c)).collect(Collectors.toList());
             if (comments.isEmpty()) {
@@ -120,7 +120,7 @@ public class CommentController {
     @Consumes(value = {CustomMediaType.COMMENT_REPORT_DETAIL_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response report(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         //TODO: Check if getting this object here is necessary
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         adminService.reportComment(user, commentId, ReportReason.getByValue(reportForm.getReason()));
@@ -131,7 +131,7 @@ public class CommentController {
     @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.UPVOTE);
         return Response.ok().build();
@@ -141,7 +141,7 @@ public class CommentController {
     @Path("/{commentId:[0-9]+}/dislikes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.DOWNVOTE);
         return Response.ok().build();
@@ -159,7 +159,7 @@ public class CommentController {
     @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.NO_RATING);
         return Response.ok().build();
@@ -169,7 +169,7 @@ public class CommentController {
     @Path("/{commentId:[0-9]+}/dislikes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.NO_RATING);
         return Response.ok().build();

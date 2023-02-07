@@ -130,13 +130,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addRole(long userId, Role role) {
-        userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId))).addRole(role);
+        userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
     }
 
     @Override
     @Transactional
     public void updateProfile(long userId, String username, final byte[] bytes, String dataType, String description) {
-        final User user = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
         if(isFollowing(currentUser,userId)){
             return false;
         }
-        final User following = userDao.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User following = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         userDao.addFollow(currentUser.getId(), userId);
         final EmailSettings emailSettings = following.getEmailSettings();
         if(emailSettings!= null && emailSettings.isFollow()){
@@ -239,7 +239,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void setUserImage(final long userId, final byte[] bytes,String dataType) {
-        final User user = userDao.getUserById(userId).orElseThrow(()-> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }

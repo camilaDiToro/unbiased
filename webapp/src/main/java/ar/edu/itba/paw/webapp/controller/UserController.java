@@ -97,7 +97,7 @@ public class UserController {
     @Path("/{userId:[0-9]+}")
     @Produces(value = {CustomMediaType.USER_V1})
     public Response getUser(@PathParam("userId") final long userId){
-        User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        User user = userService.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
 
         UserDto userDto = UserDto.fromUser(uriInfo, user);
         return Response.ok(userDto).build();
@@ -107,7 +107,7 @@ public class UserController {
     @Path("/{userId:[0-9]+}/news-stats")
     @Produces(value = { CustomMediaType.CATEGORY_STATISTICS_V1})
     public Response getUserNewsStats(@PathParam("userId") final long userId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         if (!user.getRoles().contains(Role.ROLE_JOURNALIST)) {
             return Response.noContent().build();
         }
@@ -124,7 +124,7 @@ public class UserController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     @Produces(value = { CustomMediaType.USER_V1})
     public Response editUser(@PathParam("userId") final long userId, @Valid final UserProfileForm userProfileForm) throws IOException {
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
 
         userService.updateProfile(userId, userProfileForm.getUsername(),
                 null, null, userProfileForm.getDescription());
@@ -141,7 +141,7 @@ public class UserController {
     public Response updateUserImage(@PathParam("userId") long userId,
                                     @FormDataParam("image") final FormDataBodyPart imageBodyPart,
                                     @FormDataParam("image") byte[] bytes) {
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         final String imageType = imageBodyPart.getMediaType().toString();
         userService.setUserImage(userId, bytes, imageType);
         final URI location = uriInfo.getAbsolutePathBuilder().build();
@@ -151,7 +151,7 @@ public class UserController {
     @GET
     @Path("/{userId:[0-9]+}/image")
     public Response profileImage(@PathParam("userId") final long userId) {
-        final Image image = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId))).getImage();
+        final Image image = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId)).getImage();
 
         if (image.getBytes().length == 0)
             return Response.noContent().build();
@@ -169,7 +169,7 @@ public class UserController {
     @Path(value = "/{userId:[0-9]+}/pinnedNews")
     public Response pinNews(@PathParam("userId") final long userId, @QueryParam("newsId") final long newsId) {
 
-        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         userService.pinNews(user, news);
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
@@ -182,7 +182,7 @@ public class UserController {
     @Path(value = "/{userId:[0-9]+}/pinnedNews")
     public Response unpinNews(@PathParam("userId") final long userId) {
 
-        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         userService.unpinNews(user);
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinned the news", user.getUsername()))).build();
 
@@ -193,7 +193,7 @@ public class UserController {
     @Produces(value = {CustomMediaType.USER_LIST_V1})
     public Response following(@PathParam("userId")  final long userId) {
 
-        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         List<UserDto> users = userService.getFollowing(user).stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
 
         if (users.isEmpty()) {
@@ -207,7 +207,7 @@ public class UserController {
     @PreAuthorize("@ownerCheck.userMatches(#followerId)")
     @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
     public Response followUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(() -> new UserNotFoundException(String.format(UserNotFoundException.ID_MSG, userId)));
+        final User currentUser = securityService.getCurrentUser().orElseThrow(() -> new UserNotFoundException(userId));
         if(userService.followUser(currentUser, userId)){
             return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
         }

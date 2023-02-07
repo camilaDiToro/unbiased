@@ -107,14 +107,14 @@ public class NewsController {
             // throw new ...
         }
         if (pinnedBy>0) {
-            final User user = userService.getUserById(pinnedBy).orElseThrow(UserNotFoundException::new);
+            final User user = userService.getUserById(pinnedBy).orElseThrow(()-> new UserNotFoundException(pinnedBy));
             Optional<News> news = newsService.getPinnedByUserNews(user);
             if (!news.isPresent())
                 return Response.noContent().build();
             return Response.ok(NewsDto.fromNews(uriInfo, news.get())).build();
         } else
         if (reportedBy>0) {
-            final User user = userService.getUserById(reportedBy).orElseThrow(UserNotFoundException::new);
+            final User user = userService.getUserById(reportedBy).orElseThrow(()-> new UserNotFoundException(reportedBy));
             List<News> news = adminService.getReportedByUserNews(user);
             if (news.isEmpty())
                 return Response.noContent().build();
@@ -126,19 +126,19 @@ public class NewsController {
             newsPage = adminService.getReportedNews(page, reportOrderObj);
         } else if (likedBy > 0) {
             final ProfileCategory catObject = ProfileCategory.UPVOTED;
-            final User profileUser = userService.getUserById(likedBy).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(likedBy).orElseThrow(()-> new UserNotFoundException(likedBy));
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
         } else if (dislikedBy > 0)  {
             final ProfileCategory catObject = ProfileCategory.DOWNVOTED;
-            final User profileUser = userService.getUserById(dislikedBy).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(dislikedBy).orElseThrow(()-> new UserNotFoundException(dislikedBy));
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
         } else if (publishedBy > 0) {
             final ProfileCategory catObject = ProfileCategory.MY_POSTS;
-            final User profileUser = userService.getUserById(publishedBy).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(publishedBy).orElseThrow(()-> new UserNotFoundException(publishedBy));
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
         } else if (savedBy > 0) {
             final ProfileCategory catObject = ProfileCategory.SAVED;
-            final User profileUser = userService.getUserById(savedBy).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(savedBy).orElseThrow(()-> new UserNotFoundException(savedBy));
             final Optional<User> user = securityService.getCurrentUser();
 
             newsPage = newsService.getNewsForUserProfile(user, page, orderObj, profileUser, catObject);
@@ -213,7 +213,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.UPVOTE);
         return Response.ok().build();
@@ -223,7 +223,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
   @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.DOWNVOTE);
         return Response.ok().build();
@@ -242,7 +242,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/reports/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response report(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId, @Valid final ReportNewsForm reportForm){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         adminService.reportNews(user, newsId, ReportReason.getByValue(reportForm.getReason()));
         return Response.ok().build();
@@ -252,7 +252,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
         @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.NO_RATING);
         return Response.ok().build();
@@ -262,7 +262,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.NO_RATING);
         return Response.ok().build();
@@ -272,7 +272,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeBookmark(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.unsaveNews(user, newsId);
         return Response.ok().build();
@@ -282,7 +282,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response save(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.saveNews(user, newsId);
         return Response.ok().build();
