@@ -51,7 +51,7 @@ public class OwnerCheck {
         if(!mbUser.isPresent()){
             return false;
         }
-        return newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)))
+        return newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId))
                 .getUser().getId()==mbUser.get().getId();
     }
 

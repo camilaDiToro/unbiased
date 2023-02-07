@@ -61,7 +61,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     @Transactional
     public void reportComment(final User currentUser, long commentId, ReportReason reportReason) {
-        final Comment comment = newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(String.format(CommentNotFoundException.ID_MSG,commentId)));
+        final Comment comment = newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentDao.reportComment(comment,currentUser,reportReason);
     }
 
