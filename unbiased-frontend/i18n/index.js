@@ -412,9 +412,18 @@ const strings = {
   },
 };
 
-const I18n = (code, params) => {
+export const I18n = (code, params) => {
   const { locale } = useRouter();
   const maybeFunc = strings[locale][code];
+  if (typeof maybeFunc == "function") {
+    return maybeFunc(params);
+  }
+
+  return maybeFunc;
+};
+
+export const I18nTesting = (code, params) => {
+  const maybeFunc = strings["en-US"][code];
   if (typeof maybeFunc == "function") {
     return maybeFunc(params);
   }
