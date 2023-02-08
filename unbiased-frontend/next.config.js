@@ -12,7 +12,7 @@ const nextConfig = {
   basePath: isProd ? '/paw-2022b-6' : undefined,
 
   env : {
-    baseURL: isProd ? 'http://localhost/paw-2022b-6/api' : 'http://localhost:8080/webapp_war_exploded/api',
+    baseURL: isProd ? 'http://pawserver.it.itba.edu.ar/paw-2022b-6/api' : 'http://localhost:8080/webapp_war_exploded/api',
     resourcePrefix: isProd ? '/paw-2022b-6' : '.'
   }
 }

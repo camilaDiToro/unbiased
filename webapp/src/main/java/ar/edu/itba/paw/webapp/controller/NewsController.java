@@ -24,6 +24,7 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.NewsDto;
 import ar.edu.itba.paw.webapp.dto.ReportDetailDto;
+import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -225,22 +226,29 @@ public class NewsController {
         return Response.ok().build();
     }
 
+    /**
+     * If a DELETE method is successfully applied, the origin server SHOULD send
+     * a 202 (Accepted) status code if the action will likely succeed but has not yet been enacted,
+     * a 204 (No Content) status code if the action has been enacted and no further information is to be supplied, or
+     * a 200 (OK) status code if the action has been enacted and the response message includes a representation describing the status.
+     */
     @DELETE
     @Path("/{newsId:[0-9]+}")
     @PreAuthorize("@ownerCheck.canDeleteNews(#newsId)")
     public Response delete(@PathParam("newsId") final long newsId){
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        newsService.deleteNews(news);
-        return Response.ok().build();
+        Optional<News> news = newsService.getById(newsId);
+        if(!news.isPresent()){
+            return Response.noContent().build();
+        }
+        newsService.deleteNews(news.get());
+        return Response.ok(SimpleMessageDto.fromString(String.format("The news of id %d has been deleted", newsId))).build();
     }
 
     @PUT
     @Path("/{newsId:[0-9]+}/reports/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response report(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId, @Valid final ReportNewsForm reportForm){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        adminService.reportNews(user, newsId, ReportReason.getByValue(reportForm.getReason()));
+        adminService.reportNews(userId, newsId, ReportReason.getByValue(reportForm.getReason()));
         return Response.ok().build();
     }
 

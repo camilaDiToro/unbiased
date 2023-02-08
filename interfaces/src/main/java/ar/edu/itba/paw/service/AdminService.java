@@ -12,7 +12,7 @@ import ar.edu.itba.paw.model.user.User;
 import java.util.List;
 
 public interface AdminService {
-    void reportNews(final User currentUser, long newsId, ReportReason reportReason);
+    void reportNews(long userId, long newsId, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
 
     List<News> getReportedByUserNews(User user);
