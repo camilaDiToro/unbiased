@@ -221,7 +221,7 @@ public class NewsController {
 
     @PUT
     @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
-  @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
@@ -290,7 +290,7 @@ public class NewsController {
 
 
 
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes({CustomMediaType.NEWS_V1})
     @POST
     public Response createNews(@Valid final CreateNewsForm createNewsFrom) {
         final User user = securityService.getCurrentUser().get();
@@ -309,7 +309,6 @@ public class NewsController {
     }
 
     @GET
-    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path("/{newsId:[0-9]+}/image")
     public Response profileImage(@PathParam("newsId") final long newsId) {
         final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
