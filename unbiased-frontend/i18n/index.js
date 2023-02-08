@@ -174,6 +174,7 @@ const strings = {
 
     //Tooltips
     "tooltip.clickToGoBack": "Click to go back",
+    "tooltip.clickToGoHome": "Click to go home",
     "tooltip.deleteNews": "Delete news",
     "tooltip.articleReported": "Article reported",
     "tooltip.commentReported": "Comment reported",
@@ -379,6 +380,7 @@ const strings = {
 
     //Tooltips
     "tooltip.clickToGoBack": "Click para volver hacia atras",
+    "tooltip.clickToGoHome": "Click para ir al inicio",
     "tooltip.deleteNews": "Borrar noticia",
     "tooltip.articleReported": "Noticia reportada",
     "tooltip.commentReported": "Comentario reportado",
