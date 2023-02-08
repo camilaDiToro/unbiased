@@ -3,7 +3,7 @@ import Link from "next/link";
 import {reportInfo} from "hardcoded"
 import {useAppContext} from "../../../../context";
 import {useRouter} from "next/router";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Modal from "../../../../components/Modal";
 import {useTriggerEffect} from "../../../../utils";
 import ReportReason from "../../../../components/ReportReason";
@@ -11,24 +11,24 @@ import Head from "next/head";
 import axios from "axios";
 import {baseURL} from "../../../../constants";
 
-export async function getServerSideProps(context) {
-    const id = parseInt(context.query.id)
-    const res = await axios.get(`${baseURL}news/${id}/reports`)
-    return {
-        props: {
-            reportInfo: res.data,
-            id
-        }, // will be passed to the page component as props
-    }
-}
+
 
 export default function ReportedNewsDetail(props){
     const {I18n, axios} = useAppContext()
-    const actualReportInfo = props.reportInfo
+    const [reportInfo, setReportInfo] = useState([])
     const router = useRouter()
+    const {id} = router.query
+
+    useEffect(() => {
+        if (!id)
+            return
+        axios.get(`comments/${id}/reports`).then (res => {
+            setReportInfo(res.data || [])
+        })
+    }, [id])
 
     const onDelete = async () => {
-        await axios.delete(`news/${props.id}`)
+        await axios.delete(`news/${id}`)
         await router.push('/admin/reported_news')
     }
     return (<>
@@ -56,7 +56,7 @@ export default function ReportedNewsDetail(props){
                         </thead>
                         <tbody>
                         {
-                            actualReportInfo.map((r)=><ReportReason key={r.user} {...r}></ReportReason>)
+                            reportInfo.map((r)=><ReportReason key={r.user} {...r}></ReportReason>)
                         }
                         </tbody>
                     </table>

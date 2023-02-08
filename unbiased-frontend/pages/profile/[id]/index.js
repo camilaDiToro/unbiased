@@ -21,69 +21,23 @@ import {useLoggedParamsFiller, useTriggerEffect, useURLWithParams} from "../../.
 import Pagination from "../../../components/Pagination";
 import {newsMapper, userMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
-import {baseURL} from "../../../constants";
-import axios from "axios";
-
-export async function getServerSideProps(context) {
-  const id = parseInt(context.query.id)
-  const relativePath = new URL(`users/${id}`, baseURL)
-  const props = {}
-  const res = await axios.get(relativePath)
-  const data = res.data
-  if (data && data.newsStats) {
-    const newsStatsRes = await axios.get(data.newsStats)
-    data.newsStats = newsStatsRes.data
-    props.userInfo = userMapper(data)
-  } else {
-    props.userInfo = res.data ? userMapper(res.data) : {}
-  }
-  props.news = news
-  return {
-    props: {...props, id}
-  }
-  // return {
-  //   props: {
-  //     isJournalist: true,
-  //     email: 'email@email.com',
-  //     news,
-  //     id: parseInt(context.query.id),
-  //     username: 'kevin',
-  //     followers: 10,
-  //     following: 5,
-  //     tier: 'gold',
-  //     description: 'this is my description',
-  //     isLoggedUserFollowing: false,
-  //     newsStatistics: [
-  //       { title: "categories.tourism", progress: 0.2, i18n: true },
-  //       { title:"categories.entertainment", progress: 0.2, i18n: true },
-  //       { title: "categories.politics", progress: 0.2, i18n: true },
-  //       { title: "categories.economics", progress: 0.2, i18n: true },
-  //       { title: "categories.sports", progress: 0.2, i18n: true },
-  //       {title: "categories.technology", progress: 0.2, i18n: true }
-  //     ],
-  //     stats: {interactions: 98,
-  //       upvoted: 0.6,
-  //       positivity: "positive"},
-  //     mailOptions: ["mailOption.follow", "mailOption.comment"]
-  //
-  //   }, // will be passed to the page component as props
-  // }
-}
 
 
 
 
-export default function Profile(props) {
+
+export default function Profile() {
 
   const {I18n, loggedUser, axios}= useAppContext();
   const router = useRouter()
-  const isMyProfile = loggedUser && loggedUser.id === props.id
+  const {id} = router.query
+  const isMyProfile = loggedUser && loggedUser.id === id
   const [profileEffectTrigger, profileTriggerEffect] = useTriggerEffect()
   const [newsEffectTrigger, newsTriggerEffect] = useTriggerEffect()
 
-  const [useNews, setNews] = useState(props.news)
+  const [useNews, setNews] = useState([])
   const [pagination, setPagination] = usePagination()
-  const [profileInfo, setProfileInfo] = useState(props.userInfo)
+  const [profileInfo, setProfileInfo] = useState(undefined)
   const [pinned, setPinned] = useState(undefined)
   const {fillNewsLoggedParams} = useLoggedParamsFiller()
 
@@ -104,7 +58,9 @@ export default function Profile(props) {
   }
 
   useEffect(() => {
-    axios.get(`news`, {params: {pinnedBy: props.id}}).then(res => {
+    if (!id)
+      return
+    axios.get(`news`, {params: {pinnedBy: id}}).then(res => {
       const maybePinned = res.data
       console.log('pinned')
       console.log(res.data)
@@ -112,16 +68,16 @@ export default function Profile(props) {
         setPinned(newsMapper(maybePinned))
     })
 
-    axios.get(`users/${props.id}/following`).then(res => {
+    axios.get(`users/${id}/following`).then(res => {
       const following = res.data
       console.log('following')
       console.log(following)
       if (following) {
-        const isLoggedUserFollowing = following.map(u => u.id).includes(props.id)
+        const isLoggedUserFollowing = following.map(u => u.id).includes(id)
         setProfileInfo(i => ({...i, isLoggedUserFollowing}))
       }
     })
-  }, [newsEffectTrigger])
+  }, [newsEffectTrigger, id])
 
   useEffect(() => {
     axios.get('news', getQueryParams()).then(res => {
@@ -133,8 +89,9 @@ export default function Profile(props) {
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {
-    // setParams(urlBase, ['type'])
-    const relativePath = `users/${props.id}`
+    if (!id)
+      return
+    const relativePath = `users/${id}`
     axios.get(relativePath).then(res => {
       const data = res.data
       if (data && data.newsStats) {
@@ -152,11 +109,15 @@ export default function Profile(props) {
 
   let submitHandlerArray = []
 
-  const RightSide = () => (<div
-      className="d-flex flex-column w-30 justify-content-start pr-5">
-    <div className="card right-card" id="right-card">
-      <div className="profile">
-        {isMyProfile ? <ModalTrigger modalId="profileModal">
+  const RightSide = () => {
+    if (!profileInfo)
+      return <></>
+
+    return <div
+        className="d-flex flex-column w-30 justify-content-start pr-5">
+      <div className="card right-card" id="right-card">
+        <div className="profile">
+          {isMyProfile ? <ModalTrigger modalId="profileModal">
           <span
               className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
               id="pencil_button">
@@ -166,26 +127,26 @@ export default function Profile(props) {
                         </div>
             {I18n("profile.edit")}
                         </span>
-        </ModalTrigger>: <></>}
+          </ModalTrigger>: <></>}
 
-        <ProfilePic image={profileInfo.image} hasImage={profileInfo.hasImage} tier={profileInfo.tier}/>
+          <ProfilePic image={profileInfo.image} hasImage={profileInfo.hasImage} tier={profileInfo.tier}/>
 
-      </div>
-      {profileInfo.hasPositivity ? <PositivityIndicator {...profileInfo.stats}></PositivityIndicator>
-      : <></>}
+        </div>
+        {profileInfo.hasPositivity ? <PositivityIndicator {...profileInfo.stats}></PositivityIndicator>
+            : <></>}
 
-      {isMyProfile ? <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
-        <ModalTrigger  modalId="infoModal">
-          <button
-              className="bg-transparent border-0 btn-size"
-              style={{backgroundImage: 'url(/img/info-svgrepo-com.svg)'}}></button>
-        </ModalTrigger>
-      </Tooltip> : <></>}
-    <Modal id="infoModal" title={I18n("profile.modal.infoTitle")} >
-     <UserPrivileges isJournalist={profileInfo.isJournalist}></UserPrivileges>
-    </Modal>
+        {isMyProfile ? <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
+          <ModalTrigger  modalId="infoModal">
+            <button
+                className="bg-transparent border-0 btn-size"
+                style={{backgroundImage: 'url(/img/info-svgrepo-com.svg)'}}></button>
+          </ModalTrigger>
+        </Tooltip> : <></>}
+        <Modal id="infoModal" title={I18n("profile.modal.infoTitle")} >
+          <UserPrivileges isJournalist={profileInfo.isJournalist}></UserPrivileges>
+        </Modal>
 
-      <img src="/img/front-page-profile.png" className="card-img-top" alt="..."/>
+        <img src="/img/front-page-profile.png" className="card-img-top" alt="..."/>
 
         <div className="card-body">
           <h4 className="mb-0 card-title text-center">
@@ -194,7 +155,7 @@ export default function Profile(props) {
           <div className="d-flex flex-row align-items-center justify-content-center m-2 gap-2">
             <span className="card-text text-muted d-block">{profileInfo.email}</span>
             {(loggedUser && !isMyProfile) ?  <FollowButton userId={profileInfo.id} following={loggedUser && profileInfo.isLoggedUserFollowing}></FollowButton>
-             : <></>}
+                : <></>}
           </div>
 
           <div className="d-flex flex-row align-items-center justify-content-center">
@@ -221,18 +182,19 @@ export default function Profile(props) {
         </div>
 
 
-    </div>
-    {profileInfo.isJournalist ? <div className="card right-card">
-
-      <div className="card-body">
-        {profileInfo.newsStatistics.map(stats => <ProgressBar key={stats.title} {...stats}></ProgressBar>)}
-
       </div>
-    </div> : <></>}
-    <Modal  onClickHandlerArray={submitHandlerArray} id="profileModal" title={I18n("profile.user.settings")}>
-      <EditProfileForm triggerEffect={profileTriggerEffect} handlerArray={submitHandlerArray} {...profileInfo}></EditProfileForm>
-    </Modal>
-  </div>)
+      {profileInfo.isJournalist ? <div className="card right-card">
+
+        <div className="card-body">
+          {profileInfo.newsStatistics.map(stats => <ProgressBar key={stats.title} {...stats}></ProgressBar>)}
+
+        </div>
+      </div> : <></>}
+      <Modal  onClickHandlerArray={submitHandlerArray} id="profileModal" title={I18n("profile.user.settings")}>
+        <EditProfileForm triggerEffect={profileTriggerEffect} handlerArray={submitHandlerArray} {...profileInfo}></EditProfileForm>
+      </Modal>
+    </div>
+  }
 
     const LeftSide = () => (<div className="d-flex flex-column w-70 align-items-start">
       <div className="tab">
@@ -258,7 +220,7 @@ export default function Profile(props) {
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/img/unbiased-logo-circle.png" />
       </Head>
-      <ProfileTabs userId={profileInfo.id}></ProfileTabs>
+      <ProfileTabs userId={id}></ProfileTabs>
       <div className="d-flex flex-column h-100">
         <div className="flex-grow-1 d-flex flex-row">
           <LeftSide></LeftSide>

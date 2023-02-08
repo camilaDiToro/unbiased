@@ -7,20 +7,28 @@ import Modal from "./Modal";
 import {useAppContext} from "../context";
 
 export default function Creator(props) {
-    const {I18n} = useAppContext()
-    const onDelete = () => {
-        alert(`deleted user ${props.id} from admin`)
+    const {I18n, axios} = useAppContext()
+    const onDeleteOrAdd = async () => {
+        if (props.toAdd) {
+            const res = await axios.put(`users/${props.id}/role`, undefined,{
+                params: {role: 'ROLE_ADMIN'}
+            })
+        } else {
+            const res = await axios.delete(`users/${props.id}/role`, undefined,{
+                params: {role: 'ROLE_ADMIN'}
+            })
+        }
         props.triggerEffect()
     }
 
 return <>
     <div className="col mb-4">
-        {props.admin ?         <Modal title={I18n("owner.removeAdminTitle")} body={I18n("owner.removeAdminMsg")} onClickHandler={onDelete} id={`user${props.id}modal`}></Modal>
+        {props.admin ?         <Modal title={I18n(`owner.${props.toAdd ? 'add': 'remove'}AdminTitle`)} body={I18n(`owner.${props.toAdd ? 'add': 'remove'}AdminMsg`)} onClickHandler={onDeleteOrAdd} id={`user${props.id}modal`}></Modal>
          : <></>}        <div className="link">
 
             <div className="card h-100 d-flex flex-row">
                 {props.hasPositivity ? <PositivityIndicator {...props.stats}></PositivityIndicator> : <></>}
-                {props.admin ?                 <ModalTrigger  modalId={`user${props.id}modal`} className="svg-btn w-fit h-fit flex-grow-0 py-1 px-2">✕</ModalTrigger>
+                {props.admin ?                 <ModalTrigger  modalId={`user${props.id}modal`} className="svg-btn w-fit h-fit flex-grow-0 py-1 px-2">{props.toAdd ? '+' : '✕'}</ModalTrigger>
                  : <></>}
                 <div className="d-flex justify-content-between p-2 w-100">
                     <div className="d-flex align-items-center w-auto gap-1">

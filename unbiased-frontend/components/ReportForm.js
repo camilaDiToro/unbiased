@@ -25,7 +25,7 @@ export default function ReportForm(props) {
         if (props.comment) {
             const res = await axios.put(`comments/${props.id}/reports/${loggedUser.id}`, JSON.stringify(json),{
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/vnd.unbiased.commentReportDetail.v1+json',
                 }
             })
         } else {

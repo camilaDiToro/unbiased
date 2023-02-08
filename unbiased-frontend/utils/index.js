@@ -27,9 +27,11 @@ export const useLoggedParamsFiller =  () => {
     const {axios, loggedUser} = useAppContext()
 
 
-    const auxFunc = async (entity, queryParam) => {
+    const auxFunc = async (entity, queryParam, accept) => {
         try {
-            const likedNewsResponse = await axios.get(entity, {params: {[queryParam]: loggedUser.id}}, {authOptional: true})
+            const likedNewsResponse = await axios.get(entity, {params: {[queryParam]: loggedUser.id}, headers: {
+                'Accept': accept
+                }}, {authOptional: true})
             let likedNews = (likedNewsResponse.data || []).map(n => n.id)
             let parsedLink = await parse(likedNewsResponse.headers.get('Link'))
             while (parsedLink && parsedLink.next) {

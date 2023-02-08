@@ -183,7 +183,8 @@ const strings = {
     "tooltip.articleUnsave": "Unsave article",
     "tooltip.commentArticle": "Comment article",
     "tooltip.info": "Information",
-    "tooltip.addAdmin": "Add admin",
+    "tooltip.addAdmin": "Add admins",
+    "tooltip.removeAdmin": "Remove admins",
     "tooltip.pin": "Pin article",
     "tooltip.unpin": "Unpin article",
     "tooltip.infoDisabled": "To enable this option you need to create your first article",
@@ -197,6 +198,8 @@ const strings = {
     //Owner
     "owner.removeAdminTitle": "Are you sure you want to revoke admin privileges?",
     "owner.removeAdminMsg": "By accepting the user will no longer be able to access the administration panel",
+    "owner.addAdminTitle": "Are you sure you want to grant admin privileges?",
+    "owner.addAdminMsg": "By accepting the user will be able to access the administration panel",
 
     // Time Constraint
     "timeConstraint.hour":"Last hour",
@@ -391,7 +394,8 @@ const strings = {
     "tooltip.unpin": "Desfijar noticia",
     "tooltip.info": "Información",
     "tooltip.infoDisabled": "Para habilitar esta caracteristica debes crear tu primer artículo",
-    "tooltip.addAdmin": "Añadir administrador",
+    "tooltip.addAdmin": "Añadir administradores",
+    "tooltip.removeAdmin": "Borrar administradores",
 
     // Mail options
     "mailOption.follow":"Nuevos seguidores",
@@ -402,6 +406,8 @@ const strings = {
     //Owner
     "owner.removeAdminTitle": "¿Está seguro de que quiere quitar los privilegios de administrador?",
     "owner.removeAdminMsg": "Si acepta, el usuario no podrá ingresar más al panel de administradores.",
+    "owner.addAdminTitle": "¿Está seguro de que quiere otorgar privilegios de administrador?",
+    "owner.addAdminMsg": "Si acepta, el usuario podrá ingresar al panel de administradores.",
 
     // Time Constraint
     "timeConstraint.hour":"Última hora",
@@ -413,8 +419,8 @@ const strings = {
 };
 
 export const I18n = (code, params) => {
-  const { locale } = useRouter();
-  const maybeFunc = strings[locale][code];
+  // const { locale } = useRouter();
+  const maybeFunc = strings['en-US'][code];
   if (typeof maybeFunc == "function") {
     return maybeFunc(params);
   }

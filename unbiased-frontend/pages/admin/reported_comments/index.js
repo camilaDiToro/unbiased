@@ -14,22 +14,12 @@ import Head from "next/head";
 import {commentsMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
 
-export async function getServerSideProps(context) {
-    return {
-        props: {
-            news
-        }, // will be passed to the page component as props
-    }
-}
 
-export default function Reported_comments(props){
+export default function Reported_comments(){
 
     const ctx = useAppContext()
     const I18n = ctx.I18n
-    const items = [{text: ctx.I18n("reportOrder.reportCountDesc"), route: "/admin/reported_comments"},
-        {text: ctx.I18n("reportOrder.reportCountAsc"), route: "/admin/reported_comments"},
-        {text: ctx.I18n("reportOrder.reportDateDesc"), route: "/admin/reported_comments"},
-        {text: ctx.I18n("reportOrder.reportDateAsc"), route: "/admin/reported_comments"}]
+
     const router = useRouter()
     const [reportedComments, setReportedComments] = useState([])
     const [effectTrigger, triggerEffect] = useTriggerEffect()

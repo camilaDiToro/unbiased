@@ -216,7 +216,6 @@ public class UserController {
 
     @DELETE
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
-    @PreAuthorize("@ownerCheck.userMatches(#followerId)")
     @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
     public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
         final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorizedException::new);
@@ -233,6 +232,7 @@ public class UserController {
 
     @PUT
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.isAdmin()")
     @Path(value = "/{userId:[0-9]+}/role")
     public Response addRole(@PathParam("userId") final long userId, @QueryParam("role") final String role) {
         if(!role.equals(Role.ROLE_ADMIN.getRole())){
@@ -249,6 +249,7 @@ public class UserController {
 
     @DELETE
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.isAdmin()")
     @Path(value = "/{userId:[0-9]+}/role")
     public Response deleteRole(@PathParam("userId") final long userId, @QueryParam("role") final String role) {
         if(!role.equals(Role.ROLE_ADMIN.getRole())){

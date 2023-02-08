@@ -39,11 +39,16 @@ public class OwnerCheck {
     }
 
     public boolean canDeleteNews(long newsId) {
-        return checkNewsOwnership(newsId) || userService.isUserAdmin(securityService.getCurrentUser().orElseThrow(UserNotFoundException::new));
+        return checkNewsOwnership(newsId) || isAdmin();
     }
 
+    public boolean isAdmin() {
+        return userService.isUserAdmin(securityService.getCurrentUser().orElseThrow(UserNotFoundException::new));
+    }
+
+
     public boolean canDeleteComment(long commentId) {
-        return checkCommentOwnership(commentId) || userService.isUserAdmin(securityService.getCurrentUser().orElseThrow(UserNotFoundException::new));
+        return checkCommentOwnership(commentId) || isAdmin();
     }
 
     public boolean checkCommentOwnership(long commentId) {

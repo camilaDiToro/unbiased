@@ -5,30 +5,28 @@ import Modal from "../../../../components/Modal";
 import ModerationPanel from "../../../../components/ModerationPanel";
 import Link from "next/link";
 import ReportReason from "../../../../components/ReportReason";
-import {reportInfo} from "../../../../hardcoded";
-import axios from "axios";
-import {baseURL} from "../../../../constants";
+import {useEffect, useState} from "react";
 
 
-export async function getServerSideProps(context) {
-    const id = parseInt(context.query.id)
-    const res = await axios.get(`${baseURL}comments/${id}/reports`)
-    return {
-        props: {
-            reportInfo: res.data,
-            id
-        }, // will be passed to the page component as props
-    }
-}
 
 export default function ReportedCommentDetail(props){
 
     const {I18n, axios} = useAppContext()
-    const actualReportInfo = props.reportInfo
     const router = useRouter()
 
+    const [reportInfo, setReportInfo] = useState([])
+    const {id} = router.query
+    useEffect(() => {
+        if (!id)
+            return
+        axios.get(`comments/${id}/reports`).then (res => {
+            setReportInfo(res.data || [])
+        })
+    }, [id])
+
+
     const onDelete = async () => {
-        await axios.delete(`comments/${props.id}`)
+        await axios.delete(`comments/${id}`)
         await router.push('/admin/reported_comments')
     }
     return (<>
@@ -56,7 +54,7 @@ export default function ReportedCommentDetail(props){
                         </thead>
                         <tbody>
                         {
-                            actualReportInfo.map((r)=><ReportReason key={r.user} {...r}></ReportReason>)
+                            reportInfo.map((r)=><ReportReason key={r.user} {...r}></ReportReason>)
                         }
                         </tbody>
                     </table>
