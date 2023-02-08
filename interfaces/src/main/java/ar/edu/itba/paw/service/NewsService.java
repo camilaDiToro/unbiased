@@ -32,10 +32,8 @@ public interface NewsService {
     void setRating(long userId, long newsId , Rating rating);
 
 
-    void saveNews(User currentUser, long newsId);
-
-
-    void unsaveNews(User currentUser, long newsId);
+    void saveNews(long userId, long newsId);
+    void unsaveNews(long userId, long newsId);
 
     boolean toggleSaveNews(final User currentUser, long newsId);
     void deleteNews(News news);

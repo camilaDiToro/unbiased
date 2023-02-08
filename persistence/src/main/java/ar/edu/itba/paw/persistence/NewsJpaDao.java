@@ -234,7 +234,6 @@ public class NewsJpaDao implements NewsDao {
     @Override
     public void removeSaved(News news, User user) {
         user.getSavedNews().remove(new Saved(news, user.getId()));
-
     }
 
     @Override

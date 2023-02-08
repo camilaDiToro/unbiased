@@ -254,7 +254,7 @@ public class NewsController {
 
     @DELETE
     @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
-        @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         newsService.setRating(userId, newsId, Rating.NO_RATING);
         return Response.ok().build();
@@ -272,9 +272,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeBookmark(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        newsService.unsaveNews(user, newsId);
+        newsService.unsaveNews(userId, newsId);
         return Response.ok().build();
     }
 
@@ -282,9 +280,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response save(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        newsService.saveNews(user, newsId);
+        newsService.saveNews(userId, newsId);
         return Response.ok().build();
     }
 

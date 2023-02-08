@@ -176,24 +176,22 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public void saveNews(final User currentUser, long newsId) {
+    public void saveNews(long userId, long newsId) {
 
-        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
-
-        newsDao.saveNews(news, currentUser);
-        news.setUserSpecificVariables(currentUser.getId());
+        final News news = newsDao.getById(newsId, userId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        newsDao.saveNews(news, user);
+        news.setUserSpecificVariables(userId);
 
     }
 
     @Override
     @Transactional
-    public void unsaveNews(final User currentUser, long newsId) {
-
-        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
-
-        newsDao.removeSaved(news, currentUser);
-        news.setUserSpecificVariables(currentUser.getId());
-
+    public void unsaveNews(long userId, long newsId) {
+        final News news = newsDao.getById(newsId, userId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        newsDao.removeSaved(news, user);
+        news.setUserSpecificVariables(userId);
     }
 
     @Override
