@@ -76,6 +76,8 @@ public class OwnerCheck {
         return mayBeUser.filter(user -> user.getId() == userId).isPresent();
     }
 
+
+
     public boolean userMatches(long userId){
         Optional<User> mayBeUser = securityService.getCurrentUser();
         return mayBeUser.filter(user -> user.getId() == userId).isPresent();

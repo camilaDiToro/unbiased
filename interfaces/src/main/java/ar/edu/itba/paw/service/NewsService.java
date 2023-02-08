@@ -29,7 +29,7 @@ public interface NewsService {
     Optional<News> getPinnedByUserNews(User user);
 
     Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query);
-    void setRating(final User currentUser, News news, Rating rating);
+    void setRating(long userId, long newsId , Rating rating);
 
 
     void saveNews(User currentUser, long newsId);

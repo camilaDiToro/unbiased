@@ -6,6 +6,7 @@ import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.CategoryStatistics;
 import ar.edu.itba.paw.model.news.Comment;
@@ -147,7 +148,10 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public void setRating(final User currentUser, News news, Rating rating) {
+    public void setRating(long userId, long newsId, Rating rating) {
+
+        User currentUser = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
 
         final PositivityStats.Positivity oldp = news.getPositivityStats().getPositivity();
         final Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
@@ -155,7 +159,6 @@ public class NewsServiceImpl implements NewsService {
             upvoteMap.remove(currentUser.getId());
             return;
         }
-        final long userId = currentUser.getId();
 
         upvoteMap.putIfAbsent(userId, new Upvote(news, currentUser.getId()));
         upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));

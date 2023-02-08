@@ -198,13 +198,13 @@ public class NewsController {
 
     @PUT
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @PreAuthorize("@ownerCheck.newsOwnership(#newsId)")
     @Path("/{newsId:[0-9]+}/image")
     public Response updateNewsImage(@PathParam("newsId") long newsId,
                                  @FormDataParam("image") final FormDataBodyPart newsBodyPart,
                                  @FormDataParam("image") byte[] bytes) {
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final String imageType = newsBodyPart.getMediaType().toString();
-        newsService.setNewsImage(news.getNewsId(), bytes, imageType);
+        newsService.setNewsImage(newsId, bytes, imageType);
         final URI location = uriInfo.getAbsolutePathBuilder().build();
         return Response.created(location).build();
     }
@@ -213,9 +213,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        newsService.setRating(user, news, Rating.UPVOTE);
+        newsService.setRating(userId, newsId, Rating.UPVOTE);
         return Response.ok().build();
     }
 
@@ -223,9 +221,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        newsService.setRating(user, news, Rating.DOWNVOTE);
+        newsService.setRating(userId, newsId, Rating.DOWNVOTE);
         return Response.ok().build();
     }
 
@@ -252,9 +248,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
         @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        newsService.setRating(user, news, Rating.NO_RATING);
+        newsService.setRating(userId, newsId, Rating.NO_RATING);
         return Response.ok().build();
     }
 
@@ -262,9 +256,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        newsService.setRating(user, news, Rating.NO_RATING);
+        newsService.setRating(userId, newsId, Rating.NO_RATING);
         return Response.ok().build();
     }
 
