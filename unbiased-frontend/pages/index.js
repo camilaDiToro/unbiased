@@ -16,6 +16,7 @@ import Pagination from "../components/Pagination";
 import usePagination from "../pagination";
 import {newsMapper, userMapper} from "../mappers"
 import TimeSelector from "../components/TimeSelector";
+import { useTranslation } from "react-i18next";
 
 export default function Home(props) {
   const router = useRouter()
@@ -24,7 +25,7 @@ export default function Home(props) {
   const [useUsers, setUsers] = useState([])
   const [topCreators, setTopCreators] = useState([])
   const [pagination, setPagination] = usePagination()
-
+  const {t} = useTranslation()
   const {I18n, axios} = useAppContext()
   const {fillNewsLoggedParams} = useLoggedParamsFiller()
 
@@ -71,7 +72,7 @@ export default function Home(props) {
   return (
     <>
     <Head>
-      <title>unbiased - Home </title>
+      <title>unbiased - Home {t("key")} </title>
     </Head>
       {router.query.search  ? <></> : <NewsCategoryTabs></NewsCategoryTabs>}
       <div className="d-flex flex-column flex-xl-row  flex-grow-1">

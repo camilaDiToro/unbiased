@@ -4,14 +4,15 @@ const isProd = process.env.ENV === 'prod'
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // i18n: {
+  // customI18n: {
   //   locales: ["en-US","es-ES"],
   //   defaultLocale: "en-US",
   // },
   // esmExternals: true
   basePath: isProd ? '/paw-2022b-6' : undefined,
+
   env : {
-    baseURL: new URL(isProd ? 'http://localhost/paw-2022b-6' : 'http://localhost:8080/webapp_war_exploded/api'),
+    baseURL: isProd ? 'http://localhost/paw-2022b-6/api' : 'http://localhost:8080/webapp_war_exploded/api',
     resourcePrefix: isProd ? '/paw-2022b-6' : '.'
   }
 }

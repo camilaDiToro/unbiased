@@ -1,11 +1,12 @@
 import {createContext, useContext, useEffect, useState} from 'react';
-import I18n from "../i18n"
+import {useI18n} from "../customI18n"
 import axios from "axios";
 import {baseURL} from "../constants";
 import {useRouter} from "next/router";
 export const AppContext = createContext(null);
 
 export default function AppWrapper({ children }) {
+    const I18n = useI18n()
     const [errorDetails, setErrorDetails] = useState({})
     let newJwt = {}
     if (typeof window !== 'undefined') {
@@ -14,14 +15,10 @@ export default function AppWrapper({ children }) {
     }
     const jwtState = useState(newJwt)
     const [loggedUser, setLoggedUser] = useState(null)
-    // useEffect(()=> {
-    //
-    //     alert('About to set to ' + JSON.stringify(newJwt))
-    //     jwtState[1](newJwt)
-    // }, [])
+
     const router = useRouter()
     const axiosInstance = axios.create({
-        baseURL: baseURL.href
+        baseURL
     })
 
 

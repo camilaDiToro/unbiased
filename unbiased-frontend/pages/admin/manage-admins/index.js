@@ -2,7 +2,6 @@ import ModerationPanel from "../../../components/ModerationPanel";
 import {useAppContext} from "../../../context";
 import Pagination from "../../../components/Pagination";
 import Head from "next/head";
-import i18n from "../../../i18n";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {useTriggerEffect} from "../../../utils";
@@ -85,30 +84,7 @@ export default function AddAdmin(props){
                 <title>{I18n("moderation.panel")}</title>
             </Head>
             <div className="d-flex h-100 flex-column">
-                {/*<Modal onClickHandler={addAdmin} acceptText={I18n("tooltip.addAdmin")} id="addAdminModal" title={I18n("tooltip.addAdmin")}>*/}
-                {/*    <div id="form-login-index" >*/}
-                {/*        <div className="d-flex flex-column align-items-center">*/}
-                {/*            <div className="d-flex align-items-center">*/}
-                {/*                <img className="size-img-modal-login align-self-center"*/}
-                {/*                     src="/img/profile-svgrepo-com.svg" alt="..."/>*/}
-                {/*                <label htmlFor="email-input" className="sr-only">*/}
-                {/*                    {I18n("login.mail.address")}*/}
-                {/*                </label>*/}
-                {/*                <input onChange={(e) => setEmail(e.target.value)} value={email} className="form-control text-white w-100 mb-2" id="email-input"*/}
-                {/*                            placeholder={I18n("login.mail.address")}/>*/}
 
-                {/*            </div>*/}
-                {/*            /!*<div className="my-1">*!/*/}
-                {/*            /!*    <form:errors cssClass="text-danger" path="email" element="small"/>*!/*/}
-                {/*            /!*</div>*!/*/}
-
-
-                {/*            /!*<button onClick={addAdmin} className="btn btn-info" type="submit">*!/*/}
-                {/*            /!*    {I18n("tooltip.addAdmin")}*!/*/}
-                {/*            /!*</button>*!/*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*</Modal>*/}
                 <div className="flex-grow-1 d-flex flex-row">
 
                     <ModerationPanel/>
@@ -117,11 +93,11 @@ export default function AddAdmin(props){
                             <div className=" d-flex w-100 m-2 my-lg-0 ">
                                 <div className="d-flex w-100 justify-content-center">
                                     <input onKeyDown={search} value={details} id="searchBar_addAdmin" style={{backgroundImage: "url(/img/loupe-svgrepo-com.svg)"}} className="search-form search form-control text-white w-55"
-                                           type="search" placeholder={i18n("moderation.searchAdmin")} onChange={handleChange}/>
+                                           type="search" placeholder={I18n("moderation.searchAdmin")} onChange={handleChange}/>
                                 </div>
                             </div>
 
-                            <Tooltip text={i18n(`tooltip.${addAdminMode ? 'remove' : 'add'}Admin`)}>
+                            <Tooltip text={I18n(`tooltip.${addAdminMode ? 'remove' : 'add'}Admin`)}>
                                 <button onClick={showNotAdmins}
                                         className="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent"
                                         style={{backgroundImage: `url(/img/${addAdminMode ? 'less' : 'plus'}-svgrepo-com.svg)`}} >
