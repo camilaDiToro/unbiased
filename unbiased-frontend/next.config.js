@@ -9,7 +9,11 @@ const nextConfig = {
   //   defaultLocale: "en-US",
   // },
   // esmExternals: true
-  basePath: isProd ? '/paw-2022b-6' : undefined
+  basePath: isProd ? '/paw-2022b-6' : undefined,
+  env : {
+    baseURL: new URL(isProd ? 'http://localhost/paw-2022b-6' : 'http://localhost:8080/webapp_war_exploded/api'),
+    resourcePrefix: isProd ? '/paw-2022b-6' : '.'
+  }
 }
 
 module.exports = removeImports(nextConfig)
