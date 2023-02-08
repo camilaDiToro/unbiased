@@ -170,12 +170,10 @@ public class UserController {
     @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
     @Path(value = "/{userId:[0-9]+}/pinnedNews")
     public Response pinNews(@PathParam("userId") final long userId, @QueryParam("newsId") final long newsId) {
-
         final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         userService.pinNews(user, news);
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
-
     }
 
     @DELETE
@@ -189,20 +187,6 @@ public class UserController {
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinned the news", user.getUsername()))).build();
 
     }
-
-    /*@GET
-    @Path(value = "/{userId:[0-9]+}/following")
-    @Produces(value = {CustomMediaType.USER_LIST_V1})
-    public Response following(@PathParam("userId")  final long userId) {
-
-        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        List<UserDto> users = userService.getFollowing(user).stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
-
-        if (users.isEmpty()) {
-            return Response.noContent().build();
-        }
-        return Response.ok(new GenericEntity<List<UserDto>>(users){}).build();
-    }*/
 
     @PUT
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
