@@ -138,12 +138,12 @@ public class UserController {
     }
 
     @PUT
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Path("/{userId:[0-9]+}/image")
     public Response updateUserImage(@PathParam("userId") long userId,
                                     @FormDataParam("image") final FormDataBodyPart imageBodyPart,
                                     @FormDataParam("image") byte[] bytes) {
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         final String imageType = imageBodyPart.getMediaType().toString();
         userService.setUserImage(userId, bytes, imageType);
         final URI location = uriInfo.getAbsolutePathBuilder().build();
