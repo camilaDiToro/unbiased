@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-@Provider
+//@Provider
 @Produces(value = { CustomMediaType.ERROR_V1 })
 public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplicationException> {
 
