@@ -199,8 +199,8 @@ public class UserJpaDao implements UserDao{
         final int totalPages = getTotalPagesGetAdmins(search);
         page = Math.min(page, totalPages);
 
-        final Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query escape '\\'  or LOWER(u.email) LIKE :query escape '\\' ) " +
-                "and u.status != 'UNABLE' and user_role.user_role != 'ROLE_ADMIN' and user_role.user_role != 'ROLE_OWNER' LIMIT :pageSize OFFSET :offset").setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%");
+        final Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query escape '\\'  or LOWER(u.email) LIKE :query escape '\\' ) "+
+                "              and u.status <> 'UNABLE' and user_id not in (select user_id from user_role where user_role = 'ROLE_ADMIN' or user_role = 'ROLE_OWNER') LIMIT :pageSize OFFSET :offset").setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%");
 
         final List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
         return new Page<>(users, page,totalPages);

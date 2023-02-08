@@ -57,15 +57,15 @@ export default function ModerationPanel(){
             <li className="nav-item li-no-dots">
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
 
-                    {splitUrl === 'add_admin' ?
-                        <Link className="mb-2 nav-link select pl-0" href="/admin/add_admin">
+                    {splitUrl === 'manage-admins' ?
+                        <Link className="mb-2 nav-link select pl-0" href="/admin/manage-admins">
                             <img className="mb-2 moderation-img" src="/img/add-user-svgrepo-com.svg" alt="..."/>
                             {ctx.I18n("moderation.manage")}
                         </Link>
 
                         :
 
-                        <Link className="mb-2 nav-link selected pl-0" href="/admin/add_admin">
+                        <Link className="mb-2 nav-link selected pl-0" href="/admin/manage-admins">
                             <img className="mb-2 moderation-img" src="/img/add-user-svgrepo-com.svg" alt="..."/>
                             {ctx.I18n("moderation.manage")}
                         </Link>

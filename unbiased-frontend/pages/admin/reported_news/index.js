@@ -13,15 +13,8 @@ import Head from "next/head";
 import {newsMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
 
-export async function getServerSideProps(context) {
-    return {
-        props: {
-            news
-        }, // will be passed to the page component as props
-    }
-}
 
-export default function Reported_news(props){
+export default function Reported_news(){
     const {I18n, axios}= useAppContext()
     const [pagination, setPagination] = usePagination()
     const router = useRouter()
