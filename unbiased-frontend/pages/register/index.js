@@ -49,7 +49,7 @@ export default function Login() {
     return(
         <div className="d-flex flex-column justify-content-center align-items-center height-100vh">
 
-            {/*TODO: i18n to all inputs*/}
+            {/*TODO: customI18n to all inputs*/}
             <div className="form-signIn d-flex flex-column align-items-center " onSubmit={(e)=>{handleSubmit(e)}}>
 
                 <h1 id="title-log" className="logo mb-3">

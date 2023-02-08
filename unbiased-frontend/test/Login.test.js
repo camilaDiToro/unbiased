@@ -4,9 +4,9 @@
 // import AppWrapper from "../context";
 // import {createMockRouter} from "./test_utils/createMockRouter";
 // import {RouterContext} from "next/dist/shared/lib/router-context";
-// import {I18n} from "../i18n"
+// import {I18n} from "../customI18n"
 //
-// jest.mock('../i18n', () => ({
+// jest.mock('../customI18n', () => ({
 //     I18n: jest.fn(),
 // }));
 //
@@ -75,13 +75,13 @@ import React, {useState} from 'react';
 import {render, screen, waitFor} from '@testing-library/react';
 import {AppContext} from "../context";
 import Login from "../pages/login";
-import {I18nTesting} from "../i18n";
+import {I18nTesting} from "../customI18n";
 import {RouterContext} from "next/dist/shared/lib/router-context";
 import {createMockRouter} from "./test_utils/createMockRouter";
 import '@testing-library/jest-dom'
 import userEvent from "@testing-library/user-event";
 
-// jest.mock('../i18n', () => ({
+// jest.mock('../customI18n', () => ({
 //     I18n: jest.fn(()=>{return 'Hello world'}),
 // }));
 
@@ -105,7 +105,7 @@ describe('Login test', ()=>{
         );
     })
 
-    test('MyComponent should display the correct value from i18n context', () => {
+    test('MyComponent should display the correct value from customI18n context', () => {
 
         const button = screen.getByRole('button', {
             name: /Log in/i,
