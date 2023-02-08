@@ -17,7 +17,7 @@ import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CommentDto;
-import ar.edu.itba.paw.webapp.dto.ReportDetailDto;
+import ar.edu.itba.paw.webapp.dto.NewsReportDetailDto;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -100,8 +100,8 @@ public class CommentController {
     @Produces(value = {CustomMediaType.COMMENT_REPORT_DETAIL_LIST_V1})
     public Response getNewsReportDetail(@PathParam("commentId") final long commentId){
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        List<ReportDetailDto> reportList = comment.getReports().stream().map(d -> ReportDetailDto.fromReportedComment(uriInfo, d)).collect(Collectors.toList());
-        return Response.ok(new GenericEntity<List<ReportDetailDto>>(reportList) {}).build();
+        List<NewsReportDetailDto> reportList = comment.getReports().stream().map(d -> NewsReportDetailDto.fromReportedComment(uriInfo, d)).collect(Collectors.toList());
+        return Response.ok(new GenericEntity<List<NewsReportDetailDto>>(reportList) {}).build();
     }
 
     @POST

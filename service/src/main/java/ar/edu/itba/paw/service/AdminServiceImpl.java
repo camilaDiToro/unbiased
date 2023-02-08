@@ -41,10 +41,13 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     @Transactional
-    public void reportNews(long userId, long newsId, ReportReason reportReason) {
+    public ReportDetail reportNews(long userId, long newsId, ReportReason reportReason) {
         final User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         final News news = newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        newsDao.reportNews(news,user,reportReason);
+        if(newsDao.isReportedByUser(news, user)){
+            return null;
+        }
+        return newsDao.reportNews(news,user,reportReason);
     }
 
     @Override
@@ -77,11 +80,6 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public Page<ReportedComment> getReportedCommentDetail(int page, long commentId) {
         return commentDao.getReportedCommentDetail(page, commentId);
-    }
-
-    @Override
-    public boolean hasReported(long userId, long newsId) {
-        return newsDao.hasReported(newsId, userId);
     }
 
     @Override

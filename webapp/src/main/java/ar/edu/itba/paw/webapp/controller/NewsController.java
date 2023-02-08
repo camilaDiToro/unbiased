@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 
+import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
@@ -22,8 +23,10 @@ import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
+import ar.edu.itba.paw.webapp.api.exceptions.MissingArgumentException;
 import ar.edu.itba.paw.webapp.dto.NewsDto;
-import ar.edu.itba.paw.webapp.dto.ReportDetailDto;
+import ar.edu.itba.paw.webapp.dto.NewsReportDetailDto;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
@@ -193,8 +196,8 @@ public class NewsController {
     @Produces(value = {CustomMediaType.NEWS_REPORT_LIST_V1})
     public Response getNewsReportDetail(@PathParam("newsId") final long newsId){
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        List<ReportDetailDto> reportList = news.getReports().stream().map(d -> ReportDetailDto.fromReportDetail(uriInfo, d)).collect(Collectors.toList());
-        return Response.ok(new GenericEntity<List<ReportDetailDto>>(reportList) {}).build();
+        List<NewsReportDetailDto> reportList = news.getReports().stream().map(d -> NewsReportDetailDto.fromReportDetail(uriInfo, d)).collect(Collectors.toList());
+        return Response.ok(new GenericEntity<List<NewsReportDetailDto>>(reportList) {}).build();
     }
 
     @PUT
@@ -215,7 +218,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         newsService.setRating(userId, newsId, Rating.UPVOTE);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -223,7 +226,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         newsService.setRating(userId, newsId, Rating.DOWNVOTE);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     /**
@@ -233,6 +236,7 @@ public class NewsController {
      * a 200 (OK) status code if the action has been enacted and the response message includes a representation describing the status.
      */
     @DELETE
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path("/{newsId:[0-9]+}")
     @PreAuthorize("@ownerCheck.canDeleteNews(#newsId)")
     public Response delete(@PathParam("newsId") final long newsId){
@@ -244,12 +248,19 @@ public class NewsController {
         return Response.ok(SimpleMessageDto.fromString(String.format("The news of id %d has been deleted", newsId))).build();
     }
 
-    @PUT
-    @Path("/{newsId:[0-9]+}/reports/{userId:[0-9]+}")
-    @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response report(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId, @Valid final ReportNewsForm reportForm){
-        adminService.reportNews(userId, newsId, ReportReason.getByValue(reportForm.getReason()));
-        return Response.ok().build();
+    @POST
+    @Produces({CustomMediaType.NEWS_REPORT_V1})
+    @Path("/{newsId:[0-9]+}/reports")
+    @PreAuthorize("@ownerCheck.userMatches(#reportForm.userId)")
+    public Response report(@PathParam("newsId") final long newsId, @Valid final ReportNewsForm reportForm){
+        if(reportForm == null){
+            throw new MissingArgumentException("To report an article the reason of reporting must be provided");
+        }
+        ReportDetail reportDetail = adminService.reportNews(reportForm.getUserId(), newsId, ReportReason.getByValue(reportForm.getReason()));
+        if(reportDetail == null){
+            throw new InvalidRequestParamsException("Each user can report an article just once");
+        }
+        return Response.ok(NewsReportDetailDto.fromReportDetail(uriInfo, reportDetail)).build();
     }
 
     @DELETE
