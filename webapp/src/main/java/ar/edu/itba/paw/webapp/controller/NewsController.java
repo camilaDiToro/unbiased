@@ -84,7 +84,7 @@ public class NewsController {
     }
 
     @GET
-    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = {CustomMediaType.NEWS_LIST_V1})
     public Response listNews(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search,
                              @QueryParam("cat") @DefaultValue("ALL") final String category,
                              @QueryParam("order") @DefaultValue("TOP") final String order,
@@ -179,7 +179,7 @@ public class NewsController {
 
     @GET
     @Path("/{newsId:[0-9]+}")
-    @Produces(value = {CustomMediaType.USER_V1})
+    @Produces(value = {CustomMediaType.NEWS_V1})
     public Response getNews(@PathParam("newsId") final long newsId){
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
 
@@ -189,7 +189,7 @@ public class NewsController {
 
     @GET
     @Path("/{newsId:[0-9]+}/reports")
-    @Produces(value = {CustomMediaType.USER_V1})
+    @Produces(value = {CustomMediaType.NEWS_REPORT_LIST_V1})
     public Response getNewsReportDetail(@PathParam("newsId") final long newsId){
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         List<ReportDetailDto> reportList = news.getReports().stream().map(d -> ReportDetailDto.fromReportDetail(uriInfo, d)).collect(Collectors.toList());
