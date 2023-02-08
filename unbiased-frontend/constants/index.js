@@ -1,2 +1,3 @@
-export const baseURL = 'http://localhost/paw-2022b-6/api'
-//export const baseURL = 'http://localhost:8080/webapp_war_exploded/api')
+
+export const baseURL = process.env.baseURL
+export const resourcePrefix = process.env.resourcePrefix
