@@ -19,7 +19,7 @@ export default function Article(props) {
 
     const isMyProfile = loggedUser && loggedUser.id === props.creator.id
 
-
+    console.log(props)
 
     return <>
 
