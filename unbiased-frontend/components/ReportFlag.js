@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import ReportForm from "./ReportForm";
 import ModalTrigger from "./ModalTrigger";
 import {useState} from "react";
+import {getResourcePath} from "../constants";
 
 export default function ReportFlag(props) {
 
@@ -19,7 +20,7 @@ export default function ReportFlag(props) {
             <Tooltip text={tooltipMap[`${!!props.reported}`]} position="bottom" >
                 <img id="save"
                      className={`icon-index ${props.reported ? '' : 'svg-btn'} svg-bookmark`}
-                     src={`/img/flag${props.reported ? '-clicked' : ''}.svg`}/>
+                     src={getResourcePath(`/img/flag${props.reported ? '-clicked' : ''}.svg`)}/>
             </Tooltip>
         </ModalTrigger>
         {props.reported ? <></> : <Modal onClickHandlerArray={handlerArray} title={I18n(props.comment ? "showNews.reportCommentQuestion" : "showNews.reportNewsQuestion")} id={`report${props.comment ? 'Comment' : 'Article'}${props.id}`}>

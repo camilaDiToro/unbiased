@@ -5,6 +5,7 @@ import {useAppContext} from "../context";
 import types from "../types";
 import {useState} from "react";
 import ProfilePic from "./ProfilePic";
+import {getResourcePath} from "../constants";
 
 
 
@@ -31,7 +32,7 @@ export default function Navbar(props) {
     return <nav className="d-flex navbar navbar-dark navbar-expand-sm bg-primary text-white h-75px">
         <div className="d-flex container-fluid h-100">
             <Link className="navbar-brand" href="/">
-                <img src="/img/unbiased_navbar.png" height="35" alt=""
+                <img src={getResourcePath("/img/unbiased_navbar.png")} height="35" alt=""
                      className="d-inline-block align-middle mr-2"/>
                 <span className="text-info">unbiased</span>
             </Link>
@@ -51,7 +52,7 @@ export default function Navbar(props) {
                 {router.pathname.startsWith('/admin') ? <></> : <form id="search-form" className="form-inline my-2 my-lg-0" method="GET" action="/TOP">
                     <div>
                         <input
-                            style={{backgroundImage: 'url("/img/loupe-svgrepo-com.svg")'}}
+                            style={{backgroundImage: `url("${getResourcePath("/img/loupe-svgrepo-com.svg")}")`}}
                             className="search-form search form-control text-white"
                             type="search" placeholder={I18n("navbar.search")} id="query" name="query"
                             value={query}
@@ -90,7 +91,7 @@ export default function Navbar(props) {
                             <div className="text-decoration-none text-white"
                             >
                                 <img className="profile-img"
-                                     src="/img/profile-svgrepo-com.svg"/>
+                                     src={getResourcePath("/img/profile-svgrepo-com.svg")}/>
                                 {I18n("navbar.myProfile")}
                             </div>
                         </Link>
@@ -100,7 +101,7 @@ export default function Navbar(props) {
                             <div className="text-decoration-none text-white"
                             >
                                 <img className="moderation-img"
-                                     src="/img/panel-svgrepo-com.svg" alt="..."/>
+                                     src={getResourcePath("/img/panel-svgrepo-com.svg")} alt="..."/>
                                 {I18n("navbar.adminPanel")}
                             </div>
                         </Link>: <></>}
@@ -109,7 +110,7 @@ export default function Navbar(props) {
                         <button className="dropdown-item " onClick={() => jwtState[1]({})}>
                             <div className="text-decoration-none text-white" >
                                 <img className="moderation-img"
-                                     src="/img/log-out-svgrepo-com.svg" alt="..."/>
+                                     src={getResourcePath("/img/log-out-svgrepo-com.svg")} alt="..."/>
                                 {I18n("navbar.logout")}
                             </div>
                         </button>

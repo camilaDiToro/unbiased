@@ -10,6 +10,7 @@ import Creator from "../../../components/Creator";
 import {userMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
 import Tooltip from "../../../components/Tooltip";
+import {getResourcePath} from "../../../constants";
 
 
 export default function AddAdmin(props){
@@ -92,7 +93,7 @@ export default function AddAdmin(props){
                         <div className="w-100 my-3 d-flex flex-row justify-content-center">
                             <div className=" d-flex w-100 m-2 my-lg-0 ">
                                 <div className="d-flex w-100 justify-content-center">
-                                    <input onKeyDown={search} value={details} id="searchBar_addAdmin" style={{backgroundImage: "url(/img/loupe-svgrepo-com.svg)"}} className="search-form search form-control text-white w-55"
+                                    <input onKeyDown={search} value={details} id="searchBar_addAdmin" style={{backgroundImage: `url("${getResourcePath("/img/loupe-svgrepo-com.svg")}")`}} className="search-form search form-control text-white w-55"
                                            type="search" placeholder={I18n("moderation.searchAdmin")} onChange={handleChange}/>
                                 </div>
                             </div>
@@ -100,7 +101,7 @@ export default function AddAdmin(props){
                             <Tooltip text={I18n(`tooltip.${addAdminMode ? 'remove' : 'add'}Admin`)}>
                                 <button onClick={showNotAdmins}
                                         className="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent"
-                                        style={{backgroundImage: `url(/img/${addAdminMode ? 'less' : 'plus'}-svgrepo-com.svg)`}} >
+                                        style={{backgroundImage: `url(${getResourcePath(`/img/${addAdminMode ? 'less' : 'plus'}-svgrepo-com.svg`)})`}} >
                                 </button>
                             </Tooltip>
 

@@ -21,6 +21,7 @@ import {useLoggedParamsFiller, useTriggerEffect, useURLWithParams} from "../../.
 import Pagination from "../../../components/Pagination";
 import {newsMapper, userMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
+import {getResourcePath} from "../../../constants";
 
 
 
@@ -123,7 +124,7 @@ export default function Profile() {
               id="pencil_button">
                         <div className="position-relative img-container-profile mr-1 d-flex justify-content-center align-items-center">
                             <img className="position-relative object-fit-contain"
-                                 src="/img/pencil-edit.png" alt="..."/>
+                                 src={getResourcePath("/img/pencil-edit.png")} alt="..."/>
                         </div>
             {I18n("profile.edit")}
                         </span>
@@ -139,14 +140,14 @@ export default function Profile() {
           <ModalTrigger  modalId="infoModal">
             <button
                 className="bg-transparent border-0 btn-size"
-                style={{backgroundImage: 'url(/img/info-svgrepo-com.svg)'}}></button>
+                style={{backgroundImage: `url(${getResourcePath("/img/info-svgrepo-com.svg")})`}}></button>
           </ModalTrigger>
         </Tooltip> : <></>}
         <Modal id="infoModal" title={I18n("profile.modal.infoTitle")} >
           <UserPrivileges isJournalist={profileInfo.isJournalist}></UserPrivileges>
         </Modal>
 
-        <img src="/img/front-page-profile.png" className="card-img-top" alt="..."/>
+        <img src={getResourcePath("/img/front-page-profile.png")} className="card-img-top" alt="..."/>
 
         <div className="card-body">
           <h4 className="mb-0 card-title text-center">

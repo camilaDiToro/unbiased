@@ -422,8 +422,8 @@ export const useI18n = () => {
   const {t} = useTranslation()
 
   return (code, params) => {
-
-    return t(code, params);
+    const paramObj = params ? {count: params[0]} : undefined
+    return t(code, paramObj);
   };
 };
 

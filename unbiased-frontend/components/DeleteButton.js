@@ -4,6 +4,7 @@ import types from "../types";
 import ModalTrigger from "./ModalTrigger";
 import Modal from "./Modal";
 import {useRouter} from "next/router";
+import {getResourcePath} from "../constants";
 
 export default function DeleteButton(props) {
     const {I18n, loggedUser, axios} = useAppContext()
@@ -27,7 +28,7 @@ export default function DeleteButton(props) {
                 <button  className="btn bin-modal"
                          id="bin_button">
                     <Tooltip text={I18n(props.comment ? "moderation.deleteComment" : "tooltip.deleteNews")} position="bottom">
-                        <img src="/img/bin-svgrepo-com.svg" alt="..."
+                        <img src={getResourcePath("/img/bin-svgrepo-com.svg")} alt="..."
                              className="icon-profile"
                         />
                     </Tooltip>

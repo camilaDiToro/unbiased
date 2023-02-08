@@ -72,7 +72,7 @@ export default function Home(props) {
   return (
     <>
     <Head>
-      <title>unbiased - Home {t("key")} </title>
+      <title>unbiased - Home {I18n("interactions", [3])}</title>
     </Head>
       {router.query.search  ? <></> : <NewsCategoryTabs></NewsCategoryTabs>}
       <div className="d-flex flex-column flex-xl-row  flex-grow-1">

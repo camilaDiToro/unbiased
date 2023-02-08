@@ -17,6 +17,7 @@ import DeleteButton from "../../../components/DeleteButton";
 import PinButton from "../../../components/PinButton";
 import {commentsMapper, newsMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
+import {getResourcePath} from "../../../constants";
 
 
 export default function ShowNews() {
@@ -125,7 +126,7 @@ export default function ShowNews() {
             {/*<FormattedDate datetime={article.datetime}></FormattedDate>{" • "}*/}
             <img id="clock"
                  className="read-clock mx-1 mb-1"
-                 src={"/img/clock-svgrepo-com.svg"} />
+                 src={getResourcePath("/img/clock-svgrepo-com.svg")} />
             {I18n("home.read", [article.readTime])}
           </p>
 

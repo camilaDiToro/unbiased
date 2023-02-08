@@ -13,7 +13,7 @@ const nextConfig = {
 
   env : {
     baseURL: isProd ? 'http://localhost/paw-2022b-6/api' : 'http://localhost:8080/webapp_war_exploded/api',
-    resourcePrefix: isProd ? '/paw-2022b-6' : '.'
+    resourcePrefix: isProd ? '/paw-2022b-6' : '/.'
   }
 }
 
