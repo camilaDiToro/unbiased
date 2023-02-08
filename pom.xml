@@ -342,7 +342,7 @@
             <packagingExcludes>**/logback-test.xml</packagingExcludes>
             <webResources>
               <resource>
-                <directory>../unbiased-fronted/out</directory>
+                <directory>../unbiased-frontend/out</directory>
               </resource>
             </webResources>
           </configuration>
