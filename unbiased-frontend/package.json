@@ -4,9 +4,9 @@
   "private": false,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "(export ENV=prod && next build)",
     "start": "next start",
-    "export": "next export || (awk '{gsub(\"href=\\\"/\",\"href=\\\"./\"); gsub(\"src=\\\"/\",\"src=\\\"./\"); print > \"temp.html\";}' out/index.html && mv temp.html out/index.html)",
+    "export": "next export",
     "lint": "next lint",
     "test": "jest --watch"
   },
