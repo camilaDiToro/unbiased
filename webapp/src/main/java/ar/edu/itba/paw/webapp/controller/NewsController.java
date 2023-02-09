@@ -150,32 +150,30 @@ public class NewsController {
     }
 
     @PUT
-    @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
+    @Path("/{newsId:[0-9]+}/likes")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response like(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+    public Response like(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
         newsService.setRating(userId, newsId, Rating.UPVOTE);
-        return Response.noContent().build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the news of id %d",
+                userId, newsId))).build();
     }
 
     @PUT
-    @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
+    @Path("/{newsId:[0-9]+}/dislikes")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response dislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+    public Response dislike(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
         newsService.setRating(userId, newsId, Rating.DOWNVOTE);
-        return Response.noContent().build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the news of id %d",
+                userId, newsId))).build();
     }
 
-    /**
-     * If a DELETE method is successfully applied, the origin server SHOULD send
-     * a 202 (Accepted) status code if the action will likely succeed but has not yet been enacted,
-     * a 204 (No Content) status code if the action has been enacted and no further information is to be supplied, or
-     * a 200 (OK) status code if the action has been enacted and the response message includes a representation describing the status.
-     */
     @DELETE
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path("/{newsId:[0-9]+}")
     @PreAuthorize("@ownerCheck.canDeleteNews(#newsId)")
-    public Response delete(@PathParam("newsId") final long newsId){
+    public Response delete(@PathParam("newsId")  long newsId){
         Optional<News> news = newsService.getById(newsId);
         if(!news.isPresent()){
             return Response.noContent().build();
@@ -188,7 +186,7 @@ public class NewsController {
     @Produces({CustomMediaType.NEWS_REPORT_V1})
     @Path("/{newsId:[0-9]+}/reports")
     @PreAuthorize("@ownerCheck.userMatches(#reportForm.userId)")
-    public Response report(@PathParam("newsId") final long newsId, @Valid final ReportNewsForm reportForm){
+    public Response report(@PathParam("newsId")  long newsId, @Valid final ReportNewsForm reportForm){
         if(reportForm == null){
             throw new MissingArgumentException("Missing body, userId and reporting reason required");
         }
@@ -200,19 +198,23 @@ public class NewsController {
     }
 
     @DELETE
-    @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
+    @Path("/{newsId:[0-9]+}/likes")
+    @Produces({CustomMediaType.NEWS_REPORT_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response removeLike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+    public Response removeLike(@QueryParam("userId")  long userId, @PathParam("newsId")  long newsId){
         newsService.setRating(userId, newsId, Rating.NO_RATING);
-        return Response.noContent().build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("The like of the user of id %d to the article of id %d has been removed",
+                userId, newsId))).build();
     }
 
     @DELETE
-    @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
+    @Path("/{newsId:[0-9]+}/dislikes")
+    @Produces({CustomMediaType.NEWS_REPORT_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response removeDislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+    public Response removeDislike(@QueryParam("userId")  long userId, @PathParam("newsId")  long newsId){
         newsService.setRating(userId, newsId, Rating.NO_RATING);
-        return Response.noContent().build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the article of id %d has been removed",
+                userId, newsId))).build();
     }
 
     @DELETE
