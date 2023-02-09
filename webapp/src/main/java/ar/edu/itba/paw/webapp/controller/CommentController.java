@@ -19,10 +19,7 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
 import ar.edu.itba.paw.webapp.api.exceptions.MissingArgumentException;
-import ar.edu.itba.paw.webapp.dto.CommentDto;
-import ar.edu.itba.paw.webapp.dto.CommentReportDetailsDto;
-import ar.edu.itba.paw.webapp.dto.NewsReportDetailDto;
-import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
+import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -145,10 +142,14 @@ public class CommentController {
     @GET
     @Path("/{commentId:[0-9]+}/reports")
     @Produces(value = {CustomMediaType.COMMENT_REPORT_DETAIL_LIST_V1})
-    public Response getNewsReportDetail(@PathParam("commentId") final long commentId){
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        List<CommentReportDetailsDto> reportList = comment.getReports().stream().map(d -> CommentReportDetailsDto.fromReportedComment(uriInfo, d)).collect(Collectors.toList());
-        return Response.ok(new GenericEntity<List<CommentReportDetailsDto>>(reportList) {}).build();
+    public Response getNewsReportDetail(@PathParam("commentId") long commentId, @QueryParam("page") @DefaultValue("1") int page){
+        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page, commentId);
+        if(reportedCommentPage.getContent().isEmpty()){
+            return Response.noContent().build();
+        }
+        List<CommentReportDetailsDto> reportList = reportedCommentPage.getContent().stream().map(n -> CommentReportDetailsDto.fromReportedComment(uriInfo, n)).collect(Collectors.toList());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CommentReportDetailsDto>>(reportList) {});
+        return PagingUtils.pagedResponse(reportedCommentPage, responseBuilder, uriInfo);
     }
 
     @PUT

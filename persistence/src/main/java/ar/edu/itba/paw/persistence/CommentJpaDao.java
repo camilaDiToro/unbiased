@@ -138,7 +138,7 @@ public class CommentJpaDao implements CommentDao{
 
     @Override
     public Page<ReportedComment> getReportedCommentDetail(int page, long commentId) {
-        page = Math.min(page,1);
+        page = Math.max(page,1);
         final int totalPages = getReportedCommentDetailPageCount(commentId);
         page = Math.min(page, totalPages);
         final Query idsQuery = entityManager.createNativeQuery(
