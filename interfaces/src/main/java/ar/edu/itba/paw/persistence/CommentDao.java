@@ -17,14 +17,10 @@ public interface CommentDao {
     void deleteComment(long commentId);
     Page<Comment> getTopComments(long newsId, int page);
     Page<Comment> getNewComments(long newsId, int page);
-
     List<Comment> getReportedByUserComments(long userId);
-
-    void reportComment(final Comment comment, final User reporter, ReportReason reportReason);
+    ReportedComment reportComment(final Comment comment, final User reporter, ReportReason reportReason);
     Page<Comment> getReportedComment(int page, ReportOrder reportOrder);
     Page<ReportedComment> getReportedCommentDetail(int page, long commentId);
-
     List<Comment> getCommentsUpvotedByUser(User user);
-
     List<Comment> getCommentsDownvotedByUser(User user);
 }

@@ -26,16 +26,6 @@ public class NewsReportDetailDto {
         return n;
     }
 
-    public static NewsReportDetailDto fromReportedComment(final UriInfo uriInfo, final ReportedComment reportDetail) {
-        NewsReportDetailDto n = new NewsReportDetailDto();
-
-        n.user = reportDetail.getReporter().toString();
-        n.reason = reportDetail.getReason().getInterCode();
-
-        n.datetime = reportDetail.getCreationDate().format(DateTimeFormatter.ISO_DATE_TIME);
-        return n;
-    }
-
     public String getUser() {
         return user;
     }

@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
@@ -16,7 +17,10 @@ import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
+import ar.edu.itba.paw.webapp.api.exceptions.MissingArgumentException;
 import ar.edu.itba.paw.webapp.dto.CommentDto;
+import ar.edu.itba.paw.webapp.dto.CommentReportDetailsDto;
 import ar.edu.itba.paw.webapp.dto.NewsReportDetailDto;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
@@ -97,15 +101,6 @@ public class CommentController {
         return PagingUtils.pagedResponse(commentPage, responseBuilder, uriInfo);
     }
 
-    @GET
-    @Path("/{commentId:[0-9]+}/reports")
-    @Produces(value = {CustomMediaType.COMMENT_REPORT_DETAIL_LIST_V1})
-    public Response getNewsReportDetail(@PathParam("commentId") final long commentId){
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        List<NewsReportDetailDto> reportList = comment.getReports().stream().map(d -> NewsReportDetailDto.fromReportedComment(uriInfo, d)).collect(Collectors.toList());
-        return Response.ok(new GenericEntity<List<NewsReportDetailDto>>(reportList) {}).build();
-    }
-
     @POST
     @Consumes(value = {CustomMediaType.COMMENT_V1})
     @Produces(value = {CustomMediaType.COMMENT_V1})
@@ -117,22 +112,44 @@ public class CommentController {
         return Response.created(commentDto.getSelf()).entity(commentDto).build();
     }
 
-    @PUT
-    @Path("/{commentId:[0-9]+}/reports/{userId:[0-9]+}")
-    @Consumes(value = {CustomMediaType.COMMENT_REPORT_DETAIL_V1})
-    public Response report(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        //TODO: Check if getting this object here is necessary
+    @DELETE
+    @Path("/{commentId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.canDeleteComment(#commentId)")
+    public Response delete(@PathParam("commentId") final long commentId){
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        adminService.reportComment(user, commentId, ReportReason.getByValue(reportForm.getReason()));
-        return Response.ok().build();
+        if(comment.getDeleted()){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The comment of id %d had already been deleted",
+                    commentId))).build();
+        }
+        newsService.deleteComment(commentId);
+        return Response.ok(SimpleMessageDto.fromString(String.format("Comment of id %d successfully deleted",
+                commentId))).build();
     }
 
+    @POST
+    @Path("/{commentId:[0-9]+}/reports")
+    @PreAuthorize("@ownerCheck.userMatches(#reportForm.userId)")
+    @Consumes(value = {CustomMediaType.COMMENT_REPORT_DETAIL_V1})
+    public Response report( @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
+        if(reportForm == null){
+            throw new MissingArgumentException("Missing body, userId and reporting reason required");
+        }
 
+        ReportedComment reportedComment = adminService.reportComment(reportForm.getUserId(), commentId, ReportReason.getByValue(reportForm.getReason()));
+        if(reportedComment == null){
+            throw new InvalidRequestParamsException("Each user can report a comment just once");
+        }
+        return Response.ok(CommentReportDetailsDto.fromReportedComment(uriInfo,reportedComment)).build();
+    }
 
-
-
-
+    @GET
+    @Path("/{commentId:[0-9]+}/reports")
+    @Produces(value = {CustomMediaType.COMMENT_REPORT_DETAIL_LIST_V1})
+    public Response getNewsReportDetail(@PathParam("commentId") final long commentId){
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
+        List<CommentReportDetailsDto> reportList = comment.getReports().stream().map(d -> CommentReportDetailsDto.fromReportedComment(uriInfo, d)).collect(Collectors.toList());
+        return Response.ok(new GenericEntity<List<CommentReportDetailsDto>>(reportList) {}).build();
+    }
 
     @PUT
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
@@ -176,19 +193,5 @@ public class CommentController {
                     userId, commentId))).build();
         }
         return Response.noContent().build();
-    }
-
-    @PUT //Logical deletion
-    @Path("/{commentId:[0-9]+}")
-    @PreAuthorize("@ownerCheck.canDeleteComment(#commentId)")
-    public Response delete(@PathParam("commentId") final long commentId){
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        if(comment.getDeleted()){
-            return Response.ok(SimpleMessageDto.fromString(String.format("The comment of id %d had already been deleted",
-                    commentId))).build();
-        }
-        newsService.deleteComment(commentId);
-        return Response.ok(SimpleMessageDto.fromString(String.format("Comment of id %d successfully deleted",
-                commentId))).build();
     }
 }

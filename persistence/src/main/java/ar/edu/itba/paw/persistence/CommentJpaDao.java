@@ -101,10 +101,11 @@ public class CommentJpaDao implements CommentDao{
     }
 
     @Override
-    public void reportComment(Comment comment, User reporter, ReportReason reportReason) {
+    public ReportedComment reportComment(Comment comment, User reporter, ReportReason reportReason) {
         final ReportedComment reportedComment = new ReportedComment(comment, reporter, reportReason);
         entityManager.persist(reportedComment);
         LOGGER.debug("Comment from {} with id {} reported. The reason is {}", comment.getUser(), comment.getId(), reportReason.getDescription());
+        return reportedComment;
     }
 
     @Override

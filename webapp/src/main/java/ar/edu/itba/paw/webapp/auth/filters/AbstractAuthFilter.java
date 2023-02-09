@@ -50,6 +50,7 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
                     new AntPathRequestMatcher("/api/comments/{\\d+}/dislikes", HttpMethod.PUT),
                     new AntPathRequestMatcher("/api/comments/{\\d+}/likes", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/api/comments/{\\d+}/dislikes", HttpMethod.DELETE),
+                    new AntPathRequestMatcher("/api/comments/{\\d+}/reports", HttpMethod.POST),
                     new AntPathRequestMatcher("/api/news/{\\d+}/bookmarks/{\\d+}", HttpMethod.PUT),
                     new AntPathRequestMatcher("/api/news/{\\d+}/bookmarks/{\\d+}", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/api/users/{\\d+}/pinnedNews", HttpMethod.PUT),
@@ -57,7 +58,7 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
                     new AntPathRequestMatcher("/api/users/{\\d+}/followers/{\\d+}", HttpMethod.PUT),
                     new AntPathRequestMatcher("/api/users/{\\d+}/followers/{\\d+}", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/api/comments", HttpMethod.POST),
-                    new AntPathRequestMatcher("/api/comments/{\\d+}", HttpMethod.PUT),
+                    new AntPathRequestMatcher("/api/comments/{\\d+}", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/api/users/{\\d+}/role", HttpMethod.PUT),
                     new AntPathRequestMatcher("/api/users/{\\d+}/role", HttpMethod.DELETE)
             ));

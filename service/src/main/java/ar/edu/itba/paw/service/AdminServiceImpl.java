@@ -67,9 +67,13 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     @Transactional
-    public void reportComment(final User currentUser, long commentId, ReportReason reportReason) {
+    public ReportedComment reportComment(long userId, long commentId, ReportReason reportReason) {
         final Comment comment = newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentDao.reportComment(comment,currentUser,reportReason);
+        final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        if(commentDao.getReportedCommentDetail(1,commentId).getContent().isEmpty()){
+            return commentDao.reportComment(comment,user,reportReason);
+        }
+        return null;
     }
 
     @Override

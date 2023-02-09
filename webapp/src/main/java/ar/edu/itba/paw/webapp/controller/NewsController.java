@@ -188,7 +188,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#reportForm.userId)")
     public Response report(@PathParam("newsId") final long newsId, @Valid final ReportNewsForm reportForm){
         if(reportForm == null){
-            throw new MissingArgumentException("To report an article the reason of reporting must be provided");
+            throw new MissingArgumentException("Missing body, userId and reporting reason required");
         }
         ReportDetail reportDetail = adminService.reportNews(reportForm.getUserId(), newsId, ReportReason.getByValue(reportForm.getReason()));
         if(reportDetail == null){
