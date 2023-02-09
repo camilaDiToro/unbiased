@@ -3,6 +3,7 @@ import {useAppContext} from "../../context";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useRouter} from "next/router";
+import {getResourcePath} from "../../constants";
 
 
 export default function Login() {
@@ -77,15 +78,15 @@ export default function Login() {
                 </h1>
 
                 <div className="d-flex mb-4">
-                    <img className="size-img-modal-login align-self-center" src="/img/profile-svgrepo-com.svg" alt="..."/>
+                    <img className="size-img-modal-login align-self-center" src={getResourcePath("/img/profile-svgrepo-com.svg")} alt="..."/>
                     <input onChange={handleChange} type="text" title="username" id="username" name="username" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
                 </div>
 
                 <div className=" mb-2 mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
-                    <img src="/img/lock-svgrepo-com.svg" alt="..." className="size-img-modal-login align-self-center"/>
+                    <img src={getResourcePath("/img/lock-svgrepo-com.svg")} alt="..." className="size-img-modal-login align-self-center"/>
                     <input type={passwordType} onChange={handleChange} data-testid="password" name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
                     <button className="btn  eye-button-properties" onClick={togglePassword}>
-                        { passwordType==="password"? <img alt="eye" src="/img/eye.svg"/> : <img alt="eyeSlash" src="/img/eye-slash.svg"/> }
+                        { passwordType==="password"? <img alt="eye" src={getResourcePath("/img/eye.svg")}/> : <img alt="eyeSlash" src="/img/eye-slash.svg"/> }
                     </button>
                 </div>
 

@@ -5,6 +5,7 @@ import types from "../types";
 import ModalTrigger from "./ModalTrigger";
 import Modal from "./Modal";
 import {useAppContext} from "../context";
+import {getResourcePath} from "../constants";
 
 export default function Creator(props) {
     const {I18n, axios} = useAppContext()
@@ -34,7 +35,7 @@ return <>
                     <div className="d-flex align-items-center w-auto gap-1">
                         <div className="img-container-article">
                             <img className="rounded-circle object-fit-cover mr-1"
-                                 src={props.hasImage ? props.image : "/img/profile-image.png"} alt=""/>
+                                 src={props.hasImage ? props.image : getResourcePath("/img/profile-image.png")} alt=""/>
                         </div>
                         <Link href={`/profile/${props.id}`} className="link-text text-white card-name-text text-ellipsis-1">{props.nameOrEmail}</Link>
 

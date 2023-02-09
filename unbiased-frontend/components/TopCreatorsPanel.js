@@ -2,6 +2,7 @@ import Link from "next/link";
 import {useAppContext} from "../context";
 import PropTypes, {shape} from "prop-types";
 import TopCreator from "./TopCreator";
+import {getResourcePath} from "../constants";
 
 export default function TopCreatorsPanel(props) {
     const {I18n} = useAppContext()
@@ -10,7 +11,7 @@ export default function TopCreatorsPanel(props) {
         id="none_shadow"
     >
         <h5
-            style={{ backgroundImage: "url('/img/crown-svgrepo-com.svg')" }}
+            style={{ backgroundImage: `url('${getResourcePath('/img/crown-svgrepo-com.svg')}')` }}
             className="card-title top-creators"
         >
             {I18n("home.topCreators")}

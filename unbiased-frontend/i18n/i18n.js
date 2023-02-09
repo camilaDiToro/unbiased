@@ -4,6 +4,7 @@ import { initReactI18next } from "react-i18next";
 i18n
     .use(initReactI18next) // passes customI18n down to react-i18next
     .init({
+        compatibilityJSON: 'v3',
         resources: {
             es: {
                 //NavBar
@@ -20,20 +21,19 @@ i18n
                 "home.topCreators": "Creadores populares",
                 "home.type.article":"Noticias",
                 "home.type.creator":"Creadores",
-                "home.upvotes": (params) => `${params[0]*100}% gustado`,
-                "home.read": (params) => `${params[0]} min para leer`,
-                "home.interactions": (params) => `${params[0]} ${params[0] === 1 ? 'interacción' : 'interacciones'}`,
-                "search.filter": (params) => `Cancelar filtro de búsqueda: \"${params[0]}\"`,
-                "search.notFound": (params) =>
-                    `No se encontraron resultados para la búsqueda \"${params[0]}\"`,
+                "home.upvotes": `{{count}}% gustado`,
+                "home.read":  `{{count}} min para leer`,
+                "home.interactions":  `{{count}} interacción`,
+                "home.interactions_plural":  `{{count}} interacciones`,
+                "search.filter":  `Cancelar filtro de búsqueda: \"{{count}}\"`,
+                "search.notFound": `No se encontraron resultados para la búsqueda \"{{count}}\"`,
                 "home.pagination.first": "Inicio",
                 "home.pagination.last": "Fin",
 
                 //Categories
                 "order.top": "Más popular",
                 "order.new": "Nuevo",
-                "categories.notFound": (params) =>
-                    `No se encontraron resultados para la categoría \"${params[0]}\"`,
+                "categories.notFound":  `No se encontraron resultados para la categoría \"{{count}}\"`,
                 "categories.tourism": "Turismo",
                 "categories.entertainment": "Espectáculo",
                 "categories.politics": "Política",
@@ -72,8 +72,7 @@ i18n
                 "profileCategories.saved": "Guardados",
                 "profileCategories.upvoted": "Me gusta",
                 "profileCategories.downvoted": "No me gusta",
-                "profile.notFound": (params) =>
-                    `No se encontraron resultados para el filtro \"${params[0]}\"`,
+                "profile.notFound": `No se encontraron resultados para el filtro \"{{count}}\"`,
 
                 //Error
                 "error.articleNotFound": "El artículo buscado no existe.",
@@ -139,8 +138,7 @@ i18n
                 "moderation.reportedComments": "Comentarios reportados",
                 "moderation.emptyComments": "No hay comentarios reportados todavía.",
                 "moderation.emptyAdmins": "No hay administradores todavía.",
-                "moderation.emptyAdminsSearch": (params) =>
-                    `Ningún administrador coincide con \"${params[0]}\"`,
+                "moderation.emptyAdminsSearch": `Ningún administrador coincide con \"{{count}}\"`,
                 "moderation.details": "Ver detalles",
                 "moderation.reportedArticles": "Noticias reportadas",
                 "moderation.delete": "Borrar noticia",
@@ -229,20 +227,22 @@ i18n
                     "home.topCreators": "Top Creators",
                     "home.type.article":"Articles",
                     "home.type.creator":"Creators",
-                    "home.upvotes": (params) => `${parseInt(params[0]*100)}% upvoted`,
-                    "home.read": (params) => `${params[0]} min read`,
-                    "home.interactions": (params) => `${params[0]} ${params[0] === 1 ? 'interaction' : 'interactions'}`,
-                    "search.filter": (params) => `Cancel search filter: \"${params[0]}\"`,
-                    "search.notFound": (params) =>
-                        `We could not find any results that match \"${params[0]}\"`,
+                    "home.upvotes": `{{count}}% upvoted`,
+                    "home.read": `{{count}} min read`,
+                    "home.interactions":  `{{count}} interaction`,
+                    "home.interactions_plural":  `{{count}} interactions`,
+
+                    // "home.interactions_plural":  `{{count}} interactions`,
+                    "search.filter":  `Cancel search filter: \"{{count}}\"`,
+                    "search.notFound":
+                        `We could not find any results that match \"{{count}}\"`,
                     "home.pagination.first": "First",
                     "home.pagination.last": "Last",
 
                     //Categories
                     "order.top": "Top",
                     "order.new": "New",
-                    "categories.notFound": (params) =>
-                        `We could not find any results for the category \"${params[0]}\"`,
+                    "categories.notFound": `We could not find any results for the category \"{{count}}\"`,
                     "categories.tourism": "Tourism",
                     "categories.entertainment": "Entertainment",
                     "categories.politics": "Politics",
@@ -281,8 +281,7 @@ i18n
                     "profileCategories.upvoted": "Upvoted",
                     "profileCategories.downvoted": "Downvoted",
                     "profileCategories.myPosts": "Posts",
-                    "profile.notFound": (params) =>
-                        `No results found for filter \"${params[0]}\"`,
+                    "profile.notFound": `No results found for filter \"{{count}}\"`,
 
                     //Error
                     "error.articleNotFound": "The news article you're looking for doesn't exist.",
@@ -348,8 +347,7 @@ i18n
                     "moderation.reportedComments": "Reported comments",
                     "moderation.emptyComments": "There are no reported comments yet.",
                     "moderation.emptyAdmins": "There are no admins yet.",
-                    "moderation.emptyAdminsSearch": (params) =>
-                        `No admins match \"${params[0]}\"`,
+                    "moderation.emptyAdminsSearch":   `No admins match \"{{count}}\"`,
                     "moderation.details": "View details",
                     "moderation.reportedArticles": "Reported articles",
                     "moderation.delete": "Delete article",
@@ -376,6 +374,7 @@ i18n
                     "showNews.reportNewsQuestion": "Are you sure you want to report this article?",
                     "showNews.comments": "Comments",
                     "showNews.comment.submit": "Comment",
+                    "showNews.comment": "Comment",
                     "showNews.categories": "Categories:",
                     "showNews.emptyCommentsLogged": "Nobody has commened yet.",
                     "showNews.deleteComment": "Delete comment",
@@ -428,8 +427,7 @@ i18n
 
         interpolation: {
             escapeValue: false,
-        },
-        pluralSeparator: " | ",
+        }
     });
 
 export default i18n;

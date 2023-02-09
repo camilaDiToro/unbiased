@@ -2,6 +2,7 @@ import Link from "next/link";
 import {useAppContext} from "../../context";
 import {useState} from "react";
 import {useRouter} from "next/router";
+import {getResourcePath} from "../../constants";
 
 export default function Login() {
     const router = useRouter()
@@ -61,24 +62,18 @@ export default function Login() {
                 <h1 className="h3 mb-4 font-weight-normal text-light">Register</h1>
 
                 <div className="d-flex mb-4">
-                    <img className="size-img-modal-login align-self-center" src="/img/profile-svgrepo-com.svg" alt="..."/>
+                    <img className="size-img-modal-login align-self-center" src={getResourcePath("/img/profile-svgrepo-com.svg")} alt="..."/>
                     <input onChange={handleChange} type="text" id="email" name="email" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
                 </div>
 
                 <div className="mb-2 mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
-                    <img src="/img/lock-svgrepo-com.svg" alt="..." className="size-img-modal-login align-self-center"/>
+                    <img src={getResourcePath("/img/lock-svgrepo-com.svg")} alt="..." className="size-img-modal-login align-self-center"/>
                     <input type={passwordType} onChange={handleChange} name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
                     <button className="btn  eye-button-properties" onClick={togglePassword}>
-                        { passwordType==="password"? <img src="/img/eye.svg"/> : <img src="/img/eye-slash.svg"/> }
+                        { passwordType==="password"? <img src={getResourcePath("/img/eye.svg")}/> : <img src={getResourcePath("/img/eye-slash.svg")}/> }
                     </button>
                 </div>
 
-                {/*<div className="checkbox mb-3">*/}
-                {/*    <label className="text-light">*/}
-                {/*        <input onChange={handleChange} className="mr-1" type="checkbox" name="rememberMe"/>*/}
-                {/*        Remember me*/}
-                {/*    </label>*/}
-                {/*</div>*/}
 
                 <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">{ctx.I18n("navbar.register")}</button>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>

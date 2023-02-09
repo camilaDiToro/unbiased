@@ -1,6 +1,7 @@
 import { useAppContext } from "../context";
 import Tooltip from "./Tooltip";
 import Link from "next/link";
+import {getResourcePath} from "../constants";
 
 export default function CommentButton(props) {
   const {I18n} = useAppContext()
@@ -10,7 +11,7 @@ export default function CommentButton(props) {
       <Link href={`/news/${props.id}#comment-section`}>
         <Tooltip position="bottom" text={I18n("tooltip.commentArticle")}>
           <img className="w-25px svg-btn" id="comment"
-               src={`/img/comment.svg`}
+               src={getResourcePath("/img/comment.svg")}
                alt=""/>
         </Tooltip>
       </Link>
