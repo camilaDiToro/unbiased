@@ -6,7 +6,6 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidGetUsersFilter;
 import org.springframework.stereotype.Component;
 
-@Component
 public enum GetUsersFilter {
 
     SEARCH() {

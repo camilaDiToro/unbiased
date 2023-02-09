@@ -25,9 +25,12 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
 import ar.edu.itba.paw.webapp.api.exceptions.MissingArgumentException;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetNewsFilter;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetNewsParams;
 import ar.edu.itba.paw.webapp.dto.NewsDto;
 import ar.edu.itba.paw.webapp.dto.NewsReportDetailDto;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
+import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -88,97 +91,28 @@ public class NewsController {
     }
 
     @GET
+    @PreAuthorize("@ownerCheck.canGetSavedNews(#filter, #id)")
     @Produces(value = {CustomMediaType.NEWS_LIST_V1})
-    public Response listNews(@QueryParam("page") @DefaultValue("1") final int page, @QueryParam("search") @DefaultValue("") final String search,
+    public Response listNews(@QueryParam("page") @DefaultValue("1") final int page,
+                             @QueryParam("filter") @DefaultValue("NO_FILTER") final String filter,
+                             @QueryParam("search") @DefaultValue("") final String search,
                              @QueryParam("cat") @DefaultValue("ALL") final String category,
                              @QueryParam("order") @DefaultValue("TOP") final String order,
                              @QueryParam("time") @DefaultValue("WEEK") final String time,
-                             @QueryParam("likedBy") @DefaultValue("-1") final long  likedBy,
-                             @QueryParam("dislikedBy") @DefaultValue("-1") final long  dislikedBy,
-                             @QueryParam("pinnedBy") @DefaultValue("-1") final long pinnedBy,
-                             @QueryParam("savedBy") @DefaultValue("-1") final long  savedBy,
-                             @QueryParam("reportedBy") @DefaultValue("-1") final long reportedBy,
-                             @QueryParam("reported") final boolean reported,
-                             @QueryParam("reportOrder") @DefaultValue("REP_COUNT_DESC") String reportOrder,
-                             @QueryParam("publishedBy") @DefaultValue("-1") final long  publishedBy) {
-        Category categoryObj = Category.getByValue(category);
-        NewsOrder orderObj = NewsOrder.getByValue(order);
-        TimeConstraint timeObj = TimeConstraint.getByValue(time);
-        final Page<News> newsPage;
-        final long uniqueParamCount = Arrays.stream(new long[]{likedBy, dislikedBy, savedBy, publishedBy}).map(s -> s > 0 ? 1 : 0).reduce(Long::sum).getAsLong();
+                             @QueryParam("id") final Long id) {
 
-        if (uniqueParamCount > 1) {
-            // throw new ...
-        }
-        if (pinnedBy>0) {
-            final User user = userService.getUserById(pinnedBy).orElseThrow(()-> new UserNotFoundException(pinnedBy));
-            Optional<News> news = newsService.getPinnedByUserNews(user);
-            if (!news.isPresent())
-                return Response.noContent().build();
-            return Response.ok(NewsDto.fromNews(uriInfo, news.get())).build();
-        } else
-        if (reportedBy>0) {
-            final User user = userService.getUserById(reportedBy).orElseThrow(()-> new UserNotFoundException(reportedBy));
-            List<News> news = adminService.getReportedByUserNews(user);
-            if (news.isEmpty())
-                return Response.noContent().build();
-            return Response.ok(new GenericEntity<List<NewsDto>>(news.stream().map(n -> {
-                return NewsDto.fromNews(uriInfo, n);
-            }).collect(Collectors.toList())) {}).build();
-        } else if (reported) {
-            final ReportOrder reportOrderObj = ReportOrder.getByValue(reportOrder);
-            newsPage = adminService.getReportedNews(page, reportOrderObj);
-        } else if (likedBy > 0) {
-            final ProfileCategory catObject = ProfileCategory.UPVOTED;
-            final User profileUser = userService.getUserById(likedBy).orElseThrow(()-> new UserNotFoundException(likedBy));
-            newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
-        } else if (dislikedBy > 0)  {
-            final ProfileCategory catObject = ProfileCategory.DOWNVOTED;
-            final User profileUser = userService.getUserById(dislikedBy).orElseThrow(()-> new UserNotFoundException(dislikedBy));
-            newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
-        } else if (publishedBy > 0) {
-            final ProfileCategory catObject = ProfileCategory.MY_POSTS;
-            final User profileUser = userService.getUserById(publishedBy).orElseThrow(()-> new UserNotFoundException(publishedBy));
-            newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
-        } else if (savedBy > 0) {
-            final ProfileCategory catObject = ProfileCategory.SAVED;
-            final User profileUser = userService.getUserById(savedBy).orElseThrow(()-> new UserNotFoundException(savedBy));
-            final Optional<User> user = securityService.getCurrentUser();
-
-            newsPage = newsService.getNewsForUserProfile(user, page, orderObj, profileUser, catObject);
-        }
-        else {
-            newsPage = newsService.getNews(Optional.empty(), page,categoryObj, orderObj, timeObj, search);
-        }
-
+        final GetNewsFilter objFilter = GetNewsFilter.fromString(filter);
+        final GetNewsParams params = objFilter.validateParams(userService, category, order, time, search, id);
+        final Page<News> newsPage = objFilter.getNews(newsService, adminService, page, params);
 
         if(newsPage.getContent().isEmpty()){
             return Response.noContent().build();
         }
 
-        final List<NewsDto> allNews = newsPage.getContent().stream().map(n -> {
+        final List<NewsDto> allNews = newsPage.getContent().stream().map(n -> NewsDto.fromNews(uriInfo, n)).collect(Collectors.toList());
 
-            return NewsDto.fromNews(uriInfo, n);
-        }).collect(Collectors.toList());
-
-        final MultivaluedMap<String, String> queryParams = uriInfo.getQueryParameters();
-        final UriBuilder pathBuilder = uriInfo.getAbsolutePathBuilder();
-
-        queryParams.forEach((key, value) -> pathBuilder.queryParam(key, value.get(0)));
-
-        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsDto>>(allNews) {})
-                .link(pathBuilder.clone().replaceQueryParam("page", newsPage.getTotalPages()).build(), "last")
-                .link(pathBuilder.clone().replaceQueryParam("page", 1).build(), "first");
-
-        if(page != 1){
-            responseBuilder.link(pathBuilder.clone().replaceQueryParam("page", page-1).build(), "prev");
-        }
-
-
-        if(page != newsPage.getTotalPages()){
-            responseBuilder.link(pathBuilder.clone().replaceQueryParam("page", page+1).build(), "next");
-        }
-        return responseBuilder.build();
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsDto>>(allNews) {});
+        return PagingUtils.pagedResponse(newsPage, responseBuilder, uriInfo);
     }
 
     @GET
@@ -268,7 +202,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         newsService.setRating(userId, newsId, Rating.NO_RATING);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
@@ -276,7 +210,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         newsService.setRating(userId, newsId, Rating.NO_RATING);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
@@ -284,7 +218,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeBookmark(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         newsService.unsaveNews(userId, newsId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -292,7 +226,7 @@ public class NewsController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response save(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
         newsService.saveNews(userId, newsId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
 
