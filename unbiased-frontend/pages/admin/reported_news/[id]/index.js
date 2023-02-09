@@ -8,7 +8,7 @@ import Modal from "../../../../components/Modal";
 import ReportReason from "../../../../components/ReportReason";
 import Head from "next/head";
 import {getResourcePath} from "../../../../constants";
-
+import Tooltip from "../../../../components/Tooltip"
 
 
 export default function ReportedNewsDetail(props){
@@ -43,7 +43,9 @@ export default function ReportedNewsDetail(props){
                 <div className="d-flex w-75 flex-column">
                     <div className="w-100 my-2">
                         <Link href="/admin/reported_news">
-                            <img className="svg-btn hover-hand back-btn mt-3 mb-1" src={getResourcePath("/img/back-svgrepo-com.svg")} alt="..." data-toggle="tooltip" data-placement="bottom" title="Click to go back"/>
+                            <Tooltip position="bottom" text={I18n("tooltip.clickToGoBack")}>
+                                <img className="svg-btn hover-hand back-btn mt-3 mb-1" src={getResourcePath("/img/back-svgrepo-com.svg")} alt="..." />
+                            </Tooltip>
                         </Link>
                     </div>
 

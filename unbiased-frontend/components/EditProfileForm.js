@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {useAppContext} from "../context";
+import types from "../types";
 
 export default function EditProfileForm(props) {
     const {I18n, api} = useAppContext()
@@ -100,3 +101,5 @@ export default function EditProfileForm(props) {
         </div>
     </>
 }
+
+EditProfileForm.propTypes = types.EditProfileForm

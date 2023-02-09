@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {useAppContext} from "../context";
+import types from "../types";
 
 export default function ReportForm(props) {
     const {I18n, api} = useAppContext()
@@ -51,3 +52,5 @@ export default function ReportForm(props) {
         </div>
     </>
 }
+
+ReportForm.propTypes = types.ReportForm

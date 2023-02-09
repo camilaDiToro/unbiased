@@ -49,7 +49,7 @@ export default function Reported_comments(){
                         {
                             reportedComments.map((n) => {
                                 return (
-                                    <ReportedCard comment triggerEffect={triggerEffect} key={n.id} {...n}/>
+                                    <ReportedCard comment triggerEffect={triggerEffect} key={n.id} {...n} title={n.body}/>
                                 )
                             })
                         }

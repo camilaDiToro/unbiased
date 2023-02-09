@@ -54,7 +54,6 @@ export default function ModerationPanel(){
                 </div>
             </li>
 
-            {/*TODO: agregar if is owner*/}
             <li className="nav-item li-no-dots">
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
 

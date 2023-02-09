@@ -3,7 +3,7 @@ import {useAppContext} from "../context";
 import {useRouter} from "next/router";
 import Link from "next/link";
 
-export default function TimeSelector(props) {
+export default function TimeSelector() {
     const {I18n} = useAppContext()
     const router = useRouter()
     const categories = [

@@ -10,7 +10,7 @@ import {getResourcePath} from "../constants";
 
 
 
-export default function Navbar(props) {
+export default function Navbar() {
     const {I18n, loggedUser, jwtState} = useAppContext()
     const router = useRouter()
     const [query, setQuery] = useState(router.query.search || '')

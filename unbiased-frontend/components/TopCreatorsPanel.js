@@ -1,8 +1,7 @@
-import Link from "next/link";
 import {useAppContext} from "../context";
-import PropTypes, {shape} from "prop-types";
 import TopCreator from "./TopCreator";
 import {getResourcePath} from "../constants";
+import types from "../types";
 
 export default function TopCreatorsPanel(props) {
     const {I18n} = useAppContext()
@@ -26,6 +25,4 @@ export default function TopCreatorsPanel(props) {
     </div>
 }
 
-TopCreatorsPanel.propTypes = {
-    creators: PropTypes.arrayOf(TopCreator)
-}
+TopCreatorsPanel.propTypes = types.TopCreatorsPanel

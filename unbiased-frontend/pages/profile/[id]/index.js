@@ -9,17 +9,14 @@ import ProgressBar from "../../../components/ProgressBar";
 import Tooltip from "../../../components/Tooltip";
 import ModalTrigger from "../../../components/ModalTrigger";
 import ProfilePic from "../../../components/ProfilePic";
-import types from "../../../types";
 import TopNewTabs from "../../../components/TopNewTabs";
 import ProfileTabs from "../../../components/ProfileTabs";
-import {users, news} from "../../../hardcoded"
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import EditProfileForm from "../../../components/EditProfileForm";
 import UserPrivileges from "../../../components/UserPrivileges";
-import {useLoggedParamsFiller, useTriggerEffect, useURLWithParams} from "../../../utils"
+import {useTriggerEffect} from "../../../utils"
 import Pagination from "../../../components/Pagination";
-import {newsMapper, userMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
 import {getResourcePath} from "../../../constants";
 
@@ -32,7 +29,6 @@ export default function Profile() {
   const {I18n, loggedUser, api}= useAppContext();
   const router = useRouter()
   const {id} = router.query
-  const isMyProfile = loggedUser && loggedUser.id === id
   const [profileEffectTrigger, profileTriggerEffect] = useTriggerEffect()
   const [newsEffectTrigger, newsTriggerEffect] = useTriggerEffect()
 
@@ -58,6 +54,16 @@ export default function Profile() {
   }
 
   useEffect(() => {
+    api.getArticles( getQueryParams()).then(res => {
+      const {success, pagination, data} = res
+      if (success) {
+        setPagination(pagination)
+        setNews(data)
+      }
+    })
+  }, [router.query, newsEffectTrigger])
+
+  useEffect(() => {
     if (!id)
       return
     api.getArticles({pinnedBy: id}).then(res => {
@@ -78,24 +84,19 @@ export default function Profile() {
     })
   }, [newsEffectTrigger, id])
 
-  useEffect(() => {
-    api.getArticles( getQueryParams()).then(res => {
-      const {success, pagination, data} = res
-      if (success) {
-        setPagination(pagination)
-        setNews(data)
-      }
-    })
-  }, [router.query, newsEffectTrigger])
+
 
   useEffect(() => {
     if (!id)
       return
     api.getUser(id).then(r => {
-      const {success, data} = r
+      const {success, data, error} = r
 
       if (success) {
         setProfileInfo(data)
+      }
+      else if (error?.response?.status === 404) {
+        router.replace('/404')
       }
     })
 
@@ -110,10 +111,13 @@ export default function Profile() {
 
     return <div
         className="d-flex flex-column w-30 justify-content-start pr-5">
+
       <div className="card right-card" id="right-card">
+
         <div className="profile">
-          {isMyProfile ? <ModalTrigger modalId="profileModal">
+          {loggedUser && loggedUser.id == id? <ModalTrigger modalId="profileModal">
           <span
+
               className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
               id="pencil_button">
                         <div className="position-relative img-container-profile mr-1 d-flex justify-content-center align-items-center">
@@ -125,18 +129,17 @@ export default function Profile() {
           </ModalTrigger>: <></>}
 
           <ProfilePic image={profileInfo.image} hasImage={profileInfo.hasImage} tier={profileInfo.tier}/>
-
         </div>
         {profileInfo.hasPositivity ? <PositivityIndicator {...profileInfo.stats}></PositivityIndicator>
             : <></>}
 
-        {isMyProfile ? <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
-          <ModalTrigger  modalId="infoModal">
+        {loggedUser && loggedUser.id == id?          <ModalTrigger  modalId="infoModal">
+            <Tooltip text={I18n("tooltip.info")} className="info-profile-btn bg-transparent">
             <button
                 className="bg-transparent border-0 btn-size"
                 style={{backgroundImage: `url(${getResourcePath("/img/info-svgrepo-com.svg")})`}}></button>
-          </ModalTrigger>
-        </Tooltip> : <></>}
+        </Tooltip>          </ModalTrigger>
+          : <></>}
         <Modal id="infoModal" title={I18n("profile.modal.infoTitle")} >
           <UserPrivileges isJournalist={profileInfo.isJournalist}></UserPrivileges>
         </Modal>
@@ -149,7 +152,7 @@ export default function Profile() {
           </h4>
           <div className="d-flex flex-row align-items-center justify-content-center m-2 gap-2">
             <span className="card-text text-muted d-block">{profileInfo.email}</span>
-            {(loggedUser && !isMyProfile) ?  <FollowButton userId={profileInfo.id} following={loggedUser && profileInfo.isLoggedUserFollowing}></FollowButton>
+            {(loggedUser && !(loggedUser && loggedUser.id == id)) ?  <FollowButton userId={profileInfo.id} following={loggedUser && profileInfo.isLoggedUserFollowing}></FollowButton>
                 : <></>}
           </div>
 
@@ -214,7 +217,7 @@ export default function Profile() {
         <title>unbiased - Profile</title>
         <meta name="description" content="Generated by create next app" />
       </Head>
-      <ProfileTabs userId={id}></ProfileTabs>
+      <ProfileTabs userId={parseInt(id)}></ProfileTabs>
       <div className="d-flex flex-column h-100">
         <div className="flex-grow-1 d-flex flex-row">
           <LeftSide></LeftSide>
@@ -228,4 +231,3 @@ export default function Profile() {
   );
 }
 
-Profile.propTypes = types.Profile

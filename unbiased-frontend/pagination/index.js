@@ -9,6 +9,9 @@ export default function usePagination() {
     const [pagination, setPagination] = useState({currentPage: 1, lastPage: 1})
     const router = useRouter()
     const set = async (pagination) => {
+        if (!pagination) {
+            setPagination({currentPage: 1, lastPage: 1})
+        }
         const {currentPage, lastPage} = pagination
         if (currentPage > lastPage) {
             await router.push({

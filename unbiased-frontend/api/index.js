@@ -1,5 +1,4 @@
-import {commentsMapper, getUsersData, newsMapper, userMapper} from "../mappers"
-import {useLoggedParamsFiller} from "../utils";
+import {commentsMapper, newsMapper, userMapper} from "../mappers"
 import parse from "parse-link-header";
 import {useRouter} from "next/router";
 import FormData from "form-data";
@@ -22,7 +21,8 @@ export class Api {
     }
 
     async #getPagination(res) {
-            if (res.status !== 200 || !res.headers.get('Link')) {
+
+            if (!res.headers.get('Link')) {
                 return {currentPage: 1, lastPage: 1}
             }
             let maybeCurrent = parseInt(this.router.query.page || '1')
@@ -32,16 +32,14 @@ export class Api {
                 maybeCurrent = last
             } else if (maybeCurrent < 1) {
                 maybeCurrent = 1
-            } else {
-                return {currentPage: maybeCurrent, lastPage: last}
             }
+            return {currentPage: maybeCurrent, lastPage: last}
 
     }
 
     async login(email, password) {
         const action = async () => {
             try {
-                console.log('logging in')
                 const res = await this.axios({
                     method: 'put',
                     url: 'users/0/pinnedNews',
@@ -64,7 +62,7 @@ export class Api {
 
     async getArticles(params, hideError, authOptional) {
         const action = async () => {
-            const res = await this.#getArticlesCall(params, hideError, authOptional)
+            const res = await this.#getArticlesCall(params, hideError, authOptional, params)
             if (!res || !res.success)
                 throw new Error(res.error)
             const filledNews = await this.#fillNewsParams(res.data)
@@ -81,14 +79,13 @@ export class Api {
             return {data: mappedNews, pagination: await this.#getPagination(res)}
         }
 
-        return await Api.#runRequest(action)
+        return await Api.#runRequest(action, params)
     }
 
     async #getCommentsCall(params, hideError, authOptional) {
         const action = async () => {
-            console.log(params)
             const res = await this.axios.get('comments', {params}, undefined, {authOptional: authOptional, hideError: hideError})
-            const mappedNews = (res.data || []).map(newsMapper)
+            const mappedNews = (res.data || []).map(commentsMapper)
             return {data: mappedNews, pagination: await this.#getPagination(res)}
         }
 
@@ -102,7 +99,6 @@ export class Api {
         let {currentPage, lastPage} = r.pagination
         let array = r.data.map(n => n.id)
         while(currentPage < lastPage) {
-            console.log(params)
             const {data, success, pagination} = await apiCall({...params, page: currentPage + 1}, true, true)
             if (!success) {
                 return array
@@ -165,18 +161,18 @@ export class Api {
         return comments
     }
 
-    static async #runRequest(func) {
+    static async #runRequest(func, optional) {
         try {
 
             const data = await func()
             const obj = typeof data === 'object' && data.hasOwnProperty('data') ? data : {data}
-            const toReturn =  {...obj, success: true}
+            const toReturn =  {...obj, success: true, optional}
             if (log)
                 console.log(toReturn)
             return toReturn
         }
         catch(e) {
-            const toReturn =  {success: false, error: e}
+            const toReturn =  {success: false, error: e, optional}
             if (log)
                 console.log(toReturn)
             return toReturn
@@ -285,7 +281,7 @@ export class Api {
 
     async addRole(userId, role) {
         const action = async () => {
-            const res = await this.axios.put(`users/${userId}/role`, undefined,{
+            const res = await this.axios.put(`users/${userId}/role`,undefined, {
                 params: {role}
             })
         }
@@ -295,7 +291,7 @@ export class Api {
 
     async removeRole(userId, role) {
         const action = async () => {
-            const res = await this.axios.delete(`users/${userId}/role`, undefined,{
+            const res = await this.axios.delete(`users/${userId}/role`, {
                 params: {role}
             })
         }
@@ -552,9 +548,11 @@ export class Api {
                     'Content-Type': 'application/json',
                 }
             })
-            const f = new FormData()
-            f.set('image', image)
-            const fileRes = await this.axios.put(`users/${id}/image`, f)
+            if (image) {
+                const f = new FormData()
+                f.set('image', image)
+                const fileRes = await this.axios.put(`users/${id}/image`, f)
+            }
         }
 
         return await Api.#runRequest(action)

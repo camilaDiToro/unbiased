@@ -1,8 +1,9 @@
 import Tooltip from "./Tooltip";
 import {useAppContext} from "../context";
+import types from "../types";
 
 export default function UserPrivileges(props) {
-    const {loggedUser, I18n} = useAppContext()
+    const {I18n} = useAppContext()
     return <>
         <h6>
             {I18n("profile.modal.infoAllowedMsg")}
@@ -37,9 +38,14 @@ export default function UserPrivileges(props) {
             </div>
             {props.isJournalist ? <div className="d-flex info-enabled info-custom-box">
                 {I18n("profile.modal.enabled")}
-            </div> : <Tooltip className="d-flex info-disabled info-custom-box" position="bottom"
+            </div> : <Tooltip  position="bottom"
                               text={I18n("tooltip.infoDisabled")}>
-                {I18n("profile.modal.disabled")}
+               <div className="d-flex info-disabled info-custom-box">
+                   {                   I18n("profile.modal.disabled")
+                   }
+               </div>
             </Tooltip>}
         </div></>
 }
+
+UserPrivileges.propTypes = types.UserPrivileges

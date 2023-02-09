@@ -11,7 +11,7 @@ export default function ReportFlag(props) {
 
     let handlerArray= []
 
-    const {I18n, loggedUser} = useAppContext()
+    const {I18n, } = useAppContext()
     const tooltipMap = !props.comment ? {true: I18n("tooltip.articleReported"), false: I18n("tooltip.reportArticle")} :
         {true: I18n("tooltip.commentReported"), false: I18n("tooltip.reportComment")}
     return <>

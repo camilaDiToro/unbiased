@@ -4,6 +4,7 @@ import { useAppContext } from "../context";
 import Pagination from "./Pagination";
 import Link from "next/link";
 import {useEffect, useState} from "react";
+import types from "../types";
 
 export default function CommentList(props) {
   const {I18n, loggedUser, api}= useAppContext();
@@ -22,7 +23,7 @@ export default function CommentList(props) {
     <>
       <div className="d-flex flex-column w-75 align-items-center justify-content-center align-self-center"
            id="comments">
-        <h2 className="align-self-start my-2 text-white">
+        <h2 id="comment-section" className="align-self-start my-2 text-white">
           {I18n("showNews.comments")}
         </h2>
         <div className="d-flex flex-column w-100 mb-4">
@@ -48,7 +49,7 @@ export default function CommentList(props) {
           <TopNewTabs></TopNewTabs>
 
           {props.comments.length === 0 ?
-            <h6 className="m-2 align-self-center">{I18n("showNews.emptyCommentsLogged")}</h6> :
+            <h6  className="m-2 align-self-center">{I18n("showNews.emptyCommentsLogged")}</h6> :
             <>
               {props.comments.map(c => <Comment triggerEffect={props.triggerEffect} key={c.id} {...c}></Comment>)}
             </>
@@ -60,3 +61,5 @@ export default function CommentList(props) {
     </>
   );
 }
+
+CommentList.propTypes = types.CommentList

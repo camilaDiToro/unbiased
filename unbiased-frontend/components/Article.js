@@ -18,7 +18,6 @@ import {getResourcePath} from "../constants";
 export default function Article(props) {
     const {I18n, loggedUser} = useAppContext()
 
-    const isMyProfile = loggedUser && loggedUser.id === props.creator.id
 
 
 
@@ -60,7 +59,7 @@ export default function Article(props) {
 
                             {props.profileArticle ? <DeleteButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} ></DeleteButton> : <></>}
 
-                            {props.profileArticle ? <PinButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>}
+                            {props.profileArticle ? <PinButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} pinned={!!props.pinned}></PinButton> : <></>}
 
                             {props.profileArticle ? <></> : <CommentButton id={props.id} triggerEffect={props.triggerEffect}></CommentButton>}
 

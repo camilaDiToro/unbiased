@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 const PositivityIndicator = {
     positivity: PropTypes.string.isRequired,
     upvoted: PropTypes.number.isRequired,
-    interactions: PropTypes.number.isRequired}
+    interactions: PropTypes.number.isRequired,
+    showNews: PropTypes.bool}
 
-const TopCreator = {
+export const TopCreator = {
     nameOrEmail: PropTypes.string.isRequired,
     hasImage: PropTypes.bool.isRequired,
     id: PropTypes.number.isRequired,
@@ -13,10 +14,17 @@ const TopCreator = {
     image: PropTypes.string
 }
 
+
+
 const ProgressBar = {
     progress: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     i18n: PropTypes.bool
+}
+
+const Pagination =  {
+    currentPage: PropTypes.number,
+    lastPage: PropTypes.number
 }
 
 const Article = {
@@ -35,14 +43,19 @@ const Article = {
     upvotes: PropTypes.number.isRequired,
     rating: PropTypes.number,
     datetime: PropTypes.string.isRequired,
-    stats: PropTypes.shape(PositivityIndicator).isRequired
+    stats: PropTypes.shape(PositivityIndicator).isRequired,
+    triggerEffect: PropTypes.func.isRequired
 }
 
 const types = {
-    ShowNews: {...Article, categories: PropTypes.arrayOf(PropTypes.string), reported: PropTypes.bool},
     Article,
     BackButton: {
         onClickHandler: PropTypes.func
+    },
+    Bookmark: {
+        triggerEffect: PropTypes.func.isRequired,
+        saved: PropTypes.bool,
+        id: PropTypes.number.isRequired
     },
     CancelSearchLink: {
         text: PropTypes.string.isRequired
@@ -51,62 +64,112 @@ const types = {
         ...TopCreator,
         isJournalist: PropTypes.bool.isRequired,
         hasPositivity: PropTypes.bool.isRequired,
-        stats: PropTypes.shape(PositivityIndicator)
+        stats: PropTypes.shape(PositivityIndicator),
+        admin: PropTypes.bool,
+        toAdd: PropTypes.bool,
+        triggerEffect: PropTypes.func
+    },
+    Comment: {
+        id: PropTypes.number.isRequired,
+        creator: PropTypes.shape(TopCreator),
+        body: PropTypes.string,
+        datetime: PropTypes.string.isRequired,
+        upvotes: PropTypes.number,
+        rating: PropTypes.number,
+        deleted: PropTypes.bool,
+        reported: PropTypes.bool,
+        triggerEffect: PropTypes.func.isRequired
+    },
+    CommentButton: {
+        id: PropTypes.number.isRequired,
+    },
+    CommentList: {
+        comments: PropTypes.array.isRequired,
+        pagination: PropTypes.shape(Pagination),
+        triggerEffect: PropTypes.func.isRequired
+    },
+    EditProfileForm: {
+        username: PropTypes.string,
+        description: PropTypes.string,
+        mailOptions: PropTypes.array,
+        triggerEffect: PropTypes.func.isRequired
     },
     FollowButton: {
-        userId: PropTypes.number.isRequired
+        userId: PropTypes.number.isRequired,
+        following: PropTypes.bool.isRequired
     },
+    FormattedDate : {
+      datetime: PropTypes.string.isRequired,
+      timeAgo: PropTypes.bool
+    },
+    Pagination,
+
     MainCardsContainer: {
         rows: PropTypes.number.isRequired
     },
     Modal: {
+        id: PropTypes.string.isRequired,
         body: PropTypes.string,
         onClickHandler: PropTypes.func,
+        onClickHandlerArray: PropTypes.array,
         title: PropTypes.string.isRequired,
         acceptText: PropTypes.string
     },
     ModalTrigger: {
         modalId: PropTypes.string.isRequired
     },
-    ModerationPanel: 'a',
+    NewsCategoryPills: {
+        categories: PropTypes.array.isRequired
+    },
     Navbar: {
         loggedUser: PropTypes.shape({...TopCreator, isAdmin: PropTypes.bool.isRequired}),
     },
-    PanelCard: 'a',
     PositivityIndicator,
     ProfilePic: {
-        tier: PropTypes.string.isRequired
+        tier: PropTypes.string
     },
+    ProfileLink: {
+        id: PropTypes.number.isRequired,
+        bold: PropTypes.bool,
+        shorten: PropTypes.bool,
+        nameOrEmail: PropTypes.string.isRequired
+    },
+
     ProgressBar,
+    ReportedCard: {
+      reportCount: PropTypes.number.isRequired,
+      comment: PropTypes.bool,
+      newsId: PropTypes.number,
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+      subtitle: PropTypes.string,
+        datetime: PropTypes.string.isRequired,
+        creator: PropTypes.shape(TopCreator),
+        triggerEffect: PropTypes.func.isRequired
+    },
+    ReportReason: {
+      user: PropTypes.string.isRequired,
+      reason: PropTypes.string.isRequired,
+      datetime: PropTypes.string.isRequired
+    },
     Tabs: {
         items: PropTypes.arrayOf(PropTypes.shape({
             text: PropTypes.string.isRequired,
             params: PropTypes.objectOf(PropTypes.string)
         })),
         selected: PropTypes.string.isRequired,
-        pill: PropTypes.bool
+        pill: PropTypes.bool,
+        className: PropTypes.string
     },
     TopCreator,
-    TopCreatorsPanel: 'a',
+    TopCreatorsPanel: {
+        creators: PropTypes.array.isRequired
+    },
     TopNewTabs: {
         className: PropTypes.string
     },
     ProfileTabs: {
         userId: PropTypes.number.isRequired
-    },
-    Profile: {
-        isJournalist: PropTypes.bool.isRequired,
-        news: PropTypes.arrayOf(PropTypes.shape(Article)),
-        email: PropTypes.string.isRequired,
-        username: PropTypes.string,
-        tier: PropTypes.string.isRequired,
-        followers: PropTypes.number.isRequired,
-        following: PropTypes.number.isRequired,
-        description: PropTypes.string,
-        isLoggedUserFollowing: PropTypes.bool,
-        stats: PropTypes.shape(PositivityIndicator),
-        mailOptions: PropTypes.arrayOf(PropTypes.string),
-        newsStatistics: PropTypes.arrayOf(PropTypes.shape(ProgressBar))
     },
     ReportedArticle: {
         title: PropTypes.string.isRequired,
@@ -115,21 +178,31 @@ const types = {
         reportCount: PropTypes.number.isRequired,
         creator: PropTypes.shape(TopCreator)
     },
-    Bookmark: {
-        triggerEffect: PropTypes.func.isRequired,
-        saved: PropTypes.bool,
-        id: PropTypes.number.isRequired
-    },
+
     ReportFlag: {
         triggerEffect: PropTypes.func.isRequired,
         comment: PropTypes.bool,
         id: PropTypes.number.isRequired,
+        reported: PropTypes.bool.isRequired
+    },
+    ReportForm: {
+        triggerEffect: PropTypes.func.isRequired,
+        comment: PropTypes.bool,
+        id: PropTypes.number.isRequired,
+        handlerArray: PropTypes.array.isRequired
+    },
+    Tooltip: {
+        onClickHandler: PropTypes.func,
+        className: PropTypes.string,
+        position: PropTypes.string,
+        text: PropTypes.string.isRequired
     },
     DeleteButton: {
         triggerEffect: PropTypes.func.isRequired,
         id: PropTypes.number.isRequired,
         comment: PropTypes.bool,
-        creatorId: PropTypes.number
+        creatorId: PropTypes.number,
+        admin: PropTypes.bool
     },
     PinButton: {
         triggerEffect: PropTypes.func.isRequired,
@@ -137,17 +210,18 @@ const types = {
         pinned: PropTypes.bool.isRequired,
         creatorId: PropTypes.number.isRequired
     },
-    Comment: {
-        id: PropTypes.number.isRequired,
-        creator: TopCreator,
-        body: PropTypes.string.isRequired,
-        datetime: PropTypes.string.isRequired,
-        upvotes: PropTypes.number.isRequired,
+    UpvoteButtons: {
         rating: PropTypes.number,
+        id: PropTypes.number.isRequired,
+        triggerEffect: PropTypes.func.isRequired,
+        comment: PropTypes.bool,
+        upvotes: PropTypes.number.isRequired
     },
-    CommentButton: {
+    UserPrivileges: {
+        isJournalist: PropTypes.bool
+    }
 
-    },
+
 }
 
 export default types;

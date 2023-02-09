@@ -1,6 +1,7 @@
 import {useAppContext} from "../context";
-import PropTypes from 'prop-types';
+import {Tooltip } from "@mui/material";
 import {getResourcePath} from "../constants";
+import types from "../types";
 
 export default function PositivityIndicator(props) {
     const ctx = useAppContext()
@@ -15,13 +16,11 @@ export default function PositivityIndicator(props) {
 
 
 
-    return <img src={getResourcePath(imgMap[props.positivity || 'positive'])} alt="..."
-                className={`quality-indicator${props.showNews ? '-news-view' : ''}`} data-toggle="tooltip" data-placement="top" title={tooltipText}
-                data-original-title={tooltipText} />
+    return <Tooltip title={tooltipText}>
+        <img src={getResourcePath(imgMap[props.positivity || 'positive'])} alt="..."
+             className={`quality-indicator${props.showNews ? '-news-view' : ''}`}
+             data-original-title={tooltipText} />
+    </Tooltip>
 }
 
-PositivityIndicator.propTypes = {
-    positivity: PropTypes.string,
-    upvoted: PropTypes.number,
-    interactions: PropTypes.number.isRequired,
-}
+PositivityIndicator.propTypes = types.PositivityIndicator

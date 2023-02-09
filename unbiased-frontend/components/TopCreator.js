@@ -1,7 +1,7 @@
 import Link from "next/link";
-import PropTypes from "prop-types";
 import types from "../types";
 import ProfilePic from "./ProfilePic";
+import {TopCreator as TopCreatorType} from "../types";
 
 export default function TopCreator(props) {
   return (
@@ -21,4 +21,6 @@ export default function TopCreator(props) {
   );
 }
 
-TopCreator.propTypes = types.TopCreator;
+TopCreator.propTypes = TopCreatorType
+
+

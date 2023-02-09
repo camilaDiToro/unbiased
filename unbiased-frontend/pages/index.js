@@ -34,16 +34,18 @@ export default function Home(props) {
 
       api.getUsers(params).then(r => {
         const {success, data} = r
-        if (success)
+        if (success) {
+          setPagination(pagination)
           setUsers(data)
+        }
       })
 
     } else {
         api.getArticles(params).then(r => {
           const {success, data, pagination} = r
           if (success) {
-            setNews(data)
             setPagination(pagination)
+            setNews(data)
           }
 
         })

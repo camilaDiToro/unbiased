@@ -1,6 +1,7 @@
 import {useAppContext} from "../context";
 import {useRouter} from "next/router";
 import {getResourcePath} from "../constants";
+import types from "../types";
 
 export default function UpvoteButtons(props) {
     const {loggedUser, api} = useAppContext()
@@ -50,3 +51,5 @@ export default function UpvoteButtons(props) {
     </div>
 
 }
+
+UpvoteButtons.propTypes = types.UpvoteButtons
