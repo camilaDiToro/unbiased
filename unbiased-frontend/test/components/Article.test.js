@@ -2,9 +2,9 @@ import React from 'react'
 import Article from "../../components/Article";
 import * as testingLibrary from "../test_utils/contextRender";
 
-const {render, screen} = testingLibrary;
+const {render, screen, fireEvent} = testingLibrary;
 
-const defaultMap = (options = {}) => {
+const customPropsMap = (options = {}) => {
     const map = {
         title: "My title",
         subtitle: "My subtitle",
@@ -39,22 +39,22 @@ jest.mock('../../components/FormattedDate', ()=>{
     });
 })
 
+let propsMap
 
 describe('Article test', ()=>{
 
     beforeEach(()=>{
+        propsMap = customPropsMap() //get the default props amp
         render(null) //This render our context, it's a modified render of react-testing-library
     })
 
 
-    test('Renders the component with the default props', () => {
-        const map = defaultMap()
+    test('Check if all the readable props appear on the card', () => {
 
-        render(
-            <Article {...map}/>) //This wraps the Article component into our rendered context without rendering the context again
+        render(<Article {...propsMap}/>) //This wraps the Article component into our rendered context without rendering the context again
 
         //Here we check if all the readable props appear on the card
-        Object.entries(map).forEach(([key,value])=>{
+        Object.entries(propsMap).forEach(([key,value])=>{
             if(typeof value === 'string' && (key === 'title' || key === 'subtitle' || key === 'datetime')){
                 expect(screen.getByText(value)).toBeInTheDocument()
 
@@ -69,6 +69,18 @@ describe('Article test', ()=>{
                 expect(screen.getByText(value.nameOrEmail)).toBeInTheDocument()
             }
         })
-
     })
+
+    test('Show card image when there is one ', ()=> {
+        propsMap = customPropsMap({hasImage: true, image: "http://localhost:8080/webapp_war_exploded/api/news/4/image"})
+        render(<Article {...propsMap}/>)
+        expect(screen.getByRole('img', {name: 'cardImage'})).toBeInTheDocument()
+    })
+
+    test('Does not show card image when there is not one', ()=> {
+        render(<Article {...propsMap}/>) //The default propsMap has the hasImage prop in false
+        expect(screen.queryByLabelText('cardImage')).toBeNull()
+    })
+
+    //todo: test prop profileArticle when kevin merge his branch
 })

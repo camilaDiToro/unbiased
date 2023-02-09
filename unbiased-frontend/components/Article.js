@@ -19,8 +19,6 @@ export default function Article(props) {
 
     const isMyProfile = loggedUser && loggedUser.id === props.creator.id
 
-    console.log(props)
-
     return <>
 
         <div className="col mb-4">
@@ -70,7 +68,7 @@ export default function Article(props) {
                 {props.hasImage ? <div className="bg-secondary position-relative w-40 border-15px">
 
 
-                    <img src={props.image} className="object-fit-cover"
+                    <img aria-label="cardImage" src={props.image} className="object-fit-cover"
                          alt="..."/>
 
                 </div> : <></>}
