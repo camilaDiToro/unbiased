@@ -4,18 +4,11 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.*;
-import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.CommentService;
-import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidGetCommentsFilter;
-import ar.edu.itba.paw.webapp.api.exceptions.InvalidGetNewsFilter;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 public enum GetCommentsFilter {
 
@@ -65,16 +58,22 @@ public enum GetCommentsFilter {
             return commentService.getComments(0,page,null,true,params.getReportOrder());
         }
     },
-    NO_FILTER() {
+    NEWS_COMMENTS() {
         @Override
         public GetCommentsParams validateParams(UserService userService, String order, Long id) {
+            if(id == null){
+                throw new InvalidRequestParamsException("The requested filter \"news_comments\"requires an \"id\" query param");
+            }
+            else if(id <= 0){
+                throw new InvalidRequestParamsException("id param must be greater than 0");
+            }
             NewsOrder newsOrder = (order == null || order.equals("")) ? NewsOrder.TOP : NewsOrder.getByValue(order);
             return new GetCommentsParams(newsOrder, null, null, id);
         }
 
         @Override
         public Page<Comment> getComments(CommentService commentService, AdminService adminService, int page, GetCommentsParams params) {
-            return commentService.getComments(params.getNewsId() ,page, params.getNewsOrder(),true,params.getReportOrder());
+            return commentService.getComments(params.getNewsId() ,page, params.getNewsOrder(),false,params.getReportOrder());
         }
     };
 

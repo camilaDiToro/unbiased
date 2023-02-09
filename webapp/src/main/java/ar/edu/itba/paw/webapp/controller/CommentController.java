@@ -58,7 +58,7 @@ public class CommentController {
     @GET
     @Produces(value = {CustomMediaType.COMMENT_LIST_V1})
     public Response listComments(
-            @QueryParam("filter") @DefaultValue("-1") String filter,
+            @QueryParam("filter") @DefaultValue("NEWS_COMMENTS") String filter,
             @QueryParam("page") @DefaultValue("1") int page,
             @QueryParam("id") Long id,
             @QueryParam("order") String order) {
