@@ -21,4 +21,5 @@ public interface CommentService {
     List<Comment> getCommentsDownvotedByUser(User user);
     Optional<Comment> getById(long id);
     boolean setCommentRating(long userId, long commentId, Rating rating);
+    Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, boolean reported, ReportOrder reportOrder);
 }

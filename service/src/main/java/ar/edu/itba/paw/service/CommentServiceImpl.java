@@ -1,9 +1,12 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
+import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.CommentUpvote;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.CommentDao;
@@ -76,6 +79,19 @@ public class CommentServiceImpl implements CommentService {
         }
         upvoteMap.get(userId).setValue(true);
         return true;
+    }
+
+    @Override
+    @Transactional
+    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, final boolean reported, ReportOrder reportOrder) {
+        if(!reported){
+            if (orderByObj.equals(NewsOrder.NEW)) {
+                return commentDao.getNewComments(newsId, page);
+            }
+            return commentDao.getTopComments(newsId, page);
+        }
+
+        return commentDao.getReportedComment(page, reportOrder);
     }
 
 }

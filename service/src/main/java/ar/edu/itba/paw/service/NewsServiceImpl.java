@@ -304,19 +304,6 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, final boolean reported, ReportOrder reportOrder) {
-        if(!reported){
-            if (orderByObj.equals(NewsOrder.NEW)) {
-                return commentDao.getNewComments(newsId, page);
-            }
-            return commentDao.getTopComments(newsId, page);
-        }
-
-        return commentDao.getReportedComment(page, reportOrder);
-    }
-
-    @Override
-    @Transactional
     public void deleteComment(long commentId) {
         commentDao.deleteComment(commentId);
     }

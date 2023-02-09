@@ -43,7 +43,6 @@ public interface NewsService {
     Page<News> getNewsForUserProfile(Optional<User> maybeCurrentUser, int page, NewsOrder newsOrder, final User user, ProfileCategory pc);
     Map<Long, Rating> getCommentsRating(List<Comment> comments, Optional<User> maybeLoggedUser);
     Comment addComment(final User currentUser, long newsId, String comment);
-    Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, boolean reported, ReportOrder reportOrder);
     void deleteComment(long commentId);
     CategoryStatistics getCategoryStatistics(final long userId);
 }

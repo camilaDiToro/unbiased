@@ -19,6 +19,8 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
 import ar.edu.itba.paw.webapp.api.exceptions.MissingArgumentException;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetCommentsFilter;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetCommentsParams;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
@@ -56,38 +58,14 @@ public class CommentController {
     @GET
     @Produces(value = {CustomMediaType.COMMENT_LIST_V1})
     public Response listComments(
-            @QueryParam("newsId") @DefaultValue("-1") final Long newsId,
-            @QueryParam("page") @DefaultValue("1") final int page,
-            @QueryParam("reported") final boolean reported,
-            @QueryParam("order") @DefaultValue("TOP") String orderBy,
-            @QueryParam("likedBy") @DefaultValue("-1") Long likedBy,
-            @QueryParam("dislikedBy") @DefaultValue("-1") Long dislikedBy,
-            @QueryParam("reportedBy") @DefaultValue("-1") Long reportedBy,
-            @QueryParam("reportOrder") @DefaultValue("REP_COUNT_DESC") String reportOrder) {
-        if (reportedBy>0) {
-            final User user = userService.getUserById(reportedBy).orElseThrow(()-> new UserNotFoundException(reportedBy));
-            List<Comment> comments = adminService.getReportedByUserComments(user);
-            if (comments.isEmpty())
-                return Response.noContent().build();
-            return Response.ok(new GenericEntity<List<CommentDto>>(comments.stream().map(n -> {
-                return CommentDto.fromComment(uriInfo, n);
-            }).collect(Collectors.toList())) {
-            }).build();
-        } else
-        if (likedBy > 0 || dislikedBy > 0) {
-            long userId = likedBy > 0 ? likedBy : dislikedBy;
-            User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-            List<Comment> comments = likedBy > 0 ? commentService.getCommentsUpvotedByUser(user) : commentService.getCommentsDownvotedByUser(user);
-            final List<CommentDto> dtoComments = comments.stream().map(c -> CommentDto.fromComment(uriInfo, c)).collect(Collectors.toList());
-            if (comments.isEmpty()) {
-                return Response.noContent().build();
-            }
-            return Response.ok(new GenericEntity<List<CommentDto>>(dtoComments) {
-            }).build();
-        }
+            @QueryParam("filter") @DefaultValue("-1") String filter,
+            @QueryParam("page") @DefaultValue("1") int page,
+            @QueryParam("id") Long id,
+            @QueryParam("order") String order) {
 
-
-        final Page<Comment> commentPage = newsService.getComments(newsId, page, NewsOrder.getByValue(orderBy), reported, ReportOrder.getByValue(reportOrder));
+        final GetCommentsFilter commentsFilter = GetCommentsFilter.fromString(filter);
+        final GetCommentsParams params = commentsFilter.validateParams(userService, order, id);
+        final Page<Comment> commentPage = commentsFilter.getComments(commentService, adminService, page, params);
 
         if(commentPage.getContent().isEmpty()){
             return Response.noContent().build();
@@ -102,10 +80,9 @@ public class CommentController {
     @Consumes(value = {CustomMediaType.COMMENT_V1})
     @Produces(value = {CustomMediaType.COMMENT_V1})
     public Response postComment(
-            @QueryParam("newsId") final long newsId,
             @Valid CommentNewsForm form){
         final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorizedException::new);
-        final CommentDto commentDto = CommentDto.fromComment(uriInfo, newsService.addComment(currentUser, newsId, form.getComment()));
+        final CommentDto commentDto = CommentDto.fromComment(uriInfo, newsService.addComment(currentUser, form.getNewsId(), form.getComment()));
         return Response.created(commentDto.getSelf()).entity(commentDto).build();
     }
 

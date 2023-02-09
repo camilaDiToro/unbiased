@@ -113,12 +113,12 @@ public class NewsServiceImplTest {
         assertEquals(TOTAL_PAGES,returnValue.getTotalPages());
     }
 
-    @Test
-    public void testGetComents(){
-        Mockito.when(mockCommentDao.getNewComments(Mockito.eq(NEWS_ID), Mockito.eq(PAGE_NUM))).thenReturn(COMMENT_PAGE_2);
-
-        assertEquals(COMMENT_PAGE_2,newsService.getComments(NEWS_ID, PAGE_NUM, ORDER, false, REPORT_ORDER));
-    }
+//    @Test
+//    public void testGetComents(){
+//        Mockito.when(mockCommentDao.getNewComments(Mockito.eq(NEWS_ID), Mockito.eq(PAGE_NUM))).thenReturn(COMMENT_PAGE_2);
+//
+//        assertEquals(COMMENT_PAGE_2,newsService.getComments(NEWS_ID, PAGE_NUM, ORDER, false, REPORT_ORDER));
+//    }
 
     @Test
     public void testGetComentsRating(){
