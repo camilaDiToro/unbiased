@@ -4,13 +4,13 @@ import types from "../types";
 import {getResourcePath} from "../constants";
 
 export default function Bookmark(props) {
-    const {loggedUser, I18n, axios} = useAppContext()
+    const {loggedUser, I18n,  api} = useAppContext()
 
     const onSave = async (e) => {
         if(props.saved) {
-            await axios.delete(`/news/${props.id}/bookmarks/${loggedUser.id}`)
+            await api.deleteBookmark(props.id)
         } else {
-            await axios.put(`/news/${props.id}/bookmarks/${loggedUser.id}`)
+            await api.addBookmark(props.id)
         }
         props.triggerEffect()
     }

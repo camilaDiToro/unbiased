@@ -54,9 +54,11 @@ import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Path("/api/news")
 @Component
@@ -111,7 +113,9 @@ public class NewsController {
             Optional<News> news = newsService.getPinnedByUserNews(user);
             if (!news.isPresent())
                 return Response.noContent().build();
-            return Response.ok(NewsDto.fromNews(uriInfo, news.get())).build();
+            return Response.ok(new GenericEntity<List<NewsDto>>(Stream.of(news.get()).map(n -> {
+                return NewsDto.fromNews(uriInfo, n);
+            }).collect(Collectors.toList())) {}).build();
         } else
         if (reportedBy>0) {
             final User user = userService.getUserById(reportedBy).orElseThrow(UserNotFoundException::new);

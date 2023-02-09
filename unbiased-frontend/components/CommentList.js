@@ -6,18 +6,15 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 
 export default function CommentList(props) {
-  const {I18n, loggedUser, axios}= useAppContext();
+  const {I18n, loggedUser, api}= useAppContext();
   const [comment, setComment] = useState({comment: ''})
   const submitComment = async (e) => {
     e.preventDefault()
-    const stringifiedJson = JSON.stringify(comment)
-    await axios.post('comments', stringifiedJson, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      params: {newsId: props.newsId}
-    })
-    props.triggerEffect()
+    const {success} = await api.postComment(comment.comment, props.newsId)
+    if (success) {
+      setComment({comment: ''})
+      props.triggerEffect()
+    }
 
   }
 

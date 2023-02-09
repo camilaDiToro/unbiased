@@ -8,18 +8,19 @@ import {useAppContext} from "../context";
 import {getResourcePath} from "../constants";
 
 export default function Creator(props) {
-    const {I18n, axios} = useAppContext()
+    const {I18n, api} = useAppContext()
     const onDeleteOrAdd = async () => {
+        let successValue = false
         if (props.toAdd) {
-            const res = await axios.put(`users/${props.id}/role`, undefined,{
-                params: {role: 'ROLE_ADMIN'}
-            })
+            const {success} = await api.addRole(props.id, 'ROLE_ADMIN')
+            successValue = success
         } else {
-            const res = await axios.delete(`users/${props.id}/role`, undefined,{
-                params: {role: 'ROLE_ADMIN'}
-            })
+            const {success} = await api.removeRole(props.id, 'ROLE_ADMIN')
+            successValue = success
         }
-        props.triggerEffect()
+        if (successValue) {
+            props.triggerEffect()
+        }
     }
 
 return <>

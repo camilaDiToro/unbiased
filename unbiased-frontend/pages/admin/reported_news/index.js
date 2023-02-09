@@ -15,7 +15,7 @@ import usePagination from "../../../pagination";
 
 
 export default function Reported_news(){
-    const {I18n, axios}= useAppContext()
+    const {I18n, api}= useAppContext()
     const [pagination, setPagination] = usePagination()
     const router = useRouter()
     const [reportedNews, setReportedNews] = useState([])
@@ -23,10 +23,12 @@ export default function Reported_news(){
 
     useEffect(() => {
         const params = {page: router.query.page, reportOrder: router.query.order, reported: true}
-        axios.get('news', {params}).then(res => {
-            setPagination(res)
-            const mappedNews = (res.data || []).map(newsMapper)
-            setReportedNews(mappedNews)
+        api.getArticles(params).then(res => {
+            const {data, pagination, success} = res
+            if (success) {
+                setPagination(pagination)
+                setReportedNews(data)
+            }
         })
     }, [router.query, effectTrigger])
 

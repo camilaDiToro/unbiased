@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import {getResourcePath} from "../constants";
 
 export default function UpvoteButtons(props) {
-    const {loggedUser, axios} = useAppContext()
+    const {loggedUser, api} = useAppContext()
     const router = useRouter()
     let upvoteClass = ''
 
@@ -14,27 +14,25 @@ export default function UpvoteButtons(props) {
             upvoteClass = 'downvoted'
     }
 
-    const handleUpvoteOrDownvote = async (s) => {
+    const handleUpvoteOrDownvote = async (s, add, remove) => {
         if (!loggedUser) {
             await router.push('/login')
         } else {
-            try {
-                if (props.rating === 0 || props.rating > 0 && s === 'dislikes' || props.rating < 0 && s === 'likes') {
-                    await axios.put(`/${props.comment ? 'comments' : 'news'}/${props.id}/${s}/${loggedUser.id}`)
-                } else {
-                    await axios.delete(`/${props.comment ? 'comments' : 'news'}/${props.id}/${s}/${loggedUser.id}`)
-                }
-                props.triggerEffect()
-            } catch(e) {
-                console.log(e)
+            if (props.rating === 0 || props.rating > 0 && s === 'dislikes' || props.rating < 0 && s === 'likes') {
+                const {success} = await add(props.id)
+                success && props.triggerEffect()
+            } else {
+                const {success} = await remove(props.id)
+                success && props.triggerEffect()
+
             }
         }
     }
 
-    const handleUpvote = async () => handleUpvoteOrDownvote('likes')
+    const handleUpvote = async () => handleUpvoteOrDownvote('likes', (a) => props.comment ? api.upvoteComment(a): api.upvoteArticle(a),(a) => props.comment ? api.upvoteCommentRemove(a): api.upvoteArticleRemove(a))
 
 
-    const handleDownvote = async () => handleUpvoteOrDownvote('dislikes')
+    const handleDownvote = async () => handleUpvoteOrDownvote('dislikes', (a) => props.comment ? api.downvoteComment(a): api.downvoteArticle(a),(a) => props.comment ? api.downvoteCommentRemove(a): api.downvoteArticleRemove(a))
 
 
     return   <div className={props.comment ? "d-flex flex-row align-items-center gap-1" : "upvote-div-profile d-flex flex-column align-items-center m-3"}>

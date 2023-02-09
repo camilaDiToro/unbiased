@@ -7,7 +7,7 @@ import {getResourcePath} from "../../constants";
 export default function Login() {
     const router = useRouter()
     const ctx = useAppContext()
-    const axios = ctx.axios
+    const api = ctx.api
     const [details, setDetails] = useState({
         email: "",
         password: ""
@@ -39,12 +39,10 @@ export default function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault()
-        await axios.post('users',JSON.stringify(details),{
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        await router.push('/login')
+        const {success} = await api.registerUser(details.email, details.password)
+        if (success) {
+            await router.push('/login')
+        }
     }
 
     return(

@@ -2,7 +2,7 @@ import {useState} from "react";
 import {useAppContext} from "../context";
 
 export default function ReportForm(props) {
-    const {I18n, axios, loggedUser} = useAppContext()
+    const {I18n, api} = useAppContext()
 
     const [reason, setReason] = useState('')
 
@@ -21,22 +21,17 @@ export default function ReportForm(props) {
     }
 
     const handler = async (e) => {
-        const json = {reason}
         if (props.comment) {
-            const res = await axios.put(`comments/${props.id}/reports/${loggedUser.id}`, JSON.stringify(json),{
-                headers: {
-                    'Content-Type': 'application/vnd.unbiased.commentReportDetail.v1+json',
-                }
-            })
+            const {success} = await api.reportComment(props.id, reason)
+            if (success) {
+                props.triggerEffect()
+            }
         } else {
-            const json = {reason}
-            const res = await axios.put(`news/${props.id}/reports/${loggedUser.id}`, JSON.stringify(json),{
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
+            const {success} = await api.reportArticle(props.id, reason)
+            if (success) {
+                props.triggerEffect()
+            }
         }
-        props.triggerEffect()
     }
 
     props.handlerArray[0] = handler

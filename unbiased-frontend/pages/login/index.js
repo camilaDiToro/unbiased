@@ -1,16 +1,14 @@
 import Link from "next/link";
 import {useAppContext} from "../../context";
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {useRouter} from "next/router";
 import {getResourcePath} from "../../constants";
 
 
 export default function Login() {
 
-    const ctx = useAppContext()
+    const {api} = useAppContext()
     const router = useRouter()
-    // const [jwt, setJwt] = ctx.jwtState
     const [details, setDetails] = useState({
         username: "",
         password: "",
@@ -42,20 +40,9 @@ export default function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        ctx.axios({
-            // headers: {'Content-Type': 'application/json'},
-            method: 'put',
-            url: 'users/0/pinnedNews',
-            auth: details,
-            params: {newsId: 0}
-        }).then(res => {
-            console.log(res.data)
-            console.log(res.headers)
-            // router.back()
-        }).catch(error => {
-            console.log(error.response.headers)
-            if (error.response.status === 404) {
-
+        api.login(details.username, details.password).then(r => {
+            const {success} = r
+            if (success) {
                 if (localStorage.getItem('fromPage')) {
                     router.back();
                 } else {
@@ -64,6 +51,7 @@ export default function Login() {
                 }
             }
         })
+
     }
 
     return(

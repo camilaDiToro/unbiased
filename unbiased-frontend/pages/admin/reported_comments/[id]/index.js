@@ -12,7 +12,7 @@ import {getResourcePath} from "../../../../constants";
 
 export default function ReportedCommentDetail(props){
 
-    const {I18n, axios} = useAppContext()
+    const {I18n, api} = useAppContext()
     const router = useRouter()
 
     const [reportInfo, setReportInfo] = useState([])
@@ -20,15 +20,20 @@ export default function ReportedCommentDetail(props){
     useEffect(() => {
         if (!id)
             return
-        axios.get(`comments/${id}/reports`).then (res => {
-            setReportInfo(res.data || [])
+        api.getCommentReports(id).then(r => {
+            const {success, data} = r
+            if (success) {
+                setReportInfo(data)
+            }
         })
     }, [id])
 
 
     const onDelete = async () => {
-        await axios.delete(`comments/${id}`)
-        await router.push('/admin/reported_comments')
+        const {success} = await api.deleteComment(id)
+        if (success) {
+            await router.push('/admin/reported_comments')
+        }
     }
     return (<>
             <Head>

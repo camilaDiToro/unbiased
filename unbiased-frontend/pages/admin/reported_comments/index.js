@@ -26,10 +26,12 @@ export default function Reported_comments(){
     const [pagination, setPagination] = usePagination()
     useEffect(() => {
         const params = {reportOrder: router.query.order, reported: true, page: router.query.page}
-        ctx.axios.get(`comments`, {params}).then(res => {
-            setPagination(res)
-            const mappedComments = (res.data || []).map(commentsMapper)
-            setReportedComments(mappedComments)
+        ctx.api.getComments(params).then(res => {
+            const {pagination, success, data} = res
+            if (success) {
+                setPagination(pagination)
+                setReportedComments(data)
+            }
         })
     }, [router.query, effectTrigger])
     return (

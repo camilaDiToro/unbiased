@@ -17,7 +17,7 @@ export default function AddAdmin(props){
 
     const ctx = useAppContext()
     const I18n = ctx.I18n
-    const axios = ctx.axios
+    const api = ctx.api
     const router = useRouter()
 
     const [details, setDetails] = useState(router.query.search|| '')
@@ -28,18 +28,16 @@ export default function AddAdmin(props){
     const [effectTrigger, triggerEffect] = useTriggerEffect()
 
     useEffect(() => {
-        // alert(props.users[0].nameOrEmail)
         const params = {...router.query, admins: !addAdminMode}
 
-        axios.get('users', {params}).then(res => {
-            setPagination(res)
-            const admins = res.data.map(u => {
-                delete u['newsStats']
-                return userMapper(u)
-            })
-            setUserList(admins)
+        api.getUsers(params).then(res => {
+            const {success, data, pagination} = res
+            setPagination(pagination)
+            if (success) {
+                setUserList(data)
+            }
+
         })
-        // setUserList(props.users)
 
     }, [router.query, effectTrigger])
 
@@ -60,20 +58,20 @@ export default function AddAdmin(props){
     const showNotAdmins = async () => {
         const params = {...router.query, admins: addAdminMode}
 
-        axios.get('users', {params}).then(res => {
-            setPagination(res)
-            const admins = res.data.map(u => {
-                delete u['newsStats']
-                return userMapper(u)
-            })
-            setUserList(admins)
-            setAddAdminMode(a => !a)
-            router.push({
-                    ...router,
-                    query: { ...router.query, add: !addAdminMode }
-                },
-                undefined, { shallow: true }
-            )
+        api.getUsers(params).then(res => {
+            const {success, data, pagination} = res
+            if (success) {
+                setUserList(data)
+                setPagination(pagination)
+                setAddAdminMode(a => !a)
+                router.push({
+                        ...router,
+                        query: { ...router.query, add: !addAdminMode }
+                    },
+                    undefined, { shallow: true }
+                )
+            }
+
         })
         // triggerEffect()
     }

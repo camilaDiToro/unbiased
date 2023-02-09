@@ -29,7 +29,7 @@ import {getResourcePath} from "../../../constants";
 
 export default function Profile() {
 
-  const {I18n, loggedUser, axios}= useAppContext();
+  const {I18n, loggedUser, api}= useAppContext();
   const router = useRouter()
   const {id} = router.query
   const isMyProfile = loggedUser && loggedUser.id === id
@@ -40,7 +40,6 @@ export default function Profile() {
   const [pagination, setPagination] = usePagination()
   const [profileInfo, setProfileInfo] = useState(undefined)
   const [pinned, setPinned] = useState(undefined)
-  const {fillNewsLoggedParams} = useLoggedParamsFiller()
 
   const queryParamMap = {
     MY_POSTS: 'publishedBy',
@@ -55,57 +54,52 @@ export default function Profile() {
     if (loggedUser) {
       params[queryParamMap[router.query.cat] || queryParamMap.MY_POSTS] = loggedUser.id
     }
-    return {params}
+    return params
   }
 
   useEffect(() => {
     if (!id)
       return
-    axios.get(`news`, {params: {pinnedBy: id}}).then(res => {
-      const maybePinned = res.data
-      console.log('pinned')
-      console.log(res.data)
-      if (maybePinned)
-        setPinned(newsMapper(maybePinned))
+    api.getArticles({pinnedBy: id}).then(res => {
+      const {data, success} = res
+
+      if (success) {
+        setPinned(data[0])
+      }
+
     })
 
-    axios.get(`users/${id}/following`).then(res => {
-      const following = res.data
-      console.log('following')
-      console.log(following)
-      if (following) {
-        const isLoggedUserFollowing = following.map(u => u.id).includes(id)
+    api.getFollowing(id).then(res => {
+      const {success, data} = res
+      if (success) {
+        const isLoggedUserFollowing = data.map(u => u.id).includes(id)
         setProfileInfo(i => ({...i, isLoggedUserFollowing}))
       }
     })
   }, [newsEffectTrigger, id])
 
   useEffect(() => {
-    axios.get('news', getQueryParams()).then(res => {
-      console.log(res)
-      setPagination(res)
-      const mappedNews = (res.data || []).map(newsMapper)
-      fillNewsLoggedParams(mappedNews).then(n => setNews(n))
+    api.getArticles( getQueryParams()).then(res => {
+      const {success, pagination, data} = res
+      if (success) {
+        setPagination(pagination)
+        setNews(data)
+      }
     })
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {
     if (!id)
       return
-    const relativePath = `users/${id}`
-    axios.get(relativePath).then(res => {
-      const data = res.data
-      if (data && data.newsStats) {
-        axios.get(data.newsStats).then(newsStats =>  {
-          data.newsStats = newsStats.data
-          setProfileInfo(userMapper(res.data))
-        })
-      } else {
-        setProfileInfo(res.data ? userMapper(res.data) : {})
+    api.getUser(id).then(r => {
+      const {success, data} = r
+
+      if (success) {
+        setProfileInfo(data)
       }
     })
 
-  }, [profileEffectTrigger])
+  }, [profileEffectTrigger, id])
 
 
   let submitHandlerArray = []

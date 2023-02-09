@@ -8,15 +8,13 @@ import TopCreator from "../components/TopCreator";
 import MainCardsContainer from "../components/MainCardsContainer";
 import NewsCategoryTabs from "../components/NewsCategoryTabs";
 import {useEffect, useState} from "react";
-import {useLoggedParamsFiller, useTriggerEffect, useURLWithParams} from "../utils";
+import {useTriggerEffect} from "../utils";
 import CancelSearchLink from "../components/CancelSearchLink";
 import ProfileCardTypeTab from "../components/ProfileCardTypeTab";
 import Creator from "../components/Creator";
 import Pagination from "../components/Pagination";
 import usePagination from "../pagination";
-import {newsMapper, userMapper} from "../mappers"
 import TimeSelector from "../components/TimeSelector";
-import { useTranslation } from "react-i18next";
 
 export default function Home(props) {
   const router = useRouter()
@@ -25,34 +23,30 @@ export default function Home(props) {
   const [useUsers, setUsers] = useState([])
   const [topCreators, setTopCreators] = useState([])
   const [pagination, setPagination] = usePagination()
-  const {t} = useTranslation()
-  const {I18n, axios} = useAppContext()
-  const {fillNewsLoggedParams} = useLoggedParamsFiller()
+  const {I18n,  api} = useAppContext()
 
-  const getUsersData = async res => {
-    const data = res.data || []
 
-    const finalData = data.map(d => {
-      const aux = d
-      delete aux['newsStats']
-      return aux
-    })
-    setUsers(finalData ? finalData.map(userMapper) : [])
-  }
 
   useEffect(() => {
     const params = {...router.query}
     delete params['type']
     if (router.query.search && router.query.type === 'creator') {
 
-      axios.get('users', {params}).then(getUsersData)
+      api.getUsers(params).then(r => {
+        const {success, data} = r
+        if (success)
+          setUsers(data)
+      })
 
     } else {
-        axios.get('news', {params}).then(res => {
-          setPagination(res)
-        const mappedNews = (res.data || []).map(newsMapper)
-          fillNewsLoggedParams(mappedNews).then(n => setNews(n))
-      })
+        api.getArticles(params).then(r => {
+          const {success, data, pagination} = r
+          if (success) {
+            setNews(data)
+            setPagination(pagination)
+          }
+
+        })
       }
   }, [router.query, newsEffectTrigger])
 
@@ -60,19 +54,16 @@ export default function Home(props) {
     const params = {...router.query, topCreators: true}
     delete params['type']
 
-      axios.get('users', {params}).then(res => {
-        const topCreators = (res.data || []).map(u => {
-          delete u['newsStats']
-          return userMapper(u)
-        })
-        setTopCreators(topCreators)
+      api.getUsers(params).then(res => {
+        const {success, data} = res
+        success && setTopCreators(data)
       })
   }, [newsEffectTrigger])
 
   return (
     <>
     <Head>
-      <title>unbiased - Home {I18n("interactions", [3])}</title>
+      <title>unbiased - Home</title>
     </Head>
       {router.query.search  ? <></> : <NewsCategoryTabs></NewsCategoryTabs>}
       <div className="d-flex flex-column flex-xl-row  flex-grow-1">

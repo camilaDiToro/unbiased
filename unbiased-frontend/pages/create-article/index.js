@@ -30,34 +30,23 @@ export default function CreateArticle(props) {
         // image: null,
         categories: []
     });
-    const {I18n, axios} = useAppContext()
+    const {I18n, api} = useAppContext()
 
 
     const handleSubmit = async () => {
-        console.log(article)
-        const res = await axios.post('news', JSON.stringify(article),{
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        const splittedLocation = res.headers.location.split('/')
-        const id = splittedLocation[splittedLocation.length - 1]
-
-        const fileRes = await axios.put(`news/${id}/image`, file)
-        await router.replace(`/news/${id}`)
+        const {success, data} = await api.postArticle(article, file)
+        if (success)
+            await router.replace(`/news/${data.id}`)
     }
 
     const [filename, setFilename] = useState(I18n("createArticle.selectFile"))
     const FormData = require('form-data');
-    const [file, setFile] = useState(new FormData())
+    const [file, setFile] = useState(undefined)
 
     const handleFileChange = (e) => {
         const el = e.target
-        setFile(f => {
-            f.set('image', el.files[0])
-            return f
-        })
 
+        setFile(el.files[0])
         setFilename(el.files[0].name)
     }
 

@@ -5,16 +5,14 @@ import {useAppContext} from "../../../../context";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import Modal from "../../../../components/Modal";
-import {useTriggerEffect} from "../../../../utils";
 import ReportReason from "../../../../components/ReportReason";
 import Head from "next/head";
-import axios from "axios";
-import {baseURL, getResourcePath} from "../../../../constants";
+import {getResourcePath} from "../../../../constants";
 
 
 
 export default function ReportedNewsDetail(props){
-    const {I18n, axios} = useAppContext()
+    const {I18n, api} = useAppContext()
     const [reportInfo, setReportInfo] = useState([])
     const router = useRouter()
     const {id} = router.query
@@ -22,14 +20,17 @@ export default function ReportedNewsDetail(props){
     useEffect(() => {
         if (!id)
             return
-        axios.get(`comments/${id}/reports`).then (res => {
-            setReportInfo(res.data || [])
+        api.getArticleReports(id).then(r => {
+            const {success, data} = r
+            success && setReportInfo(data)
         })
     }, [id])
 
     const onDelete = async () => {
-        await axios.delete(`news/${id}`)
-        await router.push('/admin/reported_news')
+        const {success} = await api.deleteArticle(id)
+        if (success) {
+            await router.push('/admin/reported_news')
+        }
     }
     return (<>
             <Head>
