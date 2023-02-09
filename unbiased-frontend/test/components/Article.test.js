@@ -1,7 +1,37 @@
 import React from 'react'
 import Article from "../../components/Article";
-import {render} from "../test_utils/contextRender";
-import {screen} from '@testing-library/react'
+import * as testingLibrary from "../test_utils/contextRender";
+
+const {render, screen} = testingLibrary;
+
+const defaultMap = (options = {}) => {
+    const map = {
+        title: "My title",
+        subtitle: "My subtitle",
+        body: "my body",
+        datetime: "3 months ago",
+        readTime: 0,
+        creator: {
+            hasImage: true,
+            Image: "http://localhost:8080/webapp_war_exploded/api/users/1/image",
+            id: 1,
+            nameOrEmail: "My name",
+            tier: "default",
+        },
+        hasImage: false,
+        stats: {
+            upvoted: 1,
+            interactions: 1,
+            positivity: 'positive'
+        },
+        upvotes: 1,
+        triggerEffect: jest.fn(),
+        id: 1
+
+    }
+
+    return { ...map, ...options };
+};
 
 jest.mock('../../components/FormattedDate', ()=>{
     return jest.fn(() => {
@@ -9,54 +39,32 @@ jest.mock('../../components/FormattedDate', ()=>{
     });
 })
 
+
 describe('Article test', ()=>{
 
     beforeEach(()=>{
-        render(null)
+        render(null) //This render our context, it's a modified render of react-testing-library
     })
 
-    test('Render the readable props correctly', async () => {
 
-        const map = new Map([
-            ["title", "my Title"],
-            ["subtitle", "My description"],
-            // ["body", "My body"],
-            ["dateTime", "3 months ago"],
-            ["readTime", 0],
-            ["creator", {
-                nameOrEmail: "My name",
-            }],
-            ["hasImage", false],
-            ["stats", {
-                upvoted: 1,
-                interactions: 1,
-                positivity: 'positive'
-            }],
-            ['upvotes', 1],
-            // ['triggerEffect', jest.fn()],
-
-        ])
+    test('Renders the component with the default props', () => {
+        const map = defaultMap()
 
         render(
-            <Article
-                title={map.get('title')}
-                subtitle={map.get('subtitle')}
-                dateTime={map.get('dateTime')}
-                readTime={map.get('readTime')}
-                creator={map.get('creator')}
-                body={map.get('body')}
-                hasImage={map.get('hasImage')}
-                stats={map.get('stats')}
-                upvotes={map.get('upvotes')}
-            />) //This wraps the Article component into the ContextRender without rendering the context again
+            <Article {...map}/>) //This wraps the Article component into our rendered context without rendering the context again
 
-        map.forEach((value, key) => {
-            if(typeof value === 'string' && (key === 'title' || key === 'subtitle' || key === 'dateTime')){
+        //Here we check if all the readable props appear on the card
+        Object.entries(map).forEach(([key,value])=>{
+            if(typeof value === 'string' && (key === 'title' || key === 'subtitle' || key === 'datetime')){
                 expect(screen.getByText(value)).toBeInTheDocument()
-            }else if (typeof  value === 'number' && (key === 'dateTime' || key === 'readTime' || key === 'upvotes')){
+
+            }else if (typeof  value === 'number' && (key === 'readTime' || key === 'upvotes')){
                 if(key === 'readTime'){
                     expect(screen.getByText(`${value} min read`)).toBeInTheDocument()
+                }else{
+                    expect(screen.getByText(value)).toBeInTheDocument()
                 }
+
             }else if (typeof  value === 'object' && (key === value.nameOrEmail)) {
                 expect(screen.getByText(value.nameOrEmail)).toBeInTheDocument()
             }
