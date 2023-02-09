@@ -28,6 +28,7 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("/api/comments")
@@ -171,11 +172,17 @@ public class CommentController {
         return Response.noContent().build();
     }
 
-    @DELETE
+    @PUT //Logical deletion
     @Path("/{commentId:[0-9]+}")
     @PreAuthorize("@ownerCheck.canDeleteComment(#commentId)")
     public Response delete(@PathParam("commentId") final long commentId){
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
+        if(comment.getDeleted()){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The comment of id %d had already been deleted",
+                    commentId))).build();
+        }
         newsService.deleteComment(commentId);
-        return Response.noContent().build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("Comment of id %d successfully deleted",
+                commentId))).build();
     }
 }
