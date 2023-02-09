@@ -18,8 +18,8 @@ export default function ReportedCard(props) {
                 <div className="row row-cols-1">
                     <div className="col mb-4">
                         <div className="card h-100 d-flex flex-row p-3 max-h-300px" id="left-card">
-                            <Tooltip  position="bottom" text={ctx.I18n("moderation.reportsNum")}>
-                                <div className="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count">
+                            <Tooltip className="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count"  position="bottom" text={ctx.I18n("moderation.reportsNum")}>
+                                <div >
                                     {props.reportCount}
                                 </div>
                             </Tooltip>
