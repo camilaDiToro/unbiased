@@ -4,9 +4,11 @@ import {RouterContext} from "next/dist/shared/lib/router-context";
 import {createMockRouter} from "./createMockRouter";
 import {AppContext} from "../../context";
 import {I18nTesting} from "../../i18n";
+import '@testing-library/jest-dom'
 
 const AllTheProviders = ({children})=>{
-    render(
+
+    return(
         <RouterContext.Provider value={createMockRouter({})}>
             <AppContext.Provider value={{I18n: I18nTesting}}>
                 {children}
@@ -15,7 +17,8 @@ const AllTheProviders = ({children})=>{
     )
 }
 
-export const ContextRender = (ui, options) =>
+const contextRender = (ui, options) =>
     render(ui, {wrapper: AllTheProviders, ...options})
 
 export * from '@testing-library/react'
+export {contextRender as render}
