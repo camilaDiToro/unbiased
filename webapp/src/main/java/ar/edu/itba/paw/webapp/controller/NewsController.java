@@ -7,6 +7,7 @@ import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
@@ -27,10 +28,7 @@ import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
 import ar.edu.itba.paw.webapp.api.exceptions.MissingArgumentException;
 import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetNewsFilter;
 import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetNewsParams;
-import ar.edu.itba.paw.webapp.dto.NewsDto;
-import ar.edu.itba.paw.webapp.dto.NewsReportDetailDto;
-import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
-import ar.edu.itba.paw.webapp.dto.UserDto;
+import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -128,10 +126,14 @@ public class NewsController {
     @GET
     @Path("/{newsId:[0-9]+}/reports")
     @Produces(value = {CustomMediaType.NEWS_REPORT_LIST_V1})
-    public Response getNewsReportDetail(@PathParam("newsId") final long newsId){
-        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        List<NewsReportDetailDto> reportList = news.getReports().stream().map(d -> NewsReportDetailDto.fromReportDetail(uriInfo, d)).collect(Collectors.toList());
-        return Response.ok(new GenericEntity<List<NewsReportDetailDto>>(reportList) {}).build();
+    public Response getNewsReportDetail(@PathParam("newsId") final long newsId, @QueryParam("page") @DefaultValue("1") int page){
+        Page<ReportDetail> reportedNewsDetail = adminService.getReportedNewsDetail(page, newsId);
+        if(reportedNewsDetail.getContent().isEmpty()){
+            return Response.noContent().build();
+        }
+        List<NewsReportDetailDto> reportList = reportedNewsDetail.getContent().stream().map(n -> NewsReportDetailDto.fromReportDetail(uriInfo, n)).collect(Collectors.toList());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsReportDetailDto>>(reportList) {});
+        return PagingUtils.pagedResponse(reportedNewsDetail, responseBuilder, uriInfo);
     }
 
     @PUT

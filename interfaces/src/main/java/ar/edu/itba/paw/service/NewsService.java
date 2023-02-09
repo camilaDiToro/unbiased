@@ -19,22 +19,14 @@ public interface NewsService {
     News create(News.NewsBuilder newsBuilder, final List<Category> categories);
     Optional<News> getById(Optional<User> maybeCurrentUser, long id);
     Optional<News> getById(final User currentUser, long id);
-
-
     void setNewsImage(long newsId, byte[] image, String dataType);
-
     Optional<News> getById(long id);
     Optional<Comment> getCommentById(long id);
-
     Optional<News> getPinnedByUserNews(User user);
-
     Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query);
     void setRating(long userId, long newsId , Rating rating);
-
-
     void saveNews(long userId, long newsId);
     void unsaveNews(long userId, long newsId);
-
     boolean toggleSaveNews(final User currentUser, long newsId);
     void deleteNews(News news);
     Iterable<ProfileCategory> getProfileCategories(Optional<User> maybeCurrentUser, final User user);
