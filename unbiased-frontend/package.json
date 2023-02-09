@@ -6,9 +6,9 @@
     "dev": "next dev",
     "build": "(export ENV=prod && next build)",
     "start": "next start",
-    "export": "next export",
     "lint": "next lint",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "export":"next export"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",

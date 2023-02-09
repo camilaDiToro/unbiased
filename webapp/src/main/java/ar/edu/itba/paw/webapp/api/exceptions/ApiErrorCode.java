@@ -16,6 +16,7 @@ public enum ApiErrorCode {
     VALIDATION(701),
     INVALID_ROLE(702),
     INVALID_PARAMETERS(703),
+    INVALID_GET_USERS_FILTER(704),
 
     //Backend
     USER_NOT_FOUND(801),
