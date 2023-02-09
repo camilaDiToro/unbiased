@@ -23,4 +23,5 @@ public interface CommentDao {
     Page<ReportedComment> getReportedCommentDetail(int page, long commentId);
     List<Comment> getCommentsUpvotedByUser(User user);
     List<Comment> getCommentsDownvotedByUser(User user);
+    boolean isReportedByUser(long commentId, long userId);
 }

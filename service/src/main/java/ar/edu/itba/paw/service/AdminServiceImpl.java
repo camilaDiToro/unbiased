@@ -70,7 +70,7 @@ public class AdminServiceImpl implements AdminService{
     public ReportedComment reportComment(long userId, long commentId, ReportReason reportReason) {
         final Comment comment = newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
-        if(commentDao.getReportedCommentDetail(1,commentId).getContent().isEmpty()){
+        if(!commentDao.isReportedByUser(commentId, userId)){
             return commentDao.reportComment(comment,user,reportReason);
         }
         return null;

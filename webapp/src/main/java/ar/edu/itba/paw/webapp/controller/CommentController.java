@@ -125,13 +125,9 @@ public class CommentController {
 
     @POST
     @Path("/{commentId:[0-9]+}/reports")
-    @PreAuthorize("@ownerCheck.userMatches(#reportForm.userId)")
+    @PreAuthorize("@ownerCheck.userMatches(#reportForm)")
     @Consumes(value = {CustomMediaType.COMMENT_REPORT_DETAIL_V1})
     public Response report( @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
-        if(reportForm == null){
-            throw new MissingArgumentException("Missing body, userId and reporting reason required");
-        }
-
         ReportedComment reportedComment = adminService.reportComment(reportForm.getUserId(), commentId, ReportReason.getByValue(reportForm.getReason()));
         if(reportedComment == null){
             throw new InvalidRequestParamsException("Each user can report a comment just once");

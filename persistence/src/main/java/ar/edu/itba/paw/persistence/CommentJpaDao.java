@@ -182,4 +182,12 @@ public class CommentJpaDao implements CommentDao{
         return entityManager.createQuery("SELECT c from Comment c  WHERE c.id IN :ids", Comment.class).setParameter("ids", ids).getResultList();
     }
 
+    @Override
+    public boolean isReportedByUser(long commentId, long userId) {
+        int value = ((Number)entityManager.createNativeQuery("SELECT count(*) FROM comment_report WHERE user_id = :userId and comment_id = :commentId")
+                .setParameter("userId", userId).setParameter("commentId", commentId)
+                .getSingleResult()).intValue();
+        return value >= 1;
+    }
+
 }
