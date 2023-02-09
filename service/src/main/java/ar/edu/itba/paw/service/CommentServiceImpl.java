@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Rating;
+import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.user.CommentUpvote;
 import ar.edu.itba.paw.model.user.User;
@@ -18,12 +20,13 @@ public class CommentServiceImpl implements CommentService {
 
 
     private final CommentDao commentDao;
+    private final UserService userService;
 
 
     @Autowired
-    public CommentServiceImpl(CommentDao commentDao) {
-
+    public CommentServiceImpl(CommentDao commentDao, UserService userService) {
         this.commentDao = commentDao;
+        this.userService = userService;
     }
 
     @Override
@@ -43,16 +46,36 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void setCommentRating(final User currentUser, Comment comment, Rating rating) {
-        Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
-        if (rating.equals(Rating.NO_RATING)) {
-            upvoteMap.remove(currentUser.getId());
-            return;
-        }
-        final long userId = currentUser.getId();
+    public boolean setCommentRating(long userId, long commentId, Rating rating) {
+        Comment comment = commentDao.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
 
-        upvoteMap.putIfAbsent(userId, new CommentUpvote(comment, currentUser.getId()));
-        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
+        Map<Long, CommentUpvote> upvoteMap = comment.getUpvoteMap();
+
+        if(!upvoteMap.containsKey(userId)){
+            if(rating.equals(Rating.NO_RATING)){
+                return false;
+            }
+            upvoteMap.put(userId, new CommentUpvote(comment, userId));
+            upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
+            return true;
+        }
+        if(rating.equals(Rating.NO_RATING)){
+            upvoteMap.remove(userId);
+            return true;
+        }
+        if(upvoteMap.get(userId).isValue()){
+            if(rating.equals(Rating.UPVOTE)){
+                return false;
+            }
+            upvoteMap.get(userId).setValue(false);
+            return true;
+        }
+
+        if(rating.equals(Rating.DOWNVOTE)){
+            return false;
+        }
+        upvoteMap.get(userId).setValue(true);
+        return true;
     }
 
 }

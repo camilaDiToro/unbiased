@@ -18,6 +18,7 @@ import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.CommentDto;
 import ar.edu.itba.paw.webapp.dto.NewsReportDetailDto;
+import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -127,22 +128,46 @@ public class CommentController {
     }
 
     @PUT
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentService.setCommentRating(user, comment, Rating.UPVOTE);
+        commentService.setCommentRating(userId, commentId, Rating.UPVOTE);
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d disliked the comment of id %d",
+                userId, commentId))).build();
+    }
+
+    @DELETE
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response removeLike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
+        if(commentService.setCommentRating(userId, commentId, Rating.NO_RATING)) {
+            return Response.ok(SimpleMessageDto.fromString(String.format("The like of the user of id %d to the comment of id %d has been removed",
+                    userId, commentId))).build();
+        }
         return Response.noContent().build();
     }
 
     @PUT
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path("/{commentId:[0-9]+}/dislikes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentService.setCommentRating(user, comment, Rating.DOWNVOTE);
+        commentService.setCommentRating(userId, commentId, Rating.DOWNVOTE);
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d disliked the comment of id %d",
+                userId, commentId))).build();
+    }
+
+    @DELETE
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path("/{commentId:[0-9]+}/dislikes/{userId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response removeDislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
+        if(commentService.setCommentRating(userId, commentId, Rating.NO_RATING)) {
+            return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the comment of id %d has been removed",
+                    userId, commentId))).build();
+        }
         return Response.noContent().build();
     }
 
@@ -153,25 +178,4 @@ public class CommentController {
         newsService.deleteComment(commentId);
         return Response.noContent().build();
     }
-
-    @DELETE
-    @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
-    @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response removeLike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentService.setCommentRating(user, comment, Rating.NO_RATING);
-        return Response.noContent().build();
-    }
-
-    @DELETE
-    @Path("/{commentId:[0-9]+}/dislikes/{userId:[0-9]+}")
-    @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response removeDislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentService.setCommentRating(user, comment, Rating.NO_RATING);
-        return Response.noContent().build();
-    }
-
 }

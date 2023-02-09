@@ -20,5 +20,5 @@ public interface CommentService {
     List<Comment> getCommentsUpvotedByUser(User user);
     List<Comment> getCommentsDownvotedByUser(User user);
     Optional<Comment> getById(long id);
-    void setCommentRating(User currentUser, Comment comment, Rating rating);
+    boolean setCommentRating(long userId, long commentId, Rating rating);
 }
