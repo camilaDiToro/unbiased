@@ -133,7 +133,7 @@ public class CommentController {
         User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.UPVOTE);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @PUT
@@ -143,7 +143,7 @@ public class CommentController {
         User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.DOWNVOTE);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
@@ -151,7 +151,7 @@ public class CommentController {
     @PreAuthorize("@ownerCheck.canDeleteComment(#commentId)")
     public Response delete(@PathParam("commentId") final long commentId){
         newsService.deleteComment(commentId);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
@@ -161,7 +161,7 @@ public class CommentController {
         User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.NO_RATING);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @DELETE
@@ -171,7 +171,7 @@ public class CommentController {
         User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
         commentService.setCommentRating(user, comment, Rating.NO_RATING);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
 }

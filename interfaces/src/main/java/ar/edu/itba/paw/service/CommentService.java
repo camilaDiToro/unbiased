@@ -17,11 +17,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface CommentService {
-    public List<Comment> getCommentsUpvotedByUser(User user);
-
-    public List<Comment> getCommentsDownvotedByUser(User user);
-
+    List<Comment> getCommentsUpvotedByUser(User user);
+    List<Comment> getCommentsDownvotedByUser(User user);
     Optional<Comment> getById(long id);
-
     void setCommentRating(User currentUser, Comment comment, Rating rating);
 }
