@@ -128,21 +128,27 @@ public class CommentController {
         return Response.ok().build();
     }
 
+
+
+
+
+
+
     @PUT
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
-    @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
+    @Path("/{commentId:[0-9]+}/likes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response like(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
+    public Response like(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
         commentService.setCommentRating(userId, commentId, Rating.UPVOTE);
-        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d disliked the comment of id %d",
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the comment of id %d",
                 userId, commentId))).build();
     }
 
     @DELETE
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
-    @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
+    @Path("/{commentId:[0-9]+}/likes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response removeLike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
+    public Response removeLike(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
         if(commentService.setCommentRating(userId, commentId, Rating.NO_RATING)) {
             return Response.ok(SimpleMessageDto.fromString(String.format("The like of the user of id %d to the comment of id %d has been removed",
                     userId, commentId))).build();
@@ -152,9 +158,9 @@ public class CommentController {
 
     @PUT
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
-    @Path("/{commentId:[0-9]+}/dislikes/{userId:[0-9]+}")
+    @Path("/{commentId:[0-9]+}/dislikes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response dislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
+    public Response dislike(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
         commentService.setCommentRating(userId, commentId, Rating.DOWNVOTE);
         return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d disliked the comment of id %d",
                 userId, commentId))).build();
@@ -162,9 +168,9 @@ public class CommentController {
 
     @DELETE
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
-    @Path("/{commentId:[0-9]+}/dislikes/{userId:[0-9]+}")
+    @Path("/{commentId:[0-9]+}/dislikes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response removeDislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
+    public Response removeDislike(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
         if(commentService.setCommentRating(userId, commentId, Rating.NO_RATING)) {
             return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the comment of id %d has been removed",
                     userId, commentId))).build();
