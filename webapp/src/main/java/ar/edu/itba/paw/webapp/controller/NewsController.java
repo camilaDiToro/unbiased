@@ -108,7 +108,6 @@ public class NewsController {
         }
 
         final List<NewsDto> allNews = newsPage.getContent().stream().map(n -> NewsDto.fromNews(uriInfo, n)).collect(Collectors.toList());
-
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsDto>>(allNews) {});
         return PagingUtils.pagedResponse(newsPage, responseBuilder, uriInfo);
     }
@@ -118,7 +117,6 @@ public class NewsController {
     @Produces(value = {CustomMediaType.NEWS_V1})
     public Response getNews(@PathParam("newsId") final long newsId){
         News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-
         NewsDto newsDto = NewsDto.fromNews(uriInfo, news);
         return Response.ok(newsDto).build();
     }
@@ -179,7 +177,7 @@ public class NewsController {
             return Response.noContent().build();
         }
         newsService.deleteNews(news.get());
-        return Response.ok(SimpleMessageDto.fromString(String.format("The news of id %d has been deleted", newsId))).build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("The article of id %d has been deleted", newsId))).build();
     }
 
     @POST
@@ -218,22 +216,22 @@ public class NewsController {
     }
 
     @DELETE
-    @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
+    @Path("/{newsId:[0-9]+}/bookmarks")
+    @Produces({CustomMediaType.NEWS_REPORT_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response removeBookmark(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+    public Response removeBookmark(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
         newsService.unsaveNews(userId, newsId);
-        return Response.noContent().build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the article of id %d has been removed",
+                userId, newsId))).build();
     }
 
     @PUT
-    @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
+    @Path("/{newsId:[0-9]+}/bookmarks")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response save(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
+    public Response save(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
         newsService.saveNews(userId, newsId);
         return Response.noContent().build();
     }
-
-
 
     @Consumes({CustomMediaType.NEWS_V1})
     @POST
