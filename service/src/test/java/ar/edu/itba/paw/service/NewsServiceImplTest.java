@@ -3,19 +3,16 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
-import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TimeConstraint;
-import ar.edu.itba.paw.model.user.CommentUpvote;
 import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.Upvote;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.persistence.CommentDao;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +37,6 @@ public class NewsServiceImplTest {
 
     private static final Category CATEGORY = Category.ALL;
     private static final NewsOrder ORDER = NewsOrder.NEW;
-    private static final ReportOrder REPORT_ORDER = ReportOrder.REP_COUNT_DESC;
     private static final TimeConstraint TIME = TimeConstraint.ALLTIME;
 
     // GET NEWS
@@ -54,8 +50,6 @@ public class NewsServiceImplTest {
 
     private static final long NEWS_ID = 1;
 
-    private static final int PAGE_NUM = 1;
-
     private static final long ID_1 = 1;
 
     private static final long ID_2 = 2;
@@ -68,13 +62,7 @@ public class NewsServiceImplTest {
     private NewsDao mockNewsDao;
 
     @Mock
-    private CommentDao mockCommentDao;
-
-    @Mock
     private News NEWS_1;
-
-    @Mock
-    private News NEWS_2;
 
     @Mock
     private Comment COMMENT_1;
@@ -84,9 +72,6 @@ public class NewsServiceImplTest {
 
     @Mock
     private User mockUser;
-
-    @Mock
-    private Page<Comment> COMMENT_PAGE_2;
 
 
     @InjectMocks
@@ -112,13 +97,6 @@ public class NewsServiceImplTest {
         Page<News> returnValue = newsService.getNews(EMPTY_USER,1, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(TOTAL_PAGES,returnValue.getTotalPages());
     }
-
-//    @Test
-//    public void testGetComents(){
-//        Mockito.when(mockCommentDao.getNewComments(Mockito.eq(NEWS_ID), Mockito.eq(PAGE_NUM))).thenReturn(COMMENT_PAGE_2);
-//
-//        assertEquals(COMMENT_PAGE_2,newsService.getComments(NEWS_ID, PAGE_NUM, ORDER, false, REPORT_ORDER));
-//    }
 
     @Test
     public void testGetComentsRating(){
@@ -170,27 +148,6 @@ public class NewsServiceImplTest {
         newsService.setRating(mockUser.getId(), NEWS_ID,Rating.NO_RATING);
         assertEquals(0, upvoteMap.size());
     }
-
-
-//    @Test
-//    public void testsetCommentRating(){
-//        Map<Long, CommentUpvote> upvoteMap = new HashMap<>();
-//        Mockito.when(COMMENT_1.getUpvoteMap()).thenReturn(upvoteMap);
-//        Mockito.when(mockUser.getId()).thenReturn(ID_1);
-//        newsService.setCommentRating(mockUser, COMMENT_1,Rating.UPVOTE);
-//        assertTrue(upvoteMap.get(ID_1).isValue());
-//    }
-//
-//    @Test
-//    public void testsetCommentRatingRemove(){
-//        Map<Long, CommentUpvote> upvoteMap = new HashMap<>();
-//        upvoteMap.put(ID_1, new CommentUpvote(COMMENT_1, ID_1, true));
-//        Mockito.when(COMMENT_1.getUpvoteMap()).thenReturn(upvoteMap);
-//        Mockito.when(mockUser.getId()).thenReturn(ID_1);
-//        newsService.setCommentRating(mockUser, COMMENT_1,Rating.NO_RATING);
-//        assertEquals(0, upvoteMap.size());
-//    }
-
 
 }
 

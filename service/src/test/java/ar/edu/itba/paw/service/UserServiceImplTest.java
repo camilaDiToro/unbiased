@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
