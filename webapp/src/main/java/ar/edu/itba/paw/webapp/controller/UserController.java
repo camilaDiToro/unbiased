@@ -17,7 +17,6 @@ import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
 import ar.edu.itba.paw.webapp.api.exceptions.CustomBadRequestException;
-import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
 import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetUsersFilter;
 import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
@@ -30,13 +29,10 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
-
-import javax.persistence.Enumerated;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -213,7 +209,6 @@ public class UserController {
 
     @PUT
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
-    @PreAuthorize("@ownerCheck.isAdmin()")
     @Path(value = "/{userId:[0-9]+}/role")
     public Response addRole(@PathParam("userId") final long userId, @QueryParam("role") final String role) {
         if(!role.equals(Role.ROLE_ADMIN.getRole())){
@@ -230,7 +225,6 @@ public class UserController {
 
     @DELETE
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
-    @PreAuthorize("@ownerCheck.isAdmin()")
     @Path(value = "/{userId:[0-9]+}/role")
     public Response deleteRole(@PathParam("userId") final long userId, @QueryParam("role") final String role) {
         if(!role.equals(Role.ROLE_ADMIN.getRole())){
@@ -244,7 +238,5 @@ public class UserController {
         }
         return Response.ok(SimpleMessageDto.fromString(String.format("User of id %d was not an admin", userId))).build();
     }
-
-
 }
 

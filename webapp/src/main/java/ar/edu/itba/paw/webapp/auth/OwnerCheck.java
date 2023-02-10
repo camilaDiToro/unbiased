@@ -45,7 +45,7 @@ public class OwnerCheck {
         return checkNewsOwnership(newsId) || isAdmin();
     }
 
-    public boolean isAdmin() {
+    private boolean isAdmin() {
         return userService.isUserAdmin(securityService.getCurrentUser().orElseThrow(UserNotFoundException::new));
     }
 
