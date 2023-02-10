@@ -147,7 +147,7 @@ public class CommentController {
         return Response.noContent().build();
     }
 
-    @PUT
+    @POST
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path("/{commentId:[0-9]+}/dislikes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
