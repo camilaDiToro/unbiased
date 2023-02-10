@@ -18,7 +18,9 @@ export default function Bookmark(props) {
             <Tooltip onClickHandler={onSave} position="bottom" text={props.saved ? I18n("tooltip.articleUnsave") : I18n("tooltip.articleSave")}>
                 <img className="w-25px svg-btn" id="bookmark"
                      src={`/img/bookmark${props.saved ? '-clicked' : ''}.svg`}
-                     alt=""   />
+                     alt=""
+                     aria-label="bookmark"
+                />
             </Tooltip>
         </div> : <></>}</>
 }
