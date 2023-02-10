@@ -27,7 +27,11 @@ public enum GetNewsFilter {
     NO_FILTER() {
         @Override
         public GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id) {
-            return new GetNewsParams(   Category.getByValue(category), NewsOrder.getByValue(order), null,
+            NewsOrder newsOrder =NewsOrder.TOP;
+            if (order != null) {
+                newsOrder = NewsOrder.getByValue(order);
+            }
+            return new GetNewsParams(   Category.getByValue(category), newsOrder, null,
                                         TimeConstraint.getByValue(time), search, null);
         }
 
@@ -68,7 +72,11 @@ public enum GetNewsFilter {
     REPORTED(){
         @Override
         public GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id) {
-            return new GetNewsParams(null, null, ReportOrder.getByValue(order), null, null, null);
+            ReportOrder reportOrder = ReportOrder.REP_COUNT_DESC;
+            if (order != null) {
+                reportOrder = ReportOrder.getByValue(order);
+            }
+            return new GetNewsParams(null, null, reportOrder, null, null, null);
         }
 
         @Override
@@ -80,6 +88,7 @@ public enum GetNewsFilter {
     LIKED_BY() {
         @Override
         public GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id) {
+
             return validateIdParam(userService, category, order, time, search, id);
         }
 
@@ -143,6 +152,10 @@ public enum GetNewsFilter {
     }
 
     private static GetNewsParams validateIdParam(UserService userService, String category, String order, String time, String search, Long id) {
+        NewsOrder newsOrder = NewsOrder.TOP;
+        if (order != null) {
+            newsOrder = NewsOrder.getByValue(order);
+        }
         if(id == null){
             throw new InvalidRequestParamsException("The requested filter requires an \"id\" query param");
         }
@@ -150,7 +163,7 @@ public enum GetNewsFilter {
             throw new InvalidRequestParamsException("id param must be greater than 0");
         }
 
-        return new GetNewsParams(null, null, null,null, null,
+        return new GetNewsParams(null, newsOrder, null,null, null,
                 userService.getUserById(id).orElseThrow(()-> new UserNotFoundException(id)));
     }
 

@@ -95,7 +95,7 @@ public class NewsController {
                              @QueryParam("filter") @DefaultValue("NO_FILTER") final String filter,
                              @QueryParam("search") @DefaultValue("") final String search,
                              @QueryParam("cat") @DefaultValue("ALL") final String category,
-                             @QueryParam("order") @DefaultValue("TOP") final String order,
+                             @QueryParam("order") final String order,
                              @QueryParam("time") @DefaultValue("WEEK") final String time,
                              @QueryParam("id") final Long id) {
 
@@ -136,7 +136,7 @@ public class NewsController {
 
     @PUT
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @PreAuthorize("@ownerCheck.newsOwnership(#newsId)")
+    @PreAuthorize("@ownerCheck.checkNewsOwnership(#newsId)")
     @Path("/{newsId:[0-9]+}/image")
     public Response updateNewsImage(@PathParam("newsId") long newsId,
                                  @FormDataParam("image") final FormDataBodyPart newsBodyPart,
@@ -147,7 +147,7 @@ public class NewsController {
         return Response.created(location).build();
     }
 
-    @PUT
+    @POST
     @Path("/{newsId:[0-9]+}/likes")
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
@@ -157,7 +157,7 @@ public class NewsController {
                 userId, newsId))).build();
     }
 
-    @PUT
+    @POST
     @Path("/{newsId:[0-9]+}/dislikes")
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
@@ -225,7 +225,7 @@ public class NewsController {
                 userId, newsId))).build();
     }
 
-    @PUT
+    @POST
     @Path("/{newsId:[0-9]+}/bookmarks")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response save(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){

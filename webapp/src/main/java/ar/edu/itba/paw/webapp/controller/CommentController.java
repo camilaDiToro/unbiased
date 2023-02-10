@@ -125,7 +125,7 @@ public class CommentController {
         return PagingUtils.pagedResponse(reportedCommentPage, responseBuilder, uriInfo);
     }
 
-    @PUT
+    @POST
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path("/{commentId:[0-9]+}/likes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")

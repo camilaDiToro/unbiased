@@ -13,14 +13,9 @@ export default function TimeSelector() {
         { text: I18n("timeConstraint.alltime"), params: {time: 'ALLTIME'} },
     ];
 
-    if (typeof window !== 'undefined' && !router.query.time) {
-        router.replace({
-            pathname: router.pathname,
-            query: { ...router.query, time: 'WEEK' },
-        })
-    }
-    const timeMap = categories.reduce((a,v) => ({...a, [v.params.time]: v.text}), {})
 
+    const timeMap = categories.reduce((a,v) => ({...a, [v.params.time]: v.text}), {})
+    
 
     const [timeConstraint, setTimeConstraint] = useState(router.query.time || 'WEEK')
     return <>

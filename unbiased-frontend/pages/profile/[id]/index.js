@@ -38,18 +38,17 @@ export default function Profile() {
   const [pinned, setPinned] = useState(undefined)
 
   const queryParamMap = {
-    MY_POSTS: 'publishedBy',
-    SAVED: 'savedBy',
-    UPVOTED: 'likedBy',
-    DOWNVOTED: 'dislikedBy'
+    MY_POSTS: 'PUBLISHED_BY',
+    SAVED: 'SAVED_BY',
+    UPVOTED: 'LIKED_BY',
+    DOWNVOTED: 'DISLIKED_BY'
   }
 
   const getQueryParams = () => {
-    const params = {order: router.query.order, page: router.query.page}
+    const params = {order: router.query.order, page: router.query.page, id}
 
-    if (loggedUser) {
-      params[queryParamMap[router.query.cat] || queryParamMap.MY_POSTS] = loggedUser.id
-    }
+    params.filter = queryParamMap[router.query.cat] || queryParamMap.MY_POSTS
+
     return params
   }
 
@@ -66,7 +65,7 @@ export default function Profile() {
   useEffect(() => {
     if (!id)
       return
-    api.getArticles({pinnedBy: id}).then(res => {
+    api.getArticles({filter: 'PINNED_BY', id: id}).then(res => {
       const {data, success} = res
 
       if (success) {
@@ -75,7 +74,7 @@ export default function Profile() {
 
     })
 
-    api.getFollowing(id).then(res => {
+    api.getUsers({filter: 'FOLLOWING', id: loggedUser?.id}).then(res => {
       const {success, data} = res
       if (success) {
         const isLoggedUserFollowing = data.map(u => u.id).includes(id)

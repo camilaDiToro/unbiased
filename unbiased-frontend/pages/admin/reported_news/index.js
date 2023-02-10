@@ -22,7 +22,7 @@ export default function Reported_news(){
     const [effectTrigger, triggerEffect] = useTriggerEffect()
 
     useEffect(() => {
-        const params = {page: router.query.page, reportOrder: router.query.order, reported: true}
+        const params = {page: router.query.page, order: router.query.order, filter: 'REPORTED'}
         api.getArticles(params).then(res => {
             const {data, pagination, success} = res
             if (success) {

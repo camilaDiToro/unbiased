@@ -27,6 +27,12 @@ public enum GetUsersFilter {
             return userService.getAdmins(page,search);
         }
     },
+    NOT_ADMINS() {
+        @Override
+        public Page<User> getUsers(UserService userService, int page, String search, Long id) {
+            return userService.getNotAdmins(page,search);
+        }
+    },
     FOLLOWING(){
         @Override
         public void validateParams(String search, Long id) {

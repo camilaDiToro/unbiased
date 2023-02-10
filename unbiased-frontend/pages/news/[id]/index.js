@@ -46,7 +46,7 @@ export default function ShowNews() {
   useEffect(() => {
     if (!id)
       return
-    const params = {order: router.query.order, newsId: id, page: router.query.page}
+    const params = {order: router.query.order, id, filter:'NEWS_COMMENTS', page: router.query.page}
 
     api.getComments(params).then(r => {
       const {success, data, pagination} = r
