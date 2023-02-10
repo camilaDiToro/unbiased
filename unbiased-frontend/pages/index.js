@@ -7,33 +7,14 @@ import TopNewTabs from "../components/TopNewTabs";
 import TopCreator from "../components/TopCreator";
 import MainCardsContainer from "../components/MainCardsContainer";
 import NewsCategoryTabs from "../components/NewsCategoryTabs";
-import {news, users} from "../hardcoded"
 import {useEffect, useState} from "react";
-import {useLoggedParamsFiller, useTriggerEffect, useURLWithParams} from "../utils";
+import {useTriggerEffect} from "../utils";
 import CancelSearchLink from "../components/CancelSearchLink";
 import ProfileCardTypeTab from "../components/ProfileCardTypeTab";
 import Creator from "../components/Creator";
 import Pagination from "../components/Pagination";
-import {baseURL} from "../constants";
 import usePagination from "../pagination";
-import {newsMapper, userMapper} from "../mappers"
 import TimeSelector from "../components/TimeSelector";
-
-
-const urlBase = new URL('users', baseURL)
-
-export async function getServerSideProps(context) {
-  // const users = await (await fetch(urlBase.href)).json()
-  // return {
-  //   props: {news,
-  //     topCreators: users,
-  //     creators: users},
-  // }
-  return {props: {}}
-}
-
-const parse = require('parse-link-header');
-
 
 export default function Home(props) {
   const router = useRouter()
@@ -41,25 +22,8 @@ export default function Home(props) {
   const [useNews, setNews] = useState([])
   const [useUsers, setUsers] = useState([])
   const [topCreators, setTopCreators] = useState([])
-  // const [pagination, setPagination] = useState(null)
   const [pagination, setPagination] = usePagination()
-  const setParams = useURLWithParams()
-
-  const {I18n, axios, loggedUser, jwtState} = useAppContext()
-  const [jwt, setJwt] = jwtState
-  const {fillNewsLoggedParams} = useLoggedParamsFiller()
-
-  const getUsersData = async res => {
-    const data = res.data || []
-
-    const finalData = data.map(d => {
-      const aux = d
-      delete aux['newsStats']
-      return aux
-    })
-
-    setUsers(finalData ? finalData.map(userMapper) : [])
-  }
+  const {I18n,  api} = useAppContext()
 
 
 
@@ -68,46 +32,50 @@ export default function Home(props) {
     delete params['type']
     if (router.query.search && router.query.type === 'creator') {
 
-      axios.get('users', {params}).then(getUsersData)
+      api.getUsers(params).then(r => {
+        const {success, data} = r
+        if (success) {
+          setPagination(pagination)
+          setUsers(data)
+        }
+      })
 
     } else {
-        axios.get('news', {params}).then(res => {
-          setPagination(res)
-        const mappedNews = (res.data || []).map(newsMapper)
-          fillNewsLoggedParams(mappedNews).then(n => setNews(n))
-      })
+        api.getArticles(params).then(r => {
+          const {success, data, pagination} = r
+          if (success) {
+            setPagination(pagination)
+            setNews(data)
+          }
+
+        })
       }
-      // setNews(res.data ? res.data.map(newsMapper) : [])
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {
     const params = {...router.query, topCreators: true}
     delete params['type']
 
-      axios.get('users', {params}).then(res => {
-        const topCreators = res.data.map(u => {
-          delete u['newsStats']
-          return userMapper(u)
-        })
-        setTopCreators(topCreators)
+      api.getUsers(params).then(res => {
+        const {success, data} = res
+        success && setTopCreators(data)
       })
   }, [newsEffectTrigger])
 
   return (
     <>
     <Head>
-      <title>unbiased - Home </title>
+      <title>unbiased - Home</title>
     </Head>
       {router.query.search  ? <></> : <NewsCategoryTabs></NewsCategoryTabs>}
       <div className="d-flex flex-column flex-xl-row  flex-grow-1">
         <div className="w-100 w-xl-75 ">
           <TopNewTabs>
-            {router.query.search && router.query.type === 'creator' || (!router.query.order  || router.query.order === 'NEW')? <></> : <TimeSelector></TimeSelector>}
+            {(router.query.search && router.query.type === 'creator' )|| (router.query.order === 'NEW')? <></> : <TimeSelector></TimeSelector>}
           </TopNewTabs>
           {router.query.search ? <><CancelSearchLink text={I18n("search.filter", [router.query.search])}></CancelSearchLink> <ProfileCardTypeTab></ProfileCardTypeTab></> : <></>}
           <div className="container-fluid">
             <MainCardsContainer rows={2}>
-              {/*{useNews.map( n => <Article triggerEffect={newsTriggerEffect} setNews={setNews} key={n.id} {...n}></Article>)}*/}
               { router.query.search && router.query.type === 'creator' ? useUsers.map(c => <Creator key={`creator${c.id}`} {...c}></Creator>) :
                   useNews.map(c => <Article triggerEffect={newsTriggerEffect} key={`article${c.id}`} {...c}></Article>)}
             </MainCardsContainer>

@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 import Tabs from "./Tabs";
 import {useAppContext} from "../context";
 
-export default function AdminOrderTabs(props) {
+export default function AdminOrderTabs() {
     const router = useRouter()
     const {I18n} = useAppContext()
     const orders= [{text: I18n("reportOrder.reportCountDesc"), params: {order: "REP_COUNT_DESC"}},

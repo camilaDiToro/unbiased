@@ -18,15 +18,17 @@ export default function ReportedCard(props) {
                 <div className="row row-cols-1">
                     <div className="col mb-4">
                         <div className="card h-100 d-flex flex-row p-3 max-h-300px" id="left-card">
-                            <Tooltip className="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count" position="bottom" text={ctx.I18n("moderation.reportsNum")}>
-                                {props.reportCount}
+                            <Tooltip className="reports-indicator badge badge-pill badge-danger d-flex align-items-center justify-content-center report-count"  position="bottom" text={ctx.I18n("moderation.reportsNum")}>
+                                <div >
+                                    {props.reportCount}
+                                </div>
                             </Tooltip>
 
                             <div className="d-flex flex-column justify-content-between w-100">
                                 <div className="d-flex w-100">
                                     <div className="card-body-home pt-0">
                                         <Link href={props.comment ? `/news/${props.newsId}?comment=${props.id}` : `/news/${props.id}`} className="link mh-10">
-                                            <h5 className="text-ellipsis link-text">{props.comment ? `\"${props.body}\"` : props.title}</h5>
+                                            <h5 className="text-ellipsis link-text">{props.comment ? `\"${props.title}\"` : props.title}</h5>
                                         </Link>
                                         {props.comment ? <></> : <h6 className="card-subtitle py-1 text-ellipsis-2">{props.subtitle}</h6>}
                                         <span className="font-weight-light">
@@ -57,4 +59,4 @@ export default function ReportedCard(props) {
     )
 }
 
-ReportedCard.propTypes = types.ReportedArticle
+ReportedCard.propTypes = types.ReportedCard

@@ -1,2 +1,6 @@
-export const baseURL = new URL('http://localhost:8080/webapp_war_exploded/api')
-//export const baseURL = new URL('http://localhost:8080/webapp_war_exploded/api/')
+
+export const baseURL = process.env.baseURL
+export const resourcePrefix = process.env.resourcePrefix
+export const getResourcePath = (path) => {
+    return resourcePrefix + path
+}

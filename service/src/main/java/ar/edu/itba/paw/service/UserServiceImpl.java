@@ -307,6 +307,8 @@ public class UserServiceImpl implements UserService {
         if(user == null)
             return false;
         final Collection<Role> roles = user.getRoles();
+        if (roles == null)
+            return false;
         return roles.contains(Role.ROLE_ADMIN) || roles.contains(Role.ROLE_OWNER);
     }
 }

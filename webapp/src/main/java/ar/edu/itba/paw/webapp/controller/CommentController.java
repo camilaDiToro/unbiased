@@ -118,7 +118,6 @@ public class CommentController {
     @PUT
     @Path("/{commentId:[0-9]+}/reports/{userId:[0-9]+}")
     @Consumes(value = {CustomMediaType.COMMENT_REPORT_DETAIL_V1})
-    @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response report(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
         User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         //TODO: Check if getting this object here is necessary

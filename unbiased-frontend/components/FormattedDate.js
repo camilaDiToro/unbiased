@@ -1,7 +1,8 @@
 import TimeAgo from "javascript-time-ago";
 
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useRouter} from "next/router";
+import types from "../types";
 
 export default function FormattedDate(props) {
     const { locale } = useRouter();
@@ -9,11 +10,7 @@ export default function FormattedDate(props) {
     const date = new Date(props.datetime)
 
     const [useTimeAgo, setTimeAgo] = useState(timeAgo.format(date))
-    // const [useSaved, setSaved] = useState(props.saved)
-    // const [usePinned, setPinned] = useState(props.pinned)
 
-
-    // useEffect(() => setTimeAgo(), [])
 
     if (props.timeAgo) {
         return useTimeAgo
@@ -23,3 +20,5 @@ export default function FormattedDate(props) {
         return date.toLocaleDateString(locale, options)
     }
 }
+
+FormattedDate.propTypes = types.FormattedDate

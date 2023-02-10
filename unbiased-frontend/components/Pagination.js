@@ -2,6 +2,7 @@ import { useAppContext } from "../context";
 import Link from "next/link";
 import {useRouter} from "next/router";
 import {useState} from "react";
+import types from "../types";
 
 export default function Pagination(props){
   const {I18n} = useAppContext()
@@ -60,3 +61,5 @@ export default function Pagination(props){
     </>
   )
 }
+
+Pagination.propTypes = types.Pagination
