@@ -159,17 +159,17 @@ public class NewsDto {
         n.stats.put("interactions", Long.toString(p.getInteractions()));
 
         User creator = news.getCreator();
-        n.creator.put("hasImage", Boolean.toString(creator.hasImage()));
-        if (creator.hasImage()) {
-            n.creator.put("image",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(news.getCreatorId())).path("image").build().toString());
-        }
-        n.creator.put("self",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(creator.getId())).build().toString());
+//        n.creator.put("hasImage", Boolean.toString(creator.hasImage()));
+//        if (creator.hasImage()) {
+//            n.creator.put("image",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(news.getCreatorId())).path("image").build().toString());
+//        }
+//        n.creator.put("self",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(creator.getId())).build().toString());
         n.creator.put("nameOrEmail", creator.toString());
         n.creator.put("tier", creator.getTier().toString());
         n.creator.put("id", Long.toString(news.getCreatorId()));
         n.datetime = news.getCreationDate().format(DateTimeFormatter.ISO_DATE_TIME);
 
-        n.self = uriInfo.getBaseUriBuilder().path("article").path(String.valueOf(news.getNewsId())).build();
+        n.self = uriInfo.getBaseUriBuilder().path("news").path(String.valueOf(news.getNewsId())).build();
         n.articleReports = uriInfo.getBaseUriBuilder().path("news").path(String.valueOf(news.getNewsId())).path("reports").build();
 
         User user = news.getCreator();
