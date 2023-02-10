@@ -125,7 +125,7 @@ export default function ShowNews() {
           <div className="w-fit">
             <div className="w-fit d-flex flex-row align-items-center p-2 gap-1">
               <div className="img-container-article">
-                <ProfilePic {...article.creator}></ProfilePic>
+                <ProfilePic {...article.creator } image={article.userImage}></ProfilePic>
               </div>
 
               <ProfileLink  bold {...article.creator}></ProfileLink>

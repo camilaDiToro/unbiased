@@ -35,6 +35,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         final Collection<? extends GrantedAuthority> authorities = user.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRole())).collect(Collectors.toList());
 
-        return new CustomUserDetails(user.getId(), username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities, user.toString(), Tier.getTier(us.getFollowersCount(user.getUserId())).toString());
+        return new CustomUserDetails(user.getId(), username, user.getPass(), user.getStatus().getStatus().equals(UserStatus.REGISTERED.getStatus()), true, true, true, authorities, user.toString(), Tier.getTier(us.getFollowersCount(user.getUserId())).toString(), user.hasImage());
     }
 }

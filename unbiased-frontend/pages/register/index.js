@@ -3,11 +3,14 @@ import {useAppContext} from "../../context";
 import {useState} from "react";
 import {useRouter} from "next/router";
 import {getResourcePath} from "../../constants";
+import {useSnackbar} from "notistack";
 
 export default function Login() {
     const router = useRouter()
     const ctx = useAppContext()
     const api = ctx.api
+    const I18n = ctx.I18n
+    const { enqueueSnackbar }= useSnackbar()
     const [details, setDetails] = useState({
         email: "",
         password: ""
@@ -41,6 +44,7 @@ export default function Login() {
         e.preventDefault()
         const {success} = await api.registerUser(details.email, details.password)
         if (success) {
+            enqueueSnackbar(I18n("verificationToken.succesfullySent"))
             await router.push('/login')
         }
     }

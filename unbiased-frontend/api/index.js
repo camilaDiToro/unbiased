@@ -60,6 +60,31 @@ export class Api {
 
     }
 
+    async verifyEmail(token) {
+        const action = async () => {
+            try {
+                const res = await this.axios({
+                    method: 'put',
+                    url: 'users/0/pinnedNews',
+                    params: {newsId: 0},
+                    hideError: true,
+                    headers: {
+                        Authorization: `Email ${token}`
+                    }
+                })
+            }
+            catch(error) {
+                if (!error.response || !(error.response.status === 404)) {
+                    throw new Error("Error logging in")
+                }
+            }
+
+
+        }
+        return await Api.#runRequest(action)
+
+    }
+
     async getArticles(params, hideError, authOptional) {
         const action = async () => {
             const res = await this.#getArticlesCall(params, hideError, authOptional, params)
@@ -270,7 +295,7 @@ export class Api {
                 password
             }),{
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/vnd.unbiased.user.v1+json',
                 }
             })
         }
