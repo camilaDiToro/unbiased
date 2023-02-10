@@ -15,7 +15,7 @@ export default function TimeSelector() {
 
 
     const timeMap = categories.reduce((a,v) => ({...a, [v.params.time]: v.text}), {})
-    
+
 
     const [timeConstraint, setTimeConstraint] = useState(router.query.time || 'WEEK')
     return <>
