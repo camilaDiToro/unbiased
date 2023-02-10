@@ -1,10 +1,31 @@
 import {useAppContext} from "../../context";
 import Link from "next/link";
 import Tooltip from "../../components/Tooltip";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
 
 export default function EmailVerified(){
-
+    const {api} = useAppContext()
+    const router = useRouter()
+    const {token} = router.query
+    const [verified, setVerified] = useState(false)
+    useEffect(() => {
+        if (!token)
+            return
+        api.verifyEmail(token).then(r => {
+            const {success} = r
+            if (success) {
+                setVerified(true)
+            } else {
+                router.replace("/")
+            }
+        })
+    }, [token])
     const {I18n} = useAppContext()
+
+    if (!verified) {
+        return <></>
+    }
     return (
         <div className="w-100 h-100 d-flex justify-content-center align-items-center">
             <div>

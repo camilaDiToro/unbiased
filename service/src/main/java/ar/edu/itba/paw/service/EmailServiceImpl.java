@@ -59,7 +59,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendVerificationEmail(final User user, final VerificationToken token, Locale locale) {
         final String to = user.getEmail();
         final String encodedToken = Base64.getEncoder().encodeToString((to + ":" + token.getToken()).getBytes());
-        final String url = getUrl("verify_email?token=" + encodedToken);
+        final String url = getUrl("verify-email?token=" + encodedToken);
         final String subject = messageSource.getMessage("email.verification.subject",null,locale);
         final Map<String, Object> data = new HashMap<>();
         data.put("verificationUrl",url);
