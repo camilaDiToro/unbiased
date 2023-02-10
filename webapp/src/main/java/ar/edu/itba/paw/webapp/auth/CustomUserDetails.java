@@ -16,13 +16,20 @@ public class CustomUserDetails extends User {
 
     private final String tier;
 
+    public boolean hasImage() {
+        return hasImage;
+    }
+
+    private final boolean hasImage;
+
     public CustomUserDetails(long userId, String username, String password, boolean enabled, boolean accountNonExpired,
                              boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities,
-                             String pageName, String tier) {
+                             String pageName, String tier, boolean hasImage) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.userId = userId;
         this.pageName = pageName;
         this.tier = tier;
+        this.hasImage = hasImage;
     }
 
     public long getUserId() {

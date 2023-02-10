@@ -6,6 +6,7 @@ import ar.edu.itba.paw.webapp.auth.exceptions.ExpiredJwtTokenException;
 import ar.edu.itba.paw.webapp.auth.exceptions.InvalidJwtClaimException;
 import ar.edu.itba.paw.webapp.auth.exceptions.InvalidJwtTokenException;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
@@ -63,7 +64,7 @@ public class JwtTokenServiceImpl implements JwtTokenService{
     private String createToken(final Date expiresAt, final CustomUserDetails userDetails, final JwtTokenType tokenType) throws MalformedURLException {
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
-        return JWT.create()
+        final JWTCreator.Builder token =  JWT.create()
                 .withJWTId(generateTokenIdentifier())
                 .withSubject(userDetails.getUsername())
                 .withClaim(AUTHORITIES_CLAIM, roles)
@@ -74,12 +75,15 @@ public class JwtTokenServiceImpl implements JwtTokenService{
                 .withClaim(IS_ADMIN_CLAIM , roles.contains(Role.ROLE_ADMIN.getRole()) || roles.contains(Role.ROLE_OWNER.getRole()))
                 .withClaim(USERNAME_CLAIM, userDetails.getPageName())
                 .withClaim(USER_ID_CLAIM, userDetails.getUserId())
-                .withClaim(TIER_CLAIM, userDetails.getTier())
-                .withClaim(IMAGE_LINK_CLAIM, new URL(   environment.getRequiredProperty("url.schema"),
-                                                        environment.getRequiredProperty("url.domain"),
-                                                        Integer.parseInt(environment.getRequiredProperty("url.port")),
-                                                    environment.getRequiredProperty("url.baseDir") + "users/" + userDetails.getUserId() + "/image").toString())
-                .sign(Algorithm.HMAC256(jwtSecret.getBytes()));
+                .withClaim(TIER_CLAIM, userDetails.getTier());
+
+        if (userDetails.hasImage()) {
+                            token.withClaim(IMAGE_LINK_CLAIM, new URL(   environment.getRequiredProperty("url.schema"),
+                    environment.getRequiredProperty("url.domain"),
+                    Integer.parseInt(environment.getRequiredProperty("url.port")),
+                    environment.getRequiredProperty("url.baseDir") + "users/" + userDetails.getUserId() + "/image").toString());
+        }
+                return token.sign(Algorithm.HMAC256(jwtSecret.getBytes()));
 
     }
 

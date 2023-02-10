@@ -18,7 +18,6 @@ import {getResourcePath} from "../constants";
 export default function Article(props) {
     const {I18n, loggedUser} = useAppContext()
 
-
     return <>
 
         <div className="col mb-4">
@@ -49,7 +48,7 @@ export default function Article(props) {
                     <div className="d-flex justify-content-between p-2 w-100">
                         <div className="d-flex align-items-center w-auto gap-1">
                             <div className="img-container-article">
-                                <ProfilePic {...props.creator}></ProfilePic>
+                                <ProfilePic {...props.creator} image={props.userImage} ></ProfilePic>
                             </div>
                             <ProfileLink shorten={props.hasImage} {...props.creator}></ProfileLink>
                         </div>

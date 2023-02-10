@@ -17,7 +17,7 @@ export default function Comment(props) {
           <div className="img-container-comment">
             <div className="frame-navbar img-container">
               <ProfilePic
-                  {...props.creator}
+                  {...props.creator} image={props.userImage}
               ></ProfilePic>
             </div>
           </div>

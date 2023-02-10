@@ -39,7 +39,7 @@ export default function ReportedCard(props) {
                                 <div className="d-flex justify-content-between w-100">
                                     <div className="d-flex align-items-center w-auto gap-1">
                                         <div className="img-container-article">
-                                            <ProfilePic  image={props.creator.image} hasImage={props.creator.hasImage} tier="platinum"></ProfilePic>
+                                            <ProfilePic  image={props.userImage} hasImage={props.creator.hasImage} tier="platinum"></ProfilePic>
                                         </div>
                                         <ProfileLink {...props.creator}></ProfileLink>
                                     </div>
