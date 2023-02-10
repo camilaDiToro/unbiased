@@ -11,9 +11,9 @@ public class CreatorAdapter extends XmlAdapter<CreatorAdapter.CreatorDto, HashMa
     @XmlRootElement
     public static class CreatorDto {
 
-        public boolean hasImage;
-        public URI image;
-        public URI self;
+//        public boolean hasImage;
+//        public URI image;
+//        public URI self;
         public long id;
         public String nameOrEmail;
         public String tier;
@@ -23,11 +23,11 @@ public class CreatorAdapter extends XmlAdapter<CreatorAdapter.CreatorDto, HashMa
     @Override
     public HashMap<String,String> unmarshal(CreatorDto p) throws Exception {
         HashMap<String, String> map = new HashMap<>();
-        map.put("hasImage", Boolean.toString(p.hasImage));
-        if (p.hasImage){
-            map.put("image", p.image.toString());
-        }
-        map.put("self", p.self.toString());
+//        map.put("hasImage", Boolean.toString(p.hasImage));
+//        if (p.hasImage){
+//            map.put("image", p.image.toString());
+//        }
+//        map.put("self", p.self.toString());
         map.put("id", Long.toString(p.id));
         map.put("nameOrEmail", p.nameOrEmail);
         map.put("tier", p.tier);
@@ -40,12 +40,12 @@ public class CreatorAdapter extends XmlAdapter<CreatorAdapter.CreatorDto, HashMa
         CreatorDto p = new CreatorDto();
         p.tier = v.get("tier");
         p.nameOrEmail = v.get("nameOrEmail");
-        p.self = new URI(v.get("self"));
+//        p.self = new URI(v.get("self"));
         p.id = Long.parseLong(v.get("id"));
-        p.hasImage = Boolean.parseBoolean(v.get("hasImage"));
-        if (p.hasImage) {
-            p.image = new URI(v.get("image"));
-        }
+//        p.hasImage = Boolean.parseBoolean(v.get("hasImage"));
+//        if (p.hasImage) {
+//            p.image = new URI(v.get("image"));
+//        }
         return p;
     }
 }
