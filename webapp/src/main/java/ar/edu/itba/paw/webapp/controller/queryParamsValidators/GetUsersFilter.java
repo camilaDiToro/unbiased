@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidGetUsersFilter;
+import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
 import org.springframework.stereotype.Component;
 
 public enum GetUsersFilter {
@@ -28,22 +29,18 @@ public enum GetUsersFilter {
     },
     FOLLOWING(){
         @Override
-        public boolean areParamsValid(String search, Long id) {
-            return id!=null && id > 0;
+        public void validateParams(String search, Long id) {
+            if(id == null){
+                throw new InvalidRequestParamsException("The requested filter requires an \"id\" query param");
+            }
+            else if(id <= 0){
+                throw new InvalidRequestParamsException("id param must be greater than 0");
+            }
         }
 
         @Override
         public Page<User> getUsers(UserService userService, int page, String search, Long id) {
             return userService.getFollowing(page,id);
-        }
-
-        @Override
-        public String getInvalidParamsMsg(String search, Long id) {
-            if(id == null){
-                return "\"following\" filter needs an \"id\" query param. " +
-                        "Try sending the query params ?filter=following&id=2 to get the followers of the user of id 2";
-            }
-            return "id param must be greater than 0";
         }
     },
     NO_FILTER() {
@@ -53,12 +50,7 @@ public enum GetUsersFilter {
         }
     };
 
-    public String getInvalidParamsMsg(String search, Long id){
-        return String.format("Invalid params %s, %d", search, id);
-    }
-
-    public boolean areParamsValid(String search, Long id) {
-        return true;
+    public void validateParams(String search, Long id) {
     }
 
     public abstract Page<User> getUsers(UserService userService,int page, String search, Long id);

@@ -70,10 +70,7 @@ public class UserController {
                               @QueryParam("id") final Long id) {
 
         final GetUsersFilter objFilter = GetUsersFilter.fromString(filter);
-        if(!objFilter.areParamsValid(search,id)){
-            throw new InvalidRequestParamsException(objFilter.getInvalidParamsMsg(search, id));
-        }
-
+        objFilter.validateParams(search,id);
         Page<User> userPage = objFilter.getUsers(userService,page,search,id);
 
         if(userPage.getContent().isEmpty()){
