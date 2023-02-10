@@ -205,12 +205,12 @@ public class UserDto {
         }
         dto.id = user.getUserId();
         dto.mailOptions = user.getEmailSettings().getOptionsArray();
-        dto.pinnedNews = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("pinnedNews").build();
         dto.roles = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("role").build();
         dto.likedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.LIKED_BY.toString()).queryParam("id",user.getId()).build();
         dto.dislikedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.DISLIKED_BY.toString()).queryParam("id",user.getId()).build();
         dto.reportedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.REPORTED_BY.toString()).queryParam("id",user.getId()).build();
         dto.savedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.SAVED_BY.toString()).queryParam("id",user.getId()).build();
+        dto.pinnedNews = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.PINNED_BY.toString()).queryParam("id",user.getId()).build();
         return dto;
     }
 

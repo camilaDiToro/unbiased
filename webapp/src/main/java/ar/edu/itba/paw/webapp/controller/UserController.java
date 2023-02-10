@@ -172,18 +172,6 @@ public class UserController {
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
     }
 
-    @GET
-    @Produces(value = {CustomMediaType.NEWS_V1})
-    @Path(value = "/{userId:[0-9]+}/pinnedNews")
-    public Response getPinNews(@PathParam("userId") final long userId) {
-        Optional<News> news = newsService.getPinnedByUserNews(userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId)));
-        if(!news.isPresent()){
-            return Response.noContent().build();
-        }
-        return Response.ok(NewsDto.fromNews(uriInfo, news.get())).build();
-    }
-
-
     @DELETE
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
