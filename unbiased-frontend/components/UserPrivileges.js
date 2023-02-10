@@ -36,7 +36,7 @@ export default function UserPrivileges(props) {
             <div className="d-flex">
                 3. {I18n("profile.modal.infoChangeAddDescription")}
             </div>
-            {props.isJournalist ? <div className="d-flex info-enabled info-custom-box">
+            {props.isJournalist ? <div data-testid="journalist-only" className="d-flex info-enabled info-custom-box">
                 {I18n("profile.modal.enabled")}
             </div> : <Tooltip  position="bottom"
                               text={I18n("tooltip.infoDisabled")}>
