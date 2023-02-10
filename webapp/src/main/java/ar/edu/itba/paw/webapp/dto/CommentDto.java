@@ -67,13 +67,13 @@ public class CommentDto {
     public static CommentDto fromComment(final UriInfo uriInfo, final Comment comment){
         final CommentDto dto = new CommentDto();
         dto.id = comment.getId();
-        dto.self = uriInfo.getBaseUriBuilder().path("api").path("comments").path(String.valueOf(comment.getId())).build();
+        dto.self = uriInfo.getBaseUriBuilder().path("comments").path(String.valueOf(comment.getId())).build();
         User creator = comment.getUser();
         dto.creator.put("hasImage", Boolean.toString(creator.hasImage()));
         if (creator.hasImage()) {
-            dto.creator.put("image",uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(creator.getId())).path("image").build().toString());
+            dto.creator.put("image",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(creator.getId())).path("image").build().toString());
         }
-        dto.creator.put("self",uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(creator.getId())).build().toString());
+        dto.creator.put("self",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(creator.getId())).build().toString());
         dto.creator.put("nameOrEmail", creator.toString());
         dto.creator.put("tier", creator.getTier().toString());
         dto.creator.put("id", Long.toString(creator.getUserId()));

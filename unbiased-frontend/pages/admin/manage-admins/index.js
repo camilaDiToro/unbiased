@@ -28,7 +28,7 @@ export default function AddAdmin(props){
     const [effectTrigger, triggerEffect] = useTriggerEffect()
 
     useEffect(() => {
-        const params = {...router.query, admins: !addAdminMode}
+        const params = {...router.query, filter: addAdminMode ? 'NOT_ADMINS' : 'ADMINS'}
 
         api.getUsers(params).then(res => {
             const {success, data, pagination} = res
@@ -56,7 +56,7 @@ export default function AddAdmin(props){
 
 
     const showNotAdmins = async () => {
-        const params = {...router.query, admins: addAdminMode}
+        const params = {...router.query, filter: addAdminMode ? 'NOT_ADMINS' : 'ADMINS'}
 
         api.getUsers(params).then(res => {
             const {success, data, pagination} = res

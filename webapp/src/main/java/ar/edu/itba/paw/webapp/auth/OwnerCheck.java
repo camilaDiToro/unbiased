@@ -8,6 +8,9 @@ import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetNewsFilter;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetNewsParams;
+import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +45,7 @@ public class OwnerCheck {
         return checkNewsOwnership(newsId) || isAdmin();
     }
 
-    public boolean isAdmin() {
+    private boolean isAdmin() {
         return userService.isUserAdmin(securityService.getCurrentUser().orElseThrow(UserNotFoundException::new));
     }
 
@@ -76,7 +79,28 @@ public class OwnerCheck {
         return mayBeUser.filter(user -> user.getId() == userId).isPresent();
     }
 
+
+
     public boolean userMatches(long userId){
+        Optional<User> mayBeUser = securityService.getCurrentUser();
+        return mayBeUser.filter(user -> user.getId() == userId).isPresent();
+    }
+
+    public boolean userMatches(ReportNewsForm reportNewsForm){
+        if(reportNewsForm == null){
+            return false;
+        }
+        Optional<User> mayBeUser = securityService.getCurrentUser();
+        return mayBeUser.filter(user -> user.getId() == reportNewsForm.getUserId()).isPresent();
+    }
+
+    public boolean canGetSavedNews(String filter, Long userId){
+        if(!GetNewsFilter.SAVED_BY.toString().equalsIgnoreCase(filter)){
+            return true;
+        }
+        if(userId == null){
+            return false;
+        }
         Optional<User> mayBeUser = securityService.getCurrentUser();
         return mayBeUser.filter(user -> user.getId() == userId).isPresent();
     }

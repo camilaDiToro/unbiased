@@ -18,5 +18,15 @@ public class CommentNewsForm {
     @NotBlank
     @Length(max=400)
     private String comment;
+
+    public long getNewsId() {
+        return newsId;
+    }
+
+    public void setNewsId(long newsId) {
+        this.newsId = newsId;
+    }
+
+    private long newsId;
     
 }

@@ -28,11 +28,11 @@ export default function Home(props) {
 
 
   useEffect(() => {
-    const params = {...router.query}
+    const params = {...router.query, filter:  'NO_FILTER' }
     delete params['type']
     if (router.query.search && router.query.type === 'creator') {
 
-      api.getUsers(params).then(r => {
+      api.getUsers({...params, filter: 'SEARCH'}).then(r => {
         const {success, data} = r
         if (success) {
           setPagination(pagination)
@@ -53,7 +53,7 @@ export default function Home(props) {
   }, [router.query, newsEffectTrigger])
 
   useEffect(() => {
-    const params = {...router.query, topCreators: true}
+    const params = {...router.query, filter: 'TOP_CREATORS'}
     delete params['type']
 
       api.getUsers(params).then(res => {

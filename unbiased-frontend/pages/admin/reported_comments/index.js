@@ -25,7 +25,7 @@ export default function Reported_comments(){
     const [effectTrigger, triggerEffect] = useTriggerEffect()
     const [pagination, setPagination] = usePagination()
     useEffect(() => {
-        const params = {reportOrder: router.query.order, reported: true, page: router.query.page}
+        const params = {reportOrder: router.query.order, filter: 'REPORTED', page: router.query.page}
         ctx.api.getComments(params).then(res => {
             const {pagination, success, data} = res
             if (success) {

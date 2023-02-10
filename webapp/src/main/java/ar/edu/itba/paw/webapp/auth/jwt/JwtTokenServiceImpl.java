@@ -78,7 +78,7 @@ public class JwtTokenServiceImpl implements JwtTokenService{
                 .withClaim(IMAGE_LINK_CLAIM, new URL(   environment.getRequiredProperty("url.schema"),
                                                         environment.getRequiredProperty("url.domain"),
                                                         Integer.parseInt(environment.getRequiredProperty("url.port")),
-                                                    environment.getRequiredProperty("url.baseDir") + "api/users/" + userDetails.getUserId() + "/image").toString())
+                                                    environment.getRequiredProperty("url.baseDir") + "users/" + userDetails.getUserId() + "/image").toString())
                 .sign(Algorithm.HMAC256(jwtSecret.getBytes()));
 
     }

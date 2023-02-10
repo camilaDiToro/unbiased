@@ -7,6 +7,7 @@ import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
@@ -27,20 +28,26 @@ public class AdminServiceImpl implements AdminService{
     private final NewsService newsService;
     private final EmailService emailService;
     private final NewsDao newsDao;
+    private final UserService userService;
 
     @Autowired
-    public AdminServiceImpl(final CommentDao commentDao, final NewsService newsService, final SecurityService securityService, final EmailService emailService, final NewsDao newsDao) {
+    public AdminServiceImpl(final CommentDao commentDao, final NewsService newsService, final UserService userService, final EmailService emailService, final NewsDao newsDao) {
         this.commentDao = commentDao;
         this.newsService = newsService;
         this.emailService = emailService;
         this.newsDao = newsDao;
+        this.userService = userService;
     }
 
     @Override
     @Transactional
-    public void reportNews(final User currentUser, long newsId, ReportReason reportReason) {
-        final News news = newsService.getById(currentUser, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
-        newsDao.reportNews(news,currentUser,reportReason);
+    public ReportDetail reportNews(long userId, long newsId, ReportReason reportReason) {
+        final User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        final News news = newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        if(newsDao.isReportedByUser(news, user)){
+            return null;
+        }
+        return newsDao.reportNews(news,user,reportReason);
     }
 
     @Override
@@ -60,9 +67,13 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     @Transactional
-    public void reportComment(final User currentUser, long commentId, ReportReason reportReason) {
+    public ReportedComment reportComment(long userId, long commentId, ReportReason reportReason) {
         final Comment comment = newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentDao.reportComment(comment,currentUser,reportReason);
+        final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        if(!commentDao.isReportedByUser(commentId, userId)){
+            return commentDao.reportComment(comment,user,reportReason);
+        }
+        return null;
     }
 
     @Override
@@ -73,11 +84,6 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public Page<ReportedComment> getReportedCommentDetail(int page, long commentId) {
         return commentDao.getReportedCommentDetail(page, commentId);
-    }
-
-    @Override
-    public boolean hasReported(long userId, long newsId) {
-        return newsDao.hasReported(newsId, userId);
     }
 
     @Override

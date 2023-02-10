@@ -108,13 +108,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         return abstractAuthFilter;
     }
 
-//    @Bean
-//    public CorsConfiguration corsConfiguration() {
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.addAllowedOrigin(spaUrl);
-//        return corsConfiguration;
-//    }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration config = new CorsConfiguration();
@@ -152,8 +145,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-
-
         http.cors().and().csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
@@ -162,17 +153,14 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().headers().cacheControl().disable().and().authorizeRequests()
                 .and().authorizeRequests()
-                //.antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
-                .antMatchers("/api/users/{\\d+}/role").access("hasRole('OWNER')")
-//                .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
-//                            "/news/{\\d+}/delete", "/news/{\\d+}/comment").authenticated()
-//                .antMatchers(HttpMethod.PUT,"/news/{\\d+}/likes/{\\d+}","/news/{\\\\d+}/dislikes/{\\\\d+}").authenticated()
-                .antMatchers("/api/**")
+                .antMatchers("/users/{\\d+}/role").access("hasRole('OWNER')")
+                .antMatchers("/**")
                 .permitAll()
                 .and().addFilterBefore(abstractAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf()
                 .disable();
     }
+
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/403");

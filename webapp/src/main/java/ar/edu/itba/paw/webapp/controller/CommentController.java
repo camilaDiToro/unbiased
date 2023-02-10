@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
+import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
@@ -16,8 +17,11 @@ import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
-import ar.edu.itba.paw.webapp.dto.CommentDto;
-import ar.edu.itba.paw.webapp.dto.ReportDetailDto;
+import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
+import ar.edu.itba.paw.webapp.api.exceptions.MissingArgumentException;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetCommentsFilter;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetCommentsParams;
+import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.CommentNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,9 +31,10 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Path("/api/comments")
+@Path("/comments")
 @Component
 public class CommentController {
 
@@ -53,38 +58,14 @@ public class CommentController {
     @GET
     @Produces(value = {CustomMediaType.COMMENT_LIST_V1})
     public Response listComments(
-            @QueryParam("newsId") @DefaultValue("-1") final Long newsId,
-            @QueryParam("page") @DefaultValue("1") final int page,
-            @QueryParam("reported") final boolean reported,
-            @QueryParam("order") @DefaultValue("TOP") String orderBy,
-            @QueryParam("likedBy") @DefaultValue("-1") Long likedBy,
-            @QueryParam("dislikedBy") @DefaultValue("-1") Long dislikedBy,
-            @QueryParam("reportedBy") @DefaultValue("-1") Long reportedBy,
-            @QueryParam("reportOrder") @DefaultValue("REP_COUNT_DESC") String reportOrder) {
-        if (reportedBy>0) {
-            final User user = userService.getUserById(reportedBy).orElseThrow(()-> new UserNotFoundException(reportedBy));
-            List<Comment> comments = adminService.getReportedByUserComments(user);
-            if (comments.isEmpty())
-                return Response.noContent().build();
-            return Response.ok(new GenericEntity<List<CommentDto>>(comments.stream().map(n -> {
-                return CommentDto.fromComment(uriInfo, n);
-            }).collect(Collectors.toList())) {
-            }).build();
-        } else
-        if (likedBy > 0 || dislikedBy > 0) {
-            long userId = likedBy > 0 ? likedBy : dislikedBy;
-            User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-            List<Comment> comments = likedBy > 0 ? commentService.getCommentsUpvotedByUser(user) : commentService.getCommentsDownvotedByUser(user);
-            final List<CommentDto> dtoComments = comments.stream().map(c -> CommentDto.fromComment(uriInfo, c)).collect(Collectors.toList());
-            if (comments.isEmpty()) {
-                return Response.noContent().build();
-            }
-            return Response.ok(new GenericEntity<List<CommentDto>>(dtoComments) {
-            }).build();
-        }
+            @QueryParam("filter") @DefaultValue("NEWS_COMMENTS") String filter,
+            @QueryParam("page") @DefaultValue("1") int page,
+            @QueryParam("id") Long id,
+            @QueryParam("order") String order) {
 
-
-        final Page<Comment> commentPage = newsService.getComments(newsId, page, NewsOrder.getByValue(orderBy), reported, ReportOrder.getByValue(reportOrder));
+        final GetCommentsFilter commentsFilter = GetCommentsFilter.fromString(filter);
+        final GetCommentsParams params = commentsFilter.validateParams(userService, order, id);
+        final Page<Comment> commentPage = commentsFilter.getComments(commentService, adminService, page, params);
 
         if(commentPage.getContent().isEmpty()){
             return Response.noContent().build();
@@ -95,83 +76,96 @@ public class CommentController {
         return PagingUtils.pagedResponse(commentPage, responseBuilder, uriInfo);
     }
 
-    @GET
-    @Path("/{commentId:[0-9]+}/reports")
-    @Produces(value = {CustomMediaType.COMMENT_REPORT_DETAIL_LIST_V1})
-    public Response getNewsReportDetail(@PathParam("commentId") final long commentId){
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        List<ReportDetailDto> reportList = comment.getReports().stream().map(d -> ReportDetailDto.fromReportedComment(uriInfo, d)).collect(Collectors.toList());
-        return Response.ok(new GenericEntity<List<ReportDetailDto>>(reportList) {}).build();
-    }
-
     @POST
     @Consumes(value = {CustomMediaType.COMMENT_V1})
     @Produces(value = {CustomMediaType.COMMENT_V1})
     public Response postComment(
-            @QueryParam("newsId") final long newsId,
             @Valid CommentNewsForm form){
         final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorizedException::new);
-        final CommentDto commentDto = CommentDto.fromComment(uriInfo, newsService.addComment(currentUser, newsId, form.getComment()));
+        final CommentDto commentDto = CommentDto.fromComment(uriInfo, newsService.addComment(currentUser, form.getNewsId(), form.getComment()));
         return Response.created(commentDto.getSelf()).entity(commentDto).build();
-    }
-
-    @PUT
-    @Path("/{commentId:[0-9]+}/reports/{userId:[0-9]+}")
-    @Consumes(value = {CustomMediaType.COMMENT_REPORT_DETAIL_V1})
-    public Response report(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        //TODO: Check if getting this object here is necessary
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        adminService.reportComment(user, commentId, ReportReason.getByValue(reportForm.getReason()));
-        return Response.ok().build();
-    }
-
-    @PUT
-    @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
-    @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response like(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentService.setCommentRating(user, comment, Rating.UPVOTE);
-        return Response.ok().build();
-    }
-
-    @PUT
-    @Path("/{commentId:[0-9]+}/dislikes/{userId:[0-9]+}")
-    @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response dislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentService.setCommentRating(user, comment, Rating.DOWNVOTE);
-        return Response.ok().build();
     }
 
     @DELETE
     @Path("/{commentId:[0-9]+}")
     @PreAuthorize("@ownerCheck.canDeleteComment(#commentId)")
     public Response delete(@PathParam("commentId") final long commentId){
+        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
+        if(comment.getDeleted()){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The comment of id %d had already been deleted",
+                    commentId))).build();
+        }
         newsService.deleteComment(commentId);
-        return Response.ok().build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("Comment of id %d successfully deleted",
+                commentId))).build();
+    }
+
+    @POST
+    @Path("/{commentId:[0-9]+}/reports")
+    @PreAuthorize("@ownerCheck.userMatches(#reportForm)")
+    @Consumes(value = {CustomMediaType.COMMENT_REPORT_DETAIL_V1})
+    public Response report( @PathParam("commentId") final long commentId, @Valid final ReportNewsForm reportForm){
+        ReportedComment reportedComment = adminService.reportComment(reportForm.getUserId(), commentId, ReportReason.getByValue(reportForm.getReason()));
+        if(reportedComment == null){
+            throw new InvalidRequestParamsException("Each user can report a comment just once");
+        }
+        return Response.ok(CommentReportDetailsDto.fromReportedComment(uriInfo,reportedComment)).build();
+    }
+
+    @GET
+    @Path("/{commentId:[0-9]+}/reports")
+    @Produces(value = {CustomMediaType.COMMENT_REPORT_DETAIL_LIST_V1})
+    public Response getNewsReportDetail(@PathParam("commentId") long commentId, @QueryParam("page") @DefaultValue("1") int page){
+        Page<ReportedComment> reportedCommentPage = adminService.getReportedCommentDetail(page, commentId);
+        if(reportedCommentPage.getContent().isEmpty()){
+            return Response.noContent().build();
+        }
+        List<CommentReportDetailsDto> reportList = reportedCommentPage.getContent().stream().map(n -> CommentReportDetailsDto.fromReportedComment(uriInfo, n)).collect(Collectors.toList());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CommentReportDetailsDto>>(reportList) {});
+        return PagingUtils.pagedResponse(reportedCommentPage, responseBuilder, uriInfo);
+    }
+
+    @POST
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path("/{commentId:[0-9]+}/likes")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response like(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
+        commentService.setCommentRating(userId, commentId, Rating.UPVOTE);
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the comment of id %d",
+                userId, commentId))).build();
     }
 
     @DELETE
-    @Path("/{commentId:[0-9]+}/likes/{userId:[0-9]+}")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path("/{commentId:[0-9]+}/likes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response removeLike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentService.setCommentRating(user, comment, Rating.NO_RATING);
-        return Response.ok().build();
+    public Response removeLike(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
+        if(commentService.setCommentRating(userId, commentId, Rating.NO_RATING)) {
+            return Response.ok(SimpleMessageDto.fromString(String.format("The like of the user of id %d to the comment of id %d has been removed",
+                    userId, commentId))).build();
+        }
+        return Response.noContent().build();
+    }
+
+    @POST
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path("/{commentId:[0-9]+}/dislikes")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response dislike(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
+        commentService.setCommentRating(userId, commentId, Rating.DOWNVOTE);
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d disliked the comment of id %d",
+                userId, commentId))).build();
     }
 
     @DELETE
-    @Path("/{commentId:[0-9]+}/dislikes/{userId:[0-9]+}")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path("/{commentId:[0-9]+}/dislikes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
-    public Response removeDislike(@PathParam("userId") final long userId, @PathParam("commentId") final long commentId){
-        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        Comment comment = commentService.getById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
-        commentService.setCommentRating(user, comment, Rating.NO_RATING);
-        return Response.ok().build();
+    public Response removeDislike(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
+        if(commentService.setCommentRating(userId, commentId, Rating.NO_RATING)) {
+            return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the comment of id %d has been removed",
+                    userId, commentId))).build();
+        }
+        return Response.noContent().build();
     }
-
 }
