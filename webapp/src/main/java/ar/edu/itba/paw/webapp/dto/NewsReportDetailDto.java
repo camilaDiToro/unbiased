@@ -25,7 +25,7 @@ public class NewsReportDetailDto {
         n.userLink = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(reportDetail.getReporter().getId())).build();
         n.reason = reportDetail.getReason().getInterCode();
         n.articleId = reportDetail.getNews().getNewsId();
-        n.articleLink = uriInfo.getBaseUriBuilder().path("article").path(String.valueOf(reportDetail.getNews().getNewsId())).build();
+        n.articleLink = uriInfo.getBaseUriBuilder().path("news").path(String.valueOf(reportDetail.getNews().getNewsId())).build();
         n.datetime = reportDetail.getCreationDate().format(DateTimeFormatter.ISO_DATE_TIME);
         n.id = reportDetail.getId();
         return n;

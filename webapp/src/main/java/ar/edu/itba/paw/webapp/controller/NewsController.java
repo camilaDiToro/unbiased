@@ -63,7 +63,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Path("/article")
+@Path("/news")
 @Component
 public class NewsController {
 

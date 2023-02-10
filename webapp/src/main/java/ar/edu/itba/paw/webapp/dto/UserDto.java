@@ -192,7 +192,7 @@ public class UserDto {
         dto.isJournalist = roles != null && roles.contains(Role.ROLE_JOURNALIST);
         if (dto.isJournalist) {
             dto.newsStats = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("news-stats").build();
-            dto.publishedArticles = uriInfo.getBaseUriBuilder().path("article").queryParam("filter", GetNewsFilter.PUBLISHED_BY.toString()).queryParam("id",user.getId()).build();
+            dto.publishedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.PUBLISHED_BY.toString()).queryParam("id",user.getId()).build();
         }
         PositivityStats stats = user.getPositivityStats();
         dto.description = user.getDescription();
@@ -207,10 +207,10 @@ public class UserDto {
         dto.mailOptions = user.getEmailSettings().getOptionsArray();
         dto.pinnedNews = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("pinnedNews").build();
         dto.roles = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("role").build();
-        dto.likedArticles = uriInfo.getBaseUriBuilder().path("article").queryParam("filter", GetNewsFilter.LIKED_BY.toString()).queryParam("id",user.getId()).build();
-        dto.dislikedArticles = uriInfo.getBaseUriBuilder().path("article").queryParam("filter", GetNewsFilter.DISLIKED_BY.toString()).queryParam("id",user.getId()).build();
-        dto.reportedArticles = uriInfo.getBaseUriBuilder().path("article").queryParam("filter", GetNewsFilter.REPORTED_BY.toString()).queryParam("id",user.getId()).build();
-        dto.savedArticles = uriInfo.getBaseUriBuilder().path("article").queryParam("filter", GetNewsFilter.SAVED_BY.toString()).queryParam("id",user.getId()).build();
+        dto.likedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.LIKED_BY.toString()).queryParam("id",user.getId()).build();
+        dto.dislikedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.DISLIKED_BY.toString()).queryParam("id",user.getId()).build();
+        dto.reportedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.REPORTED_BY.toString()).queryParam("id",user.getId()).build();
+        dto.savedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.SAVED_BY.toString()).queryParam("id",user.getId()).build();
         return dto;
     }
 

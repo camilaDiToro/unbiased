@@ -170,16 +170,16 @@ public class NewsDto {
         n.datetime = news.getCreationDate().format(DateTimeFormatter.ISO_DATE_TIME);
 
         n.self = uriInfo.getBaseUriBuilder().path("article").path(String.valueOf(news.getNewsId())).build();
-        n.articleReports = uriInfo.getBaseUriBuilder().path("article").path(String.valueOf(news.getNewsId())).path("reports").build();
+        n.articleReports = uriInfo.getBaseUriBuilder().path("news").path(String.valueOf(news.getNewsId())).path("reports").build();
 
         User user = news.getCreator();
         n.userLink = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).build();
         if(user.hasImage()){
             n.userImage = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("image").build();
         }
-        n.upvotesLink = uriInfo.getBaseUriBuilder().path("article").path(String.valueOf(news.getNewsId())).path("likes").build();
-        n.downvotesLink = uriInfo.getBaseUriBuilder().path("article").path(String.valueOf(news.getNewsId())).path("dislikes").build();
-        n.bookmarks = uriInfo.getBaseUriBuilder().path("article").path(String.valueOf(news.getNewsId())).path("bookmarks").build();;
+        n.upvotesLink = uriInfo.getBaseUriBuilder().path("news").path(String.valueOf(news.getNewsId())).path("likes").build();
+        n.downvotesLink = uriInfo.getBaseUriBuilder().path("news").path(String.valueOf(news.getNewsId())).path("dislikes").build();
+        n.bookmarks = uriInfo.getBaseUriBuilder().path("news").path(String.valueOf(news.getNewsId())).path("bookmarks").build();;
         n.comments  = uriInfo.getBaseUriBuilder().path("comments").queryParam("filter", GetCommentsFilter.NEWS_COMMENTS.toString()).queryParam("id",news.getNewsId()).build();
         return n;
     }
