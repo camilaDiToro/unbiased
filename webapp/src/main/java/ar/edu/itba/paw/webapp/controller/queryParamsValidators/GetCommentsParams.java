@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller.queryParamsValidators;
 
 import ar.edu.itba.paw.model.admin.ReportOrder;
-import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
 
