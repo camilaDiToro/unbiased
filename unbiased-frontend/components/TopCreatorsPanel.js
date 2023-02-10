@@ -17,7 +17,7 @@ export default function TopCreatorsPanel(props) {
         </h5>
 
         {props.creators.length === 0 ? (
-            <h6 className="text-info m-1">{I18n("home.emptyCreators")}</h6>
+            <h6 data-testid="no-creators" className="text-info m-1">{I18n("home.emptyCreators")}</h6>
         ) : (
             <></>
         )}
