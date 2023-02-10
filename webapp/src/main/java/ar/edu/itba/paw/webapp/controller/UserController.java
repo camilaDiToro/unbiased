@@ -111,7 +111,7 @@ public class UserController {
         }
 
         Map<Category, CategoryStatistics.Statistic> newsCategoryMap = newsService.getCategoryStatistics(user.getUserId()).getStatiscticsMap();
-        List<CategoryStatisticsDto> newsStats = newsCategoryMap.entrySet().stream().map(CategoryStatisticsDto::fromCategoryStatistic).collect(Collectors.toList());
+        List<CategoryStatisticsDto> newsStats = newsCategoryMap.entrySet().stream().map(c -> CategoryStatisticsDto.fromCategoryStatistic(uriInfo, c, userId)).collect(Collectors.toList());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CategoryStatisticsDto>>(newsStats) {});
         return responseBuilder.build();
     }
