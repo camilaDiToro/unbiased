@@ -1,14 +1,10 @@
 import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import Bookmark from "../../components/Bookmark";
-import Tooltip from "../../components/Tooltip";
+import {getDefaultLoggedUser} from "../test_utils/defaultLoggedUser";
 
 jest.mock('../../components/Tooltip', ()=>{
-    return jest.fn(({children})=>{
-        return (
-            <div>{children}</div>
-        )
-    })
+    return jest.fn(()=> <div role="tooltip">Mocked tooltip</div>)
 })
 
 const {render, screen} = testingLibrary;
@@ -30,13 +26,9 @@ describe('Bookmark test', ()=>{
     test('Correct src is loaded giving the prop saved with true', ()=>{
 
         propsMap = customPropsMap()
-        render(
-            <Tooltip>
-                <Bookmark {...propsMap}/>
-            </Tooltip>
-        )
-        const img = screen.getByRole('img', {name: 'bookmark'})
-        // expect(img.src).toBe("/img/bookmark-clicked")
+        const loggedUser = getDefaultLoggedUser()
+        render(<Bookmark {...propsMap}/>, {loggedUser})
+        expect(screen.getByRole('tooltip', {name: 'Mocked tooltip'})).toBeInTheDocument()
     })
 
 })
