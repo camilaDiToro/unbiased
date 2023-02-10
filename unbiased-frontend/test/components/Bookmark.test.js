@@ -23,7 +23,7 @@ const customPropsMap = (options = {}) => {
 
 describe('Bookmark test', ()=>{
 
-    test('Correct src is loaded giving the prop saved with true', ()=>{
+    test('Bookmark only show up if it is a loggedUser', ()=>{
 
         propsMap = customPropsMap()
         const loggedUser = getDefaultLoggedUser()
