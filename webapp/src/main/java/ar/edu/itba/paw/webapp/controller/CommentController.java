@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Path("/api/comments")
+@Path("/comments")
 @Component
 public class CommentController {
 
