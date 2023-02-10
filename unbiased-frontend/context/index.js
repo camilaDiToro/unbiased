@@ -1,12 +1,16 @@
 import {createContext, useContext, useEffect, useState} from 'react';
-import I18n from "../i18n"
+import {useI18n} from "../customI18n"
 import axios from "axios";
-import baseURL from "../pages/back";
+import {baseURL} from "../constants";
 import {useRouter} from "next/router";
-const AppContext = createContext(null);
+import {useSnackbar} from "notistack";
+import {useApi} from "../api";
+import {CONN_TIMEOUT, UNKNOWN} from "../errors";
+export const AppContext = createContext(null);
 
 export default function AppWrapper({ children }) {
-    const [errorDetails, setErrorDetails] = useState({})
+    const I18n = useI18n()
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     let newJwt = {}
     if (typeof window !== 'undefined') {
         newJwt = {        accessToken: localStorage.getItem('accessToken'), refreshToken: localStorage.getItem('refreshToken')
@@ -14,14 +18,10 @@ export default function AppWrapper({ children }) {
     }
     const jwtState = useState(newJwt)
     const [loggedUser, setLoggedUser] = useState(null)
-    // useEffect(()=> {
-    //
-    //     alert('About to set to ' + JSON.stringify(newJwt))
-    //     jwtState[1](newJwt)
-    // }, [])
+
     const router = useRouter()
     const axiosInstance = axios.create({
-        baseURL: baseURL.href
+        baseURL
     })
 
 
@@ -33,8 +33,6 @@ export default function AppWrapper({ children }) {
             if (accessHeader && refreshHeader) {
                 const accessToken = response.headers.get('access-token').split(' ')[1]
                 const refreshToken = response.headers.get('refresh-token').split(' ')[1]
-                // localStorage.setItem('access-token', accessToken)
-                // localStorage.setItem('refresh-token', refreshToken)
                 jwtState[1]({accessToken, refreshToken})
             }
         }
@@ -52,19 +50,36 @@ export default function AppWrapper({ children }) {
         return config;
     })
 
+    const getErrorCode = (error) => {
+        if (error.code === 'ERR_NETWORK')
+            return CONN_TIMEOUT;
+        if (!error.response || !error.response.data || !error.response.data.apiCode) {
+            return UNKNOWN
+        }
+        return error.response.data.apiCode
+    }
+
+    const showError = (code) => {
+        if (code === 604)
+            return
+        enqueueSnackbar(I18n(`${code}`))
+    }
+
     axiosInstance.interceptors.response.use((r) => {
         setHeadersIfExist(r)
         return r;
     }, async (error) => {
         setHeadersIfExist(error.response)
-        // Any status codes that falls outside the range of 2xx cause this function to trigger
-        // Do something with response error
+        const code = getErrorCode(error)
+        if (!error.config.hideError) {
+            showError(code)
+        }
+
         const loginURL = '/login'
-        const errorDetails = error.response.data
-        if (errorDetails.apiCode && router.pathname !== loginURL) {
-            if (errorDetails.apiCode === 606 || errorDetails.apiCode === 603 || errorDetails.apiCode === 605|| errorDetails.apiCode === 600) {
+        if (router.pathname !== loginURL) {
+            if (code === 606 || code  === 603 || code  === 605|| code  === 600) {
                 jwtState[1]({})
-            } else if (errorDetails.apiCode === 604) {
+            } else if (code === 604) {
                 if(jwt.accessToken) {
                     jwtState[1]({refreshToken: jwt.refreshToken})
                     const config = error.config
@@ -74,11 +89,8 @@ export default function AppWrapper({ children }) {
                     jwtState[1]({})
                     localStorage.setItem('fromPage', 'true')
                     if (!error.config.authOptional) {
-                        console.log(error.config)
-                        console.log('going to home...')
                         await router.push(loginURL)
                     }
-
                 }
             }
         }
@@ -112,7 +124,9 @@ export default function AppWrapper({ children }) {
     }, [jwt])
 
 
-    let sharedState = {I18n, loggedUser, axios: axiosInstance, setErrorDetails, jwtState}
+    let sharedState = {I18n, loggedUser, axios: axiosInstance,jwtState,api :useApi(loggedUser, axiosInstance)}
+
+
 
 
     return (

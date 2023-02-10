@@ -35,9 +35,9 @@ export default function Modal(props) {
                         {props.children}
                     </div>
                     <div className="modal-footer">
-                        {props.noAcceptButton ? '' : <button data-dismiss="modal" type="submit" className="btn btn-primary" onClick={handler}>
-                            {props.acceptText || I18n("profile.modal.accept")}
-                        </button>}
+                        <button data-dismiss="modal" type="submit" className="btn btn-primary" onClick={handler}>
+                        {props.acceptText || I18n("profile.modal.accept")}
+                    </button>
                     </div>
                 </div>
             </div>

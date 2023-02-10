@@ -14,32 +14,24 @@ import Head from "next/head";
 import {commentsMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
 
-export async function getServerSideProps(context) {
-    return {
-        props: {
-            news
-        }, // will be passed to the page component as props
-    }
-}
 
-export default function Reported_comments(props){
+export default function Reported_comments(){
 
     const ctx = useAppContext()
     const I18n = ctx.I18n
-    const items = [{text: ctx.I18n("reportOrder.reportCountDesc"), route: "/admin/reported_comments"},
-        {text: ctx.I18n("reportOrder.reportCountAsc"), route: "/admin/reported_comments"},
-        {text: ctx.I18n("reportOrder.reportDateDesc"), route: "/admin/reported_comments"},
-        {text: ctx.I18n("reportOrder.reportDateAsc"), route: "/admin/reported_comments"}]
+
     const router = useRouter()
     const [reportedComments, setReportedComments] = useState([])
     const [effectTrigger, triggerEffect] = useTriggerEffect()
     const [pagination, setPagination] = usePagination()
     useEffect(() => {
         const params = {reportOrder: router.query.order, reported: true, page: router.query.page}
-        ctx.axios.get(`comments`, {params}).then(res => {
-            setPagination(res)
-            const mappedComments = (res.data || []).map(commentsMapper)
-            setReportedComments(mappedComments)
+        ctx.api.getComments(params).then(res => {
+            const {pagination, success, data} = res
+            if (success) {
+                setPagination(pagination)
+                setReportedComments(data)
+            }
         })
     }, [router.query, effectTrigger])
     return (
@@ -57,7 +49,7 @@ export default function Reported_comments(props){
                         {
                             reportedComments.map((n) => {
                                 return (
-                                    <ReportedCard comment triggerEffect={triggerEffect} key={n.id} {...n}/>
+                                    <ReportedCard comment triggerEffect={triggerEffect} key={n.id} {...n} title={n.body}/>
                                 )
                             })
                         }

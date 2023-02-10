@@ -8,7 +8,6 @@ import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.News;
@@ -23,11 +22,8 @@ import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
-import ar.edu.itba.paw.webapp.constraints.FileSize;
 import ar.edu.itba.paw.webapp.dto.NewsDto;
 import ar.edu.itba.paw.webapp.dto.ReportDetailDto;
-import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
-import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -58,10 +54,11 @@ import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Path("/api/news")
 @Component
@@ -112,14 +109,16 @@ public class NewsController {
             // throw new ...
         }
         if (pinnedBy>0) {
-            final User user = userService.getUserById(pinnedBy).orElseThrow(UserNotFoundException::new);
+            final User user = userService.getUserById(pinnedBy).orElseThrow(()-> new UserNotFoundException(pinnedBy));
             Optional<News> news = newsService.getPinnedByUserNews(user);
             if (!news.isPresent())
                 return Response.noContent().build();
-            return Response.ok(NewsDto.fromNews(uriInfo, news.get())).build();
+            return Response.ok(new GenericEntity<List<NewsDto>>(Stream.of(news.get()).map(n -> {
+                return NewsDto.fromNews(uriInfo, n);
+            }).collect(Collectors.toList())) {}).build();
         } else
         if (reportedBy>0) {
-            final User user = userService.getUserById(reportedBy).orElseThrow(UserNotFoundException::new);
+            final User user = userService.getUserById(reportedBy).orElseThrow(()-> new UserNotFoundException(reportedBy));
             List<News> news = adminService.getReportedByUserNews(user);
             if (news.isEmpty())
                 return Response.noContent().build();
@@ -131,19 +130,19 @@ public class NewsController {
             newsPage = adminService.getReportedNews(page, reportOrderObj);
         } else if (likedBy > 0) {
             final ProfileCategory catObject = ProfileCategory.UPVOTED;
-            final User profileUser = userService.getUserById(likedBy).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(likedBy).orElseThrow(()-> new UserNotFoundException(likedBy));
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
         } else if (dislikedBy > 0)  {
             final ProfileCategory catObject = ProfileCategory.DOWNVOTED;
-            final User profileUser = userService.getUserById(dislikedBy).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(dislikedBy).orElseThrow(()-> new UserNotFoundException(dislikedBy));
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
         } else if (publishedBy > 0) {
             final ProfileCategory catObject = ProfileCategory.MY_POSTS;
-            final User profileUser = userService.getUserById(publishedBy).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(publishedBy).orElseThrow(()-> new UserNotFoundException(publishedBy));
             newsPage = newsService.getNewsForUserProfile(Optional.empty(), page, orderObj, profileUser, catObject);
         } else if (savedBy > 0) {
             final ProfileCategory catObject = ProfileCategory.SAVED;
-            final User profileUser = userService.getUserById(savedBy).orElseThrow(UserNotFoundException::new);
+            final User profileUser = userService.getUserById(savedBy).orElseThrow(()-> new UserNotFoundException(savedBy));
             final Optional<User> user = securityService.getCurrentUser();
 
             newsPage = newsService.getNewsForUserProfile(user, page, orderObj, profileUser, catObject);
@@ -186,7 +185,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}")
     @Produces(value = {CustomMediaType.USER_V1})
     public Response getNews(@PathParam("newsId") final long newsId){
-        News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
 
         NewsDto newsDto = NewsDto.fromNews(uriInfo, news);
         return Response.ok(newsDto).build();
@@ -196,7 +195,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/reports")
     @Produces(value = {CustomMediaType.USER_V1})
     public Response getNewsReportDetail(@PathParam("newsId") final long newsId){
-        News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(NewsNotFoundException.ID_MSG, newsId)));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         List<ReportDetailDto> reportList = news.getReports().stream().map(d -> ReportDetailDto.fromReportDetail(uriInfo, d)).collect(Collectors.toList());
         return Response.ok(new GenericEntity<List<ReportDetailDto>>(reportList) {}).build();
     }
@@ -207,7 +206,7 @@ public class NewsController {
     public Response updateNewsImage(@PathParam("newsId") long newsId,
                                  @FormDataParam("image") final FormDataBodyPart newsBodyPart,
                                  @FormDataParam("image") byte[] bytes) {
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final String imageType = newsBodyPart.getMediaType().toString();
         newsService.setNewsImage(news.getNewsId(), bytes, imageType);
         final URI location = uriInfo.getAbsolutePathBuilder().build();
@@ -218,8 +217,8 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.UPVOTE);
         return Response.ok().build();
     }
@@ -228,8 +227,8 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
   @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.DOWNVOTE);
         return Response.ok().build();
     }
@@ -238,7 +237,7 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}")
     @PreAuthorize("@ownerCheck.canDeleteNews(#newsId)")
     public Response delete(@PathParam("newsId") final long newsId){
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.deleteNews(news);
         return Response.ok().build();
     }
@@ -247,8 +246,8 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/reports/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response report(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId, @Valid final ReportNewsForm reportForm){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         adminService.reportNews(user, newsId, ReportReason.getByValue(reportForm.getReason()));
         return Response.ok().build();
     }
@@ -257,8 +256,8 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/likes/{userId:[0-9]+}")
         @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.NO_RATING);
         return Response.ok().build();
     }
@@ -267,8 +266,8 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/dislikes/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.setRating(user, news, Rating.NO_RATING);
         return Response.ok().build();
     }
@@ -277,8 +276,8 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeBookmark(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.unsaveNews(user, newsId);
         return Response.ok().build();
     }
@@ -287,8 +286,8 @@ public class NewsController {
     @Path("/{newsId:[0-9]+}/bookmarks/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response save(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId){
-        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         newsService.saveNews(user, newsId);
         return Response.ok().build();
     }
@@ -297,7 +296,7 @@ public class NewsController {
 
     @Consumes({MediaType.APPLICATION_JSON})
     @POST
-    public Response createNews(@Valid final CreateNewsForm createNewsFrom){
+    public Response createNews(@Valid final CreateNewsForm createNewsFrom) {
         final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, TextUtils.convertMarkdownToHTML(createNewsFrom.getBody()), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
         List<Category> categories;
@@ -309,134 +308,22 @@ public class NewsController {
         final News news = newsService.create(newsBuilder, categories);
 
         final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(news.getNewsId())).build();
-//        return Response.created(location).entity(NewsDto.fromNews(uriInfo, news)).build();
         return Response.created(location).build();
 
     }
-//
-//    @Consumes({MediaType.APPLICATION_JSON})
-//    @POST
-//    public Response createUser(@Valid final UserForm userForm){
-//        final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
-//
-//        final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newUser.getId())).build();
-//        return Response.created(location).build();
-//    }
-//
-//    @GET
-//    @Path("/{userId:[0-9]+}")
-//    @Produces(value = { MediaType.APPLICATION_JSON})
-//    public Response getUser(@PathParam("userId") final long userId){
-//        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-//        UserDto userDto = UserDto.fromUser(uriInfo, user, userService.getFollowersCount(userId), userService.getFollowingCount(userId));
-//        return Response.ok(userDto).build();
-//    }
-//
-//    @GET
-//    @Path("/{userId:[0-9]+}/news-stats")
-//    @Produces(value = { MediaType.APPLICATION_JSON})
-//    public Response getUserNewsStats(@PathParam("userId") final long userId){
-//        User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-//        if (!user.getRoles().contains(Role.ROLE_JOURNALIST)) {
-//            return Response.status(404).build();
-//        }
-//
-//        Map<Category, CategoryStatistics.Statistic> newsCategoryMap = newsService.getCategoryStatistics(user.getUserId()).getStatiscticsMap();
-//        List<CategoryStatisticsDto> newsStats = newsCategoryMap.entrySet().stream().map(CategoryStatisticsDto::fromCategoryStatistic).collect(Collectors.toList());
-//        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CategoryStatisticsDto>>(newsStats) {});
-//        return responseBuilder.build();
-//    }
-//
-//
-//    @PUT
-//    @Path("/{userId:[0-9]+}")
-//    @PreAuthorize("@ownerCheck.userMatches(#userId)")
-//    @Produces(value = { MediaType.APPLICATION_JSON})
-//    @Consumes({MediaType.APPLICATION_JSON})
-//    public Response editUser(@PathParam("userId") final long userId, @Valid final UserProfileForm userProfileForm) throws IOException {
-//        Optional<User> mayBeUser = userService.getUserById(userId);
-//
-//        if(!mayBeUser.isPresent()){
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//        }
-//
-//        if(userProfileForm.getImage() != null){
-//            userService.updateProfile(userId, userProfileForm.getUsername(),
-//                    userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
-//        }else{
-//            userService.updateProfile(userId, userProfileForm.getUsername(),
-//                    null, null, userProfileForm.getDescription());
-//        }
-//        if(userProfileForm.getMailOptions()!=null){
-//            userService.updateEmailSettings(mayBeUser.get(), MailOption.getEnumCollection(userProfileForm.getMailOptions()));
-//        }
-//
-//        return Response.ok(UserDto.fromUser(uriInfo, mayBeUser.get(), userService.getFollowersCount(userId), userService.getFollowingCount(userId))).build();
-//    }
-//
-//    @GET
-//    @Path("/{userId:[0-9]+}/image")
-//    public Response profileImage(@PathParam("userId") final long userId) {
-//        final Image image = userService.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage();
-//
-//        if (image.getBytes().length == 0)
-//            return Response.noContent().build();
-//
-//        return Response
-//                .ok(new ByteArrayInputStream(image.getBytes()))
-//                .type(image.getDataType())
-//                .build();
-//    }
-//
-//
-//    @PUT
-//    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
-//    @Path(value = "/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}")
-//    public Response pingNews(@PathParam("userId") final long userId, @PathParam("newsId") final long newsId) {
-//
-//        final User user = userService.getUserById(userId).orElseThrow(UserNotFoundException::new);
-//        final News news =  newsService.getById(user, newsId).orElseThrow(NewsNotFoundException::new);
-//
-//        if(userService.pingNewsToggle(user,news)){
-//            return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinged the news of id %d", user.getUsername(), news.getNewsId()))).build();
-//        }else{
-//            return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinged the news of id %d", user.getUsername(), news.getNewsId()))).build();
-//        }
-//    }
-//
-//    @PUT
-//    @PreAuthorize("@ownerCheck.userMatches(#followerId)")
-//    @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
-//    public Response followUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
-//        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-//        if(userService.followUser(currentUser, userId)){
-//            return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
-//        }
-//        return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] already followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
-//    }
-//
-//    @DELETE
-//    @PreAuthorize("@ownerCheck.userMatches(#followerId)")
-//    @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
-//    public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
-//        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-//        if(userService.unfollowUser(currentUser, userId)){
-//            return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] unfollowed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
-//        }
-//        return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] did not followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
-//    }
 
     @GET
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path("/{newsId:[0-9]+}/image")
     public Response profileImage(@PathParam("newsId") final long newsId) {
-        final News news = newsService.getById(newsId).orElseThrow(() -> new NewsNotFoundException(String.format(UserNotFoundException.ID_MSG, newsId)));
+        final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final Optional<Long> maybeImageId = news.getImageId();
 
-        if (!maybeImageId.isPresent())
+        if (!maybeImageId.isPresent()){
             return Response.noContent().build();
-        final Image image = imageService.getImageById(maybeImageId.get()).orElseThrow(ImageNotFoundException::new);
+        }
 
+        final Image image = imageService.getImageById(maybeImageId.get()).orElseThrow(()-> new ImageNotFoundException(maybeImageId.get()));
         return Response
                 .ok(new ByteArrayInputStream(image.getBytes()))
                 .type(image.getDataType())

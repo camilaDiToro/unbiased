@@ -10,16 +10,13 @@ import DeleteButton from "./DeleteButton";
 import PinButton from "./PinButton";
 import UpvoteButtons from "./UpvoteButtons";
 import CommentButton from "./CommentButton";
+import {getResourcePath} from "../constants";
 
 
 
 
 export default function Article(props) {
     const {I18n, loggedUser} = useAppContext()
-
-    const isMyProfile = loggedUser && loggedUser.id === props.creator.id
-
-
 
     return <>
 
@@ -41,7 +38,7 @@ export default function Article(props) {
                             <span className="font-weight-light"><FormattedDate timeAgo datetime={props.datetime}></FormattedDate></span>
 
                             <p className="text-sm-left text-secondary mb-0 d-flex justify-content-center align-content-center w-fit">
-                                <img src="/img/clock-svgrepo-com.svg"
+                                <img src={getResourcePath("/img/clock-svgrepo-com.svg")}
                                      className="read-clock mr-1"/>
                                 {I18n("home.read", [props.readTime])}
                             </p>
@@ -59,7 +56,7 @@ export default function Article(props) {
 
                             {props.profileArticle ? <DeleteButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} ></DeleteButton> : <></>}
 
-                            {props.profileArticle ? <PinButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} pinned={props.pinned}></PinButton> : <></>}
+                            {props.profileArticle ? <PinButton triggerEffect={props.triggerEffect} creatorId={props.creator.id} id={props.id} pinned={!!props.pinned}></PinButton> : <></>}
 
                             {props.profileArticle ? <></> : <CommentButton id={props.id} triggerEffect={props.triggerEffect}></CommentButton>}
 
@@ -70,7 +67,7 @@ export default function Article(props) {
                 {props.hasImage ? <div className="bg-secondary position-relative w-40 border-15px">
 
 
-                    <img src={props.image} className="object-fit-cover"
+                    <img aria-label="cardImage" src={props.image} className="object-fit-cover"
                          alt="..."/>
 
                 </div> : <></>}

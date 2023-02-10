@@ -1,16 +1,14 @@
 import Link from "next/link";
 import {useAppContext} from "../../context";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import baseURL from "../back";
 import {useRouter} from "next/router";
+import {getResourcePath} from "../../constants";
 
 
 export default function Login() {
 
-    const ctx = useAppContext()
+    const {I18n, api} = useAppContext()
     const router = useRouter()
-    const [jwt, setJwt] = ctx.jwtState
     const [details, setDetails] = useState({
         username: "",
         password: "",
@@ -42,20 +40,9 @@ export default function Login() {
 
     async function handleSubmit(e) {
         e.preventDefault();
-        ctx.axios({
-            // headers: {'Content-Type': 'application/json'},
-            method: 'put',
-            url: 'users/0/pinnedNews',
-            auth: details,
-            params: {newsId: 0}
-        }).then(res => {
-            console.log(res.data)
-            console.log(res.headers)
-            // router.back()
-        }).catch(error => {
-            console.log(error.response.headers)
-            if (error.response.status === 404) {
-
+        api.login(details.username, details.password).then(r => {
+            const {success} = r
+            if (success) {
                 if (localStorage.getItem('fromPage')) {
                     router.back();
                 } else {
@@ -64,6 +51,7 @@ export default function Login() {
                 }
             }
         })
+
     }
 
     return(
@@ -78,15 +66,15 @@ export default function Login() {
                 </h1>
 
                 <div className="d-flex mb-4">
-                    <img className="size-img-modal-login align-self-center" src="/img/profile-svgrepo-com.svg" alt="..."/>
-                    <input onChange={handleChange} type="text" id="username" name="username" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
+                    <img className="size-img-modal-login align-self-center" src={getResourcePath("/img/profile-svgrepo-com.svg")} alt="..."/>
+                    <input onChange={handleChange} type="text" title="username" id="username" name="username" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
                 </div>
 
                 <div className=" mb-2 mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
-                    <img src="/img/lock-svgrepo-com.svg" alt="..." className="size-img-modal-login align-self-center"/>
-                    <input type={passwordType} onChange={handleChange} name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
+                    <img src={getResourcePath("/img/lock-svgrepo-com.svg")} alt="..." className="size-img-modal-login align-self-center"/>
+                    <input type={passwordType} onChange={handleChange} data-testid="password" name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
                     <button className="btn  eye-button-properties" onClick={togglePassword}>
-                        { passwordType==="password"? <img src="/img/eye.svg"/> : <img src="/img/eye-slash.svg"/> }
+                        { passwordType==="password"? <img alt="eye" src={getResourcePath("/img/eye.svg")}/> : <img alt="eyeSlash" src="/img/eye-slash.svg"/> }
                     </button>
                 </div>
 
@@ -97,7 +85,7 @@ export default function Login() {
                 {/*    </label>*/}
                 {/*</div>*/}
 
-                <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">Log in</button>
+                <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">{I18n("navbar.logIn")}</button>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>
             </div>
         </div>

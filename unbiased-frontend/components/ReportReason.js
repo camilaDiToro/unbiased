@@ -1,5 +1,6 @@
 import FormattedDate from "./FormattedDate";
 import {useAppContext} from "../context";
+import types from "../types";
 
 export default function ReportReason(props) {
 
@@ -12,3 +13,5 @@ export default function ReportReason(props) {
         </tr>
     )
 }
+
+ReportReason.propTypes = types.ReportReason

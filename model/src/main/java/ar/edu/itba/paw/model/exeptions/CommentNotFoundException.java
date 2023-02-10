@@ -1,12 +1,16 @@
 package ar.edu.itba.paw.model.exeptions;
 
+
 public class CommentNotFoundException extends RuntimeException  {
 
-    public CommentNotFoundException() {
+    private static final String ID_MSG = "Comment of id %d not found";
+
+    public CommentNotFoundException(long id) {
+        super(String.format(ID_MSG, id));
     }
 
-    public CommentNotFoundException(Throwable var1) {
-        super(var1);
+    public CommentNotFoundException(long id, Throwable var1) {
+        super(String.format(ID_MSG, id), var1);
     }
 
 }

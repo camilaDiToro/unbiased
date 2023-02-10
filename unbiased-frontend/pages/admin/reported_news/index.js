@@ -13,16 +13,9 @@ import Head from "next/head";
 import {newsMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
 
-export async function getServerSideProps(context) {
-    return {
-        props: {
-            news
-        }, // will be passed to the page component as props
-    }
-}
 
-export default function Reported_news(props){
-    const {I18n, axios}= useAppContext()
+export default function Reported_news(){
+    const {I18n, api}= useAppContext()
     const [pagination, setPagination] = usePagination()
     const router = useRouter()
     const [reportedNews, setReportedNews] = useState([])
@@ -30,10 +23,12 @@ export default function Reported_news(props){
 
     useEffect(() => {
         const params = {page: router.query.page, reportOrder: router.query.order, reported: true}
-        axios.get('news', {params}).then(res => {
-            setPagination(res)
-            const mappedNews = (res.data || []).map(newsMapper)
-            setReportedNews(mappedNews)
+        api.getArticles(params).then(res => {
+            const {data, pagination, success} = res
+            if (success) {
+                setPagination(pagination)
+                setReportedNews(data)
+            }
         })
     }, [router.query, effectTrigger])
 

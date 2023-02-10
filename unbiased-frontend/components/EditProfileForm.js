@@ -1,27 +1,22 @@
 import {useState} from "react";
 import {useAppContext} from "../context";
+import types from "../types";
 
 export default function EditProfileForm(props) {
-    const {I18n, axios} = useAppContext()
+    const {I18n, api} = useAppContext()
     const [settings, setSettings] = useState({
         username: props.username,
         description: props.description,
         mailOptions: props.mailOptions
     });
 
-    const [file, setFile] = useState(new FormData())
+    const [file, setFile] = useState(undefined)
 
     const handleEditFormSubmit = async (e) => {
-        const res = await axios.put(`users/${props.id}`, JSON.stringify(settings),{
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-if (file.has('image')) {
-    const fileRes = await axios.put(`users/${props.id}/image`, file)
-}
-
-    props.triggerEffect()
+        const {success} = await api.editUser(settings, file)
+        if (success) {
+            props.triggerEffect()
+        }
     }
 
     props.handlerArray[0] = handleEditFormSubmit
@@ -32,10 +27,7 @@ if (file.has('image')) {
 
     const handleFileChange = (e) => {
         const el = e.target
-        setFile(f => {
-            f.set('image', el.files[0])
-            return f
-        })
+        setFile(el.files[0])
         setFilename(el.files[0].name)
 
     }
@@ -100,7 +92,7 @@ if (file.has('image')) {
             </label>
             {mailOptions.map(op => <div key={op} className="form-check  w-100">
 
-                <input onChange={handleChange} className="mr-1" checked={!!settings.mailOptions.find(o => o === op)} type="checkbox" value={op} />
+                <input onChange={handleChange} className="mr-1" checked={!!settings?.mailOptions?.find(o => o === op)} type="checkbox" value={op} />
                 <label className="form-check-label">
                     {I18n(op)}
                 </label>
@@ -109,3 +101,5 @@ if (file.has('image')) {
         </div>
     </>
 }
+
+EditProfileForm.propTypes = types.EditProfileForm

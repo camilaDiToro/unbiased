@@ -5,31 +5,36 @@ import Modal from "../../../../components/Modal";
 import ModerationPanel from "../../../../components/ModerationPanel";
 import Link from "next/link";
 import ReportReason from "../../../../components/ReportReason";
-import {reportInfo} from "../../../../hardcoded";
-import axios from "axios";
-import baseURL from "../../../back";
+import {useEffect, useState} from "react";
+import {getResourcePath} from "../../../../constants";
+import Tooltip from "../../../../components/Tooltip";
 
 
-export async function getServerSideProps(context) {
-    const id = parseInt(context.query.id)
-    const res = await axios.get(`${baseURL}comments/${id}/reports`)
-    return {
-        props: {
-            reportInfo: res.data,
-            id
-        }, // will be passed to the page component as props
-    }
-}
 
 export default function ReportedCommentDetail(props){
 
-    const {I18n, axios} = useAppContext()
-    const actualReportInfo = props.reportInfo
+    const {I18n, api} = useAppContext()
     const router = useRouter()
 
+    const [reportInfo, setReportInfo] = useState([])
+    const {id} = router.query
+    useEffect(() => {
+        if (!id)
+            return
+        api.getCommentReports(id).then(r => {
+            const {success, data} = r
+            if (success) {
+                setReportInfo(data)
+            }
+        })
+    }, [id])
+
+
     const onDelete = async () => {
-        await axios.delete(`comments/${props.id}`)
-        await router.push('/admin/reported_comments')
+        const {success} = await api.deleteComment(id)
+        if (success) {
+            await router.push('/admin/reported_comments')
+        }
     }
     return (<>
             <Head>
@@ -42,7 +47,9 @@ export default function ReportedCommentDetail(props){
                 <div className="d-flex w-75 flex-column">
                     <div className="w-100 my-2">
                         <Link href="/admin/reported_news">
-                            <img className="svg-btn hover-hand back-btn mt-3 mb-1" src="/img/back-svgrepo-com.svg" alt="..." data-toggle="tooltip" data-placement="bottom" title="Click to go back"/>
+                            <Tooltip position="bottom" text={I18n("tooltip.clickToGoBack")}>
+                                <img className="svg-btn hover-hand back-btn mt-3 mb-1" src={getResourcePath("/img/back-svgrepo-com.svg")} alt="..." />
+                            </Tooltip>
                         </Link>
                     </div>
 
@@ -56,7 +63,7 @@ export default function ReportedCommentDetail(props){
                         </thead>
                         <tbody>
                         {
-                            actualReportInfo.map((r)=><ReportReason key={r.user} {...r}></ReportReason>)
+                            reportInfo.map((r)=><ReportReason key={r.user} {...r}></ReportReason>)
                         }
                         </tbody>
                     </table>
