@@ -72,7 +72,7 @@ public class NewsDto {
         n.reportCount = reportedNewsList == null ? 0 : reportedNewsList.size();
         n.categories = news.getCategories().stream().map(Category::getInterCode).collect(Collectors.toList()).toArray(new String[]{});
         if (n.hasImage) {
-            n.image = uriInfo.getBaseUriBuilder().path("api").path("news").path(String.valueOf(news.getNewsId())).path("image").build();
+            n.image = uriInfo.getBaseUriBuilder().path("news").path(String.valueOf(news.getNewsId())).path("image").build();
         }
         n.title = news.getTitle();
         n.subtitle = news.getSubtitle();
@@ -84,9 +84,9 @@ public class NewsDto {
         User creator = news.getCreator();
         n.creator.put("hasImage", Boolean.toString(creator.hasImage()));
         if (creator.hasImage()) {
-            n.creator.put("image",uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(news.getCreatorId())).path("image").build().toString());
+            n.creator.put("image",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(news.getCreatorId())).path("image").build().toString());
         }
-        n.creator.put("self",uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(creator.getId())).build().toString());
+        n.creator.put("self",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(creator.getId())).build().toString());
         n.creator.put("nameOrEmail", creator.toString());
         n.creator.put("tier", creator.getTier().toString());
         n.creator.put("id", Long.toString(news.getCreatorId()));

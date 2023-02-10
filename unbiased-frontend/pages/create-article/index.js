@@ -36,7 +36,7 @@ export default function CreateArticle(props) {
     const handleSubmit = async () => {
         const {success, data} = await api.postArticle(article, file)
         if (success)
-            await router.replace(`/news/${data.id}`)
+            await router.replace(`/article/${data.id}`)
     }
 
     const [filename, setFilename] = useState(I18n("createArticle.selectFile"))
