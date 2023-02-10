@@ -6,6 +6,7 @@ import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.CategoryStatistics;
 import ar.edu.itba.paw.model.news.Comment;
@@ -147,7 +148,10 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public void setRating(final User currentUser, News news, Rating rating) {
+    public void setRating(long userId, long newsId, Rating rating) {
+
+        User currentUser = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
 
         final PositivityStats.Positivity oldp = news.getPositivityStats().getPositivity();
         final Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
@@ -155,7 +159,6 @@ public class NewsServiceImpl implements NewsService {
             upvoteMap.remove(currentUser.getId());
             return;
         }
-        final long userId = currentUser.getId();
 
         upvoteMap.putIfAbsent(userId, new Upvote(news, currentUser.getId()));
         upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
@@ -173,24 +176,22 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public void saveNews(final User currentUser, long newsId) {
+    public void saveNews(long userId, long newsId) {
 
-        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
-
-        newsDao.saveNews(news, currentUser);
-        news.setUserSpecificVariables(currentUser.getId());
+        final News news = newsDao.getById(newsId, userId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        newsDao.saveNews(news, user);
+        news.setUserSpecificVariables(userId);
 
     }
 
     @Override
     @Transactional
-    public void unsaveNews(final User currentUser, long newsId) {
-
-        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
-
-        newsDao.removeSaved(news, currentUser);
-        news.setUserSpecificVariables(currentUser.getId());
-
+    public void unsaveNews(long userId, long newsId) {
+        final News news = newsDao.getById(newsId, userId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        newsDao.removeSaved(news, user);
+        news.setUserSpecificVariables(userId);
     }
 
     @Override
@@ -299,19 +300,6 @@ public class NewsServiceImpl implements NewsService {
             emailService.sendNewCommentEmail(newsOwner,news,emailSettings.getLocale());
         }
         return commentObj;
-    }
-
-    @Override
-    @Transactional
-    public Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, final boolean reported, ReportOrder reportOrder) {
-        if(!reported){
-            if (orderByObj.equals(NewsOrder.NEW)) {
-                return commentDao.getNewComments(newsId, page);
-            }
-            return commentDao.getTopComments(newsId, page);
-        }
-
-        return commentDao.getReportedComment(page, reportOrder);
     }
 
     @Override

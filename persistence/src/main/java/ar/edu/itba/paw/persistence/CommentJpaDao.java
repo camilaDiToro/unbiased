@@ -101,10 +101,11 @@ public class CommentJpaDao implements CommentDao{
     }
 
     @Override
-    public void reportComment(Comment comment, User reporter, ReportReason reportReason) {
+    public ReportedComment reportComment(Comment comment, User reporter, ReportReason reportReason) {
         final ReportedComment reportedComment = new ReportedComment(comment, reporter, reportReason);
         entityManager.persist(reportedComment);
         LOGGER.debug("Comment from {} with id {} reported. The reason is {}", comment.getUser(), comment.getId(), reportReason.getDescription());
+        return reportedComment;
     }
 
     @Override
@@ -137,7 +138,7 @@ public class CommentJpaDao implements CommentDao{
 
     @Override
     public Page<ReportedComment> getReportedCommentDetail(int page, long commentId) {
-        page = Math.min(page,1);
+        page = Math.max(page,1);
         final int totalPages = getReportedCommentDetailPageCount(commentId);
         page = Math.min(page, totalPages);
         final Query idsQuery = entityManager.createNativeQuery(
@@ -179,6 +180,14 @@ public class CommentJpaDao implements CommentDao{
         if (ids.isEmpty())
             return new ArrayList<>();
         return entityManager.createQuery("SELECT c from Comment c  WHERE c.id IN :ids", Comment.class).setParameter("ids", ids).getResultList();
+    }
+
+    @Override
+    public boolean isReportedByUser(long commentId, long userId) {
+        int value = ((Number)entityManager.createNativeQuery("SELECT count(*) FROM comment_report WHERE user_id = :userId and comment_id = :commentId")
+                .setParameter("userId", userId).setParameter("commentId", commentId)
+                .getSingleResult()).intValue();
+        return value >= 1;
     }
 
 }
