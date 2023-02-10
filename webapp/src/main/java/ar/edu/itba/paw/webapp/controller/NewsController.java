@@ -248,7 +248,6 @@ public class NewsController {
 
         final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(news.getNewsId())).build();
         return Response.created(location).build();
-
     }
 
     @GET

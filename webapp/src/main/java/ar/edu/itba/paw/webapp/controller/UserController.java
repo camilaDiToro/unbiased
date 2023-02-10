@@ -125,7 +125,7 @@ public class UserController {
     @Path("/{userId:[0-9]+}")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     @Produces(value = { CustomMediaType.USER_V1})
-    public Response editUser(@PathParam("userId") final long userId, @Valid final UserProfileForm userProfileForm) throws IOException {
+    public Response editUser(@PathParam("userId") final long userId, @Valid final UserProfileForm userProfileForm) {
         User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
 
         userService.updateProfile(userId, userProfileForm.getUsername(),
@@ -181,11 +181,9 @@ public class UserController {
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     @Path(value = "/{userId:[0-9]+}/pinnedNews")
     public Response unpinNews(@PathParam("userId") final long userId) {
-
         final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         userService.unpinNews(user);
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinned the news", user.getUsername()))).build();
-
     }
 
     @PUT
