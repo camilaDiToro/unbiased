@@ -2,7 +2,7 @@ import React from 'react'
 import Article from "../../components/Article";
 import * as testingLibrary from "../test_utils/contextRender";
 
-const {render, screen, fireEvent} = testingLibrary;
+const {render, screen} = testingLibrary;
 
 const customPropsMap = (options = {}) => {
     const map = {
@@ -33,10 +33,23 @@ const customPropsMap = (options = {}) => {
     return { ...map, ...options };
 };
 
+//Mocks of the internal components used in Article
 jest.mock('../../components/FormattedDate', ()=>{
     return jest.fn(() => {
         return "3 months ago";
     });
+})
+
+jest.mock('../../components/DeleteButton', ()=>{
+    return jest.fn(()=> <div role="button">Mocked delete button</div>)
+})
+
+jest.mock('../../components/PinButton', ()=>{
+    return jest.fn(()=> <div role="button">Mocked pin button</div>)
+})
+
+jest.mock('../../components/CommentButton', ()=>{
+    return jest.fn(()=> <div role="button">Mocked comment button</div>)
 })
 
 let propsMap
@@ -45,15 +58,13 @@ describe('Article test', ()=>{
 
     beforeEach(()=>{
         propsMap = customPropsMap() //get the default props amp
-        render(null) //This render our context, it's a modified render of react-testing-library
     })
 
 
     test('Check if all the readable props appear on the card', () => {
 
-        render(<Article {...propsMap}/>) //This wraps the Article component into our rendered context without rendering the context again
+        render(<Article {...propsMap}/>) //This wraps the Article component into our rendered context (it's a custom render of RTL)
 
-        //Here we check if all the readable props appear on the card
         Object.entries(propsMap).forEach(([key,value])=>{
             if(typeof value === 'string' && (key === 'title' || key === 'subtitle' || key === 'datetime')){
                 expect(screen.getByText(value)).toBeInTheDocument()
@@ -82,5 +93,19 @@ describe('Article test', ()=>{
         expect(screen.queryByLabelText('cardImage')).toBeNull()
     })
 
-    //todo: test prop profileArticle when kevin merge his branch
+    test('Show delete button, pin button and it doesn\'t show comment button if is a profile article', ()=>{
+        propsMap = customPropsMap({profileArticle: true})
+        render(<Article {...propsMap}/>)
+        expect(screen.getByRole('button', {name: 'Mocked delete button'})).toBeInTheDocument()
+        expect(screen.getByRole('button', {name: 'Mocked pin button'})).toBeInTheDocument()
+        expect(screen.queryByRole('button', {name: 'Mocked comment button'})).toBeNull()
+    })
+
+    test('Show comment button and it doesn\'t show delete button and pin button if is not a profile article', ()=>{
+        propsMap = customPropsMap()
+        render(<Article {...propsMap}/>)
+        expect(screen.queryByRole('button', {name: 'Mocked delete button'})).toBeNull()
+        expect(screen.queryByRole('button', {name: 'Mocked pin button'})).toBeNull()
+        expect(screen.getByRole('button', {name: 'Mocked comment button'})).toBeInTheDocument()
+    })
 })
