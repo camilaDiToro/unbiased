@@ -18,7 +18,6 @@ import {getResourcePath} from "../constants";
 export default function Article(props) {
     const {I18n, loggedUser} = useAppContext()
 
-
     return <>
 
         <div className="col mb-4">
