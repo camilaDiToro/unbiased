@@ -20,6 +20,7 @@ import ar.edu.itba.paw.webapp.api.exceptions.CustomBadRequestException;
 import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetUsersFilter;
 import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.dto.NewsDto;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -34,8 +35,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("/users")
@@ -169,6 +172,18 @@ public class UserController {
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
     }
 
+    @GET
+    @Produces(value = {CustomMediaType.NEWS_V1})
+    @Path(value = "/{userId:[0-9]+}/pinnedNews")
+    public Response getPinNews(@PathParam("userId") final long userId) {
+        Optional<News> news = newsService.getPinnedByUserNews(userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId)));
+        if(!news.isPresent()){
+            return Response.noContent().build();
+        }
+        return Response.ok(NewsDto.fromNews(uriInfo, news.get())).build();
+    }
+
+
     @DELETE
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
@@ -178,6 +193,7 @@ public class UserController {
         userService.unpinNews(user);
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinned the news", user.getUsername()))).build();
     }
+
 
     @PUT
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
@@ -190,6 +206,7 @@ public class UserController {
         }
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] already followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
     }
+
 
     @DELETE
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
