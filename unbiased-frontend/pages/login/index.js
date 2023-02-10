@@ -7,7 +7,7 @@ import {getResourcePath} from "../../constants";
 
 export default function Login() {
 
-    const {api} = useAppContext()
+    const {I18n, api} = useAppContext()
     const router = useRouter()
     const [details, setDetails] = useState({
         username: "",
@@ -85,7 +85,7 @@ export default function Login() {
                 {/*    </label>*/}
                 {/*</div>*/}
 
-                <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">Log in</button>
+                <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">{I18n("navbar.logIn")}</button>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>
             </div>
         </div>

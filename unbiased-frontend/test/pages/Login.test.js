@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {render, screen, waitFor} from '@testing-library/react';
 import {AppContext} from "../../context";
 import Login from "../../pages/login";
-import {I18nTesting} from "../../i18n";
+import {I18nTesting} from "../../customI18n";
 import {RouterContext} from "next/dist/shared/lib/router-context";
 import {createMockRouter} from "../test_utils/createMockRouter";
 import '@testing-library/jest-dom'
