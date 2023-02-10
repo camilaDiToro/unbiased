@@ -99,8 +99,6 @@ public class UserServiceImplTest {
         Mockito.when(mockVerificationToken.getUserId()).thenReturn(ID);
         Mockito.when(mockVerificationTokenService.getToken(Mockito.eq(TOKEN))).thenReturn(Optional.of(mockVerificationToken));
 
-        Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(mockUser));
-
         VerificationToken.Status vt = userService.verifyUserEmail(TOKEN);
 
         assertEquals(VerificationToken.Status.SUCCESFFULLY_VERIFIED, vt);
