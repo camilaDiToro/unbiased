@@ -21,7 +21,7 @@ export default function Tabs(props) {
        return <>
            <ul className={`${className} mb-4 mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex `}>
                {items.map(item => <li className="nav-item" key={item.text}>
-                   <Link className={`text-capitalize nav-link fromLeft rounded-pill hover-pill ml-1 ${useSelected === item.text ? activeClasses : inactiveClasses}`}
+                   <Link data-testid="tab-link" className={`text-capitalize nav-link fromLeft rounded-pill hover-pill ml-1 ${useSelected === item.text ? activeClasses : inactiveClasses}`}
                          aria-current="page"
                          href={{
                              pathname: router.pathname,
