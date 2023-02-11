@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
@@ -46,7 +47,7 @@ public class OwnerCheck {
     }
 
     private boolean isAdmin() {
-        return userService.isUserAdmin(securityService.getCurrentUser().orElseThrow(UserNotFoundException::new));
+        return userService.isUserAdmin(securityService.getCurrentUser().orElseThrow(()->new UserNotAuthorizedException("User should be logged in")));
     }
 
 

@@ -76,7 +76,7 @@ public class CommentController {
     @Produces(value = {CustomMediaType.COMMENT_V1})
     public Response postComment(
             @Valid CommentNewsForm form){
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorizedException::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(()->new UserNotAuthorizedException("User should be logged in"));
         final CommentDto commentDto = CommentDto.fromComment(uriInfo, newsService.addComment(currentUser, form.getNewsId(), form.getComment()));
         return Response.created(commentDto.getSelf()).entity(commentDto).build();
     }

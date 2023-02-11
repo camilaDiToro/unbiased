@@ -197,7 +197,7 @@ public class UserController {
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
     @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
     public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorizedException::new);
+        final User currentUser = securityService.getCurrentUser().orElseThrow(()->new UserNotAuthorizedException("User should be logged in"));
         if(userService.unfollowUser(currentUser, userId)){
             return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] unfollowed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
         }

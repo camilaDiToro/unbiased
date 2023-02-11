@@ -8,11 +8,12 @@ public class UserNotFoundException extends RuntimeException {
         super(String.format(ID_MSG, id));
     }
 
-    public UserNotFoundException(long id, Throwable var1) {
-        super(String.format(ID_MSG, id),var1);
+    public UserNotFoundException(String s) {
+        super(s);
     }
 
-    public UserNotFoundException() {
+    public UserNotFoundException(long id, Throwable var1) {
+        super(String.format(ID_MSG, id),var1);
     }
 
 }

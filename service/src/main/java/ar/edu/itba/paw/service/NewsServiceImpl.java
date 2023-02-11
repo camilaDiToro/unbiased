@@ -104,7 +104,7 @@ public class NewsServiceImpl implements NewsService {
             }
         } else if (category.equals(Category.FOR_ME)) {
             if (!isPresent)
-                throw new UserNotAuthorizedException();
+                throw new UserNotAuthorizedException("User should be logged in to get the category \"For me\"");
             final User currentUser = maybeCurrentUser.get();
             if(newsOrder.equals(NewsOrder.NEW)) {
                 totalPages = newsDao.getRecommendationNewsPageCountNew(currentUser);
