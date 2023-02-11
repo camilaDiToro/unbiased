@@ -23,12 +23,21 @@ const customPropsMap = (options = {}) => {
 
 describe('Bookmark test', ()=>{
 
-    test('Bookmark only show up if it is a loggedUser', ()=>{
-
+    beforeEach(()=>{
         propsMap = customPropsMap()
+    })
+
+    test('Bookmark show up if it is a loggedUser', ()=>{
+
         const loggedUser = getDefaultLoggedUser()
         render(<Bookmark {...propsMap}/>, {loggedUser})
         expect(screen.getByRole('tooltip', {name: 'Mocked tooltip'})).toBeInTheDocument()
+    })
+
+    test('Bookmark does not show up if it is not a loggedUser', ()=>{
+
+        render(<Bookmark {...propsMap}/>)
+        expect(screen.queryByRole('tooltip', {name: 'Mocked tooltip'})).toBeNull()
     })
 
 })
