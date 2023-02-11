@@ -144,8 +144,11 @@ public class NewsController {
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
-        newsService.setRating(userId, newsId, Rating.UPVOTE);
-        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the news of id %d",
+        if(newsService.setRating(userId, newsId, Rating.UPVOTE)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the article of id %d",
+                    userId, newsId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d already liked the article of id %d",
                 userId, newsId))).build();
     }
 
@@ -154,8 +157,11 @@ public class NewsController {
     @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
-        newsService.setRating(userId, newsId, Rating.DOWNVOTE);
-        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the news of id %d",
+        if(newsService.setRating(userId, newsId, Rating.DOWNVOTE)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d disliked the article of id %d",
+                    userId, newsId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d already disliked the article of id %d",
                 userId, newsId))).build();
     }
 
@@ -192,8 +198,11 @@ public class NewsController {
     @Produces({CustomMediaType.NEWS_REPORT_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@QueryParam("userId")  long userId, @PathParam("newsId")  long newsId){
-        newsService.setRating(userId, newsId, Rating.NO_RATING);
-        return Response.ok(SimpleMessageDto.fromString(String.format("The like of the user of id %d to the article of id %d has been removed",
+        if(newsService.setRating(userId, newsId, Rating.NO_RATING)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The like of the user of id %d to the article of id %d has been removed",
+                    userId, newsId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d did not have an interaction with the article of id %d",
                 userId, newsId))).build();
     }
 
@@ -202,8 +211,11 @@ public class NewsController {
     @Produces({CustomMediaType.NEWS_REPORT_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@QueryParam("userId")  long userId, @PathParam("newsId")  long newsId){
-        newsService.setRating(userId, newsId, Rating.NO_RATING);
-        return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the article of id %d has been removed",
+        if(newsService.setRating(userId, newsId, Rating.NO_RATING)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the article of id %d has been removed",
+                    userId, newsId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d did not have an interaction with the article of id %d",
                 userId, newsId))).build();
     }
 
@@ -212,17 +224,22 @@ public class NewsController {
     @Produces({CustomMediaType.NEWS_REPORT_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeBookmark(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
+        if (!newsService.isSavedByUser(newsId, userId)) {
+            return Response.ok("The user of id %d did not have the article of id %d saved").build();
+        }
         newsService.unsaveNews(userId, newsId);
-        return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the article of id %d has been removed",
-                userId, newsId))).build();
+        return Response.ok("The user of id %d unsaved the article of id %d").build();
     }
 
     @POST
     @Path("/{newsId:[0-9]+}/bookmarks")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response save(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
+        if (newsService.isSavedByUser(newsId, userId)) {
+            return Response.ok("The user of id %d has already saved the article of id %d").build();
+        }
         newsService.saveNews(userId, newsId);
-        return Response.noContent().build();
+        return Response.ok("The user of id %d saved the article of id %d").build();
     }
 
     @Consumes({CustomMediaType.NEWS_V1})

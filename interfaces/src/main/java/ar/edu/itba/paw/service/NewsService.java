@@ -24,7 +24,7 @@ public interface NewsService {
     Optional<Comment> getCommentById(long id);
     Optional<News> getPinnedByUserNews(User user);
     Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query);
-    void setRating(long userId, long newsId , Rating rating);
+    boolean setRating(long userId, long newsId , Rating rating);
     void saveNews(long userId, long newsId);
     void unsaveNews(long userId, long newsId);
     boolean toggleSaveNews(final User currentUser, long newsId);
@@ -37,4 +37,5 @@ public interface NewsService {
     Comment addComment(final User currentUser, long newsId, String comment);
     void deleteComment(long commentId);
     CategoryStatistics getCategoryStatistics(final long userId);
+    boolean isSavedByUser(long newsId, long userId);
 }

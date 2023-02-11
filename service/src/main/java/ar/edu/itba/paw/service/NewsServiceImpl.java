@@ -148,20 +148,36 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public void setRating(long userId, long newsId, Rating rating) {
+    public boolean setRating(long userId, long newsId, Rating rating) {
 
-        User currentUser = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
 
         final PositivityStats.Positivity oldp = news.getPositivityStats().getPositivity();
         final Map<Long, Upvote> upvoteMap = news.getUpvoteMap();
-        if (rating.equals(Rating.NO_RATING)) {
-            upvoteMap.remove(currentUser.getId());
-            return;
+
+        if(!upvoteMap.containsKey(userId)){
+            if(rating.equals(Rating.NO_RATING)){
+                return false;
+            }
+            upvoteMap.put(userId, new Upvote(news, userId));
+            upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
+        }
+        else if(rating.equals(Rating.NO_RATING)){
+            upvoteMap.remove(userId);
+        }
+        else if(upvoteMap.get(userId).isValue()){
+            if(rating.equals(Rating.UPVOTE)){
+                return false;
+            }
+            upvoteMap.get(userId).setValue(false);
+        }
+        else if(rating.equals(Rating.DOWNVOTE)){
+            return false;
+        }
+        else {
+            upvoteMap.get(userId).setValue(true);
         }
 
-        upvoteMap.putIfAbsent(userId, new Upvote(news, currentUser.getId()));
-        upvoteMap.get(userId).setValue(rating.equals(Rating.UPVOTE));
 
         final PositivityStats.Positivity newp = news.getPositivityStats().getPositivity();
         if(oldp != newp){
@@ -170,9 +186,13 @@ public class NewsServiceImpl implements NewsService {
                 emailService.sendNewsPositivityChanged(creator, news, creator.getEmailSettings().getLocale());
             }
         }
+        return true;
     }
 
-
+    @Override
+    public boolean isSavedByUser(long newsId, long userId) {
+        return newsDao.isSavedByUser(newsId, userId);
+    }
 
     @Override
     @Transactional

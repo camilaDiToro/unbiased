@@ -44,4 +44,5 @@ public interface NewsDao {
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsId);
     boolean isReportedByUser(final News news,final User user);
+    boolean isSavedByUser(long newsId, long userId);
 }
