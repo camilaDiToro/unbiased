@@ -20,7 +20,7 @@ export default function TimeSelector() {
     const [timeConstraint, setTimeConstraint] = useState(router.query.time || 'WEEK')
     return <>
         <div className="btn-group ">
-            <div className="btn dropdown-toggle text-white" data-toggle="dropdown">
+            <div data-testid="selected-time" className="btn dropdown-toggle text-white" data-toggle="dropdown">
                 {timeMap[timeConstraint]}
             </div>
 

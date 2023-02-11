@@ -21,10 +21,14 @@ export default function UpvoteButtons(props) {
         } else {
             if (props.rating === 0 || props.rating > 0 && s === 'dislikes' || props.rating < 0 && s === 'likes') {
                 const {success} = await add(props.id)
-                success && props.triggerEffect()
+                if(success){
+                    props.triggerEffect()
+                }
             } else {
                 const {success} = await remove(props.id)
-                success && props.triggerEffect()
+                if(success){
+                    props.triggerEffect()
+                }
 
             }
         }
@@ -37,17 +41,17 @@ export default function UpvoteButtons(props) {
 
 
     return   <div className={props.comment ? "d-flex flex-row align-items-center gap-1" : "upvote-div-profile d-flex flex-column align-items-center m-3"}>
-        <img id="upvote"
+        <img data-testid="upvote" id="upvote"
              className="svg-btn hover-hand"
              onClick={handleUpvote}
-             src={getResourcePath(`/img/upvote${props.rating > 0 ? '-clicked' : ''}.svg`)}/>
-        <div id="rating" className={upvoteClass}>
+             src={getResourcePath(`/img/upvote${loggedUser && props.rating > 0 ? '-clicked' : ''}.svg`)}/>
+        <div data-testid="rating" id="rating" className={upvoteClass}>
             {props.upvotes}
         </div>
-        <img id="downvote"
+        <img data-testid="downvote" id="downvote"
              className="svg-btn hover-hand"
              onClick={handleDownvote}
-             src={getResourcePath(`/img/downvote${props.rating < 0 ? '-clicked' : ''}.svg`)}/>
+             src={getResourcePath(`/img/downvote${loggedUser && props.rating < 0 ? '-clicked' : ''}.svg`)}/>
     </div>
 
 }

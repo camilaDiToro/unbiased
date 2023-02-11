@@ -11,18 +11,18 @@ const AllTheProviders = ({children, options= {loggedUser: null}})=>{
     const I18n = useI18n()
 
     return(
-        <withI18n>
             <RouterContext.Provider value={createMockRouter({})}>
                 <AppContext.Provider value={{I18n, ...options}}>
                     {children}
                 </AppContext.Provider>
             </RouterContext.Provider>
-        </withI18n>
     )
 }
 
+const FinalWrapper = withI18n(AllTheProviders)
+
 const contextRender = (ui, options) =>
-    render(ui, {wrapper: (props) => <AllTheProviders {...props} options={options} />, ...options})
+    render(ui, {wrapper: (props) => <FinalWrapper {...props} options={options} />, ...options})
 
 export * from '@testing-library/react'
 export {contextRender as render}

@@ -8,7 +8,6 @@ const PositivityIndicator = {
 
 export const TopCreator = {
     nameOrEmail: PropTypes.string.isRequired,
-    hasImage: PropTypes.bool.isRequired,
     id: PropTypes.number.isRequired,
     tier: PropTypes.string.isRequired,
     image: PropTypes.string
