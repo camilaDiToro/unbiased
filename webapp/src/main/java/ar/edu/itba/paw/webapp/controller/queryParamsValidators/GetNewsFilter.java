@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller.queryParamsValidators;
 
-
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
@@ -9,15 +8,12 @@ import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TimeConstraint;
 import ar.edu.itba.paw.model.user.ProfileCategory;
-import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidGetNewsFilter;
-import ar.edu.itba.paw.webapp.api.exceptions.InvalidGetUsersFilter;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,10 +23,7 @@ public enum GetNewsFilter {
     NO_FILTER() {
         @Override
         public GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id) {
-            NewsOrder newsOrder = NewsOrder.TOP;
-            if (order != null && !order.equals("")) {
-                newsOrder = NewsOrder.getByValue(order);
-            }
+            NewsOrder newsOrder = (order == null || order.equals("")) ? NewsOrder.TOP : NewsOrder.getByValue(order);
             return new GetNewsParams(   Category.getByValue(category), newsOrder, null,
                                         TimeConstraint.getByValue(time), search, null);
         }
@@ -72,10 +65,7 @@ public enum GetNewsFilter {
     REPORTED(){
         @Override
         public GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id) {
-            ReportOrder reportOrder = ReportOrder.REP_COUNT_DESC;
-            if (order != null) {
-                reportOrder = ReportOrder.getByValue(order);
-            }
+            ReportOrder reportOrder = (order == null || order.equals("")) ? ReportOrder.REP_COUNT_DESC : ReportOrder.getByValue(order);
             return new GetNewsParams(null, null, reportOrder, null, null, null);
         }
 
@@ -88,7 +78,6 @@ public enum GetNewsFilter {
     LIKED_BY() {
         @Override
         public GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id) {
-
             return validateIdParam(userService, category, order, time, search, id);
         }
 
@@ -152,10 +141,7 @@ public enum GetNewsFilter {
     }
 
     private static GetNewsParams validateIdParam(UserService userService, String category, String order, String time, String search, Long id) {
-        NewsOrder newsOrder = NewsOrder.TOP;
-        if (order != null) {
-            newsOrder = NewsOrder.getByValue(order);
-        }
+        NewsOrder newsOrder = (order == null || order.equals("")) ? NewsOrder.TOP : NewsOrder.getByValue(order);
         if(id == null){
             throw new InvalidRequestParamsException("The requested filter requires an \"id\" query param");
         }
