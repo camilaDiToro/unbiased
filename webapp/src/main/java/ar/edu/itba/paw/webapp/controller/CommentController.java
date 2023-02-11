@@ -2,14 +2,11 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
-import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
-import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.CommentService;
@@ -18,7 +15,6 @@ import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
-import ar.edu.itba.paw.webapp.api.exceptions.MissingArgumentException;
 import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetCommentsFilter;
 import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetCommentsParams;
 import ar.edu.itba.paw.webapp.dto.*;
@@ -31,7 +27,6 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("/comments")
@@ -73,7 +68,7 @@ public class CommentController {
 
         final List<CommentDto> comments = commentPage.getContent().stream().map(c -> CommentDto.fromComment(uriInfo, c)).collect(Collectors.toList());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CommentDto>>(comments) {});
-        return PagingUtils.pagedResponse(commentPage, responseBuilder, uriInfo);
+        return ResponseHeadersUtils.pagedResponse(commentPage, responseBuilder, uriInfo);
     }
 
     @POST
@@ -122,7 +117,7 @@ public class CommentController {
         }
         List<CommentReportDetailsDto> reportList = reportedCommentPage.getContent().stream().map(n -> CommentReportDetailsDto.fromReportedComment(uriInfo, n)).collect(Collectors.toList());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CommentReportDetailsDto>>(reportList) {});
-        return PagingUtils.pagedResponse(reportedCommentPage, responseBuilder, uriInfo);
+        return ResponseHeadersUtils.pagedResponse(reportedCommentPage, responseBuilder, uriInfo);
     }
 
     @POST

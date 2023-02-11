@@ -5,18 +5,12 @@ import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
 
 import ar.edu.itba.paw.model.admin.ReportDetail;
-import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.admin.ReportReason;
-import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TextUtils;
-import ar.edu.itba.paw.model.news.TimeConstraint;
-import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.ImageService;
@@ -51,9 +45,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
@@ -109,7 +101,7 @@ public class NewsController {
 
         final List<NewsDto> allNews = newsPage.getContent().stream().map(n -> NewsDto.fromNews(uriInfo, n)).collect(Collectors.toList());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsDto>>(allNews) {});
-        return PagingUtils.pagedResponse(newsPage, responseBuilder, uriInfo);
+        return ResponseHeadersUtils.pagedResponse(newsPage, responseBuilder, uriInfo);
     }
 
     @GET
@@ -131,7 +123,7 @@ public class NewsController {
         }
         List<NewsReportDetailDto> reportList = reportedNewsDetail.getContent().stream().map(n -> NewsReportDetailDto.fromReportDetail(uriInfo, n)).collect(Collectors.toList());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsReportDetailDto>>(reportList) {});
-        return PagingUtils.pagedResponse(reportedNewsDetail, responseBuilder, uriInfo);
+        return ResponseHeadersUtils.pagedResponse(reportedNewsDetail, responseBuilder, uriInfo);
     }
 
     @PUT
@@ -252,7 +244,8 @@ public class NewsController {
 
     @GET
     @Path("/{newsId:[0-9]+}/image")
-    public Response profileImage(@PathParam("newsId") final long newsId) {
+    public Response profileImage(@PathParam("newsId") final long newsId,
+                                 @Context javax.ws.rs.core.Request request) {
         final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final Optional<Long> maybeImageId = news.getImageId();
 
@@ -261,10 +254,7 @@ public class NewsController {
         }
 
         final Image image = imageService.getImageById(maybeImageId.get()).orElseThrow(()-> new ImageNotFoundException(maybeImageId.get()));
-        return Response
-                .ok(new ByteArrayInputStream(image.getBytes()))
-                .type(image.getDataType())
-                .build();
+        return ResponseHeadersUtils.conditionalCacheImageResponse(image, request);
     }
 
 }

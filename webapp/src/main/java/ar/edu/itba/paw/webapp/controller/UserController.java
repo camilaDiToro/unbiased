@@ -20,7 +20,6 @@ import ar.edu.itba.paw.webapp.api.exceptions.CustomBadRequestException;
 import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetUsersFilter;
 import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
-import ar.edu.itba.paw.webapp.dto.NewsDto;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -35,10 +34,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("/users")
@@ -79,7 +76,7 @@ public class UserController {
         final List<UserDto> allUsers = userPage.getContent().stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
 
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<UserDto>>(allUsers) {});
-        return PagingUtils.pagedResponse(userPage, responseBuilder, uriInfo);
+        return ResponseHeadersUtils.pagedResponse(userPage, responseBuilder, uriInfo);
     }
 
     @Consumes({CustomMediaType.USER_V1})
@@ -148,16 +145,16 @@ public class UserController {
 
     @GET
     @Path("/{userId:[0-9]+}/image")
-    public Response profileImage(@PathParam("userId") final long userId) {
-        final Image image = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId)).getImage();
+    public Response profileImage(@PathParam("userId") final long userId,
+                                 @Context javax.ws.rs.core.Request request) {
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
-        if (image.getBytes().length == 0)
+        if (!user.hasImage()){
             return Response.noContent().build();
+        }
 
-        return Response
-                .ok(new ByteArrayInputStream(image.getBytes()))
-                .type(image.getDataType())
-                .build();
+        final Image image = user.getImage();
+        return ResponseHeadersUtils.conditionalCacheImageResponse(image, request);
     }
 
 
