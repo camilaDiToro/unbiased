@@ -1,6 +1,7 @@
 import React from 'react'
 import Article from "../../components/Article";
 import * as testingLibrary from "../test_utils/contextRender";
+import FormattedDate from "../../components/FormattedDate";
 
 const {render, screen} = testingLibrary;
 
@@ -9,7 +10,7 @@ const customPropsMap = (options = {}) => {
         title: "My title",
         subtitle: "My subtitle",
         body: "my body",
-        datetime: "3 months ago",
+        datetime: "2022-10-19T11:24:59.723",
         readTime: 0,
         creator: {
             hasImage: true,
@@ -35,9 +36,7 @@ const customPropsMap = (options = {}) => {
 
 //Mocks of the internal components used in Article
 jest.mock('../../components/FormattedDate', ()=>{
-    return jest.fn(() => {
-        return "3 months ago";
-    });
+    return jest.fn(()=> <div data-testid="formattedDate">3 months ago</div>)
 })
 
 jest.mock('../../components/DeleteButton', ()=>{
@@ -67,7 +66,11 @@ describe('Article test', ()=>{
 
         Object.entries(propsMap).forEach(([key,value])=>{
             if(typeof value === 'string' && (key === 'title' || key === 'subtitle' || key === 'datetime')){
-                expect(screen.getByText(value)).toBeInTheDocument()
+                if(key === 'datetime'){
+                    expect(screen.getByTestId('formattedDate').textContent).toContain("3 months ago")
+                }else{
+                    expect(screen.getByText(value)).toBeInTheDocument()
+                }
 
             }else if (typeof  value === 'number' && (key === 'readTime' || key === 'upvotes')){
                 if(key === 'readTime'){
