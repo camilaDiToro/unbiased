@@ -6,11 +6,13 @@ import Modal from "../../components/Modal";
 import ModalTrigger from "../../components/ModalTrigger";
 
 jest.mock('../../components/Modal', ()=>{
-  return jest.fn(() => <Modal title="modal" role="modal">Mock modal</Modal>)
+  return jest.fn(() => <div title="modal" role="modal">Mock modal</div>)
+  //return jest.fn(() => <Modal title="modal" role="modal">Mock modal</Modal>)
 })
 
 jest.mock('../../components/ModalTrigger', ()=>{
-  return jest.fn(() => <ModalTrigger title="modal-trigger" role="modal-trigger">Mock modal trigger</ModalTrigger>);
+  return jest.fn(() => <div title="modal-trigger" role="modal-trigger">Mock modal trigger</div>)
+    //<ModalTrigger title="modal-trigger" role="modal-trigger">Mock modal trigger</ModalTrigger>);
 })
 
 const {render, screen} = testingLibrary;
@@ -37,7 +39,8 @@ describe('Pin Button test', ()=>{
     const isMyProfile = loggedUser && propsMap.creatorId === loggedUser.userId
     render(<PinButton {...propsMap}/>, {isMyProfile})
     console.log(propsMap)
-    expect(screen.getByText('modal')).toBeInTheDocument
+    expect(screen.getByRole('modal')).toBeInTheDocument
+    expect(screen.getByRole('modal-trigger')).toBeInTheDocument
   })
 
   test('Pin Button does not show up if it is not my profile', ()=>{
