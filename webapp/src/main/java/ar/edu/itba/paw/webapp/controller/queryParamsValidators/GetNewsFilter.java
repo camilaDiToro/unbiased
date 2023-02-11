@@ -27,8 +27,8 @@ public enum GetNewsFilter {
     NO_FILTER() {
         @Override
         public GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id) {
-            NewsOrder newsOrder =NewsOrder.TOP;
-            if (order != null) {
+            NewsOrder newsOrder = NewsOrder.TOP;
+            if (order != null && !order.equals("")) {
                 newsOrder = NewsOrder.getByValue(order);
             }
             return new GetNewsParams(   Category.getByValue(category), newsOrder, null,

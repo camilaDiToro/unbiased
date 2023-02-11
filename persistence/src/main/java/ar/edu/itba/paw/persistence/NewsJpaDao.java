@@ -482,7 +482,7 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public boolean isSavedByUser(long newsId, long userId){
-        int value = ((Number)entityManager.createNativeQuery("SELECT count(*) FROM report WHERE user_id = :userId and news_id = :newsId")
+        int value = ((Number)entityManager.createNativeQuery("SELECT count(*) FROM saved_news WHERE user_id = :userId and news_id = :newsId")
                 .setParameter("userId", userId).setParameter("newsId", newsId)
                 .getSingleResult()).intValue();
         return value >= 1;

@@ -90,7 +90,6 @@ public class NewsController {
                              @QueryParam("order") final String order,
                              @QueryParam("time") @DefaultValue("WEEK") final String time,
                              @QueryParam("id") final Long id) {
-
         final GetNewsFilter objFilter = GetNewsFilter.fromString(filter);
         final GetNewsParams params = objFilter.validateParams(userService, category, order, time, search, id);
         final Page<News> newsPage = objFilter.getNews(newsService, adminService, page, params);
@@ -195,7 +194,7 @@ public class NewsController {
 
     @DELETE
     @Path("/{newsId:[0-9]+}/likes")
-    @Produces({CustomMediaType.NEWS_REPORT_V1})
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeLike(@QueryParam("userId")  long userId, @PathParam("newsId")  long newsId){
         if(newsService.setRating(userId, newsId, Rating.NO_RATING)){
@@ -208,7 +207,7 @@ public class NewsController {
 
     @DELETE
     @Path("/{newsId:[0-9]+}/dislikes")
-    @Produces({CustomMediaType.NEWS_REPORT_V1})
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeDislike(@QueryParam("userId")  long userId, @PathParam("newsId")  long newsId){
         if(newsService.setRating(userId, newsId, Rating.NO_RATING)){
@@ -221,25 +220,26 @@ public class NewsController {
 
     @DELETE
     @Path("/{newsId:[0-9]+}/bookmarks")
-    @Produces({CustomMediaType.NEWS_REPORT_V1})
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response removeBookmark(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
         if (!newsService.isSavedByUser(newsId, userId)) {
-            return Response.ok("The user of id %d did not have the article of id %d saved").build();
+            return Response.ok(String.format("The user of id %d did not have the article of id %d saved",userId, newsId)).build();
         }
         newsService.unsaveNews(userId, newsId);
-        return Response.ok("The user of id %d unsaved the article of id %d").build();
+        return Response.ok(String.format("The user of id %d unsaved the article of id %d",userId, newsId)).build();
     }
 
     @POST
     @Path("/{newsId:[0-9]+}/bookmarks")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response save(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
         if (newsService.isSavedByUser(newsId, userId)) {
-            return Response.ok("The user of id %d has already saved the article of id %d").build();
+            return Response.ok(String.format("The user of id %d had already saved the article of id %d",userId, newsId)).build();
         }
         newsService.saveNews(userId, newsId);
-        return Response.ok("The user of id %d saved the article of id %d").build();
+        return Response.ok(String.format("The user of id %d saved the article of id %d",userId, newsId)).build();
     }
 
     @Consumes({CustomMediaType.NEWS_V1})
