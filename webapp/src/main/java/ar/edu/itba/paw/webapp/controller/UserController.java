@@ -108,7 +108,8 @@ public class UserController {
         }
 
         Map<Category, CategoryStatistics.Statistic> newsCategoryMap = newsService.getCategoryStatistics(user.getUserId()).getStatiscticsMap();
-        List<CategoryStatisticsDto> newsStats = newsCategoryMap.entrySet().stream().map(c -> CategoryStatisticsDto.fromCategoryStatistic(uriInfo, c, userId)).collect(Collectors.toList());
+        List<CategoryStatisticsDto> newsStats = newsCategoryMap.entrySet().stream()
+                .map(c -> CategoryStatisticsDto.fromCategoryStatistic(uriInfo, c, userId)).collect(Collectors.toList());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CategoryStatisticsDto>>(newsStats) {});
         return responseBuilder.build();
     }
@@ -166,7 +167,7 @@ public class UserController {
         final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         userService.pinNews(user, news);
-        return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the news of id %d", user.getUsername(), news.getNewsId()))).build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the article of id %d", user.getUsername(), news.getNewsId()))).build();
     }
 
     @DELETE
@@ -176,7 +177,7 @@ public class UserController {
     public Response unpinNews(@PathParam("userId") final long userId) {
         final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         userService.unpinNews(user);
-        return Response.ok(SimpleMessageDto.fromString(String.format("User %s unpinned the news", user.getUsername()))).build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s has no pinned article", user.getUsername()))).build();
     }
 
 
