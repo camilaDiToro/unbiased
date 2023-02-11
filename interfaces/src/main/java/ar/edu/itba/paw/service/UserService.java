@@ -42,4 +42,5 @@ public interface UserService {
     Page<User> getAdmins(int page, String search);
     Page<User> getNotAdmins(int page, String search);
     Page<User> getTopCreators();
+    boolean isUserEnabled(String email);
 }
