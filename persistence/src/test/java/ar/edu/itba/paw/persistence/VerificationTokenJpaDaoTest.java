@@ -34,8 +34,6 @@ public class VerificationTokenJpaDaoTest {
     private DataSource ds;
     @Autowired
     private VerificationTokenJpaDao verificationTokenDao;
-    @Autowired
-    private UserJpaDao userDao;
 
     @PersistenceContext
     EntityManager entityManager;

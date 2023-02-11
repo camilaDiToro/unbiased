@@ -23,6 +23,6 @@ public class NotExistingUsernameValidator implements ConstraintValidator<NotExis
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         Optional<User> user = userService.findByUsername(value);
-        return !user.isPresent() || securityService.getCurrentUser().orElseThrow(UserNotAuthorizedException::new).getId() == user.get().getId();
+        return !user.isPresent() || securityService.getCurrentUser().orElseThrow(()->new UserNotAuthorizedException("User should be logged in")).getId() == user.get().getId();
     }
 }

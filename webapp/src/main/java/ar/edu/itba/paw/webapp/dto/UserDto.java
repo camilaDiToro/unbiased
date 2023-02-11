@@ -5,6 +5,7 @@ import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.Tier;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.webapp.adapter.PositivityAdapter;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetNewsFilter;
 
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -24,6 +25,11 @@ public class UserDto {
     private URI self;
     private URI news;
     private URI image;
+    private URI newsStats;
+    private URI roles;
+    private URI publishedArticles;
+    private URI likedArticles;
+    private URI pinnedNews;
     private String tier;
     private boolean hasImage;
     private boolean isJournalist;
@@ -31,6 +37,67 @@ public class UserDto {
     private long id;
     private boolean hasPositivity;
     private String[] mailOptions = new String[]{};
+
+    public URI getRoles() {
+        return roles;
+    }
+
+    public void setRoles(URI roles) {
+        this.roles = roles;
+    }
+
+    public URI getLikedArticles() {
+        return likedArticles;
+    }
+
+    public void setLikedArticles(URI likedArticles) {
+        this.likedArticles = likedArticles;
+    }
+
+    public URI getDislikedArticles() {
+        return dislikedArticles;
+    }
+
+    public void setDislikedArticles(URI dislikedArticles) {
+        this.dislikedArticles = dislikedArticles;
+    }
+
+    public URI getReportedArticles() {
+        return reportedArticles;
+    }
+
+    public void setReportedArticles(URI reportedArticles) {
+        this.reportedArticles = reportedArticles;
+    }
+
+    public URI getSavedArticles() {
+        return savedArticles;
+    }
+
+    public void setSavedArticles(URI savedArticles) {
+        this.savedArticles = savedArticles;
+    }
+
+    private URI dislikedArticles;
+
+    public URI getPublishedArticles() {
+        return publishedArticles;
+    }
+
+    public void setPublishedArticles(URI publishedArticles) {
+        this.publishedArticles = publishedArticles;
+    }
+
+    private URI reportedArticles;
+    private URI savedArticles;
+
+    public URI getPinnedNews() {
+        return pinnedNews;
+    }
+
+    public void setPinnedNews(URI pinnedNews) {
+        this.pinnedNews = pinnedNews;
+    }
 
     public boolean isHasImage() {
         return hasImage;
@@ -107,16 +174,14 @@ public class UserDto {
         this.newsStats = newsStats;
     }
 
-    private URI newsStats;
-
     public static UserDto fromUser(final UriInfo uriInfo, final User user){
         final UserDto dto = new UserDto();
         dto.email = user.getEmail();
         dto.username = user.getUsername();
-        dto.self = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).build();
+        dto.self = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).build();
         dto.hasImage = user.hasImage();
         if (dto.hasImage) {
-            dto.image = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).path("image").build();
+            dto.image = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("image").build();
         }
         long followers = user.getFollowers() == null ? 0 : user.getFollowers().size();
         long following = user.getFollowing() == null ? 0 : user.getFollowing().size();
@@ -126,7 +191,8 @@ public class UserDto {
         Collection<Role> roles = user.getRoles();
         dto.isJournalist = roles != null && roles.contains(Role.ROLE_JOURNALIST);
         if (dto.isJournalist) {
-            dto.newsStats = uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(user.getId())).path("news-stats").build();
+            dto.newsStats = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("news-stats").build();
+            dto.publishedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.PUBLISHED_BY.toString()).queryParam("id",user.getId()).build();
         }
         PositivityStats stats = user.getPositivityStats();
         dto.description = user.getDescription();
@@ -139,6 +205,12 @@ public class UserDto {
         }
         dto.id = user.getUserId();
         dto.mailOptions = user.getEmailSettings().getOptionsArray();
+        dto.roles = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("role").build();
+        dto.likedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.LIKED_BY.toString()).queryParam("id",user.getId()).build();
+        dto.dislikedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.DISLIKED_BY.toString()).queryParam("id",user.getId()).build();
+        dto.reportedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.REPORTED_BY.toString()).queryParam("id",user.getId()).build();
+        dto.savedArticles = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.SAVED_BY.toString()).queryParam("id",user.getId()).build();
+        dto.pinnedNews = uriInfo.getBaseUriBuilder().path("news").queryParam("filter", GetNewsFilter.PINNED_BY.toString()).queryParam("id",user.getId()).build();
         return dto;
     }
 

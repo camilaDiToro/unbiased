@@ -2,10 +2,11 @@ package ar.edu.itba.paw.model.exeptions;
 
 public class UserNotAuthorizedException extends RuntimeException{
 
-    public UserNotAuthorizedException() {
+    public UserNotAuthorizedException(String s) {
+        super(s);
     }
 
-    public UserNotAuthorizedException(Throwable var1) {
-        super(var1);
+    public UserNotAuthorizedException(String s, Throwable var1) {
+        super(s);
     }
 }

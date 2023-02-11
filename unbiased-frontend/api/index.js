@@ -60,6 +60,31 @@ export class Api {
 
     }
 
+    async verifyEmail(token) {
+        const action = async () => {
+            try {
+                const res = await this.axios({
+                    method: 'put',
+                    url: 'users/0/pinnedNews',
+                    params: {newsId: 0},
+                    hideError: true,
+                    headers: {
+                        Authorization: `Email ${token}`
+                    }
+                })
+            }
+            catch(error) {
+                if (!error.response || !(error.response.status === 404)) {
+                    throw new Error("Error logging in")
+                }
+            }
+
+
+        }
+        return await Api.#runRequest(action)
+
+    }
+
     async getArticles(params, hideError, authOptional) {
         const action = async () => {
             const res = await this.#getArticlesCall(params, hideError, authOptional, params)
@@ -115,14 +140,14 @@ export class Api {
         if (this.loggedUser) {
             const id = this.loggedUser.id
             const instanceMethodCall = (...a) => this.#getArticlesCall(...a)
-            const likedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{likedBy: id})
-            const pinnedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{pinnedBy: id})
+            const likedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{id, filter: 'LIKED_BY'})
+            const pinnedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{id, filter: 'PINNED_BY'})
 
-            const dislikedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{dislikedBy: id})
+            const dislikedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{id, filter: 'DISLIKED_BY'})
 
-            const savedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{savedBy: id})
+            const savedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{id, filter: 'SAVED_BY'})
 
-            const reportedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{reportedBy: id})
+            const reportedNewsPromise = Api.#getAllIdsFrom(instanceMethodCall,{id, filter: 'REPORTED_BY'})
 
             const [likedNews, dislikedNews, savedNews, reportedNews, pinnedNews] = await Promise.all([likedNewsPromise, dislikedNewsPromise, savedNewsPromise, reportedNewsPromise, pinnedNewsPromise])
 
@@ -142,12 +167,12 @@ export class Api {
         if (this.loggedUser) {
             const id = this.loggedUser.id
             const instanceMethodCall = (...a) => this.#getCommentsCall(...a)
-            const likedCommentsPromise = Api.#getAllIdsFrom(instanceMethodCall,{likedBy: id})
+            const likedCommentsPromise = Api.#getAllIdsFrom(instanceMethodCall,{id, filter: 'LIKED_BY'})
 
-            const dislikedCommentsPromise = Api.#getAllIdsFrom(instanceMethodCall,{dislikedBy: id})
+            const dislikedCommentsPromise = Api.#getAllIdsFrom(instanceMethodCall,{id, filter: 'DISLIKED_BY'})
 
 
-            const reportedCommentsPromise = Api.#getAllIdsFrom(instanceMethodCall,{reportedBy: id})
+            const reportedCommentsPromise = Api.#getAllIdsFrom(instanceMethodCall,{id, filter: 'REPORTED_BY'})
 
             const [likedComments, dislikedComments, reportedComments] = await Promise.all([likedCommentsPromise, dislikedCommentsPromise,  reportedCommentsPromise])
 
@@ -180,13 +205,12 @@ export class Api {
     }
 
     async postComment(comment, newsId) {
-        const stringifiedJson = JSON.stringify({comment})
+        const stringifiedJson = JSON.stringify({comment, newsId})
         const action = async () => {
             await this.axios.post('comments', stringifiedJson, {
                 headers: {
                     'Content-Type': 'application/vnd.unbiased.comment.v1+json',
-                },
-                params: {newsId}
+                }
             })
         }
         return await Api.#runRequest(action)
@@ -196,7 +220,7 @@ export class Api {
         const action = async () => {
             const res = await this.axios.post('news', JSON.stringify(article),{
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/vnd.unbiased.news.v1+json',
                 }
             })
 
@@ -228,7 +252,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.put(`/news/${newsId}/bookmarks/${id}`)
+            await this.axios.post(`/news/${newsId}/bookmarks`, undefined, {params: {userId: id}})
         }
 
         return await Api.#runRequest(action)
@@ -238,7 +262,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.delete(`/news/${newsId}/bookmarks/${id}`)
+            await this.axios.delete(`/news/${newsId}/bookmarks`,{params: {userId: id}})
         }
 
         return await Api.#runRequest(action)
@@ -271,7 +295,7 @@ export class Api {
                 password
             }),{
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/vnd.unbiased.user.v1+json',
                 }
             })
         }
@@ -370,10 +394,11 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.put(`comments/${commentId}/reports/${id}`, JSON.stringify({reason}),{
+            await this.axios.post(`comments/${commentId}/reports`, JSON.stringify({reason, userId:id}),{
                 headers: {
                     'Content-Type': 'application/vnd.unbiased.commentReportDetail.v1+json',
-                }
+                },
+            params: {commentId}
             })
         }
 
@@ -385,7 +410,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.put(`news/${newsId}/reports/${id}`, JSON.stringify({reason}),{
+            await this.axios.post(`news/${newsId}/reports`, JSON.stringify({reason, userId: id}),{
                 headers: {
                     'Content-Type': 'application/json',
                 }
@@ -400,7 +425,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.put(`comments/${commentId}/likes/${id}`)
+            await this.axios.post(`comments/${commentId}/likes`, undefined, {params: {userId: id}})
         }
 
         return await Api.#runRequest(action)
@@ -411,7 +436,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.put(`news/${newsId}/likes/${id}`)
+            await this.axios.post(`news/${newsId}/likes`, undefined, {params: {userId: id}})
         }
 
         return await Api.#runRequest(action)
@@ -422,7 +447,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.put(`comments/${commentId}/dislikes/${id}`)
+            await this.axios.post(`comments/${commentId}/dislikes`, undefined, {params: {userId: id}})
         }
 
         return await Api.#runRequest(action)
@@ -433,7 +458,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.put(`news/${newsId}/dislikes/${id}`)
+            await this.axios.post(`news/${newsId}/dislikes`, undefined, {params: {userId: id}})
         }
 
         return await Api.#runRequest(action)
@@ -444,7 +469,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.delete(`comments/${commentId}/dislikes/${id}`)
+            await this.axios.delete(`comments/${commentId}/dislikes`, {params: {userId: id}})
         }
 
         return await Api.#runRequest(action)
@@ -455,7 +480,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.delete(`news/${newsId}/dislikes/${id}`)
+            await this.axios.delete(`news/${newsId}/dislikes`,  {params: {userId: id}})
         }
 
         return await Api.#runRequest(action)
@@ -466,7 +491,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.delete(`comments/${commentId}/likes/${id}`)
+            await this.axios.delete(`comments/${commentId}/likes`,  {params: {userId: id}})
         }
 
         return await Api.#runRequest(action)
@@ -477,7 +502,7 @@ export class Api {
         const action = async () => {
             const id = this.loggedUser.id
             this.#validateId(id)
-            await this.axios.delete(`news/${newsId}/likes/${id}`)
+            await this.axios.delete(`news/${newsId}/likes`, {params: {userId: id}})
         }
 
         return await Api.#runRequest(action)

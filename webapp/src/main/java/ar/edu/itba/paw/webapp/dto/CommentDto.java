@@ -17,49 +17,16 @@ public class CommentDto {
     private String commentOwner;
     private URI userUri;
     private long reportCount;
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    private String body;
-
-    public long getUpvotes() {
-        return upvotes;
-    }
-
-    public void setUpvotes(long upvotes) {
-        this.upvotes = upvotes;
-    }
-
-
-    private long upvotes;
-
-    public long getNewsId() {
-        return newsId;
-    }
-
-    public void setNewsId(long newsId) {
-        this.newsId = newsId;
-    }
-
+    private URI userLink;
+    private URI userImage;
+    private URI commentReports;
+    private URI upvotesLink;
+    private URI downvotesLink;
     private long newsId;
-
     private URI reportsUri;
     private boolean deleted;
     private String datetime;
-
-    public HashMap<String, String> getCreator() {
-        return creator;
-    }
-
-    public void setCreator(HashMap<String, String> creator) {
-        this.creator = creator;
-    }
+    private String body;
 
     @XmlJavaTypeAdapter(CreatorAdapter.class)
     private HashMap<String, String> creator = new HashMap<>();
@@ -67,13 +34,13 @@ public class CommentDto {
     public static CommentDto fromComment(final UriInfo uriInfo, final Comment comment){
         final CommentDto dto = new CommentDto();
         dto.id = comment.getId();
-        dto.self = uriInfo.getBaseUriBuilder().path("api").path("comments").path(String.valueOf(comment.getId())).build();
+        dto.self = uriInfo.getBaseUriBuilder().path("comments").path(String.valueOf(comment.getId())).build();
         User creator = comment.getUser();
-        dto.creator.put("hasImage", Boolean.toString(creator.hasImage()));
-        if (creator.hasImage()) {
-            dto.creator.put("image",uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(creator.getId())).path("image").build().toString());
-        }
-        dto.creator.put("self",uriInfo.getBaseUriBuilder().path("api").path("users").path(String.valueOf(creator.getId())).build().toString());
+//        dto.creator.put("hasImage", Boolean.toString(creator.hasImage()));
+//        if (creator.hasImage()) {
+//            dto.creator.put("image",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(creator.getId())).path("image").build().toString());
+//        }
+//        dto.creator.put("self",uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(creator.getId())).build().toString());
         dto.creator.put("nameOrEmail", creator.toString());
         dto.creator.put("tier", creator.getTier().toString());
         dto.creator.put("id", Long.toString(creator.getUserId()));
@@ -86,6 +53,15 @@ public class CommentDto {
             dto.body = comment.getComment();
         }
         dto.datetime = comment.getCommentedDate().toLocalDateTime().format(DateTimeFormatter.ISO_DATE_TIME);
+
+        User user = comment.getUser();
+        dto.userLink = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).build();
+        if(user.hasImage()){
+            dto.userImage = uriInfo.getBaseUriBuilder().path("users").path(String.valueOf(user.getId())).path("image").build();
+        }
+        dto.commentReports = uriInfo.getBaseUriBuilder().path("comment").path(String.valueOf(comment.getId())).path("reports").build();
+        dto.upvotesLink = uriInfo.getBaseUriBuilder().path("comment").path(String.valueOf(comment.getId())).path("likes").build();
+        dto.downvotesLink = uriInfo.getBaseUriBuilder().path("comment").path(String.valueOf(comment.getId())).path("dislikes").build();
         return dto;
     }
 
@@ -151,5 +127,80 @@ public class CommentDto {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public long getUpvotes() {
+        return upvotes;
+    }
+
+    public void setUpvotes(long upvotes) {
+        this.upvotes = upvotes;
+    }
+
+    private long upvotes;
+
+    public long getNewsId() {
+        return newsId;
+    }
+
+    public void setNewsId(long newsId) {
+        this.newsId = newsId;
+    }
+
+    public HashMap<String, String> getCreator() {
+        return creator;
+    }
+
+    public void setCreator(HashMap<String, String> creator) {
+        this.creator = creator;
+    }
+
+
+    public URI getUserLink() {
+        return userLink;
+    }
+
+    public void setUserLink(URI userLink) {
+        this.userLink = userLink;
+    }
+
+    public URI getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(URI userImage) {
+        this.userImage = userImage;
+    }
+
+    public URI getCommentReports() {
+        return commentReports;
+    }
+
+    public void setCommentReports(URI commentReports) {
+        this.commentReports = commentReports;
+    }
+
+    public URI getUpvotesLink() {
+        return upvotesLink;
+    }
+
+    public void setUpvotesLink(URI upvotesLink) {
+        this.upvotesLink = upvotesLink;
+    }
+
+    public URI getDownvotesLink() {
+        return downvotesLink;
+    }
+
+    public void setDownvotesLink(URI downvotesLink) {
+        this.downvotesLink = downvotesLink;
     }
 }

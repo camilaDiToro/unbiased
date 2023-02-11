@@ -27,7 +27,7 @@ export default function ReportedCard(props) {
                             <div className="d-flex flex-column justify-content-between w-100">
                                 <div className="d-flex w-100">
                                     <div className="card-body-home pt-0">
-                                        <Link href={props.comment ? `/news/${props.newsId}?comment=${props.id}` : `/news/${props.id}`} className="link mh-10">
+                                        <Link href={props.comment ? `/article/${props.newsId}?comment=${props.id}` : `/article/${props.id}`} className="link mh-10">
                                             <h5 className="text-ellipsis link-text">{props.comment ? `\"${props.title}\"` : props.title}</h5>
                                         </Link>
                                         {props.comment ? <></> : <h6 className="card-subtitle py-1 text-ellipsis-2">{props.subtitle}</h6>}
@@ -39,7 +39,7 @@ export default function ReportedCard(props) {
                                 <div className="d-flex justify-content-between w-100">
                                     <div className="d-flex align-items-center w-auto gap-1">
                                         <div className="img-container-article">
-                                            <ProfilePic  image={props.creator.image} hasImage={props.creator.hasImage} tier="platinum"></ProfilePic>
+                                            <ProfilePic  image={props.userImage} hasImage={props.creator.hasImage} tier="platinum"></ProfilePic>
                                         </div>
                                         <ProfileLink {...props.creator}></ProfileLink>
                                     </div>

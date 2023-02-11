@@ -234,7 +234,6 @@ public class NewsJpaDao implements NewsDao {
     @Override
     public void removeSaved(News news, User user) {
         user.getSavedNews().remove(new Saved(news, user.getId()));
-
     }
 
     @Override
@@ -466,10 +465,27 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public void reportNews(News news, User reporter, ReportReason reportReason) {
+    public ReportDetail reportNews(News news, User reporter, ReportReason reportReason) {
         final ReportDetail reportDetail = new ReportDetail(news, reporter, LocalDateTime.now(), reportReason);
         entityManager.persist(reportDetail);
         LOGGER.debug("News {} with id {} reported. The reason is {}", news.getTitle(), news.getNewsId(), reportReason.getDescription());
+        return reportDetail;
+    }
+
+    @Override
+    public boolean isReportedByUser(final News news,final User user){
+        int value = ((Number)entityManager.createNativeQuery("SELECT count(*) FROM report WHERE user_id = :userId and news_id = :newsId")
+                     .setParameter("userId", user.getId()).setParameter("newsId", news.getNewsId())
+                     .getSingleResult()).intValue();
+        return value >= 1;
+    }
+
+    @Override
+    public boolean isSavedByUser(long newsId, long userId){
+        int value = ((Number)entityManager.createNativeQuery("SELECT count(*) FROM report WHERE user_id = :userId and news_id = :newsId")
+                .setParameter("userId", userId).setParameter("newsId", newsId)
+                .getSingleResult()).intValue();
+        return value >= 1;
     }
 
     @Override
@@ -521,13 +537,5 @@ public class NewsJpaDao implements NewsDao {
         final long count = entityManager.createQuery("SELECT COUNT(distinct r.news) FROM ReportDetail r", Long.class)
                 .getSingleResult();
         return Page.getPageCount(count, PAGE_SIZE);
-    }
-
-    @Override
-    public boolean hasReported(long newsId, long loggedUser) {
-        final long elemCount = entityManager.createQuery("SELECT COUNT(r) FROM ReportDetail r WHERE r.news.newsId = :news_id AND r.reporter.userId = :user_id",Long.class)
-                .setParameter("news_id", newsId)
-                .setParameter("user_id", loggedUser).getSingleResult();
-        return elemCount > 0;
     }
 }

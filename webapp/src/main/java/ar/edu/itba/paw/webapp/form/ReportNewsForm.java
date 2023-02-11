@@ -21,5 +21,14 @@ public class ReportNewsForm {
     @Length(max=400)
     @NotExistingReportReason
     private String reason = "INAP";
-    
+
+    private int userId;
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 }

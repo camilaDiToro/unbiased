@@ -6,10 +6,8 @@ import ar.edu.itba.paw.webapp.auth.filters.AbstractAuthFilter;
 import ar.edu.itba.paw.webapp.auth.handlers.AuthFailureHandler;
 import ar.edu.itba.paw.webapp.auth.handlers.AuthSuccessHandler;
 import ar.edu.itba.paw.webapp.auth.handlers.CustomAccessDeniedHandler;
-import ar.edu.itba.paw.webapp.auth.LoginFailureHandler;
 import ar.edu.itba.paw.webapp.auth.CustomUserDetailsService;
 import ar.edu.itba.paw.webapp.auth.jwt.JwtAuthProvider;
-import ar.edu.itba.paw.webapp.auth.jwt.JwtTokenService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -21,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -33,9 +30,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -43,9 +38,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
-
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.PUT;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -108,13 +100,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         return abstractAuthFilter;
     }
 
-//    @Bean
-//    public CorsConfiguration corsConfiguration() {
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.addAllowedOrigin(spaUrl);
-//        return corsConfiguration;
-//    }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration config = new CorsConfiguration();
@@ -152,8 +137,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-
-
         http.cors().and().csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint)
@@ -162,17 +145,14 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().headers().cacheControl().disable().and().authorizeRequests()
                 .and().authorizeRequests()
-                //.antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
-                .antMatchers("/api/users/{\\d+}/role").access("hasRole('OWNER')")
-//                .antMatchers("/create_article","/change-upvote","/change-downvote","/news/create",
-//                            "/news/{\\d+}/delete", "/news/{\\d+}/comment").authenticated()
-//                .antMatchers(HttpMethod.PUT,"/news/{\\d+}/likes/{\\d+}","/news/{\\\\d+}/dislikes/{\\\\d+}").authenticated()
-                .antMatchers("/api/**")
+                .antMatchers("/users/{\\d+}/role").access("hasRole('OWNER')")
+                .antMatchers("/**")
                 .permitAll()
                 .and().addFilterBefore(abstractAuthFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf()
                 .disable();
     }
+
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/favicon.ico", "/403");

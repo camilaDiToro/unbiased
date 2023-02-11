@@ -111,6 +111,7 @@ export default function AppWrapper({ children }) {
         if (jwt.refreshToken) {
             localStorage.setItem('refreshToken', jwt.refreshToken)
             const loggedUser = JSON.parse(atob(jwt.refreshToken.split('.')[1]))
+            console.log(loggedUser)
             setLoggedUser({...loggedUser, nameOrEmail: loggedUser.username, hasImage: !!loggedUser.imageLink,
             image: loggedUser.imageLink, id: loggedUser.userId})
 

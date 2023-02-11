@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.service;
 
-import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
@@ -98,8 +97,6 @@ public class UserServiceImplTest {
         Mockito.when(mockVerificationToken.isValidToken()).thenReturn(true);
         Mockito.when(mockVerificationToken.getUserId()).thenReturn(ID);
         Mockito.when(mockVerificationTokenService.getToken(Mockito.eq(TOKEN))).thenReturn(Optional.of(mockVerificationToken));
-
-        Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(mockUser));
 
         VerificationToken.Status vt = userService.verifyUserEmail(TOKEN);
 

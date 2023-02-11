@@ -27,7 +27,7 @@ export default function Article(props) {
                     <div className="d-flex w-100">
                         <UpvoteButtons id={props.id} triggerEffect={props.triggerEffect} upvotes={props.upvotes} rating={props.rating}></UpvoteButtons>
                         <div className="card-body-home">
-                            <Link shallow className="link max-h-10" href={`/news/${props.id}`}>
+                            <Link shallow className="link max-h-10" href={`/article/${props.id}`}>
                                 <h5 className="link-text text-ellipsis">
                                     {props.title}
                                 </h5>
@@ -48,7 +48,7 @@ export default function Article(props) {
                     <div className="d-flex justify-content-between p-2 w-100">
                         <div className="d-flex align-items-center w-auto gap-1">
                             <div className="img-container-article">
-                                <ProfilePic {...props.creator}></ProfilePic>
+                                <ProfilePic {...props.creator} image={props.userImage} ></ProfilePic>
                             </div>
                             <ProfileLink shorten={props.hasImage} {...props.creator}></ProfileLink>
                         </div>

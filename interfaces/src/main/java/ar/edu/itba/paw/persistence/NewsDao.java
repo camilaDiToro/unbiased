@@ -38,13 +38,11 @@ public interface NewsDao {
     Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Optional<User> loggedUser, ProfileCategory profileCategory);
     int getRecommendationNewsPageCountTop(User user, TimeConstraint timeConstraint);
     CategoryStatistics getCategoryStatistics(long userId);
-
     List<News> getReportedByUserNews(long userId);
-
     Optional<News> getPinnedByUserNews(long userId);
-
-    void reportNews(News news, User reporter, ReportReason reportReason);
+    ReportDetail reportNews(News news, User reporter, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsId);
-    boolean hasReported(long newsId, long loggedUser);
+    boolean isReportedByUser(final News news,final User user);
+    boolean isSavedByUser(long newsId, long userId);
 }

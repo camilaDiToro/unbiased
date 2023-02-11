@@ -113,7 +113,9 @@ const es = {
     "verifyEmail.goHome": "Ir a la página principal",
     "verifyEmail.login": "Ir a iniciar sesión",
     "verificationToken.succesfullyVerified": "Email verificado exitosamente.",
-    "verificationToken.succesfullyResended": "Verificación de email reenviada.",
+    "verificationToken.succesfullyResended": "Verificación de correo reenviada.",
+    "verificationToken.succesfullySent": "Verificación de correo enviada.",
+
     "verificationToken.expired": "El token de verificación expiró.",
     "verificationToken.notExists": "El token de verificación no existe.",
     "verificationToken.alreadyVerified": "Esta cuenta ya fue verificada.",
@@ -173,6 +175,8 @@ const es = {
 
     //Tooltips
     "tooltip.clickToGoBack": "Click para volver hacia atras",
+    "tooltip.clickToGoHome": "Click para ir a la página principal",
+
     "tooltip.deleteNews": "Borrar noticia",
     "tooltip.articleReported": "Noticia reportada",
     "tooltip.commentReported": "Comentario reportado",
@@ -208,7 +212,7 @@ const es = {
 
 }
 
-const en = {
+export const en = {
 
         //NavBar
         "navbar.search": "Search",
@@ -323,8 +327,9 @@ const en = {
         "verifyEmail.goHome": "Go home",
         "verifyEmail.login": "Go to login",
         "verificationToken.succesfullyVerified": "Email verification successful.",
-        "verificationToken.succesfullyResended": "Verification email resended.",
-        "verificationToken.expired": "The verification token has expired.",
+        "verificationToken.succesfullyResended": "Verification email resent.",
+    "verificationToken.succesfullySent": "Verification email sent.",
+    "verificationToken.expired": "The verification token has expired.",
         "verificationToken.notExists": "The verification token does not exist.",
         "verificationToken.alreadyVerified": "This account has already been verified.",
 
@@ -383,7 +388,8 @@ const en = {
 
         //Tooltips
         "tooltip.clickToGoBack": "Click to go back",
-        "tooltip.deleteNews": "Delete news",
+    "tooltip.clickToGoHome": "Click to go to the home page",
+    "tooltip.deleteNews": "Delete news",
         "tooltip.articleReported": "Article reported",
         "tooltip.commentReported": "Comment reported",
         "tooltip.reportComment": "Report comment",

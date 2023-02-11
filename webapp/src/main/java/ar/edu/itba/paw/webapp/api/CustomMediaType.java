@@ -11,6 +11,10 @@ public class CustomMediaType {
     public static final String COMMENT_REPORT_DETAIL_LIST_V1 = "application/vnd.unbiased.commentReportDetailList.v1+json";
     public static final String COMMENT_REPORT_DETAIL_V1 = "application/vnd.unbiased.commentReportDetail.v1+json";
     public static final String CATEGORY_STATISTICS_V1 = "application/vnd.unbiased.categoryStatistics.v1+json";
+    public static final String NEWS_V1 = "application/vnd.unbiased.news.v1+json";
+    public static final String NEWS_LIST_V1 = "application/vnd.unbiased.newsList.v1+json";
+    public static final String NEWS_REPORT_V1 = "application/vnd.unbiased.newsReport.v1+json";
+    public static final String NEWS_REPORT_LIST_V1 = "application/vnd.unbiased.newsReportList.v1+json";
     private CustomMediaType(){
 
     }
