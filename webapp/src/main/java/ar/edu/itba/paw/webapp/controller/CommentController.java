@@ -125,8 +125,11 @@ public class CommentController {
     @Path("/{commentId:[0-9]+}/likes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response like(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
-        commentService.setCommentRating(userId, commentId, Rating.UPVOTE);
-        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the comment of id %d",
+        if(commentService.setCommentRating(userId, commentId, Rating.UPVOTE)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the comment of id %d",
+                    userId, commentId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d already liked the comment of id %d",
                 userId, commentId))).build();
     }
 
@@ -139,7 +142,8 @@ public class CommentController {
             return Response.ok(SimpleMessageDto.fromString(String.format("The like of the user of id %d to the comment of id %d has been removed",
                     userId, commentId))).build();
         }
-        return Response.noContent().build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d did not liked with the comment of id %d",
+                userId, commentId))).build();
     }
 
     @POST
@@ -147,8 +151,11 @@ public class CommentController {
     @Path("/{commentId:[0-9]+}/dislikes")
     @PreAuthorize("@ownerCheck.userMatches(#userId)")
     public Response dislike(@PathParam("commentId") long commentId, @QueryParam("userId") long userId){
-        commentService.setCommentRating(userId, commentId, Rating.DOWNVOTE);
-        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d disliked the comment of id %d",
+        if(commentService.setCommentRating(userId, commentId, Rating.DOWNVOTE)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d disliked the comment of id %d",
+                    userId, commentId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d already disliked the comment of id %d",
                 userId, commentId))).build();
     }
 
@@ -161,6 +168,7 @@ public class CommentController {
             return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the comment of id %d has been removed",
                     userId, commentId))).build();
         }
-        return Response.noContent().build();
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d did not disliked with the comment of id %d",
+                userId, commentId))).build();
     }
 }
