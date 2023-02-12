@@ -3,7 +3,6 @@ import {useAppContext} from "../context";
 import types from "../types";
 
 export default function EditProfileForm(props) {
-    console.log('HERE I AM', props)
     const {I18n, api} = useAppContext()
     const [settings, setSettings] = useState({
         username: props.username,

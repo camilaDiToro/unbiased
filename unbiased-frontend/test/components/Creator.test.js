@@ -34,7 +34,7 @@ const customPropsMap = (options = {}) => {
     return { ...map, ...options };
 };
 
-describe('Bookmark test', ()=>{
+describe('Creator test', ()=>{
 
     beforeEach(()=>{
         propsMap = customPropsMap()

@@ -15,7 +15,7 @@ const customPropsMap = (options = {}) => {
     return { ...map, ...options };
 };
 
-describe('Bookmark test', ()=>{
+describe('Delete button test', ()=>{
 
     beforeEach(()=>{
         propsMap = customPropsMap()
