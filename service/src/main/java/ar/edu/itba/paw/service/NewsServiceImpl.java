@@ -97,9 +97,11 @@ public class NewsServiceImpl implements NewsService {
         if (category.equals(Category.ALL)) {
             if (newsOrder.equals(NewsOrder.NEW)) {
                 totalPages = newsDao.getTotalPagesAllNews(query,timeConstraint);
+                page = Math.min(page, totalPages);
                 ln = isPresent ? newsDao.getNewNews(page, query, maybeCurrentUser.get().getUserId()) :  newsDao.getNewNews(page, query);
             } else {
                 totalPages = newsDao.getTotalPagesAllNews(query, timeConstraint);
+                page = Math.min(page, totalPages);
                 ln = isPresent ? newsDao.getTopNews(page, query, timeConstraint, maybeCurrentUser.get().getUserId()) : newsDao.getTopNews(page, query, timeConstraint);
             }
         } else if (category.equals(Category.FOR_ME)) {
@@ -108,23 +110,26 @@ public class NewsServiceImpl implements NewsService {
             final User currentUser = maybeCurrentUser.get();
             if(newsOrder.equals(NewsOrder.NEW)) {
                 totalPages = newsDao.getRecommendationNewsPageCountNew(currentUser);
+                page = Math.min(page, totalPages);
                 ln = newsDao.getRecommendationNew(page, maybeCurrentUser.get());
             } else {
                 totalPages = newsDao.getRecommendationNewsPageCountTop(currentUser, timeConstraint);
+                page = Math.min(page, totalPages);
                 ln = newsDao.getRecommendationTop(page, currentUser, timeConstraint);
             }
         }
         else { // categoria estandar
             if (newsOrder.equals(NewsOrder.NEW)) {
                 totalPages = newsDao.getTotalPagesCategoryNew(category);
+                page = Math.min(page, totalPages);
                 ln = isPresent ? newsDao.getNewsByCategoryNew(page, category, maybeCurrentUser.get().getUserId()) : newsDao.getNewsByCategoryNew(page, category);
             } else {
                 totalPages = newsDao.getTotalPagesCategoryTop(category, timeConstraint);
+                page = Math.min(page, totalPages);
                 ln = isPresent ? newsDao.getNewsByCategoryTop(page, category,maybeCurrentUser.get().getUserId(), timeConstraint) : newsDao.getNewsByCategoryTop(page, category, timeConstraint);
             }
         }
 
-        page = Math.min(page, totalPages);
         return new Page<>(ln, page, totalPages);
     }
 

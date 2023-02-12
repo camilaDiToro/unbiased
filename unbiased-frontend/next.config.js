@@ -4,6 +4,7 @@ const isProd = process.env.ENV === 'prod'
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  trailingSlash:true,
   // customI18n: {
   //   locales: ["en-US","es-ES"],
   //   defaultLocale: "en-US",

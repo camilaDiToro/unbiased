@@ -124,10 +124,6 @@ public enum GetNewsFilter {
         }
     };
 
-    public String getInvalidParamsMsg(String search, Long id){
-        return String.format("Invalid params %s, %d", search, id);
-    }
-
     public abstract GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id);
 
     public abstract Page<News> getNews(NewsService newsService, AdminService adminService, int page, GetNewsParams params);
