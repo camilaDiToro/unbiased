@@ -59,7 +59,7 @@ public enum GetNewsFilter {
 
         @Override
         public Page<News> getNews(NewsService newsService, AdminService adminService, int page, GetNewsParams params) {
-            return new Page<>(adminService.getReportedByUserNews(params.getUser()), 1, 1);
+            return adminService.getReportedByUserNews(page, params.getUser().getUserId());
         }
     },
     REPORTED(){

@@ -56,8 +56,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public List<News> getReportedByUserNews(User user) {
-        return newsDao.getReportedByUserNews(user.getUserId());
+    public Page<News> getReportedByUserNews(int page, long userId) {
+        return newsDao.getReportedByUserNews(page, userId);
     }
 
     @Override

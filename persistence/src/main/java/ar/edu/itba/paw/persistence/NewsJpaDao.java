@@ -431,17 +431,45 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public List<News> getReportedByUserNews(long userId) {
-        Query query = entityManager.createNativeQuery("SELECT news_id FROM report n WHERE user_id = :userId")
-                .setParameter("userId", userId);
-        @SuppressWarnings("unchecked")
-        final List<Long> ids = (List<Long>) query.getResultList().stream().map(o -> ((Number)o).longValue()).collect(Collectors.toList());
+    public Page<News> getReportedNews(int page, ReportOrder reportOrder) {
 
-        if (ids.isEmpty()) {
-            return new ArrayList<>();
-        }
+        page = Math.min(page,1);
+        final int totalPages = getTotalReportedNews();
+        page = Math.min(page, totalPages);
 
-        return entityManager.createQuery("SELECT n from News n WHERE n.newsId in :ids", News.class).setParameter("ids", ids).getResultList();
+        final Query idsQuery = entityManager.createNativeQuery(
+                        "SELECT news_id FROM report n NATURAL JOIN news GROUP BY news_id ORDER BY "
+                                + reportOrder.getQuery() +" LIMIT :limit OFFSET :offset")
+                .setParameter("limit",PAGE_SIZE)
+                .setParameter("offset",(page-1)*PAGE_SIZE);
+
+        final TypedQuery<News> objectQuery = entityManager.createQuery("SELECT n from News n WHERE n.newsId IN :ids ", News.class);
+
+        return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, News::getNewsId);
+    }
+
+    @Override
+    public Page<News> getReportedByUserNews(int page, long userId) {
+
+        page = Math.min(page,1);
+        final int totalPages = getTotalReportedByUserNews(userId);
+        page = Math.min(page, totalPages);
+
+        final Query idsQuery = entityManager.createNativeQuery("SELECT news_id FROM report n WHERE user_id = :userId LIMIT :limit OFFSET :offset")
+                .setParameter("userId", userId)
+                .setParameter("limit",PAGE_SIZE)
+                .setParameter("offset",(page-1)*PAGE_SIZE);
+
+        final TypedQuery<News> objectQuery = entityManager.createQuery("SELECT n from News n WHERE n.newsId IN :ids ", News.class);
+
+        return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, News::getNewsId);
+    }
+
+    private int getTotalReportedByUserNews(long userId) {
+        final long count = entityManager.createQuery("SELECT COUNT(distinct r.news) FROM ReportDetail r WHERE r.reporter.userId = :userId", Long.class)
+                .setParameter("userId", userId)
+                .getSingleResult();
+        return Page.getPageCount(count, PAGE_SIZE);
     }
 
     @Override
@@ -481,29 +509,11 @@ public class NewsJpaDao implements NewsDao {
     }
 
     @Override
-    public boolean isSavedByUser(long newsId, long userId){
-        int value = ((Number)entityManager.createNativeQuery("SELECT count(*) FROM saved_news WHERE user_id = :userId and news_id = :newsId")
+    public boolean isSavedByUser(long newsId, long userId) {
+        int value = ((Number) entityManager.createNativeQuery("SELECT count(*) FROM saved_news WHERE user_id = :userId and news_id = :newsId")
                 .setParameter("userId", userId).setParameter("newsId", newsId)
                 .getSingleResult()).intValue();
         return value >= 1;
-    }
-
-    @Override
-    public Page<News> getReportedNews(int page, ReportOrder reportOrder) {
-
-        page = Math.min(page,1);
-        final int totalPages = getTotalReportedNews();
-        page = Math.min(page, totalPages);
-
-        final Query idsQuery = entityManager.createNativeQuery(
-                        "SELECT news_id FROM report n NATURAL JOIN news GROUP BY news_id ORDER BY "
-                                + reportOrder.getQuery() +" LIMIT :limit OFFSET :offset")
-                .setParameter("limit",PAGE_SIZE)
-                .setParameter("offset",(page-1)*PAGE_SIZE);
-
-        final TypedQuery<News> objectQuery = entityManager.createQuery("SELECT n from News n WHERE n.newsId IN :ids ", News.class);
-
-       return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, News::getNewsId);
     }
 
     @Override
