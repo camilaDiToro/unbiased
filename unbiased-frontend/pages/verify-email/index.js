@@ -17,7 +17,7 @@ export default function EmailVerified(){
             if (success) {
                 setVerified(true)
             } else {
-                router.replace("/")
+                // router.replace("/")
             }
         })
     }, [token])
