@@ -2,6 +2,7 @@ import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import { getDefaultLoggedUser } from "../test_utils/defaultLoggedUser";
 import Navbar from "../../components/Navbar";
+import dropdown from "bootstrap/js/src/dropdown";
 
 jest.mock("next/link", () => {
   return jest.fn(() => <nav role="button">Log In</nav>)
@@ -40,5 +41,18 @@ describe('NavBar test', ()=>{
     render(<Navbar  {...propsMap}/>)
     expect(screen.getByRole('button', {name: 'Log In'})).toBeInTheDocument()
     expect(screen.getByRole('button', {name: 'Sign Up'})).toBeInTheDocument()
+  })
+
+  test('NavBar show dropdown if is loggeduser', ()=>{
+    const loggedUser = getDefaultLoggedUser()
+    render(<Navbar {...propsMap}/>, {loggedUser})
+    expect(screen.getByRole("dropdown")).toBeInTheDocument()
+  })
+
+  test('NavBar show button Create if is loggeduser', ()=>{
+    const loggedUser = getDefaultLoggedUser()
+    const button = screen.getByRole('button', {name: /Create/i})
+    render(<Navbar {...propsMap}/>, {loggedUser})
+    expect(button).toBeInTheDocument()
   })
 })

@@ -2,8 +2,7 @@ import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import { getDefaultLoggedUser } from "../test_utils/defaultLoggedUser";
 import PinButton from "../../components/PinButton";
-import Modal from "../../components/Modal";
-import ModalTrigger from "../../components/ModalTrigger";
+import { getResourcePath } from "../../constants";
 
 jest.mock('../../components/Modal', ()=>{
   return jest.fn(() => <div title="modal" role="modal">Mock modal</div>)
@@ -39,8 +38,8 @@ describe('Pin Button test', ()=>{
     const isMyProfile = loggedUser && propsMap.creatorId === loggedUser.userId
     render(<PinButton {...propsMap}/>, {isMyProfile})
     console.log(propsMap)
-    expect(screen.getByRole('modal')).toBeInTheDocument
-    expect(screen.getByRole('modal-trigger')).toBeInTheDocument
+    expect(screen.getByTestId('modal')).toBeInTheDocument
+    expect(screen.getByTestId('modal-trigger')).toBeInTheDocument
   })
 
   test('Pin Button does not show up if it is not my profile', ()=>{
@@ -49,6 +48,19 @@ describe('Pin Button test', ()=>{
     render(<PinButton {...propsMap}/>)
     expect(screen.queryByText('modal', {name: 'Mocked modal'})).toBeNull()
     expect(screen.queryByRole('modal-trigger', {name: 'Mocked modal trigger'})).toBeNull()
+  })
+
+  test('Test for correct image shown when is pinned', ()=>{
+    render(<PinButton{...propsMap}/>)
+    const img = screen.getByTestId('pin-img')
+    expect(img.getAttribute('src')).toEqual(getResourcePath(`/img/pin-clicked.svg`))
+  })
+
+  test('Test for correct image shown when is not pinned', ()=>{
+    propsMap = customPropsMap({pinned: false})
+    render(<PinButton {...propsMap}> </PinButton>)
+    const img = screen.getByTestId('pin-img')
+    expect(img.getAttribute('src')).toEqual(getResourcePath(`/img/pin.svg`))
   })
 
 })
