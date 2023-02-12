@@ -80,7 +80,7 @@ export default function EditProfileForm(props) {
                 <label>
                     {I18n("profile.modal.changeDescription")}
                 </label>
-                <div className="input-group mb-3">
+                <div title="description" className="input-group mb-3">
                     <input name="description" onChange={handleChange} type="text" className="form-control" id="description-input"
                            placeholder={I18n("profile.modal.changeDescription")} value={settings.description}/>
                 </div>
