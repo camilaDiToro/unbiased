@@ -25,7 +25,7 @@ describe('Profile Pic test', ()=>{
   test('Profile pic shows default profile image', ()=>{
     propsMap = customPropsMap({image: null})
     render(<ProfilePic {...propsMap}/>)
-    const img = screen.getByTestId('profile-img')
+    const img = screen.getByTestId('img-profile')
     expect(img.getAttribute('src')).toEqual(getResourcePath(`/img/profile-image.png`))
   })
 
