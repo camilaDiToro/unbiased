@@ -3,6 +3,7 @@ const removeImports = require('next-remove-imports')();
 const isProd = process.env.ENV === 'prod'
 const nextConfig = {
   reactStrictMode: true,
+  exportTrailingSlash: true,
   swcMinify: true,
   // customI18n: {
   //   locales: ["en-US","es-ES"],

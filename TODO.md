@@ -11,11 +11,12 @@
 
 ## Back
 - [ ] Probar todos los endpoints
-- [ ] Paginar en get news el filtro reported_by? 
-- [ ] paginar en get comments filter
+- [ ] Paginar:
+  - [ ] Comments: REPORTED_BY
+  - [ ] News: PINNED_BY, REPORTED_BY
 - [ ] Revisar en webConfig la fucion configure
 - [x] Arreglar testeo
-- [ ] Correccion 2da entrega: escapan incorrectamente _ en las busquedas
+- [x] Correccion 2da entrega: escapan incorrectamente _ en las busquedas
 - [ ] Correccion 2da entrega: hacer que creators of the day tenga en cuenta comentarios
 
 
