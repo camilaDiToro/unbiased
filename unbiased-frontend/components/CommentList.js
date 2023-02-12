@@ -28,7 +28,7 @@ export default function CommentList(props) {
         </h2>
         <div className="d-flex flex-column w-100 mb-4">
           { loggedUser ?
-            <div className="flex-grow-1 d-flex flex-column mt-4 mb-4">
+            <div title='comment-block' className="flex-grow-1 d-flex flex-column mt-4 mb-4">
               <div className="form-group w-100">
                   <textarea value={comment.comment} onChange={(e) => setComment({comment: e.target.value})} name="comment" className="form-control w-100 custom-comment-area text-white" rows="5"
                             id="comment-input"

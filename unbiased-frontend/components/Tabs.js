@@ -19,7 +19,7 @@ export default function Tabs(props) {
        const activeClasses = "bg-info active"
        const inactiveClasses = "text-secondary"
        return <>
-           <ul className={`${className} mb-4 mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex `}>
+           <ul data-testid="not-pills" className={`${className} mb-4 mt-4 nav bg-transparent nav-pills text-light p-2 rounded-lg d-flex `}>
                {items.map(item => <li className="nav-item" key={item.text}>
                    <Link data-testid="tab-link" className={`text-capitalize nav-link fromLeft rounded-pill hover-pill ml-1 ${useSelected === item.text ? activeClasses : inactiveClasses}`}
                          aria-current="page"
@@ -39,7 +39,7 @@ export default function Tabs(props) {
        </>
     } else {
        return<>
-           <ul className="my-2 nav nav-tabs justify-content-center text-light p-2">
+           <ul data-testid="not-pills" className="my-2 nav nav-tabs justify-content-center text-light p-2">
                {items.map(item => <li className="nav-item" key={item.text}>
                    <Link className={`text-capitalize text-white nav-link tabs ${useSelected === item.text ? 'active' : ''}`}
                          aria-current="page"
