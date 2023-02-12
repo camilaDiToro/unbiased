@@ -6,6 +6,8 @@ export const EXPIRED_JWT_TOKEN = 604;
 export const FORBIDDEN = 605;
 export const UNAUTHORIZED = 606;
 export const INVALID_EMAIL_TOKEN = 607;
+export const ALREADY_USED_TOKEN = 608;
+export const NOT_EXISTENT_TOKEN = 609;
 
 //Validation
 export const VALIDATION = 701;
@@ -61,6 +63,14 @@ export default {
   [INVALID_EMAIL_TOKEN]: {
     es: "Falla al autenticar correo",
     en: "Failure to authenticate email",
+  },
+  [ALREADY_USED_TOKEN]: {
+    es: "Token de verificación ya utilizado",
+    en: "Verification token already used",
+  },
+  [NOT_EXISTENT_TOKEN]: {
+    es: "Token de verificación no existente",
+    en: "Verification token non existent",
   },
   [VALIDATION]: {
     es: "Falla de validación del usuario",

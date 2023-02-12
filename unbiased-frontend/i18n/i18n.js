@@ -1,4 +1,5 @@
 import i18n from "i18next";
+import detector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 import errors from "../errors";
 
@@ -150,10 +151,10 @@ const es = {
     "moderation.add": "Agregar administrador",
     "moderation.manage": "Manejar administradoress",
     "moderation.searchAdmin": "Buscar en panel de administradores",
-    "reportOrder.reportCountDesc": "Más Reportados",
-    "reportOrder.reportCountAsc": "Menos Reportados",
-    "reportOrder.reportDateDesc": "Reportados más recientes",
-    "reportOrder.reportDateAsc": "Reportados más antiguos",
+    "reportOrder.reportCountDesc": "Por Más Reportados",
+    "reportOrder.reportCountAsc": "Por Menos Reportados",
+    "reportOrder.reportDateDesc": "Por Reportados más recientes",
+    "reportOrder.reportDateAsc": "Por Reportados más antiguos",
     "report.inappropiate": "El contenido es inapropiado.",
     "report.notSerious": "El contenido no es serio.",
     "report.violent": "El contenido es violento.",
@@ -363,10 +364,10 @@ export const en = {
         "moderation.add": "Add admins",
         "moderation.manage": "Manage admins",
         "moderation.searchAdmin": "Search in admin panel",
-        "reportOrder.reportCountDesc": "Most Reported",
-        "reportOrder.reportCountAsc": "Least Reported",
-        "reportOrder.reportDateDesc": "Newest Reported",
-        "reportOrder.reportDateAsc": "Oldest Reported",
+        "reportOrder.reportCountDesc": "By Most Reported",
+        "reportOrder.reportCountAsc": "By Least Reported",
+        "reportOrder.reportDateDesc": "By Newest Reported",
+        "reportOrder.reportDateAsc": "By Oldest Reported",
         "report.inappropiate": "The content is inappropriate.",
         "report.notSerious": "The content is not serious.",
         "report.violent": "The content is violent.",
@@ -429,18 +430,25 @@ export const en = {
         es[`${key}`] = value.es
     }
 
+const detectionOptions = {
+    order: ['cookie', 'navigator', 'localStorage', 'subdomain', 'queryString', 'htmlTag'],
+}
 
-i18n
+ i18n
     .use(initReactI18next) // passes customI18n down to react-i18next
+    .use(detector)
     .init({
         compatibilityJSON: 'v3',
         resources: {
             es : {translation: es},
             en: {translation: en},
             },
-        lng: "en",
         fallbackLng: "en",
+        supportedLngs: ['en', 'es'],
+        // lng: process.env.isProd ? undefined : 'en',
+        lng: undefined,
 
+        detection: detectionOptions,
         interpolation: {
             escapeValue: false,
         }

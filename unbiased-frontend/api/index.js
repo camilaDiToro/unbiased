@@ -67,16 +67,17 @@ export class Api {
                     method: 'put',
                     url: 'users/0/pinnedNews',
                     params: {newsId: 0},
-                    hideError: true,
                     headers: {
                         Authorization: `Email ${token}`
                     }
                 })
+                return res
             }
             catch(error) {
                 if (!error.response || !(error.response.status === 404)) {
-                    throw new Error("Error logging in")
+                    throw new Error(error)
                 }
+
             }
 
 
