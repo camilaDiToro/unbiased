@@ -97,6 +97,7 @@ export class Api {
         return await Api.#runRequest(action)
     }
 
+
     async #getArticlesCall(params, hideError, authOptional) {
         const action = async () => {
             const res = await this.axios.get('news', {params}, undefined, {authOptional: authOptional, hideError: hideError})
@@ -161,6 +162,18 @@ export class Api {
         }
 
         return articles
+    }
+
+    async #fillUserParams(user) {
+        if (this.loggedUser) {
+            const id = this.loggedUser.id
+            const instanceMethodCall = (...a) => this.getUsers(...a)
+            const usersFollowing = await Api.#getAllIdsFrom(instanceMethodCall,{filter: 'FOLLOWING', id})
+            user.isLoggedUserFollowing = usersFollowing.includes(user.id)
+            return user
+        }
+
+        return user
     }
 
     async #fillCommentsParams(comments) {
@@ -253,6 +266,26 @@ export class Api {
             const id = this.loggedUser.id
             this.#validateId(id)
             await this.axios.post(`/news/${newsId}/bookmarks`, undefined, {params: {userId: id}})
+        }
+
+        return await Api.#runRequest(action)
+    }
+
+    async followUser(userId) {
+        const action = async () => {
+            const id = this.loggedUser.id
+            this.#validateId(id)
+            await this.axios.post(`/users/${userId}/followers/${id}`)
+        }
+
+        return await Api.#runRequest(action)
+    }
+
+    async unfollowUser(userId) {
+        const action = async () => {
+            const id = this.loggedUser.id
+            this.#validateId(id)
+            await this.axios.delete(`/users/${userId}/followers/${id}`)
         }
 
         return await Api.#runRequest(action)
@@ -369,25 +402,20 @@ export class Api {
             if (data && data.newsStats) {
                 const stats = await this.axios.get(data.newsStats)
                 data.newsStats = stats.data
+                // const withLoggedData = this.#fill
                 userInfo = userMapper(res.data)
             } else {
                 userInfo = res.data ? userMapper(res.data) : {}
             }
+            userInfo = this.#fillUserParams(userInfo)
+
             return userInfo
         }
 
         return await Api.#runRequest(action)
     }
 
-    async getFollowing(userId) {
-        const action = async () => {
-            const res = await this.axios.get(`users/${userId}/following`)
-            const following = res.data || []
-            return following
-        }
 
-        return await Api.#runRequest(action)
-    }
 
     async reportComment(commentId, reason) {
 

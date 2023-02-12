@@ -181,7 +181,7 @@ public class UserController {
     }
 
 
-    @PUT
+    @POST
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
     @PreAuthorize("@ownerCheck.userMatches(#followerId)")
     @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
@@ -196,6 +196,7 @@ public class UserController {
 
     @DELETE
     @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#followerId)")
     @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
     public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
         final User currentUser = securityService.getCurrentUser().orElseThrow(()->new UserNotAuthorizedException("User should be logged in"));

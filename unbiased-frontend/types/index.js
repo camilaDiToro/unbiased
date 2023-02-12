@@ -95,7 +95,8 @@ const types = {
     },
     FollowButton: {
         userId: PropTypes.number.isRequired,
-        following: PropTypes.bool.isRequired
+        following: PropTypes.bool.isRequired,
+        triggerEffect: PropTypes.func.isRequired
     },
     FormattedDate : {
       datetime: PropTypes.string.isRequired,
