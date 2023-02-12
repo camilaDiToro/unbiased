@@ -45,7 +45,7 @@ describe('Bookmark test', ()=>{
         expect(screen.getByTitle('positivityIndicator')).toBeInTheDocument()
     })
 
-    test('Do not shows positivity indicator when the user do not have one', ()=>{
+    test('Do not show positivity indicator when the user do not have one', ()=>{
         propsMap = customPropsMap({hasPositivity: false})
         render(<Creator {...propsMap}/>)
         expect(screen.queryByTitle('positivityIndicator')).toBeNull()
@@ -56,7 +56,7 @@ describe('Bookmark test', ()=>{
         expect(screen.getByTitle('modalTrigger')).toBeInTheDocument()
     })
 
-    test('Do not shows modal trigger if the user is not an admin', ()=>{
+    test('Do not show modal trigger if the user is not an admin', ()=>{
         propsMap = customPropsMap({admin: false})
         render(<Creator {...propsMap}/>)
         expect(screen.queryByTitle('modalTrigger')).toBeNull()
