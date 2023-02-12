@@ -1,20 +1,20 @@
 import Head from "next/head";
-import CommentList from "../../../components/CommentList";
-import { useAppContext } from "../../../context";
-import PositivityIndicator from "../../../components/PositivityIndicator";
-import ProfilePic from "../../../components/ProfilePic";
-import NewsCategoryPills from "../../../components/NewsCategoryPills";
-import ProfileLink from "../../../components/ProfileLink";
-import Bookmark from "../../../components/Bookmark";
-import ReportFlag from "../../../components/ReportFlag";
-import {useTriggerEffect} from "../../../utils";
-import UpvoteButtons from "../../../components/UpvoteButtons";
+import CommentList from "../../components/CommentList";
+import { useAppContext } from "../../context";
+import PositivityIndicator from "../../components/PositivityIndicator";
+import ProfilePic from "../../components/ProfilePic";
+import NewsCategoryPills from "../../components/NewsCategoryPills";
+import ProfileLink from "../../components/ProfileLink";
+import Bookmark from "../../components/Bookmark";
+import ReportFlag from "../../components/ReportFlag";
+import {useTriggerEffect} from "../../utils";
+import UpvoteButtons from "../../components/UpvoteButtons";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import DeleteButton from "../../../components/DeleteButton";
-import PinButton from "../../../components/PinButton";
-import usePagination from "../../../pagination";
-import {getResourcePath} from "../../../constants";
+import DeleteButton from "../../components/DeleteButton";
+import PinButton from "../../components/PinButton";
+import usePagination from "../../pagination";
+import {getResourcePath} from "../../constants";
 
 
 export default function ShowNews() {

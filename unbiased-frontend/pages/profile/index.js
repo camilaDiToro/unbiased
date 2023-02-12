@@ -1,24 +1,24 @@
 import Head from "next/head";
-import Tabs from "../../../components/Tabs";
-import { useAppContext } from "../../../context";
-import Article from "../../../components/Article";
-import PositivityIndicator from "../../../components/PositivityIndicator";
-import Modal from "../../../components/Modal";
-import FollowButton from "../../../components/FollowButton";
-import ProgressBar from "../../../components/ProgressBar";
-import Tooltip from "../../../components/Tooltip";
-import ModalTrigger from "../../../components/ModalTrigger";
-import ProfilePic from "../../../components/ProfilePic";
-import TopNewTabs from "../../../components/TopNewTabs";
-import ProfileTabs from "../../../components/ProfileTabs";
+import Tabs from "../../components/Tabs";
+import { useAppContext } from "../../context";
+import Article from "../../components/Article";
+import PositivityIndicator from "../../components/PositivityIndicator";
+import Modal from "../../components/Modal";
+import FollowButton from "../../components/FollowButton";
+import ProgressBar from "../../components/ProgressBar";
+import Tooltip from "../../components/Tooltip";
+import ModalTrigger from "../../components/ModalTrigger";
+import ProfilePic from "../../components/ProfilePic";
+import TopNewTabs from "../../components/TopNewTabs";
+import ProfileTabs from "../../components/ProfileTabs";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import EditProfileForm from "../../../components/EditProfileForm";
-import UserPrivileges from "../../../components/UserPrivileges";
-import {useTriggerEffect} from "../../../utils"
-import Pagination from "../../../components/Pagination";
-import usePagination from "../../../pagination";
-import {getResourcePath} from "../../../constants";
+import EditProfileForm from "../../components/EditProfileForm";
+import UserPrivileges from "../../components/UserPrivileges";
+import {useTriggerEffect} from "../../utils"
+import Pagination from "../../components/Pagination";
+import usePagination from "../../pagination";
+import {getResourcePath} from "../../constants";
 
 
 

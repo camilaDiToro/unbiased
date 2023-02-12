@@ -6,7 +6,7 @@ import {TopCreator as TopCreatorType} from "../types";
 export default function TopCreator(props) {
   return (
     <>
-      <Link key={props.id} className="m-1 link" href={`/profile/${props.id}`}>
+      <Link key={props.id} className="m-1 link" href={`/profile?id=${props.id}`}>
         <div
           className="card text-white d-flex flex-row p-2 creator-card align-items-center"
           id="none_shadow_creator"

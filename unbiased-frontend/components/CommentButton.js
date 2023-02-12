@@ -9,7 +9,7 @@ export default function CommentButton(props) {
 
   return <>
     <div className=" m-1 h-50 max-h-40px d-flex justify-content-center align-items-center">
-      <Link title="comment-button-link" href={`/article/${props.id}?comment=true`}>
+      <Link title="comment-button-link" href={`/article?id=${props.id}?comment=true`}>
         <Tooltip position="bottom" text={I18n("tooltip.commentArticle")}>
           <img className="w-25px svg-btn" id="comment"
                src={getResourcePath("/img/comment.svg")}
