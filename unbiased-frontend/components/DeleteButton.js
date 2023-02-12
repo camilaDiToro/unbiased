@@ -7,6 +7,7 @@ import {useRouter} from "next/router";
 import {getResourcePath} from "../constants";
 
 export default function DeleteButton(props) {
+    console.log('HERE I AM', props)
     const {I18n, loggedUser, api} = useAppContext()
     const router = useRouter()
     const isMyProfile = loggedUser && props.creatorId === loggedUser.id
