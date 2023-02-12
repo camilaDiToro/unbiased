@@ -52,4 +52,17 @@ describe('Tabs test', ()=>{
         expect(a).toBeVisible()
         expect(a.classList).toContain('active')
     })
+
+    test('Does not show tabs pills when props pill is not true', ()=>{
+        render(<Tabs {...propsMap}> </Tabs>)
+        expect(screen.getByTestId('not-pills')).toBeInTheDocument()
+        expect(screen.queryByTestId('pills')).toBeNull()
+    })
+
+    test('Show tabs pills when props pill is true', ()=>{
+        propsMap = customPropsMap({pill: true})
+        render(<Tabs {...propsMap}> </Tabs>)
+        expect(screen.getByTestId('not-pills')).toBeInTheDocument()
+        expect(screen.queryByTestId('pills')).toBeNull()
+    })
 })
