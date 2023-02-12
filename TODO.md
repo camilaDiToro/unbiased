@@ -14,7 +14,7 @@
 - [ ] Paginar:
   - [ ] Comments: REPORTED_BY
   - [ ] News: PINNED_BY, REPORTED_BY
-- [ ] Revisar en webConfig la fucion configure
+- [x] Revisar en webConfig la fucion configure
 - [x] Arreglar testeo
 - [x] Correccion 2da entrega: escapan incorrectamente _ en las busquedas
 - [ ] Correccion 2da entrega: hacer que creators of the day tenga en cuenta comentarios
