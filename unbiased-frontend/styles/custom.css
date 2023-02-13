@@ -5,6 +5,14 @@
     object-fit: cover;
 }
 
+.max-w-50 {
+    max-width: 50%;
+}
+
+.max-h-600px {
+    max-height: 600px;
+}
+
 
 #__next {
     width: 100%;

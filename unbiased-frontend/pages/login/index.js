@@ -78,14 +78,15 @@ export default function Login() {
                     </button>
                 </div>
 
-                {/*<div className="checkbox mb-3">*/}
-                {/*    <label className="text-light">*/}
-                {/*        <input onChange={handleChange} className="mr-1" type="checkbox" name="rememberMe"/>*/}
-                {/*        Remember me*/}
-                {/*    </label>*/}
-                {/*</div>*/}
+
 
                 <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">{I18n("navbar.logIn")}</button>
+
+                <h6 className="m-2 mt-3 align-self-center">
+                    {I18n("login.notMemberYet")} {" "}
+                    <Link href={`/register`} className="link text-underline">{I18n("navbar.register")}</Link>
+
+                </h6>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>
             </div>
         </div>
