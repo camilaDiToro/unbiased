@@ -107,6 +107,8 @@ const es = {
     //Register
     "register.mail.address": "Dirección de mail",
     "register.password": "Contraseña",
+    "register.successful": "Correo de verificación enviado",
+
     "register.signUp": "Registrarse",
     "register.alreadyMemberQuestion": "¿Ya eres miembro?",
 
@@ -125,6 +127,8 @@ const es = {
     "login.error": "Hubo un error con los datos ingresados.",
     "login.mail.address": "Dirección de mail",
     "login.password": "Contraseña",
+    "login.succesful": "Autenticación exitosa",
+
     "login.rememberMe": "Recordarme",
     "login.notMemberYet": "No eres un miembro todavía?",
     "login.signIn": "Iniciar Sesión",
@@ -321,7 +325,9 @@ export const en = {
 
         //Register
         "register.mail.address": "Email address",
-        "register.password": "Password",
+    "register.successful": "Verification mail sent",
+
+    "register.password": "Password",
         "register.signUp": "Sign Up",
         "register.alreadyMemberQuestion": "Already a member?",
 
@@ -339,6 +345,7 @@ export const en = {
         "login.error": "There was an error with the inputted values",
         "login.mail.address": "Email address",
         "login.password": "Password",
+    "login.succesful": "Logged in succesfully",
         "login.rememberMe": "Remember me",
     "login.notMemberYet": "Not a member yet?",
         "login.signIn": "Sign in",
