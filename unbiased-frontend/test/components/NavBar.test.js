@@ -2,57 +2,64 @@ import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import { getDefaultLoggedUser } from "../test_utils/defaultLoggedUser";
 import Navbar from "../../components/Navbar";
-import dropdown from "bootstrap/js/src/dropdown";
-
-jest.mock("next/link", () => {
-  return jest.fn(() => <nav role="button">Log In</nav>)
-});
-
-jest.mock("next/link", () => {
-  return jest.fn(() => <nav role="button">Sign Up</nav>)
-});
+import i18n from "../../i18n/i18n";
 
 const {render, screen} = testingLibrary;
-
-let propsMap
-
-const customPropsMap = (options = {}) => {
-  const map = {
-    creator: {
-      hasImage: true,
-      Image: "http://localhost:8080/webapp_war_exploded/api/users/1/image",
-      id: 1,
-      nameOrEmail: "My name",
-      tier: "default",
-    },
-    triggerEffect: jest.fn()
-  }
-
-  return { ...map, ...options };
-};
 
 describe('NavBar test', ()=>{
 
   beforeEach(()=>{
-    propsMap = customPropsMap()
+    i18n.changeLanguage('en')
   })
 
-  test('NavBar show up Log In and Sign In if it is not a loggedUser', ()=>{
-    render(<Navbar  {...propsMap}/>)
-    expect(screen.getByRole('button', {name: 'Log In'})).toBeInTheDocument()
-    expect(screen.getByRole('button', {name: 'Sign Up'})).toBeInTheDocument()
-  })
-
-  test('NavBar show dropdown if is loggeduser', ()=>{
+  test('Shows Create button if is loggeduser and pathname do not start with admin', ()=>{
     const loggedUser = getDefaultLoggedUser()
-    render(<Navbar {...propsMap}/>, {loggedUser})
-    expect(screen.getByRole("dropdown")).toBeInTheDocument()
+    const query = {
+      pathname: '/no/starts/with/admin'
+    }
+    render(<Navbar/>, {loggedUser, query})
+    expect(screen.getByRole('button', {name: 'Create'})).toBeInTheDocument()
   })
 
-  test('NavBar show button Create if is loggeduser', ()=>{
-    const loggedUser = getDefaultLoggedUser()
-    const button = screen.getByRole('button', {name: /Create/i})
-    render(<Navbar {...propsMap}/>, {loggedUser})
-    expect(button).toBeInTheDocument()
+  test('Shows form if is pathname do not start with admin', ()=>{
+    const query = {
+      pathname: '/no/starts/with/admin'
+    }
+    render(<Navbar/>, {query})
+    expect(screen.getByTestId('search-form')).toBeInTheDocument()
+  })
+
+  test('If it is a logged user shows dropdown and his items correctly and do not show Login/SignUp', ()=>{
+    const loggedUser = getDefaultLoggedUser({nameOrEmail: 'user@example.com'}) //by default is admin
+    const query = {
+      search: ''
+    }
+    render(<Navbar/>, {query, loggedUser})
+    expect(screen.getByTestId('dropdown')).toBeInTheDocument()
+    expect(screen.getByText(loggedUser.nameOrEmail)).toBeInTheDocument()
+    expect(screen.getByText('Administration panel')).toBeInTheDocument()
+    expect(screen.queryByText('Log in')).toBeNull()
+    expect(screen.queryByText('Sign up')).toBeNull()
+
+  })
+
+  test('If user is not admin should not show the Administration panel', ()=>{
+    const loggedUser = getDefaultLoggedUser({nameOrEmail: 'user@example.com', isAdmin: false})
+    const query = {
+      search: ''
+    }
+    render(<Navbar/>, {query, loggedUser})
+    expect(screen.queryByText('Administration panel')).toBeNull()
+
+  })
+
+  test('Shows Login and Signup button if is not a loggedUser', ()=>{
+    const loggedUser = null
+    const query = {
+      search: ''
+    }
+    render(<Navbar/>, {loggedUser, query})
+    expect(screen.getByText('Log in')).toBeInTheDocument()
+    expect(screen.getByText('Sign up')).toBeInTheDocument()
   })
 })

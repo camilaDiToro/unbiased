@@ -1,7 +1,10 @@
 import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
-import { getResourcePath } from "../../constants";
 import ProfilePic from "../../components/ProfilePic";
+
+jest.mock('../../constants', () => ({
+  getResourcePath: jest.fn(() => 'mocked/path/to/image.png'),
+}));
 
 const {render, screen} = testingLibrary;
 
@@ -17,16 +20,20 @@ const customPropsMap = (options = {}) => {
 
 describe('Profile Pic test', ()=>{
 
-  test('Profile pic shows correct profile image', ()=>{
+  test('Shows correct profile image if the user have one', ()=>{
+    propsMap = customPropsMap()
     render(<ProfilePic{...propsMap}/>)
-    expect(screen.getByRole('img', {name: 'profileImage'})).toBeInTheDocument()
+    const image = screen.getByRole('img', {name: 'profileImage'})
+    expect(image).toBeInTheDocument()
+    expect(image.getAttribute('src')).toBe(propsMap.image)
   })
 
-  test('Profile pic shows default profile image', ()=>{
+  test('Shows default image if the user do no have one', ()=>{
     propsMap = customPropsMap({image: null})
-    render(<ProfilePic {...propsMap}/>)
-    const img = screen.getByTestId('img-profile')
-    expect(img.getAttribute('src')).toEqual(getResourcePath(`/img/profile-image.png`))
+    render(<ProfilePic{...propsMap}/>)
+    const image = screen.getByRole('img', {name: 'profileImage'})
+    expect(image).toBeInTheDocument()
+    expect(image.getAttribute('src')).toBe('mocked/path/to/image.png')
   })
 
 })

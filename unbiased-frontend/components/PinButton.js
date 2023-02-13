@@ -28,8 +28,8 @@ export default function PinButton(props) {
             <div className="svg-btn hover-hand h-fit">
 
                         <Tooltip position="bottom" text={props.pinned ?  I18n("tooltip.unpin"): I18n("tooltip.pin")} >
-                            <img data-testid="pin-img" className="icon-profile svg-btn svg-bookmark"
-                                 src={getResourcePath(`/img/pin${props.pinned ? '-clicked' : ''}.svg`)} alt="" />
+                            <img className="icon-profile svg-btn svg-bookmark"
+                                 src={getResourcePath(`/img/pin${props.pinned ? '-clicked' : ''}.svg`)} alt="pin-image" />
                         </Tooltip>
 
             </div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import ProgressBar from "../../components/ProgressBar";
+import i18n from "../../i18n/i18n";
 
 const {render, screen} = testingLibrary;
 
@@ -8,18 +9,9 @@ let propsMap;
 
 const customPropsMap = (options = {}) => {
   const map = {
-    progress: 20,
-    title: "TOURISM",
     i18n: true,
-    categoryMap: {
-      "categories.tourism": "TOURISM",
-      "categories.entertainment": "SHOW",
-      "categories.politics": "POLITICS",
-      "categories.economics": "ECONOMICS",
-      "categories.sports": "SPORTS",
-      "categories.technology": "TECHNOLOGY"
-    },
-    triggerEffect: jest.fn()
+    progress: 0.05555555555555555,
+    title: "categories.tourism"
   }
 
   return { ...map, ...options };
@@ -27,20 +19,19 @@ const customPropsMap = (options = {}) => {
 
 describe('Progress Bar test', ()=> {
   beforeEach(()=>{
+    i18n.changeLanguage('en')
     propsMap = customPropsMap()
   })
 
-  test('Progress Bar show percent progress for one category', ()=>{
-    const progress = propsMap.progress*100 + "%"
+  test('Shows I18n title of the category', ()=> {
     render(<ProgressBar {...propsMap}/>)
-    expect(screen.getByRole("progressbar")).toBeInTheDocument()
-    expect(screen.getByText(progress)).toBeInTheDocument()
+    expect(screen.getByText('Tourism')).toBeInTheDocument()
   })
 
-  test('Progress Bar show progress for each category', ()=>{
-    propsMap.title = propsMap.categoryMap["categories.economics"]
+  test('Shows props title when the one is not a code in i18n', ()=>{
+    propsMap = customPropsMap({i18n: false, title: "My custom title"})
     render(<ProgressBar {...propsMap}/>)
-    expect(screen.getByText("ECONOMICS")).toBeInTheDocument()
+    expect(screen.queryByText(propsMap.title)).toBeInTheDocument()
   })
 
 })

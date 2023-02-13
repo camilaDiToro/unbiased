@@ -49,7 +49,7 @@ export default function Navbar() {
                     </button>
                 </Link> : <></>}
 
-                {router.pathname.startsWith('/admin') ? <></> : <form id="search-form" className="form-inline my-2 my-lg-0" method="GET" action="/TOP">
+                {router.pathname.startsWith('/admin') ? <></> : <form data-testid="search-form" id="search-form" className="form-inline my-2 my-lg-0" method="GET" action="/TOP">
                     <div>
                         <input
                             style={{backgroundImage: `url("${getResourcePath("/img/loupe-svgrepo-com.svg")}")`}}
@@ -65,7 +65,7 @@ export default function Navbar() {
                     </div>
                 </form>}
 
-                {loggedUser ? <div className="dropdown dropdown-p h-100">
+                {loggedUser ? <div data-testid="dropdown" className="dropdown dropdown-p h-100">
                     <button className="btn btn-primary dropdown-toggle w-100 h-100 py-0" type="button" id="dropdownMenuButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <div
