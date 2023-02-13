@@ -13,11 +13,11 @@
 - [ ] Probar todos los endpoints
 - [ ] Paginar:
   - [ ] Comments: REPORTED_BY
-  - [ ] News: PINNED_BY, REPORTED_BY
+  - [x] News: PINNED_BY, REPORTED_BY
 - [x] Revisar en webConfig la fucion configure
 - [x] Arreglar testeo
 - [x] Correccion 2da entrega: escapan incorrectamente _ en las busquedas
-- [ ] Correccion 2da entrega: hacer que creators of the day tenga en cuenta comentarios
+- [x] Correccion 2da entrega: hacer que creators of the day tenga en cuenta comentarios
 
 
 ## General

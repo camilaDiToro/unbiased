@@ -75,9 +75,12 @@ public class UserJpaDao implements UserDao{
     public List<User> getTopCreators(int qty) {
 
         final Query idQuery = entityManager.createNativeQuery(
-                "WITH interactions AS (SELECT creator AS user_id, count(*) AS interaction_count FROM upvotes JOIN news ON upvotes.news_id = news.news_id " +
-                        "WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator LIMIT :limit) " +
-                        "SELECT users.user_id FROM interactions NATURAL JOIN users ORDER BY interaction_count DESC")
+                "WITH n_interactions AS (SELECT creator AS user_id, count(*) AS n_interaction_count FROM upvotes JOIN news ON upvotes.news_id = news.news_id\n" +
+                        "                        WHERE DATE(interaction_date) = CURRENT_DATE GROUP BY creator LIMIT :limit),\n" +
+                        "     c_interactions as (select creator AS user_id, count(*) AS c_interaction_count from comments JOIN news ON comments.news_id = news.news_id\n" +
+                        "                        WHERE DATE(commented_date) = CURRENT_DATE GROUP BY creator LIMIT :limit)\n" +
+                        "                        SELECT user_id FROM (n_interactions natural full outer join c_interactions) natural join users\n" +
+                        "                        ORDER BY COALESCE(n_interaction_count, 0) + COALESCE(c_interaction_count, 0) DESC LIMIT :limit")
                 .setParameter("limit", qty);
 
         @SuppressWarnings("unchecked")

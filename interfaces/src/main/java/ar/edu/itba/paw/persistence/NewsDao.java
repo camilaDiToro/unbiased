@@ -38,7 +38,7 @@ public interface NewsDao {
     Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Optional<User> loggedUser, ProfileCategory profileCategory);
     int getRecommendationNewsPageCountTop(User user, TimeConstraint timeConstraint);
     CategoryStatistics getCategoryStatistics(long userId);
-    List<News> getReportedByUserNews(long userId);
+    Page<News> getReportedByUserNews(int page, long userId);
     Optional<News> getPinnedByUserNews(long userId);
     ReportDetail reportNews(News news, User reporter, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
