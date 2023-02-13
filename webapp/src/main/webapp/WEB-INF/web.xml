@@ -66,6 +66,12 @@
     <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
   </filter>
 
+  <filter>
+    <filter-name>UnconditionalCacheFilter</filter-name>
+    <filter-class>ar.edu.itba.paw.webapp.auth.filters.UnconditionalCacheFilter</filter-class>
+  </filter>
+
+
   <filter-mapping>
     <filter-name>springSecurityFilterChain</filter-name>
     <url-pattern>/*</url-pattern>
@@ -77,5 +83,9 @@
   <filter-mapping>
     <filter-name>jersey</filter-name>
     <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>UnconditionalCacheFilter</filter-name>
+    <url-pattern>/_next/static/*</url-pattern>
   </filter-mapping>
 </web-app>
