@@ -14,7 +14,7 @@
 - [ ] Paginar:
   - [x] Comments: REPORTED_BY
   - [x] Comments: LIKED_BY
-  - [ ] Comments: DISLIKED_BY
+  - [x] Comments: DISLIKED_BY
   - [x] News: PINNED_BY, REPORTED_BY
 - [x] Revisar en webConfig la fucion configure
 - [x] Arreglar testeo
