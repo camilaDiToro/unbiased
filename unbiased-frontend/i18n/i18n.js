@@ -445,8 +445,7 @@ const detectionOptions = {
             },
         fallbackLng: "en",
         supportedLngs: ['en', 'es'],
-        // lng: process.env.isProd ? undefined : 'en',
-        lng: undefined,
+        lng: process.env.isProd ? undefined : 'en',
 
         detection: detectionOptions,
         interpolation: {
