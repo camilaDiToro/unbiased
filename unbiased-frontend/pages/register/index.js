@@ -52,7 +52,6 @@ export default function Login() {
     return(
         <div className="d-flex flex-column justify-content-center align-items-center height-100vh">
 
-            {/*TODO: customI18n to all inputs*/}
             <div className="form-signIn d-flex flex-column align-items-center " onSubmit={(e)=>{handleSubmit(e)}}>
 
                 <h1 id="title-log" className="logo mb-3">
@@ -61,7 +60,7 @@ export default function Login() {
                     </Link>
                 </h1>
 
-                <h1 className="h3 mb-4 font-weight-normal text-light">Register</h1>
+                <h1 className="h3 mb-4 font-weight-normal text-light">{ctx.I18n("navbar.register")}</h1>
 
                 <div className="d-flex mb-4">
                     <img className="size-img-modal-login align-self-center" src={getResourcePath("/img/profile-svgrepo-com.svg")} alt="..."/>
@@ -74,10 +73,16 @@ export default function Login() {
                     <button className="btn  eye-button-properties" onClick={togglePassword}>
                         { passwordType==="password"? <img src={getResourcePath("/img/eye.svg")}/> : <img src={getResourcePath("/img/eye-slash.svg")}/> }
                     </button>
+
                 </div>
 
 
                 <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">{ctx.I18n("navbar.register")}</button>
+                <h6 className="m-2 mt-3 align-self-center">
+                    {I18n("register.alreadyMemberQuestion")} {" "}
+                    <Link href={`/login`} className="link text-underline">{I18n("navbar.logIn")}</Link>{" "}
+
+                </h6>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>
             </div>
         </div>

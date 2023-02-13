@@ -2,6 +2,7 @@ import React from 'react'
 import Article from "../../components/Article";
 import * as testingLibrary from "../test_utils/contextRender";
 import FormattedDate from "../../components/FormattedDate";
+import i18n from "../../i18n/i18n";
 
 const {render, screen} = testingLibrary;
 
@@ -57,6 +58,7 @@ describe('Article test', ()=>{
 
     beforeEach(()=>{
         propsMap = customPropsMap() //get the default props amp
+        i18n.changeLanguage('en')
     })
 
 

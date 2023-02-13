@@ -101,7 +101,7 @@ export default function Profile() {
       }
     })
 
-  }, [profileEffectTrigger, id])
+  }, [profileEffectTrigger,newsEffectTrigger, id])
 
 
   let submitHandlerArray = []

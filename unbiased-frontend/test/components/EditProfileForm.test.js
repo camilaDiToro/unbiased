@@ -8,7 +8,8 @@ let propsMap
 
 const customPropsMap = (options = {}) => {
     const map = {
-        handlerArray: jest.fn()
+        handlerArray: jest.fn(),
+        triggerEffect: jest.fn()
     }
 
     return { ...map, ...options };
@@ -27,7 +28,7 @@ describe('EditProfile test', ()=>{
     })
 
     test('Do not show description if the user is not a journalist', ()=>{
-        propsMap = customPropsMap({isJournalist: true})
+        propsMap = customPropsMap({isJournalist: false})
         render(<EditProfileForm {...propsMap}/>)
         expect(screen.queryByTitle('description')).toBeNull()
     })

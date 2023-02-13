@@ -7,6 +7,7 @@ import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
@@ -37,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+
     private final VerificationTokenService verificationTokenService;
 
     private final ImageService imageService;
@@ -103,6 +105,7 @@ public class UserServiceImpl implements UserService {
         verificationTokenService.deleteEmailToken(vt.getUserId());
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
+
 
     @Override
     @Transactional

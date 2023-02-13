@@ -106,6 +106,8 @@ public class News implements Serializable {
     @JoinColumn(name = "creator", referencedColumnName = "user_id")
     private User creator;
 
+
+
     @Transient
     private Integer upvotes = 0;
 

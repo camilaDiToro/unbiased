@@ -9,7 +9,8 @@ let propsMap
 const customPropsMap = (options = {}) => {
     const map = {
         userId: 1,
-        following: true
+        following: true,
+        triggerEffect: jest.fn()
     }
 
     return { ...map, ...options };
@@ -24,14 +25,14 @@ describe('Follow button test', ()=>{
     test('Shows follow button if the user do not follow the profile user', ()=>{
         propsMap = customPropsMap({following: false})
         render(<FollowButton {...propsMap}/>)
-        expect(screen.getByRole('link', {name: /follow/i})).toBeInTheDocument()
-        // todo: expect(screen.queryByRole('link', {name: /unfollow/i})).toBeNull() cuando se agregue el i18n de unfollow
+        expect(screen.getByText('Follow')).toBeInTheDocument()
+        expect(screen.queryByAltText('following')).toBeNull()
     })
 
     test('Shows unfollow button if the user is following the profile user', ()=>{
         render(<FollowButton {...propsMap}/>)
-        expect(screen.queryByRole('link', {name: /follow/i})).toBeNull()
-        // todo: expect(screen.getByRole('link', {name: /unfollow/i})).toBeInTheDocument() cuando se agregue el i18n de unfollow
+        expect(screen.queryByText('Follow')).toBeNull()
+        expect(screen.getByAltText('following')).toBeInTheDocument()
     })
 
 })
