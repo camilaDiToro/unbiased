@@ -61,8 +61,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public List<Comment> getReportedByUserComments(User user) {
-        return commentDao.getReportedByUserComments(user.getUserId());
+    public Page<Comment> getReportedByUserComments(int page, User user) {
+        return commentDao.getReportedByUserComments(page, user.getUserId());
     }
 
     @Override

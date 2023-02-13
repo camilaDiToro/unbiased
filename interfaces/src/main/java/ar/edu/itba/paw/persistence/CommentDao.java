@@ -17,7 +17,7 @@ public interface CommentDao {
     void deleteComment(long commentId);
     Page<Comment> getTopComments(long newsId, int page);
     Page<Comment> getNewComments(long newsId, int page);
-    List<Comment> getReportedByUserComments(long userId);
+    Page<Comment> getReportedByUserComments(int page, long userId);
     ReportedComment reportComment(final Comment comment, final User reporter, ReportReason reportReason);
     Page<Comment> getReportedComment(int page, ReportOrder reportOrder);
     Page<ReportedComment> getReportedCommentDetail(int page, long commentId);

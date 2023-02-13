@@ -15,7 +15,7 @@ public interface AdminService {
     ReportDetail reportNews(long userId, long newsId, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
     Page<News> getReportedByUserNews(int page, long userId);
-    List<Comment> getReportedByUserComments(User user);
+    Page<Comment> getReportedByUserComments(int page, User user);
     ReportedComment reportComment(long userId, long commentId, ReportReason reportReason);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsIs);
     void deleteNews(long newsId);

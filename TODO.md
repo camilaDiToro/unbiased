@@ -13,6 +13,8 @@
 - [ ] Probar todos los endpoints
 - [ ] Paginar:
   - [ ] Comments: REPORTED_BY
+  - [ ] Comments: LIKED_BY
+  - [ ] Comments: DISLIKED_BY
   - [x] News: PINNED_BY, REPORTED_BY
 - [x] Revisar en webConfig la fucion configure
 - [x] Arreglar testeo
