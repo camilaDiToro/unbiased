@@ -352,6 +352,7 @@
   </build>
 
   <modules>
+    <module>unbiased-frontend</module>
     <module>webapp</module>
     <module>service</module>
     <module>interfaces</module>
