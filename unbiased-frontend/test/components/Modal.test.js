@@ -1,6 +1,7 @@
 import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import Modal from "../../components/Modal"
+import i18n from "../../i18n/i18n"
 
 const {render, screen, fireEvent} = testingLibrary;
 
@@ -19,6 +20,9 @@ const customPropsMap = (options = {}) => {
 };
 
 describe('Modal test', ()=>{
+    beforeAll(() => {
+        i18n.changeLanguage('en')
+    })
 
     beforeEach(()=>{
         propsMap = customPropsMap()
