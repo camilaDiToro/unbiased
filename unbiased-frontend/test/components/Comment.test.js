@@ -1,6 +1,7 @@
 import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import Comment from "../../components/Comment";
+import i18n from "../../i18n/i18n";
 
 const {render, screen} = testingLibrary;
 
@@ -19,6 +20,8 @@ const customPropsMap = (options = {}) => {
         rating: 0,
         reportCount: 0,
         reported: false,
+        triggerEffect: jest.fn(),
+        id: 1
     }
 
     return { ...map, ...options };
@@ -47,6 +50,7 @@ describe('Comment test', () => {
 
     beforeEach(()=>{
         propsMap = customPropsMap()
+        i18n.changeLanguage('en')
     })
 
     test('Check if all the default visible props appear on the comment', ()=>{

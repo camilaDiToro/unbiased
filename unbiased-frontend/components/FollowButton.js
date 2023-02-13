@@ -29,7 +29,7 @@ export default function FollowButton(props) {
         <Tooltip  text={I18n("profile.following")} position="bottom" >
                 <div
                       onClick={handleUnfollow}>
-                        <img src={getResourcePath("/img/following.svg")} alt="..."/>
+                        <img src={getResourcePath("/img/following.svg")} alt="following"/>
                 </div>
 
             </Tooltip>                     </div>
