@@ -1,13 +1,8 @@
 import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
-import {getResourcePath} from "../../constants";
-import { getDefaultLoggedUser } from "../test_utils/defaultLoggedUser";
-import ProfileTabs from "../../components/ProfileTabs";
-import Tabs from "../../components/Tabs";
 import ProgressBar from "../../components/ProgressBar";
 
-const {render, screen, fireEvent} = testingLibrary;
-
+const {render, screen} = testingLibrary;
 
 let propsMap;
 
