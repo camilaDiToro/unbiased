@@ -14,10 +14,6 @@ export default function ProfileTabs(props) {
         { text: I18n("profileCategories.downvoted"), params: {cat: 'DOWNVOTED'}}
     ];
 
-    if (typeof window !== 'undefined') {
-
-    }
-
     if (!loggedUser || loggedUser.id !== props.userId) {
         orders.splice(1, 0)
     }

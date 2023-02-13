@@ -97,7 +97,7 @@ export default function Navbar() {
                         </Link>
 
 
-                        {loggedUser.isAdmin ? <Link className="dropdown-item" href="/admin/reported_news">
+                        {loggedUser.isAdmin ? <Link className="dropdown-item" href="/admin/reported-news">
                             <div className="text-decoration-none text-white"
                             >
                                 <img className="moderation-img"

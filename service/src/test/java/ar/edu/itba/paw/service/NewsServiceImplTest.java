@@ -108,21 +108,9 @@ public class NewsServiceImplTest {
         ratingMap.values().forEach(r -> assertEquals(Rating.NO_RATING, r));
     }
 
-    @Test
-    public void testGetHomeCategoriesUser(){
 
-        for (Category cat : newsService.getHomeCategories(EMPTY_USER)) {
-            assertNotEquals(Category.FOR_ME,cat);
-        }
-    }
 
-    @Test
-    public void testGetProfileCategoriesUser(){
-        Mockito.when(mockUser.getRoles()).thenReturn(Collections.singletonList(Role.ROLE_JOURNALIST));
-        for (ProfileCategory cat : newsService.getProfileCategories(EMPTY_USER, mockUser)) {
-            assertNotEquals(ProfileCategory.SAVED,cat);
-        }
-    }
+
 
     @Test
     public void testsetRating(){

@@ -33,7 +33,7 @@ export default function ReportedCommentDetail(props){
     const onDelete = async () => {
         const {success} = await api.deleteComment(id)
         if (success) {
-            await router.push('/admin/reported_comments')
+            await router.push('/admin/reported-comments')
         }
     }
     return (<>
@@ -46,7 +46,7 @@ export default function ReportedCommentDetail(props){
 
                 <div className="d-flex w-75 flex-column">
                     <div className="w-100 my-2">
-                        <Link href="/admin/reported_news">
+                        <Link href="/admin/reported-news">
                             <Tooltip position="bottom" text={I18n("tooltip.clickToGoBack")}>
                                 <img className="svg-btn hover-hand back-btn mt-3 mb-1" src={getResourcePath("/img/back-svgrepo-com.svg")} alt="..." />
                             </Tooltip>

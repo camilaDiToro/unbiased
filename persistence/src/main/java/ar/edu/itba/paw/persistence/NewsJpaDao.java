@@ -63,15 +63,7 @@ public class NewsJpaDao implements NewsDao {
         return news;
     }
 
-    @Override
-    public List<News> getNewNews(int page, String query, long loggedUser) {
-        final List<News> newsList = getNewNews(page, query);
 
-        newsList.forEach(n -> n.setUserSpecificVariables(loggedUser));
-
-
-        return newsList;
-    }
 
     @Override
     public List<News> getNewNews(int page, String query) {
@@ -83,14 +75,7 @@ public class NewsJpaDao implements NewsDao {
         return news;
     }
 
-    @Override
-    public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint, long loggedUser) {
-        final List<News> newsList = getTopNews(page, query, timeConstraint);
 
-        newsList.forEach(n -> n.setUserSpecificVariables(loggedUser));
-
-        return newsList;
-    }
 
     @Override
     public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint) {
@@ -111,37 +96,17 @@ public class NewsJpaDao implements NewsDao {
         return Page.getPageCount(elemCount.longValue(), PAGE_SIZE);
     }
 
-    @Override
-    public Optional<News> getById(long id, long loggedUser) {
-        final Optional<News> news = getById(id);
-
-        news.ifPresent(n -> n.setUserSpecificVariables(loggedUser));
-
-        return news;
-
-    }
 
     @Override
     public Optional<News> getById(long id) {
         final TypedQuery<News> typedQuery = entityManager.createQuery("SELECT f from News f WHERE f.newsId = :newsId ",News.class).setParameter("newsId", id);
         final Optional<News> news = typedQuery.getResultList().stream().findFirst();
 
-
-        return news;
-
-    }
-
-
-
-    @Override
-    public List<News> getNewsByCategoryNew(int page, Category category, long loggedUser) {
-
-        final List<News> news = getNewsByCategoryNew(page, category);
-
-        news.forEach(n -> n.setUserSpecificVariables(loggedUser));
-
         return news;
     }
+
+
+
 
     @Override
     public List<News> getNewsByCategoryNew(int page, Category category) {
@@ -154,14 +119,7 @@ public class NewsJpaDao implements NewsDao {
         return news;
     }
 
-    @Override
-    public List<News> getNewsByCategoryTop(int page, Category category, long loggedUser, TimeConstraint timeConstraint) {
 
-        final List<News> news = getNewsByCategoryTop(page, category, timeConstraint);
-        news.forEach(n -> n.setUserSpecificVariables(loggedUser));
-
-        return news;
-    }
 
     @Override
     public List<News> getNewsByCategoryTop(int page, Category category, TimeConstraint timeConstraint) {
@@ -226,9 +184,9 @@ public class NewsJpaDao implements NewsDao {
 
 
     @Override
-    public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Optional<User> loggedUser, ProfileCategory profileCategory) {
+    public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, ProfileCategory profileCategory) {
         page = Math.max(page, 1);
-        return profileFunctions.get(profileCategory).getNews(page, user, ns, loggedUser.map(User::getUserId).orElse(null));
+        return profileFunctions.get(profileCategory).getNews(page, user, ns);
     }
 
     @Override
@@ -363,7 +321,7 @@ public class NewsJpaDao implements NewsDao {
     }
 
 
-    private Page<News> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
+    private Page<News> getAllNewsFromUser(int page, User user, NewsOrder ns) {
 
         final int totalPages = getTotalPagesNewsFromUser(user);
         page = Math.min(page, totalPages);
@@ -372,13 +330,12 @@ public class NewsJpaDao implements NewsDao {
                 .setParameter("userId", user.getId());
         final List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
 
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
 
         return new Page<>(news, page, totalPages);
     }
 
-    private Page<News> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser) {
+    private Page<News> getSavedNews(int page, User user, NewsOrder ns) {
 
         final int totalPages = getTotalPagesNewsFromUserSaved(user);
         page = Math.min(page, totalPages);
@@ -386,33 +343,31 @@ public class NewsJpaDao implements NewsDao {
         final Query query = entityManager.createNativeQuery("SELECT news_id FROM saved_news NATURAL JOIN news f  WHERE user_id = :userId order by " + ns.getQueryPaged())
                 .setParameter("userId", user.getId());
         final List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
 
         return new Page<>(news, page, totalPages);
     }
 
 
 
-    private Page<News> getNewsWithRatingFromUser(int page, User user, NewsOrder ns, Long loggedUser, boolean upvote) {
+    private Page<News> getNewsWithRatingFromUser(int page, User user, NewsOrder ns,  boolean upvote) {
         final int totalPages = getTotalPagesNewsFromUserRating(user.getId(), upvote);
         page = Math.min(page, totalPages);
 
         final Query query = entityManager.createNativeQuery("SELECT news_id FROM upvotes NATURAL JOIN news f WHERE upvote = :value AND user_id = :userId order by " + ns.getQueryPaged())
                 .setParameter("value", upvote).setParameter("userId", user.getId());
         final List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
 
         return new Page<>(news, page, totalPages);
     }
 
-    private Page<News> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
-        return getNewsWithRatingFromUser(page, user, ns, loggedUser, true);
+    private Page<News> getNewsUpvotedByUser(int page, User user, NewsOrder ns) {
+        return getNewsWithRatingFromUser(page, user, ns,  true);
     }
 
-    private Page<News> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
-        return getNewsWithRatingFromUser(page, user, ns, loggedUser, false);
+    private Page<News> getNewsDownvotedByUser(int page, User user, NewsOrder ns) {
+        return getNewsWithRatingFromUser(page, user, ns,  false);
 
     }
 

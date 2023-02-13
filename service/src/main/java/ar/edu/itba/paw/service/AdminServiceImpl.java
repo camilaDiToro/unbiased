@@ -43,7 +43,7 @@ public class AdminServiceImpl implements AdminService{
     @Transactional
     public ReportDetail reportNews(long userId, long newsId, ReportReason reportReason) {
         final User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        final News news = newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         if(newsDao.isReportedByUser(news, user)){
             return null;
         }

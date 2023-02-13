@@ -86,9 +86,8 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public Page<News> getNews(Optional<User> maybeCurrentUser, int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query) {
+    public Page<News> getNews(Optional<User> maybeCurrentUser,int page, Category category, NewsOrder newsOrder, TimeConstraint timeConstraint, String query) {
         final int totalPages;
-        final boolean isPresent = maybeCurrentUser.isPresent();
 
         page = page <= 0 ? 1 : page;
 
@@ -98,14 +97,14 @@ public class NewsServiceImpl implements NewsService {
             if (newsOrder.equals(NewsOrder.NEW)) {
                 totalPages = newsDao.getTotalPagesAllNews(query,timeConstraint);
                 page = Math.min(page, totalPages);
-                ln = isPresent ? newsDao.getNewNews(page, query, maybeCurrentUser.get().getUserId()) :  newsDao.getNewNews(page, query);
+                ln =  newsDao.getNewNews(page, query);
             } else {
                 totalPages = newsDao.getTotalPagesAllNews(query, timeConstraint);
                 page = Math.min(page, totalPages);
-                ln = isPresent ? newsDao.getTopNews(page, query, timeConstraint, maybeCurrentUser.get().getUserId()) : newsDao.getTopNews(page, query, timeConstraint);
+                ln =  newsDao.getTopNews(page, query, timeConstraint);
             }
         } else if (category.equals(Category.FOR_ME)) {
-            if (!isPresent)
+            if (!maybeCurrentUser.isPresent())
                 throw new UserNotAuthorizedException("User should be logged in to get the category \"For me\"");
             final User currentUser = maybeCurrentUser.get();
             if(newsOrder.equals(NewsOrder.NEW)) {
@@ -122,11 +121,11 @@ public class NewsServiceImpl implements NewsService {
             if (newsOrder.equals(NewsOrder.NEW)) {
                 totalPages = newsDao.getTotalPagesCategoryNew(category);
                 page = Math.min(page, totalPages);
-                ln = isPresent ? newsDao.getNewsByCategoryNew(page, category, maybeCurrentUser.get().getUserId()) : newsDao.getNewsByCategoryNew(page, category);
+                ln =  newsDao.getNewsByCategoryNew(page, category);
             } else {
                 totalPages = newsDao.getTotalPagesCategoryTop(category, timeConstraint);
                 page = Math.min(page, totalPages);
-                ln = isPresent ? newsDao.getNewsByCategoryTop(page, category,maybeCurrentUser.get().getUserId(), timeConstraint) : newsDao.getNewsByCategoryTop(page, category, timeConstraint);
+                ln =  newsDao.getNewsByCategoryTop(page, category, timeConstraint);
             }
         }
 
@@ -134,20 +133,20 @@ public class NewsServiceImpl implements NewsService {
     }
 
 
-    @Override
-    public Optional<News> getPingedNews(Optional<User> maybeCurrentUser, final User profileUser) {
-        News pinnedNews = profileUser.getPingedNews();
-        if (pinnedNews == null)
-            return Optional.empty();
-        maybeCurrentUser.ifPresent(user -> pinnedNews.setUserSpecificVariables(user.getUserId()));
-
-        return Optional.of(pinnedNews);
-    }
+//    @Override
+//    public Optional<News> getPingedNews(Optional<User> maybeCurrentUser, final User profileUser) {
+//        News pinnedNews = profileUser.getPingedNews();
+//        if (pinnedNews == null)
+//            return Optional.empty();
+//        maybeCurrentUser.ifPresent(user -> pinnedNews.setUserSpecificVariables(user.getUserId()));
+//
+//        return Optional.of(pinnedNews);
+//    }
 
     @Override
     @Transactional
     public Page<News> getNewsForUserProfile(Optional<User> maybeCurrentUser, int page, NewsOrder newsOrder, final User user, ProfileCategory profileCategory) {
-        final Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrder, maybeCurrentUser, profileCategory);
+        final Page<News> pageObj =  newsDao.getNewsFromProfile(page, user, newsOrder, profileCategory);
         return pageObj;
     }
 
@@ -203,39 +202,38 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public void saveNews(long userId, long newsId) {
 
-        final News news = newsDao.getById(newsId, userId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
         newsDao.saveNews(news, user);
-        news.setUserSpecificVariables(userId);
 
     }
 
     @Override
     @Transactional
     public void unsaveNews(long userId, long newsId) {
-        final News news = newsDao.getById(newsId, userId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
         newsDao.removeSaved(news, user);
-        news.setUserSpecificVariables(userId);
+//        news.setUserSpecificVariables(userId);
     }
 
-    @Override
-    @Transactional
-    public boolean toggleSaveNews(final User currentUser, long newsId) {
-
-        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
-
-        boolean returnValue;
-        if (news.getLoggedUserParameters().isSaved()) {
-            newsDao.removeSaved(news, currentUser);
-            returnValue =  false;
-        } else {
-            newsDao.saveNews(news, currentUser);
-            returnValue = true;
-        }
-        news.setUserSpecificVariables(currentUser.getId());
-        return returnValue;
-    }
+//    @Override
+//    @Transactional
+//    public boolean toggleSaveNews(final User currentUser, long newsId) {
+//
+//        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
+//
+//        boolean returnValue;
+//        if (news.getLoggedUserParameters().isSaved()) {
+//            newsDao.removeSaved(news, currentUser);
+//            returnValue =  false;
+//        } else {
+//            newsDao.saveNews(news, currentUser);
+//            returnValue = true;
+//        }
+//        news.setUserSpecificVariables(currentUser.getId());
+//        return returnValue;
+//    }
 
     @Override
     @Transactional
@@ -244,36 +242,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
 
-    @Override
-    @Transactional
-    public Iterable<ProfileCategory> getProfileCategories(Optional<User> maybeCurrentUser, final User user) {
 
-        final boolean isMyProfile =  maybeCurrentUser.isPresent() && maybeCurrentUser.get().equals(user);
-        return Arrays.stream(ProfileCategory.values()).filter(c -> {
-            if (!isMyProfile && c.equals(ProfileCategory.SAVED)) {
-                return false;
-            }
-            else return !c.equals(ProfileCategory.MY_POSTS) || user.getRoles().contains(Role.ROLE_JOURNALIST);
-        }).collect(Collectors.toList());
-    }
 
-    @Override
-    @Transactional
-    public Iterable<Category> getHomeCategories(Optional<User> maybeCurrentUser) {
-        return Category.categoriesInOrder().stream().filter(c ->  c != Category.FOR_ME || maybeCurrentUser.isPresent()).collect(Collectors.toList());
-    }
 
-    @Override
-    @Transactional
-    public Optional<News> getById(Optional<User> maybeCurrentUser, long id) {
-        return maybeCurrentUser.isPresent() ? newsDao.getById(id, maybeCurrentUser.get().getUserId()) : newsDao.getById(id);
-    }
 
-    @Override
-    @Transactional
-    public Optional<News> getById(final User currentUser, long id) {
-        return newsDao.getById(id, currentUser.getUserId());
-    }
+
 
     @Override
     @Transactional
@@ -317,7 +290,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public Comment addComment(final User currentUser, long newsId, String comment) {
-        final News news = getById(currentUser, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final News news = getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final Comment commentObj = commentDao.addComment(currentUser, news, comment);
         final User newsOwner = news.getCreator();
         final EmailSettings emailSettings = newsOwner.getEmailSettings();

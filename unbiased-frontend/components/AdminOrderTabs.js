@@ -6,7 +6,7 @@ export default function AdminOrderTabs() {
     const router = useRouter()
     const {I18n} = useAppContext()
     const orders= [{text: I18n("reportOrder.reportCountDesc"), params: {order: "REP_COUNT_DESC"}},
-        {text: I18n("reportOrder.reportCountAsc"), params: {order: "REP_COUNT_DESC"}},
+        {text: I18n("reportOrder.reportCountAsc"), params: {order: "REP_COUNT_ASC"}},
         {text: I18n("reportOrder.reportDateDesc"), params: {order: "REP_DATE_DESC"}},
         {text: I18n("reportOrder.reportDateAsc"), params: {order: "REP_DATE_ASC"}}]
 
