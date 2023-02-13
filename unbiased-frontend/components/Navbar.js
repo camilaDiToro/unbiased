@@ -44,7 +44,7 @@ export default function Navbar() {
 
             <div className="d-flex h-75 gap-2 align-items-center h-100">
                 {loggedUser && !(router.pathname.startsWith('/admin'))  ? <Link href="/create-article">
-                    <button type="button" className="btn btn-sm rounded-pill btn-info create_article_navbar_btn">
+                    <button role="button" type="button" className="btn btn-sm rounded-pill btn-info create_article_navbar_btn">
                         {I18n("home.createArticle.button")}
                     </button>
                 </Link> : <></>}
