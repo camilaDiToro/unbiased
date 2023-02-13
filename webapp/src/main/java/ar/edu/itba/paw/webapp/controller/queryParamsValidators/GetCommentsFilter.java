@@ -32,7 +32,7 @@ public enum GetCommentsFilter {
 
         @Override
         public Page<Comment> getComments(CommentService commentService, AdminService adminService, int page, GetCommentsParams params) {
-            return new Page<>(commentService.getCommentsUpvotedByUser(params.getUser()), 1, 1);
+            return commentService.getCommentsUpvotedByUser(page, params.getUser());
         }
     },
     DISLIKED_BY() {

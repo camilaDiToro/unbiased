@@ -12,8 +12,8 @@
 ## Back
 - [ ] Probar todos los endpoints
 - [ ] Paginar:
-  - [ ] Comments: REPORTED_BY
-  - [ ] Comments: LIKED_BY
+  - [x] Comments: REPORTED_BY
+  - [x] Comments: LIKED_BY
   - [ ] Comments: DISLIKED_BY
   - [x] News: PINNED_BY, REPORTED_BY
 - [x] Revisar en webConfig la fucion configure

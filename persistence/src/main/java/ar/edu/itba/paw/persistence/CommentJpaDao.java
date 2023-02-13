@@ -79,10 +79,31 @@ public class CommentJpaDao implements CommentDao{
         final int totalPages = getTotalPagesReportedByUserComments(userId);
         page = Math.min(page, totalPages);
 
-        Query query = entityManager.createNativeQuery(
+        final Query query = entityManager.createNativeQuery(
                 "SELECT comment_id FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false and comment_report.user_id = :userId LIMIT :pageSize OFFSET :offset")
                 .setParameter("userId", userId);
         return getCommentsOfPage(query, page, COMMENT_PAGE_SIZE, totalPages);
+    }
+
+    @Override
+    public Page<Comment> getCommentsUpvotedByUser(int page, User user) {
+        page = Math.max(1,page);
+        final int totalPages = getTotalPagesUpvotedByUserComments(user.getId());
+        page = Math.min(page, totalPages);
+
+        final Query query = entityManager.createNativeQuery(
+                "SELECT comment_id FROM comment_upvotes WHERE user_id = :userId AND upvote = true LIMIT :pageSize OFFSET :offset")
+                .setParameter("userId", user.getUserId());
+
+        return getCommentsOfPage(query, page, COMMENT_PAGE_SIZE, totalPages);
+    }
+
+    private int getTotalPagesUpvotedByUserComments(long userId) {
+        final int count =  ((Number) entityManager.createNativeQuery(
+                        "SELECT count(distinct comment_id) FROM comment_upvotes WHERE user_id = :userId AND upvote = true")
+                .setParameter("userId", userId)
+                .getSingleResult()).intValue();
+        return Page.getPageCount(count, COMMENT_PAGE_SIZE);
     }
 
     private int getTotalPagesReportedByUserComments(long userId) {
@@ -159,21 +180,6 @@ public class CommentJpaDao implements CommentDao{
         final TypedQuery<ReportedComment> objectQuery = entityManager.createQuery("SELECT n from ReportedComment n WHERE n.id IN :ids " , ReportedComment.class);
 
         return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, ReportedComment::getId);
-    }
-
-    @Override
-    public List<Comment> getCommentsUpvotedByUser(User user) {
-        final Query idsQuery = entityManager.createNativeQuery(
-                "SELECT comment_id FROM comment_upvotes WHERE user_id = :userId AND upvote = true").setParameter("userId", user.getUserId());
-
-        @SuppressWarnings("unchecked")
-        final List<Long> ids = (List<Long>) idsQuery.getResultList().stream()
-                .map(o -> ((Number)o).longValue()).collect(Collectors.toList());
-
-        if (ids.isEmpty())
-            return new ArrayList<>();
-
-        return entityManager.createQuery("SELECT c from Comment c  WHERE c.id IN :ids", Comment.class).setParameter("ids", ids).getResultList();
     }
 
     @Override

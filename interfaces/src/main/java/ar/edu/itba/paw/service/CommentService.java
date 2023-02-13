@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface CommentService {
-    List<Comment> getCommentsUpvotedByUser(User user);
+    Page<Comment> getCommentsUpvotedByUser(int page, User user);
     List<Comment> getCommentsDownvotedByUser(User user);
     Optional<Comment> getById(long id);
     boolean setCommentRating(long userId, long commentId, Rating rating);

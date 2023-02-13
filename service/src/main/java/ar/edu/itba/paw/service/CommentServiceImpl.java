@@ -32,8 +32,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getCommentsUpvotedByUser(User user) {
-        return commentDao.getCommentsUpvotedByUser(user);
+    public Page<Comment> getCommentsUpvotedByUser(int page, User user) {
+        return commentDao.getCommentsUpvotedByUser(page, user);
     }
 
     @Override
