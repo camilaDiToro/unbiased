@@ -226,6 +226,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isUserEnabled(String email) {
+        Optional<User> mayBeUser = userDao.findByEmail(email);
+        if(!mayBeUser.isPresent()){
+            return false;
+        }
+        return mayBeUser.get().getStatus().equals(UserStatus.REGISTERED);
+    }
+
+    @Override
     public Page<User> getTopCreators() {
         return new Page<>(userDao.getTopCreators(TOP_CREATORS_COUNT), 1, 1);
     }

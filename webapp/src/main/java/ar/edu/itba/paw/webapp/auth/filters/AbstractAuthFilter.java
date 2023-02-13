@@ -39,7 +39,7 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
                     new AntPathRequestMatcher("/users/{\\d+}/image", HttpMethod.PUT),
                     new AntPathRequestMatcher("/users/{\\d+}/pinnedNews", HttpMethod.PUT),
                     new AntPathRequestMatcher("/users/{\\d+}/pinnedNews", HttpMethod.DELETE),
-                    new AntPathRequestMatcher("/users/{\\d+}/followers/{\\d+}", HttpMethod.PUT),
+                    new AntPathRequestMatcher("/users/{\\d+}/followers/{\\d+}", HttpMethod.POST),
                     new AntPathRequestMatcher("/users/{\\d+}/followers/{\\d+}", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/users/{\\d+}/role", HttpMethod.PUT),
                     new AntPathRequestMatcher("/users/{\\d+}/role", HttpMethod.DELETE),
@@ -55,7 +55,6 @@ public class AbstractAuthFilter extends AbstractAuthenticationProcessingFilter {
                     new AntPathRequestMatcher("/news/{\\d+}/bookmarks", HttpMethod.POST),
                     new AntPathRequestMatcher("/news/{\\d+}/bookmarks", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/news", HttpMethod.POST),
-
                     new AntPathRequestMatcher("/comments", HttpMethod.POST),
                     new AntPathRequestMatcher("/comments/{\\d+}", HttpMethod.DELETE),
                     new AntPathRequestMatcher("/comments/{\\d+}/reports", HttpMethod.POST),

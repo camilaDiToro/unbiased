@@ -38,7 +38,7 @@ return <>
                             <img className="rounded-circle object-fit-cover mr-1"
                                  src={props.hasImage ? props.image : getResourcePath("/img/profile-image.png")} alt="profile-image"/>
                         </div>
-                        <Link href={`/profile/${props.id}`} className="link-text text-white card-name-text text-ellipsis-1">{props.nameOrEmail}</Link>
+                        <Link href={`/profile?id=${props.id}`} className="link-text text-white card-name-text text-ellipsis-1">{props.nameOrEmail}</Link>
 
                     </div>
                 </div>

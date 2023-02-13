@@ -11,6 +11,8 @@ public enum ApiErrorCode {
     FORBIDDEN(605),
     UNAUTHORIZED(606),
     INVALID_EMAIL_TOKEN(607),
+    ALREADY_USED_TOKEN(608),
+    NOT_EXISTENT_TOKEN(609),
 
     //Validation
     VALIDATION(701),

@@ -39,23 +39,23 @@ export default function AppWrapper({ children }) {
     }
 
     axiosInstance.interceptors.request.use(function (config) {
-        // Do whatever you want to transform the data
         const {accessToken, refreshToken} = jwt
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`
         } else if(refreshToken) {
-            // alert('setting refreshToken')
             config.headers.Authorization = `Bearer ${refreshToken}`
         }
         return config;
     })
 
     const getErrorCode = (error) => {
+
         if (error.code === 'ERR_NETWORK')
             return CONN_TIMEOUT;
         if (!error.response || !error.response.data || !error.response.data.apiCode) {
             return UNKNOWN
         }
+
         return error.response.data.apiCode
     }
 

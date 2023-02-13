@@ -27,7 +27,7 @@ export default function Article(props) {
                     <div className="d-flex w-100">
                         <UpvoteButtons id={props.id} triggerEffect={props.triggerEffect} upvotes={props.upvotes} rating={props.rating}></UpvoteButtons>
                         <div className="card-body-home">
-                            <Link shallow className="link max-h-10" href={`/article/${props.id}`}>
+                            <Link shallow className="link max-h-10" href={`/article?id=${props.id}`}>
                                 <h5 className="link-text text-ellipsis">
                                     {props.title}
                                 </h5>

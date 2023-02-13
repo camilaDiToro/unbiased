@@ -87,7 +87,7 @@ export default function Navbar() {
                     <div id="navbar-dropdown" className="dropdown-menu bg-dropdown"
                     >
 
-                        <Link className="dropdown-item" href={`/profile/${loggedUser.id}`}>
+                        <Link className="dropdown-item" href={`/profile?id=${loggedUser.id}`}>
                             <div className="text-decoration-none text-white"
                             >
                                 <img className="profile-img"
