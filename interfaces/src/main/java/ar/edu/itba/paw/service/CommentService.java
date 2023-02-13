@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public interface CommentService {
     Page<Comment> getCommentsUpvotedByUser(int page, User user);
-    List<Comment> getCommentsDownvotedByUser(User user);
+    Page<Comment> getCommentsDownvotedByUser(int page, User user);
     Optional<Comment> getById(long id);
     boolean setCommentRating(long userId, long commentId, Rating rating);
     Page<Comment> getComments(long newsId, int page, NewsOrder orderByObj, boolean reported, ReportOrder reportOrder);

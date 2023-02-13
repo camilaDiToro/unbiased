@@ -37,8 +37,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getCommentsDownvotedByUser(User user) {
-        return commentDao.getCommentsDownvotedByUser(user);
+    public Page<Comment> getCommentsDownvotedByUser(int page, User user) {
+        return commentDao.getCommentsDownvotedByUser(page, user);
     }
 
     @Override

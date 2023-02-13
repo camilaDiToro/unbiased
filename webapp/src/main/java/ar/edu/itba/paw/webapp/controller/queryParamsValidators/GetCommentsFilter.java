@@ -43,7 +43,7 @@ public enum GetCommentsFilter {
 
         @Override
         public Page<Comment> getComments(CommentService commentService, AdminService adminService, int page, GetCommentsParams params) {
-            return new Page<>(commentService.getCommentsDownvotedByUser(params.getUser()), 1, 1);
+            return commentService.getCommentsDownvotedByUser(page, params.getUser());
         }
     },
     REPORTED() {
