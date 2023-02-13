@@ -13,11 +13,7 @@ export default function Login() {
         username: "",
         password: "",
     })
-    useEffect(() => {
-        if (router.pathname !== '/login')
-            localStorage.removeItem('fromPage')
 
-    }, [router.pathname])
     const [passwordType, setPasswordType] = useState("password");
     const handleChange = (e) => {
 
@@ -43,12 +39,7 @@ export default function Login() {
         api.login(details.username, details.password).then(r => {
             const {success} = r
             if (success) {
-                if (localStorage.getItem('fromPage')) {
-                    router.back();
-                } else {
-                    localStorage.removeItem('fromPage')
-                    router.push('/')
-                }
+                router.push('/')
             }
         })
 
