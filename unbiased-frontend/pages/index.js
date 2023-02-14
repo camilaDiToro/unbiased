@@ -19,8 +19,8 @@ import TimeSelector from "../components/TimeSelector";
 export default function Home(props) {
   const router = useRouter()
   const [newsEffectTrigger, newsTriggerEffect] = useTriggerEffect()
-  const [useNews, setNews] = useState([])
-  const [useUsers, setUsers] = useState([])
+  const [useNews, setNews] = useState(undefined)
+  const [useUsers, setUsers] = useState(undefined)
   const [topCreators, setTopCreators] = useState([])
   const [pagination, setPagination] = usePagination()
   const {I18n,  api} = useAppContext()
@@ -75,9 +75,9 @@ export default function Home(props) {
           </TopNewTabs>
           {router.query.search ? <><CancelSearchLink text={I18n("search.filter", [router.query.search])}></CancelSearchLink> <ProfileCardTypeTab></ProfileCardTypeTab></> : <></>}
           <div className="container-fluid">
-            <MainCardsContainer rows={2}>
-              { router.query.search && router.query.type === 'creator' ? useUsers.map(c => <Creator key={`creator${c.id}`} {...c}></Creator>) :
-                  useNews.map(c => <Article triggerEffect={newsTriggerEffect} key={`article${c.id}`} {...c}></Article>)}
+            <MainCardsContainer rows={2} loaded={useUsers || useNews}>
+              { router.query.search && router.query.type === 'creator' ? (useUsers||[]).map(c => <Creator key={`creator${c.id}`} {...c}></Creator>) :
+                  (useNews||[]).map(c => <Article triggerEffect={newsTriggerEffect} key={`article${c.id}`} {...c}></Article>)}
             </MainCardsContainer>
           </div>
         </div>

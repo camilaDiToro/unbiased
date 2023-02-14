@@ -12,13 +12,14 @@ import Pagination from "../../../components/Pagination";
 import Head from "next/head";
 import {newsMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
+import MainCardsContainer from "../../../components/MainCardsContainer";
 
 
 export default function Reported_news(){
     const {I18n, api}= useAppContext()
     const [pagination, setPagination] = usePagination()
     const router = useRouter()
-    const [reportedNews, setReportedNews] = useState([])
+    const [reportedNews, setReportedNews] = useState(undefined)
     const [effectTrigger, triggerEffect] = useTriggerEffect()
 
     useEffect(() => {
@@ -39,16 +40,18 @@ export default function Reported_news(){
             </Head>
             <div className="d-flex h-100 flex-column">
                 <div className="flex-grow-1 d-flex flex-row bg-fixed">
-                    <Moderation_panel/>
+                    <Moderation_panel selected="reported-news"/>
                     <div className="d-flex flex-column w-75 align-items-center">
                         <AdminOrderTabs></AdminOrderTabs>
-                        {
-                            reportedNews.map((n) => {
-                                return (
-                                    <ReportedCard triggerEffect={triggerEffect} key={n.id} {...n}/>
-                                )
-                            })
-                        }
+                        <MainCardsContainer reported loaded={reportedNews}>
+                            {
+                                (reportedNews||[]).map((n) => {
+                                    return (
+                                        <ReportedCard triggerEffect={triggerEffect} key={n.id} {...n}/>
+                                    )
+                                })
+                            }
+                        </MainCardsContainer>
 
                     </div>
                 </div>

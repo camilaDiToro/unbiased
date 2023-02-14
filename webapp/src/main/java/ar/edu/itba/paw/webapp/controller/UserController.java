@@ -165,7 +165,7 @@ public class UserController {
     @Path(value = "/{userId:[0-9]+}/pinnedNews")
     public Response pinNews(@PathParam("userId") final long userId, @QueryParam("newsId") final long newsId) {
         final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        final News news =  newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final News news =  newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         userService.pinNews(user, news);
         return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the article of id %d", user.getUsername(), news.getNewsId()))).build();
     }

@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import FormData from "form-data";
 import {useSnackbar} from "notistack";
 
-const log = true
+const log = false
 
 export const useApi = (loggedUser, axios) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();

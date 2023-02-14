@@ -44,12 +44,12 @@ export default function Navbar() {
 
             <div className="d-flex h-75 gap-2 align-items-center h-100">
                 {loggedUser && !(router.pathname.startsWith('/admin'))  ? <Link href="/create-article">
-                    <button type="button" className="btn btn-sm rounded-pill btn-info create_article_navbar_btn">
+                    <button role="button" type="button" className="btn btn-sm rounded-pill btn-info create_article_navbar_btn">
                         {I18n("home.createArticle.button")}
                     </button>
                 </Link> : <></>}
 
-                {router.pathname.startsWith('/admin') ? <></> : <form id="search-form" className="form-inline my-2 my-lg-0" method="GET" action="/TOP">
+                {router.pathname.startsWith('/admin') ? <></> : <form data-testid="search-form" id="search-form" className="form-inline my-2 my-lg-0" method="GET" action="/TOP">
                     <div>
                         <input
                             style={{backgroundImage: `url("${getResourcePath("/img/loupe-svgrepo-com.svg")}")`}}
@@ -65,7 +65,7 @@ export default function Navbar() {
                     </div>
                 </form>}
 
-                {loggedUser ? <div className="dropdown dropdown-p h-100">
+                {loggedUser ? <div data-testid="dropdown" className="dropdown dropdown-p h-100">
                     <button className="btn btn-primary dropdown-toggle w-100 h-100 py-0" type="button" id="dropdownMenuButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <div
@@ -97,7 +97,7 @@ export default function Navbar() {
                         </Link>
 
 
-                        {loggedUser.isAdmin ? <Link className="dropdown-item" href="/admin/reported_news">
+                        {loggedUser.isAdmin ? <Link className="dropdown-item" href="/admin/reported-news">
                             <div className="text-decoration-none text-white"
                             >
                                 <img className="moderation-img"

@@ -183,8 +183,8 @@ div#__next > div {
     font-size: 36px;
 }
 
-.max-h-300px {
-    max-height: 300px;
+.max-h-350px {
+    max-height: 350px;
 }
 
 .article-body h2 {
@@ -329,6 +329,10 @@ div#__next > div {
 .info-enabled{
     color: green;
     background-color: #28352b;
+}
+
+.none-focus-outline:focus{
+    outline: none;
 }
 
 .add-admin-btn{

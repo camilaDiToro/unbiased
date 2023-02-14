@@ -3,7 +3,7 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 import {getResourcePath} from "../constants";
 
-export default function ModerationPanel(){
+export default function ModerationPanel(props){
 
     const ctx = useAppContext()
     const [splitUrl, setSplitUrl] = useState("none")
@@ -19,15 +19,15 @@ export default function ModerationPanel(){
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
 
                     {
-                        splitUrl === 'reported_news' ?
-                            <Link className="mb-2 nav-link bold select pl-0" href="/admin/reported_news">
+                        props.selected === 'reported-news' ?
+                            <Link data-testid="reported-news-select" className="mb-2 nav-link bold select pl-0" href="/admin/reported-news">
                                 <img className="mb-2 moderation-img" src={getResourcePath("/img/warning-svgrepo-com.svg")} alt="..."/>
                                 {ctx.I18n("moderation.reportedArticles")}
                             </Link>
 
                             :
 
-                            <Link className="mb-2 nav-link selected bold pl-0" href="/admin/reported_news">
+                            <Link data-testid="reported-news-default" className="mb-2 nav-link selected bold pl-0" href="/admin/reported-news">
                                 <img className="mb-2 moderation-img" src={getResourcePath("/img/warning-svgrepo-com.svg")} alt="..."/>
                                 {ctx.I18n("moderation.reportedArticles")}
                             </Link>
@@ -38,15 +38,15 @@ export default function ModerationPanel(){
             <li className="nav-item li-no-dots">
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
 
-                    {splitUrl === 'reported_comments' ?
-                        <Link className="mb-2 nav-link select pl-0" href="/admin/reported_comments">
+                    {props.selected === 'reported-comments' ?
+                        <Link className="mb-2 nav-link select pl-0" href="/admin/reported-comments">
                             <img className="mb-2 moderation-img" src={getResourcePath("/img/cancel-comment.svg")} alt="..."/>
                             {ctx.I18n("moderation.reportedComments")}
                         </Link>
 
                         :
 
-                        <Link className="mb-2 nav-link selected pl-0" href="/admin/reported_comments">
+                        <Link data-testid="reported-comments-default" className="mb-2 nav-link selected pl-0" href="/admin/reported-comments">
                             <img className="mb-2 moderation-img" src={getResourcePath("/img/cancel-comment.svg")} alt="..."/>
                             {ctx.I18n("moderation.reportedComments")}
                         </Link>
@@ -57,7 +57,7 @@ export default function ModerationPanel(){
             <li className="nav-item li-no-dots">
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
 
-                    {splitUrl === 'manage-admins' ?
+                    {props.selected === 'manage-admins' ?
                         <Link className="mb-2 nav-link select pl-0" href="/admin/manage-admins">
                             <img className="mb-2 moderation-img" src={getResourcePath("/img/add-user-svgrepo-com.svg")} alt="..."/>
                             {ctx.I18n("moderation.manage")}
@@ -65,7 +65,7 @@ export default function ModerationPanel(){
 
                         :
 
-                        <Link className="mb-2 nav-link selected pl-0" href="/admin/manage-admins">
+                        <Link data-testid="manage-admins-default" className="mb-2 nav-link selected pl-0" href="/admin/manage-admins">
                             <img className="mb-2 moderation-img" src={getResourcePath("/img/add-user-svgrepo-com.svg")} alt="..."/>
                             {ctx.I18n("moderation.manage")}
                         </Link>

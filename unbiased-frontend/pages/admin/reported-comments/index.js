@@ -13,6 +13,7 @@ import ModerationPanel from "../../../components/ModerationPanel";
 import Head from "next/head";
 import {commentsMapper} from "../../../mappers";
 import usePagination from "../../../pagination";
+import MainCardsContainer from "../../../components/MainCardsContainer";
 
 
 export default function Reported_comments(){
@@ -21,7 +22,7 @@ export default function Reported_comments(){
     const I18n = ctx.I18n
 
     const router = useRouter()
-    const [reportedComments, setReportedComments] = useState([])
+    const [reportedComments, setReportedComments] = useState(undefined)
     const [effectTrigger, triggerEffect] = useTriggerEffect()
     const [pagination, setPagination] = usePagination()
     useEffect(() => {
@@ -42,17 +43,19 @@ export default function Reported_comments(){
             <div className="d-flex h-100 flex-column">
                 <div className="flex-grow-1 d-flex flex-row">
 
-                    <Moderation_panel/>
+                    <Moderation_panel selected="reported-comments"/>
 
                     <div className="d-flex flex-column w-75 align-items-center">
                         <AdminOrderTabs></AdminOrderTabs>
-                        {
-                            reportedComments.map((n) => {
-                                return (
-                                    <ReportedCard comment triggerEffect={triggerEffect} key={n.id} {...n} title={n.body}/>
-                                )
-                            })
-                        }
+                        <MainCardsContainer loaded={reportedComments} reported comments rows={1}>
+                            {
+                                (reportedComments||[]).map((n) => {
+                                    return (
+                                        <ReportedCard comment triggerEffect={triggerEffect} key={n.id} {...n} title={n.body}/>
+                                    )
+                                })
+                            }
+                        </MainCardsContainer>
                     </div>
                 </div>
                 <Pagination {...pagination}></Pagination>

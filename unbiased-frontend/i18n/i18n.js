@@ -14,6 +14,7 @@ const es = {
 
     //Home
     "home.createArticle.button": "Crear artículo",
+    "home.emptyCategory.sorry": "Lo sentimos",
     "home.emptyCreators": "No ha habido actividad aún.",
     "home.topCreators": "Creadores populares",
     "home.type.article":"Noticias",
@@ -230,7 +231,8 @@ export const en = {
 
         //Home
         "home.createArticle.button": "Create",
-        "home.emptyCreators": "There hasn't been any activity yet.",
+    "home.emptyCategory.sorry": "We're sorry.",
+    "home.emptyCreators": "There hasn't been any activity yet.",
         "home.topCreators": "Top Creators",
         "home.type.article":"Articles",
         "home.type.creator":"Creators",
@@ -355,9 +357,9 @@ export const en = {
 
         //Moderation panel
         "moderation.panel": "Moderation Panel",
-        "moderation.emptyArticles": "There are no reported articles yet.",
+        "moderation.emptyArticles": "There are no articles to show.",
         "moderation.reportedComments": "Reported comments",
-        "moderation.emptyComments": "There are no reported comments yet.",
+        "moderation.emptyComments": "There are no comments to show.",
         "moderation.emptyAdmins": "There are no admins yet.",
         "moderation.emptyAdminsSearch":   `No admins match \"{{count}}\"`,
         "moderation.details": "View details",

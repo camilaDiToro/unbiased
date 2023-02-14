@@ -21,14 +21,14 @@ export default function Article(props) {
     return <>
 
         <div className="col mb-4">
-            <div className="card h-100 d-flex flex-row max-h-300px">
+            <div className="card h-100 d-flex flex-row max-h-350px">
                 <PositivityIndicator {...props.stats}></PositivityIndicator>
                 <div className={`d-flex flex-column justify-content-between ${props.image ? 'w-60' : 'w-100'}`}>
                     <div className="d-flex w-100">
                         <UpvoteButtons id={props.id} triggerEffect={props.triggerEffect} upvotes={props.upvotes} rating={props.rating}></UpvoteButtons>
                         <div className="card-body-home">
                             <Link shallow className="link max-h-10" href={`/article?id=${props.id}`}>
-                                <h5 className="link-text text-ellipsis">
+                                <h5 className="link-text text-ellipsis-3">
                                     {props.title}
                                 </h5>
                             </Link>
