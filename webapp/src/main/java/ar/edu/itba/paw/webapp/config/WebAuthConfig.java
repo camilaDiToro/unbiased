@@ -146,8 +146,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().headers().cacheControl().disable().and().authorizeRequests()
                 .and().authorizeRequests()
                 .antMatchers("/users/{\\d+}/role").access("hasRole('OWNER')")
-                .antMatchers("/admin/manage-admins").access("hasRole('OWNER')")
-                .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
                 .antMatchers("/**")
                 .permitAll()
                 .and().addFilterBefore(abstractAuthFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -158,7 +156,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/resources/**", "/register/**", "/profile/**",
-                 "/_next/**", "/login/**", "/create-article/**", "/article/**", "/admin/**", "/404/**", "/favicon.ico",
+                 "/_next/**", "/login/**", "/create-article/**", "/article/**", "/404/**", "/favicon.ico",
                   "/404.html", "/verify-email/index.html", "/404.html");
     }
 }
