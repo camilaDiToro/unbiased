@@ -721,6 +721,7 @@ input:-webkit-autofill:focus {
 
 .read-clock {
     width: 15px;
+    height: 15px;
     margin-top: 1px
 }
 

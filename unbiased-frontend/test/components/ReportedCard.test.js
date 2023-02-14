@@ -71,7 +71,7 @@ describe('Report form test', ()=>{
     test('Redirects to the correct article with article card', ()=>{
         propsMap = customPropsMap()
         render(<ReportedCard {...propsMap}/>, {pathname: '/mocked/pathname'})
-        expect(screen.getByText(propsMap.title).closest('a')).toHaveAttribute('href', `/article/${propsMap.id}`)
+        expect(screen.getByText(propsMap.title).closest('a')).toHaveAttribute('href', `/article?id=${propsMap.id}`)
     })
 
     test('Show subtitle if it is an article card', ()=>{
