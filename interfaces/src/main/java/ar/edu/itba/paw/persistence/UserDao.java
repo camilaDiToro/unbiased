@@ -31,4 +31,6 @@ public interface UserDao {
     void unpinNews(User user, News news);
     void unpinNews(User user);
     List<User> getFollowersWithEmailPublishNewsActive(User user);
+    void makeUserAdmin(long userId);
+    void removeUserAdmin(long userId);
 }
