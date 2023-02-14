@@ -18,6 +18,7 @@ export default function AddAdmin(props){
     const ctx = useAppContext()
     const I18n = ctx.I18n
     const api = ctx.api
+    const {loggedUser} = ctx
     const router = useRouter()
 
     const [details, setDetails] = useState(router.query.search|| '')
@@ -26,7 +27,6 @@ export default function AddAdmin(props){
     const [addAdminMode, setAddAdminMode] = useState(!!router.query.add)
 
     const [effectTrigger, triggerEffect] = useTriggerEffect()
-
     useEffect(() => {
         const params = {...router.query, filter: addAdminMode ? 'NOT_ADMINS' : 'ADMINS'}
 
@@ -76,6 +76,9 @@ export default function AddAdmin(props){
         // triggerEffect()
     }
 
+    if (!loggedUser || !loggedUser.authorities || !loggedUser.authorities.includes('ROLE_OWNER'))
+        return <></>
+
 
     return (
         <>
@@ -106,7 +109,7 @@ export default function AddAdmin(props){
                             {/*TODO: modal*/}
                         </div>
                         <div className="container-fluid">
-                            <MainCardsContainer rows={3} loaded={userList}>
+                            <MainCardsContainer rows={3} loaded={userList} admin>
                                 {(userList || []).map(c => <Creator toAdd={addAdminMode} admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)}
                             </MainCardsContainer>
 

@@ -21,6 +21,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
   }, [router.isReady]);
 
+
   const [addedLocale, setAddLocale] = useState(false)
 
 
@@ -29,6 +30,8 @@ function MyApp({ Component, pageProps }) {
     TimeAgo.addLocale(es)
     setAddLocale(true)
   }
+
+
 
 
   return <SnackbarProvider maxSnack={3}>

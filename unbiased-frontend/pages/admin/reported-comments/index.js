@@ -20,6 +20,7 @@ export default function Reported_comments(){
 
     const ctx = useAppContext()
     const I18n = ctx.I18n
+    const {loggedUser} = ctx
 
     const router = useRouter()
     const [reportedComments, setReportedComments] = useState(undefined)
@@ -35,6 +36,9 @@ export default function Reported_comments(){
             }
         })
     }, [router.query, effectTrigger])
+
+    if (!loggedUser || !loggedUser.isAdmin)
+        return <></>
     return (
         <>
             <Head>

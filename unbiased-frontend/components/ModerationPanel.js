@@ -6,6 +6,7 @@ import {getResourcePath} from "../constants";
 export default function ModerationPanel(props){
 
     const ctx = useAppContext()
+    const {loggedUser} = ctx
     const [splitUrl, setSplitUrl] = useState("none")
 
     useEffect(()=>{
@@ -17,7 +18,6 @@ export default function ModerationPanel(props){
             <h3 className="text-white">{ctx.I18n("moderation.panel")}</h3>
             <li className="nav-item li-no-dots">
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
-
                     {
                         props.selected === 'reported-news' ?
                             <Link className="mb-2 nav-link bold select pl-0" href="/admin/reported-news">
@@ -54,7 +54,7 @@ export default function ModerationPanel(props){
                 </div>
             </li>
 
-            <li className="nav-item li-no-dots">
+            {loggedUser && loggedUser.authorities.includes('ROLE_OWNER') ? <li className="nav-item li-no-dots">
                 <div className="d-flex flex-row pt-2 pl-2 bg-hover">
 
                     {props.selected === 'manage-admins' ?
@@ -70,9 +70,8 @@ export default function ModerationPanel(props){
                             {ctx.I18n("moderation.manage")}
                         </Link>
                     }
-
                 </div>
-            </li>
+            </li> : <></>}
         </div>
     )
 }

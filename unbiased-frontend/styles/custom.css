@@ -199,6 +199,8 @@ div#__next > div {
     font-size: 20px;
 }
 
+.noHover{ pointer-events: none; }
+
 .upvoted {
     color: #8ea7e8;
     font-weight: bold;

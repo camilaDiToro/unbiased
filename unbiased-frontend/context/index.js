@@ -24,6 +24,28 @@ export default function AppWrapper({ children }) {
         baseURL
     })
 
+    const isAdminPath = (path) => {
+        return path.includes('/admin')
+    }
+
+    const isOwnerPath = (path) => {
+        return path.includes('/manage-admins')
+    }
+
+    useEffect(() => {
+        if (isAdminPath(router.pathname)) {
+            if (!loggedUser || !loggedUser.isAdmin) {
+                router.replace("/")
+            }
+        }
+        if (isOwnerPath(router.pathname)) {
+            if (!loggedUser || !loggedUser.authorities.includes('ROLE_OWNER')) {
+                router.replace("/")
+            }
+        }
+
+    }, [loggedUser])
+
 
 
     const setHeadersIfExist = (response) => {
@@ -94,7 +116,6 @@ export default function AppWrapper({ children }) {
                     return axios.request(config)
                 } else {
                     jwtState[1]({})
-
                     if (!error.config.authOptional) {
                         await router.push(loginURL)
                     }

@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import FormData from "form-data";
 import {useSnackbar} from "notistack";
 
-const log = false
+const log = true
 
 export const useApi = (loggedUser, axios) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -403,6 +403,7 @@ export class Api {
             let userInfo
             if (data && data.newsStats) {
                 const stats = await this.axios.get(data.newsStats)
+                console.log(stats.data)
                 data.newsStats = stats.data
                 // const withLoggedData = this.#fill
                 userInfo = userMapper(res.data)

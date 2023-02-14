@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 
 
 import dynamic from "next/dynamic";
@@ -22,6 +22,12 @@ const MarkdownEditor = dynamic(
 
 
 export default function CreateArticle(props) {
+
+    const autofocusNoSpellcheckerOptions = useMemo(() => {
+        return {
+            hideIcons: ["side-by-side", "fullscreen"],
+        }
+    }, []);
     const router = useRouter()
     const [article, setArticle] = useState({
         title: '',
@@ -34,6 +40,8 @@ export default function CreateArticle(props) {
 
 
     const handleSubmit = async () => {
+        if (!validForm())
+            return
         const {success, data} = await api.postArticle(article, file)
         if (success)
             await router.replace(`/article?id=${data.id}`)
@@ -76,10 +84,14 @@ export default function CreateArticle(props) {
         { text: I18n("categories.technology"), value: "categories.technology" }
     ]
 
+    const validForm = () => {
+        return article.title && article.subtitle && article.body
+    }
+
     return <div>
-        <ModalTrigger modalId="closeModal">
+        {article.title || article.subtitle || article.body || article.categories.length ? <ModalTrigger modalId="closeModal">
             <BackButton></BackButton>
-        </ModalTrigger>
+        </ModalTrigger> : <BackButton onClickHandler={() => router.push("/")}></BackButton>}
         <div className="d-flex flex-col align-items-center justify-content-center p-5">
 
 
@@ -116,7 +128,7 @@ export default function CreateArticle(props) {
                     <div className="form-group" data-color-mode="dark">
 
                         <div className="wmde-markdown-var"> </div>
-                        <MarkdownEditor value={article.body} onChange={(text) => setArticle({...article, body: text})}/>
+                        <MarkdownEditor options={autofocusNoSpellcheckerOptions} value={article.body} onChange={(text) => setArticle({...article, body: text})}/>
                     </div>
 
                 </div>
@@ -151,7 +163,7 @@ export default function CreateArticle(props) {
                 </div>
 
                 <div className="w-100 d-flex justify-content-end">
-                    <button onClick={handleSubmit} className="btn btn-info" type="submit">{I18n("createArticle.save")}</button>
+                    <button onClick={handleSubmit} role="button" className={`btn btn-info ${validForm() ? '' : 'disabled noHover'}`}>{I18n("createArticle.save")}</button>
                 </div>
             </div>
 
