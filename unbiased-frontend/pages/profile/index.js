@@ -79,6 +79,9 @@ export default function Profile() {
 
     })
 
+    if (!loggedUser)
+      return
+
     api.getUsers({filter: 'FOLLOWING', id: loggedUser?.id}).then(res => {
       const {success, data} = res
       if (success) {
@@ -90,11 +93,6 @@ export default function Profile() {
 
   const getNews = () => {
     let news = pinned ? [pinned] : []
-
-    // if (pinned) {
-    //   news = [pinned]
-    // }
-
 
     return [...news, ...(useNews || [])]
   }
@@ -165,7 +163,7 @@ export default function Profile() {
           </h4>
           <div className="d-flex flex-row align-items-center justify-content-center m-2 gap-2">
             <span className="card-text text-muted d-block">{profileInfo.email}</span>
-            {(loggedUser && !(loggedUser && loggedUser.id == id)) ?  <FollowButton triggerEffect={profileTriggerEffect} userId={profileInfo.id} following={loggedUser && profileInfo.isLoggedUserFollowing}></FollowButton>
+            {(loggedUser &&  loggedUser.id != id) ?  <FollowButton triggerEffect={profileTriggerEffect} userId={profileInfo.id} following={loggedUser && profileInfo.isLoggedUserFollowing}></FollowButton>
                 : <></>}
           </div>
 

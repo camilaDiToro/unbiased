@@ -20,7 +20,15 @@ describe('Moderation Panel test', ()=>{
         render(<ModerationPanel {...propsMap}/>)
         expect(screen.getByTestId('reported-news-select')).toHaveClass('select')
         expect(screen.getByTestId('reported-comments-default')).toHaveClass('selected')
-        expect(screen.getByTestId('manage-admins-default')).toHaveClass('selected')
+        expect(screen.queryByTestId('manage-admins-default')).toBeNull()
+    })
+
+    test('Show selected manage message and not selected the other options', ()=>{
+        propsMap = customPropsMap({selected: 'reported-news'})
+        render(<ModerationPanel {...propsMap}/>, {loggedUser: {authorities:["ROLE_OWNER"]}})
+        expect(screen.getByTestId('reported-news-select')).toHaveClass('select')
+        expect(screen.getByTestId('reported-comments-default')).toHaveClass('selected')
+        expect(screen.queryByTestId('manage-admins-default')).toHaveClass('selected')
     })
 
     test('No one of the options selected', ()=>{
@@ -28,7 +36,7 @@ describe('Moderation Panel test', ()=>{
         render(<ModerationPanel {...propsMap}/>)
         expect(screen.getByTestId('reported-news-default')).toHaveClass('selected')
         expect(screen.getByTestId('reported-comments-default')).toHaveClass('selected')
-        expect(screen.getByTestId('manage-admins-default')).toHaveClass('selected')
+        expect(screen.queryByTestId('manage-admins-default')).toBeNull()
     })
 
 })

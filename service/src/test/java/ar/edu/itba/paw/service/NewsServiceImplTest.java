@@ -9,8 +9,6 @@ import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TimeConstraint;
 import ar.edu.itba.paw.model.user.PositivityStats;
-import ar.edu.itba.paw.model.user.ProfileCategory;
-import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.Upvote;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.persistence.NewsDao;
@@ -22,7 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,21 +76,21 @@ public class NewsServiceImplTest {
 
     @Test
     public void testGetNewsLowerInvalidPage(){
-        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any(), Mockito.any())).thenReturn(TOTAL_PAGES);
+        Mockito.when(mockNewsDao.getTotalPagesAllNewsTop(Mockito.any(), Mockito.any())).thenReturn(TOTAL_PAGES);
         Page<News> returnValue = newsService.getNews(EMPTY_USER,LOWER_PAGE, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(1,returnValue.getCurrentPage());
     }
 
     @Test
     public void testGetNewsUpperInvalidPage(){
-        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any(), Mockito.any())).thenReturn(TOTAL_PAGES);
+        Mockito.when(mockNewsDao.getTotalPagesAllNewsTop(Mockito.any(), Mockito.any())).thenReturn(TOTAL_PAGES);
         Page<News> returnValue = newsService.getNews(EMPTY_USER,UPPER_PAGE, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(TOTAL_PAGES,returnValue.getCurrentPage());
     }
 
     @Test
     public void testGetNewsQueryMatch(){
-        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.matches(QUERY), Mockito.any())).thenReturn(TOTAL_PAGES);
+        Mockito.when(mockNewsDao.getTotalPagesAllNewsTop(Mockito.matches(QUERY), Mockito.any())).thenReturn(TOTAL_PAGES);
         Page<News> returnValue = newsService.getNews(EMPTY_USER,1, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(TOTAL_PAGES,returnValue.getTotalPages());
     }
