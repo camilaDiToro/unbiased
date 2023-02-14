@@ -269,6 +269,7 @@ div#__next > div {
 .svg-btn:hover {
     filter: brightness(80%);
     cursor: pointer;
+    color: #8ea7e8;
 }
 
 .container-xxl {
@@ -693,6 +694,10 @@ input:-webkit-autofill:focus {
 
 #bin_button:focus{
     box-shadow: none;
+}
+
+.blue-text{
+    color: #8ea7e8!important;
 }
 
 #title-principal-card:hover{

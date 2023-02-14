@@ -26,7 +26,7 @@ export default function Creator(props) {
 return <>
     <div className="col mb-4">
         {props.admin ?         <Modal title={I18n(`owner.${props.toAdd ? 'add': 'remove'}AdminTitle`)} body={I18n(`owner.${props.toAdd ? 'add': 'remove'}AdminMsg`)} onClickHandler={onDeleteOrAdd} id={`user${props.id}modal`}></Modal>
-         : <></>}        <div className="link">
+         : <></>}        <div className="text-decoration-none">
 
             <div className="card h-100 d-flex flex-row">
                 {props.hasPositivity ? <PositivityIndicator {...props.stats}></PositivityIndicator> : <></>}
