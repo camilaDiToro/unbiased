@@ -271,6 +271,7 @@ div#__next > div {
 .svg-btn:hover {
     filter: brightness(80%);
     cursor: pointer;
+    color: #8ea7e8;
 }
 
 .container-xxl {
@@ -341,6 +342,10 @@ div#__next > div {
     height: 40px;
     width: 40px;
     background-repeat: no-repeat;
+}
+
+.add-admin-btn:focus{
+    outline: none;
 }
 
 .border-color-transparent{
@@ -465,6 +470,10 @@ input:-webkit-autofill:focus {
     background-color: #8ea7e8;
 }
 
+#dropdownMenuButton.btn{
+    border-radius: 0.5rem;
+}
+
 .bookmark{
     cursor: pointer;
 }
@@ -473,6 +482,10 @@ input:-webkit-autofill:focus {
     border-radius: 50%!important;
     width: 24px!important;
     height: 24px!important;
+}
+
+#manage-admin-button .button:focus{
+    outline: none !important;
 }
 
 .w-50px {
@@ -593,6 +606,14 @@ input:-webkit-autofill:focus {
     -moz-white-space: pre-wrap;
 }
 
+#dropdownNavbar .dropdown-item{
+    padding: .25rem .25rem;
+}
+
+#dropdownNavbar .dropdown-toggle::after {
+    display: none;
+}
+
 
 @media(min-width: 1200px) {
     .w-xl-25 {
@@ -675,6 +696,10 @@ input:-webkit-autofill:focus {
 
 #bin_button:focus{
     box-shadow: none;
+}
+
+.blue-text{
+    color: #8ea7e8!important;
 }
 
 #title-principal-card:hover{

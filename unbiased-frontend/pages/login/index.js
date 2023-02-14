@@ -72,12 +72,14 @@ export default function Login() {
 
 
                 <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">{I18n("navbar.logIn")}</button>
+                <div className="d-flex mt-2">
+                    <div className="mr-2">
+                        {I18n("login.notMemberYet")}
+                    </div>
+                    <Link href={`/register`} className="link text-underline blue-text">{I18n("navbar.register")}</Link>
+                </div>
 
-                <h6 className="m-2 mt-3 align-self-center">
-                    {I18n("login.notMemberYet")} {" "}
-                    <Link href={`/register`} className="link text-underline">{I18n("navbar.register")}</Link>
 
-                </h6>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>
             </div>
         </div>

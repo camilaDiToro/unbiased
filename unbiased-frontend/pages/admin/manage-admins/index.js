@@ -112,7 +112,8 @@ export default function AddAdmin(props){
                             <Tooltip text={I18n(`tooltip.${addAdminMode ? 'remove' : 'add'}Admin`)}>
                                 <button onClick={showNotAdmins}
                                         className="mr-5 mt-1 add-admin-btn bg-transparent border-color-transparent"
-                                        style={{backgroundImage: `url(${getResourcePath(`/img/${addAdminMode ? 'less' : 'plus'}-svgrepo-com.svg`)})`}} >
+                                        style={{backgroundImage: `url(${getResourcePath(`/img/${addAdminMode ? 'less' : 'plus'}-svgrepo-com.svg`)})`}}
+                                >
                                 </button>
                             </Tooltip>
 
