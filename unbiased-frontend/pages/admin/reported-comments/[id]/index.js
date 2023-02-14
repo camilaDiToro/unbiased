@@ -13,7 +13,7 @@ import Tooltip from "../../../../components/Tooltip";
 
 export default function ReportedCommentDetail(props){
 
-    const {I18n, api} = useAppContext()
+    const {I18n, api, loggedUser} = useAppContext()
     const router = useRouter()
 
     const [reportInfo, setReportInfo] = useState([])
@@ -36,6 +36,8 @@ export default function ReportedCommentDetail(props){
             await router.push('/admin/reported-comments')
         }
     }
+    if (!loggedUser || !loggedUser.isAdmin)
+        return <></>
     return (<>
             <Head>
                 <title>{I18n("moderation.panel")}</title>

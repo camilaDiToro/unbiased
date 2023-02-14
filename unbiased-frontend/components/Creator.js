@@ -39,7 +39,6 @@ return <>
                                  src={props.hasImage ? props.image : getResourcePath("/img/profile-image.png")} alt="profile-image"/>
                         </div>
                         <Link href={`/profile?id=${props.id}`} className="link-text text-white card-name-text text-ellipsis-1">{props.nameOrEmail}</Link>
-
                     </div>
                 </div>
 

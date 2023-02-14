@@ -19,7 +19,7 @@ export default function MainCardsContainer(props) {
                     {I18n("home.emptyCategory.sorry")}
                 </h2>
                 <p className="lead">
-                    {props.comments ? I18n("moderation.emptyComments") : I18n("moderation.emptyArticles")}
+                    {props.comments ? I18n("moderation.emptyComments") : (props.admin ? I18n("moderation.emptyAdmins"):  I18n("moderation.emptyArticles"))}
                 </p>
             </div>
             :             <div className={`row row-cols-md-${props.rows} ${props.reported ? 'px-4' : ''}`}>

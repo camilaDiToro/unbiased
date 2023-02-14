@@ -16,7 +16,7 @@ import MainCardsContainer from "../../../components/MainCardsContainer";
 
 
 export default function Reported_news(){
-    const {I18n, api}= useAppContext()
+    const {I18n, api, loggedUser}= useAppContext()
     const [pagination, setPagination] = usePagination()
     const router = useRouter()
     const [reportedNews, setReportedNews] = useState(undefined)
@@ -32,6 +32,9 @@ export default function Reported_news(){
             }
         })
     }, [router.query, effectTrigger])
+
+    if (!loggedUser || !loggedUser.isAdmin)
+        return <></>
 
     return (
         <>

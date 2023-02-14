@@ -18,15 +18,17 @@ export default function AddAdmin(props){
     const ctx = useAppContext()
     const I18n = ctx.I18n
     const api = ctx.api
+    const {loggedUser} = ctx
     const router = useRouter()
 
     const [details, setDetails] = useState(router.query.search|| '')
     const [userList, setUserList] = useState(undefined)
     const [pagination, setPagination] = usePagination()
     const [addAdminMode, setAddAdminMode] = useState(!!router.query.add)
+    const [actualUserList, setActualUserList] = useState(undefined)
+
 
     const [effectTrigger, triggerEffect] = useTriggerEffect()
-
     useEffect(() => {
         const params = {...router.query, filter: addAdminMode ? 'NOT_ADMINS' : 'ADMINS'}
 
@@ -54,16 +56,20 @@ export default function AddAdmin(props){
         setDetails(e.target.value)
     }
 
+    useEffect(() => {
+        setActualUserList(userList)
+    }, [addAdminMode])
+
 
     const showNotAdmins = async () => {
         const params = {...router.query, filter: addAdminMode ? 'NOT_ADMINS' : 'ADMINS'}
 
-        api.getUsers(params).then(res => {
+        api.getUsers(params).then( res => {
             const {success, data, pagination} = res
             if (success) {
+                setAddAdminMode(a => !a)
                 setUserList(data)
                 setPagination(pagination)
-                setAddAdminMode(a => !a)
                 router.push({
                         ...router,
                         query: { ...router.query, add: !addAdminMode }
@@ -73,8 +79,15 @@ export default function AddAdmin(props){
             }
 
         })
-        // triggerEffect()
     }
+
+    const showUsers = () => {
+        const aux = addAdminMode
+        return (actualUserList || []).map(c => <Creator toAdd={aux} admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)
+    }
+
+    if (!loggedUser || !loggedUser.authorities || !loggedUser.authorities.includes('ROLE_OWNER'))
+        return <></>
 
 
     return (
@@ -106,8 +119,8 @@ export default function AddAdmin(props){
                             {/*TODO: modal*/}
                         </div>
                         <div className="container-fluid">
-                            <MainCardsContainer rows={3} loaded={userList}>
-                                {(userList || []).map(c => <Creator toAdd={addAdminMode} admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)}
+                            <MainCardsContainer rows={3} loaded={userList} admin>
+                                {showUsers()}
                             </MainCardsContainer>
 
                         </div>

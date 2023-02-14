@@ -12,7 +12,7 @@ import Tooltip from "../../../../components/Tooltip"
 
 
 export default function ReportedNewsDetail(props){
-    const {I18n, api} = useAppContext()
+    const {I18n, api, loggedUser} = useAppContext()
     const [reportInfo, setReportInfo] = useState([])
     const router = useRouter()
     const {id} = router.query
@@ -32,6 +32,9 @@ export default function ReportedNewsDetail(props){
             await router.push('/admin/reported-news')
         }
     }
+
+    if (!loggedUser || !loggedUser.isAdmin)
+        return <></>
     return (<>
             <Head>
                 <title>{I18n("moderation.panel")}</title>
