@@ -16,6 +16,9 @@ import java.util.Optional;
 
 public interface NewsDao {
     List<News> getNewNews(int page, String query);
+
+    int getTotalPagesAllNewsNew(String query);
+
     Optional<News> getById(long id);
     int getTotalPagesCategoryNew(Category category);
     List<News> getRecommendationNew(int page, User user);
@@ -24,7 +27,7 @@ public interface NewsDao {
     Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, ProfileCategory profileCategory);
     News create(News.NewsBuilder newsBuilder);
     List<News> getTopNews(int page, String query, TimeConstraint timeConstraint);
-    int getTotalPagesAllNews(String query, TimeConstraint timeConstraint);
+    int getTotalPagesAllNewsTop(String query, TimeConstraint timeConstraint);
     int getTotalPagesCategoryTop(Category category, TimeConstraint timeConstraint);
     void saveNews(News news, User user);
 

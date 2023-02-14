@@ -2,7 +2,6 @@ package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
-import ar.edu.itba.paw.model.admin.ReportOrder;
 import ar.edu.itba.paw.model.exeptions.InvalidCategoryException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -95,11 +93,11 @@ public class NewsServiceImpl implements NewsService {
 
         if (category.equals(Category.ALL)) {
             if (newsOrder.equals(NewsOrder.NEW)) {
-                totalPages = newsDao.getTotalPagesAllNews(query,timeConstraint);
+                totalPages = newsDao.getTotalPagesAllNewsNew(query);
                 page = Math.min(page, totalPages);
                 ln =  newsDao.getNewNews(page, query);
             } else {
-                totalPages = newsDao.getTotalPagesAllNews(query, timeConstraint);
+                totalPages = newsDao.getTotalPagesAllNewsTop(query, timeConstraint);
                 page = Math.min(page, totalPages);
                 ln =  newsDao.getTopNews(page, query, timeConstraint);
             }

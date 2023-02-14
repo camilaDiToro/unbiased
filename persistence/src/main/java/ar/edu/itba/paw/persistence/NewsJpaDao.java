@@ -89,8 +89,16 @@ public class NewsJpaDao implements NewsDao {
 
 
     @Override
-    public int getTotalPagesAllNews(String query, TimeConstraint timeConstraint) {
+    public int getTotalPagesAllNewsTop(String query, TimeConstraint timeConstraint) {
         final Number elemCount = (Number) entityManager.createNativeQuery("SELECT count(*) FROM news f WHERE LOWER(title) LIKE :query escape '\\'  AND creation_date >= " +timeConstraint.getMinimumDateQuery())
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%").getSingleResult();
+
+        return Page.getPageCount(elemCount.longValue(), PAGE_SIZE);
+    }
+
+    @Override
+    public int getTotalPagesAllNewsNew(String query) {
+        final Number elemCount = (Number) entityManager.createNativeQuery("SELECT count(*) FROM news f WHERE LOWER(title) LIKE :query escape '\\' " )
                 .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%").getSingleResult();
 
         return Page.getPageCount(elemCount.longValue(), PAGE_SIZE);
