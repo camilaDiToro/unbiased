@@ -1,4 +1,4 @@
-export function createMockRouter(router){
+export function createMockRouter(options={}){
     return{
         basePath: '',
         pathname: '/',
@@ -22,6 +22,7 @@ export function createMockRouter(router){
         defaultLocale: 'en',
         domainLocales: [],
         isPreview: false,
-        ...router,
+        search: '',
+        ...options,
     }
 }

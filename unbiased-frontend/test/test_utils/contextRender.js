@@ -7,9 +7,9 @@ import { useI18n} from "../../customI18n";
 import '@testing-library/jest-dom'
 import {withI18n} from "../../i18n";
 
-const AllTheProviders = ({children, options= {loggedUser: null, query: {}, push: jest.fn(), }})=>{
+const AllTheProviders = ({children, options= {loggedUser: null, query: {}, pathname: '/'}})=>{
     const I18n = useI18n()
-    const {query, ...restOptions} = options
+    const {query={}, pathname='/', ...restOptions} = options
 
     return(
             <RouterContext.Provider value={createMockRouter({query})}>

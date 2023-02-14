@@ -10,6 +10,7 @@ import {useRouter} from "next/router";
 import FormattedDate from "./FormattedDate";
 
 export default function ReportedCard(props) {
+    console.log('HERE I AM', props)
     const ctx = useAppContext()
     const router = useRouter()
     return(

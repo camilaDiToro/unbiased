@@ -52,13 +52,9 @@ describe('Report form test', ()=>{
     })
 
     test('All the readable props appear on the card', ()=>{
-        const query = {
-            pathname: '/mocked/path'
-        }
-        render(<ReportedCard {...propsMap}/>)
+        render(<ReportedCard {...propsMap}/>, {pathname: '/mocked/pathname'})
+        expect(screen.getByText(propsMap.reportCount)).toBeInTheDocument()
         screen.debug()
-        //TODO: complete and fix error
-
     })
 
 })

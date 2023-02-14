@@ -15,17 +15,17 @@ describe('NavBar test', ()=>{
   test('Shows Create button if is loggeduser and pathname do not start with admin', ()=>{
     const loggedUser = getDefaultLoggedUser()
     const query = {
-      pathname: '/no/starts/with/admin'
+      search: ''
     }
-    render(<Navbar/>, {loggedUser, query})
+    render(<Navbar/>, {loggedUser, pathname: '/no/starts/with/admin', query})
     expect(screen.getByRole('button', {name: 'Create'})).toBeInTheDocument()
   })
 
   test('Shows form if is pathname do not start with admin', ()=>{
     const query = {
-      pathname: '/no/starts/with/admin'
+      search: ''
     }
-    render(<Navbar/>, {query})
+    render(<Navbar/>, {query, pathname: '/no/starts/with/admin'})
     expect(screen.getByTestId('search-form')).toBeInTheDocument()
   })
 
