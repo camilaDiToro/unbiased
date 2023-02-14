@@ -333,6 +333,10 @@ div#__next > div {
     background-color: #28352b;
 }
 
+.none-focus-outline:focus{
+    outline: none;
+}
+
 .add-admin-btn{
     height: 40px;
     width: 40px;

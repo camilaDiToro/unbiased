@@ -11,15 +11,8 @@
 
 ## Back
 - [ ] Probar todos los endpoints
-- [ ] Paginar:
-  - [x] Comments: REPORTED_BY
-  - [x] Comments: LIKED_BY
-  - [ ] Comments: DISLIKED_BY
-  - [x] News: PINNED_BY, REPORTED_BY
-- [x] Revisar en webConfig la fucion configure
-- [x] Arreglar testeo
-- [x] Correccion 2da entrega: escapan incorrectamente _ en las busquedas
-- [x] Correccion 2da entrega: hacer que creators of the day tenga en cuenta comentarios
+- [ ] Actualizar urls mails
+- [x] Ver roles
 
 
 ## General

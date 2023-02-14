@@ -249,6 +249,17 @@ public class UserJpaDao implements UserDao{
         return entityManager.createQuery("FROM User u WHERE u.userId IN :ids",User.class)
                 .setParameter("ids", ids).getResultList();
     }
+
+    @Override
+    public void makeUserAdmin(long userId) {
+        entityManager.createNativeQuery("insert into user_role(user_id,user_role) values (:userId,'ROLE_ADMIN')").setParameter("userId", userId).executeUpdate();
+    }
+
+    @Override
+    public void removeUserAdmin(long userId) {
+        entityManager.createNativeQuery("delete from user_role where user_id=:userId and user_role='ROLE_ADMIN'").setParameter("userId", userId).executeUpdate();
+    }
+
     @Override
     public long getFollowingCount(long userId) {
         return entityManager.createQuery("SELECT COUNT(follows) FROM Follow WHERE userId = :id", Long.class).setParameter("id", userId).getSingleResult();

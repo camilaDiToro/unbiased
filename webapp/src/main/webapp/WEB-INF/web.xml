@@ -48,12 +48,12 @@
 
   <error-page>
     <error-code>404</error-code>
-    <location>/404.html</location>
+    <location>/404</location>
   </error-page>
-  <error-page>
-    <error-code>500</error-code>
-    <location>/500.html</location>
-  </error-page>
+<!--  <error-page>-->
+<!--    <error-code>500</error-code>-->
+<!--    <location>/500</location>-->
+<!--  </error-page>-->
 
 
   <filter>
@@ -87,5 +87,13 @@
   <filter-mapping>
     <filter-name>UnconditionalCacheFilter</filter-name>
     <url-pattern>/_next/static/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>UnconditionalCacheFilter</filter-name>
+    <url-pattern>/img/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>UnconditionalCacheFilter</filter-name>
+    <url-pattern>/js/*</url-pattern>
   </filter-mapping>
 </web-app>

@@ -1,7 +1,6 @@
 import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import Creator from "../../components/Creator";
-import {getResourcePath} from "../../constants";
 
 const {render, screen} = testingLibrary;
 

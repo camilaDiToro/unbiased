@@ -30,7 +30,7 @@ public class OwnerServiceImpl implements OwnerService{
     public boolean makeUserAdmin(long userId) {
         final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         if(!user.getRoles().contains(Role.ROLE_ADMIN)){
-            user.addRole(Role.ROLE_ADMIN);
+            userDao.makeUserAdmin(userId);
             final Locale locale = user.getEmailSettings() != null ? user.getEmailSettings().getLocale() : LocaleContextHolder.getLocale();
             emailService.sendAdminEmail(user, locale);
             return true;
@@ -45,7 +45,7 @@ public class OwnerServiceImpl implements OwnerService{
         if(!user.getRoles().contains(Role.ROLE_ADMIN)){
             return false;
         }
-        user.removeAdminRole();
+        userDao.removeUserAdmin(userId);
         return true;
     }
 

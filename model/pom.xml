@@ -12,6 +12,7 @@
   <version>1</version>
   <name>model</name>
   <url>http://maven.apache.org</url>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.commons</groupId>
