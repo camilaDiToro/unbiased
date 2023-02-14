@@ -42,7 +42,6 @@ public class NewsServiceImpl implements NewsService {
     private final EmailService emailService;
     private final UserDao userDao;
     private final CommentDao commentDao;
-
     private final ImageService imageService;
 
     @Autowired
@@ -132,17 +131,6 @@ public class NewsServiceImpl implements NewsService {
         return new Page<>(ln, page, totalPages);
     }
 
-
-//    @Override
-//    public Optional<News> getPingedNews(Optional<User> maybeCurrentUser, final User profileUser) {
-//        News pinnedNews = profileUser.getPingedNews();
-//        if (pinnedNews == null)
-//            return Optional.empty();
-//        maybeCurrentUser.ifPresent(user -> pinnedNews.setUserSpecificVariables(user.getUserId()));
-//
-//        return Optional.of(pinnedNews);
-//    }
-
     @Override
     @Transactional
     public Page<News> getNewsForUserProfile(Optional<User> maybeCurrentUser, int page, NewsOrder newsOrder, final User user, ProfileCategory profileCategory) {
@@ -214,39 +202,13 @@ public class NewsServiceImpl implements NewsService {
         final News news = newsDao.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
         newsDao.removeSaved(news, user);
-//        news.setUserSpecificVariables(userId);
     }
-
-//    @Override
-//    @Transactional
-//    public boolean toggleSaveNews(final User currentUser, long newsId) {
-//
-//        final News news = newsDao.getById(newsId, currentUser.getId()).orElseThrow(()-> new NewsNotFoundException(newsId));
-//
-//        boolean returnValue;
-//        if (news.getLoggedUserParameters().isSaved()) {
-//            newsDao.removeSaved(news, currentUser);
-//            returnValue =  false;
-//        } else {
-//            newsDao.saveNews(news, currentUser);
-//            returnValue = true;
-//        }
-//        news.setUserSpecificVariables(currentUser.getId());
-//        return returnValue;
-//    }
 
     @Override
     @Transactional
     public void deleteNews(News news) {
         newsDao.deleteNews(news);
     }
-
-
-
-
-
-
-
 
     @Override
     @Transactional
