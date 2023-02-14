@@ -12,7 +12,7 @@ const AllTheProviders = ({children, options= {loggedUser: null, query: {}, pathn
     const {query={}, pathname='/', ...restOptions} = options
 
     return(
-            <RouterContext.Provider value={createMockRouter({query})}>
+            <RouterContext.Provider value={createMockRouter({query, pathname})}>
                 <AppContext.Provider value={{I18n, ...restOptions}}>
                     {children}
                 </AppContext.Provider>

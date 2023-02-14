@@ -1,4 +1,4 @@
-export function createMockRouter(options={}){
+export function createMockRouter(options){
     return{
         basePath: '',
         pathname: '/',

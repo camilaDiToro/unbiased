@@ -52,9 +52,37 @@ describe('Report form test', ()=>{
     })
 
     test('All the readable props appear on the card', ()=>{
+        //Note that in all renders we're going to need mock the pathname to prevent error with a '//'expression
         render(<ReportedCard {...propsMap}/>, {pathname: '/mocked/pathname'})
         expect(screen.getByText(propsMap.reportCount)).toBeInTheDocument()
-        screen.debug()
+        expect(screen.getByText(propsMap.title)).toBeInTheDocument()
+        expect(screen.getByText('3 months ago')).toBeInTheDocument()
+        expect(screen.getByText('View details')).toBeInTheDocument()
+        expect(screen.getByRole('button', {name: 'Mocked delete button'})).toBeInTheDocument()
+        expect(screen.getByRole('button', {name: 'Mocked profile pic'})).toBeInTheDocument()
     })
 
+    test('Redirects to the correct article with comment card', ()=>{
+        propsMap = customPropsMap({comment: true, newsId: 5})
+        render(<ReportedCard {...propsMap}/>, {pathname: '/mocked/pathname'})
+        expect(screen.getByText(`"${propsMap.title}"`).closest('a')).toHaveAttribute('href', `/article?id=${propsMap.newsId}&comment=${propsMap.id}`)
+    })
+
+    test('Redirects to the correct article with article card', ()=>{
+        propsMap = customPropsMap()
+        render(<ReportedCard {...propsMap}/>, {pathname: '/mocked/pathname'})
+        expect(screen.getByText(propsMap.title).closest('a')).toHaveAttribute('href', `/article/${propsMap.id}`)
+    })
+
+    test('Show subtitle if it is an article card', ()=>{
+        propsMap = customPropsMap()
+        render(<ReportedCard {...propsMap}/>, {pathname: '/mocked/pathname'})
+        expect(screen.getByText(propsMap.subtitle)).toBeInTheDocument()
+    })
+
+    test('Redirects to the correct path with view details link', ()=>{
+        propsMap = customPropsMap()
+        render(<ReportedCard {...propsMap}/>, {pathname: '/mocked/pathname'})
+        expect(screen.getByText('View details').closest('a')).toHaveAttribute('href', `/mocked/pathname/${propsMap.id}`)
+    })
 })
