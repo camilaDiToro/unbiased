@@ -11,10 +11,8 @@
 
 ## Back
 - [ ] Probar todos los endpoints
-- [ ] Filtor por hora
-- [ ] Probar todos los endpoints
-- [x] Actualizar urls mails
-- [x] Ver roles
+- [ ] Ver que no aparecen todos los usuarios en la seccion para hacer admins
+- [ ] Crear un usuario para ver que esten bien la url
 
 
 ## General
