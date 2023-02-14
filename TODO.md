@@ -11,7 +11,9 @@
 
 ## Back
 - [ ] Probar todos los endpoints
-- [ ] Actualizar urls mails
+- [ ] Filtor por hora
+- [ ] Probar todos los endpoints
+- [x] Actualizar urls mails
 - [x] Ver roles
 
 

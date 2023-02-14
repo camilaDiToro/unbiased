@@ -5,9 +5,9 @@ import ar.edu.itba.paw.model.exeptions.InvalidTimeConstraintException;
 
 
 public enum TimeConstraint {
-    HOUR("timeConstraint.hour", " (CURRENT_DATE - interval '1 hour') "),
-    DAY("timeConstraint.day", " CURRENT_DATE "),
-    WEEK("timeConstraint.week", " (CURRENT_DATE - interval '1 week') "),
+    HOUR("timeConstraint.hour", " (now() - interval '1 hour') "),
+    DAY("timeConstraint.day", " now() "),
+    WEEK("timeConstraint.week", " (now() - interval '1 week') "),
     ALLTIME("timeConstraint.alltime", " (timestamp '-infinity') ");
 
     public String getInterCode() {
