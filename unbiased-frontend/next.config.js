@@ -8,7 +8,6 @@ const nextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
   swcMinify: true,
-  trailingSlash:true,
   // customI18n: {
   //   locales: ["en-US","es-ES"],
   //   defaultLocale: "en-US",

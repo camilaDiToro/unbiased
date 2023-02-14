@@ -36,7 +36,7 @@ export default function CreateArticle(props) {
         // image: null,
         categories: []
     });
-    const {I18n, api} = useAppContext()
+    const {I18n, api, loggedUser} = useAppContext()
 
 
     const handleSubmit = async () => {
@@ -86,6 +86,10 @@ export default function CreateArticle(props) {
 
     const validForm = () => {
         return article.title && article.subtitle && article.body
+    }
+
+    if (!loggedUser) {
+        return <></>
     }
 
     return <div>

@@ -25,6 +25,8 @@ export default function AddAdmin(props){
     const [userList, setUserList] = useState(undefined)
     const [pagination, setPagination] = usePagination()
     const [addAdminMode, setAddAdminMode] = useState(!!router.query.add)
+    const [actualUserList, setActualUserList] = useState(undefined)
+
 
     const [effectTrigger, triggerEffect] = useTriggerEffect()
     useEffect(() => {
@@ -54,16 +56,20 @@ export default function AddAdmin(props){
         setDetails(e.target.value)
     }
 
+    useEffect(() => {
+        setActualUserList(userList)
+    }, [addAdminMode])
+
 
     const showNotAdmins = async () => {
         const params = {...router.query, filter: addAdminMode ? 'NOT_ADMINS' : 'ADMINS'}
 
-        api.getUsers(params).then(res => {
+        api.getUsers(params).then( res => {
             const {success, data, pagination} = res
             if (success) {
+                setAddAdminMode(a => !a)
                 setUserList(data)
                 setPagination(pagination)
-                setAddAdminMode(a => !a)
                 router.push({
                         ...router,
                         query: { ...router.query, add: !addAdminMode }
@@ -73,7 +79,11 @@ export default function AddAdmin(props){
             }
 
         })
-        // triggerEffect()
+    }
+
+    const showUsers = () => {
+        const aux = addAdminMode
+        return (actualUserList || []).map(c => <Creator toAdd={aux} admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)
     }
 
     if (!loggedUser || !loggedUser.authorities || !loggedUser.authorities.includes('ROLE_OWNER'))
@@ -110,7 +120,7 @@ export default function AddAdmin(props){
                         </div>
                         <div className="container-fluid">
                             <MainCardsContainer rows={3} loaded={userList} admin>
-                                {(userList || []).map(c => <Creator toAdd={addAdminMode} admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)}
+                                {showUsers()}
                             </MainCardsContainer>
 
                         </div>

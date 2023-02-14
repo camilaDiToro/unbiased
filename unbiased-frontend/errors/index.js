@@ -8,7 +8,7 @@ export const UNAUTHORIZED = 606;
 export const INVALID_EMAIL_TOKEN = 607;
 export const ALREADY_USED_TOKEN = 608;
 export const NOT_EXISTENT_TOKEN = 609;
-
+export const SERVER_ERROR = 500;
 //Validation
 export const VALIDATION = 701;
 export const INVALID_ROLE = 702;
@@ -51,13 +51,14 @@ export default {
   },
   [INVALID_JWT_TOKEN]: authError,
   [INVALID_JWT_CLAIM]: authError,
-  [EXPIRED_JWT_TOKEN]: authError,
+  [EXPIRED_JWT_TOKEN]: {es: "Sesión expirada, revalidando sesión",
+  en: "Session expired, revalidating session"},
   [FORBIDDEN]: {
     es: "Acceso prohibido",
     en: "Access forbidden",
   },
   [UNAUTHORIZED]: {
-    es: "No está autorizado para realizar la acción",
+    es: "No está authorizado",
     en: "Not authorized",
   },
   [INVALID_EMAIL_TOKEN]: {
@@ -75,6 +76,10 @@ export default {
   [VALIDATION]: {
     es: "Falla de validación del usuario",
     en: "Failure to validate user",
+  },
+  [SERVER_ERROR]: {
+    es: "Error del servidor",
+    en: "Server error"
   },
   [INVALID_ROLE]: {
     es: "Rol inválido",
