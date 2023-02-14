@@ -65,7 +65,7 @@ export default function Navbar() {
                     </div>
                 </form>}
 
-                {loggedUser ? <div data-testid="dropdown" className="dropdown dropdown-p h-100">
+                {loggedUser ? <div data-testid="dropdown" className="dropdown dropdown-p h-100" id="dropdownNavbar">
                     <button className="btn btn-primary dropdown-toggle w-100 h-100 py-0" type="button" id="dropdownMenuButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <div
