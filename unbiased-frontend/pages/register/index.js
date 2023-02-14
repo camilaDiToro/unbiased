@@ -78,11 +78,12 @@ export default function Login() {
 
 
                 <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">{ctx.I18n("navbar.register")}</button>
-                <h6 className="m-2 mt-3 align-self-center">
-                    {I18n("register.alreadyMemberQuestion")} {" "}
-                    <Link href={`/login`} className="link text-underline">{I18n("navbar.logIn")}</Link>{" "}
-
-                </h6>
+                <div className="d-flex mt-2">
+                    <div className="mr-2">
+                        {I18n("register.alreadyMemberQuestion")}
+                    </div>
+                    <Link href={`/login`} className="link text-underline blue-text">{I18n("navbar.logIn")}</Link>{" "}
+                </div>
                 <p className="mt-5 mb-3 text-muted">© 2022-2022</p>
             </div>
         </div>
