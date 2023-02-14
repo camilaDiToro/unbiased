@@ -21,7 +21,7 @@ public enum GetCommentsFilter {
 
         @Override
         public Page<Comment> getComments(CommentService commentService, AdminService adminService, int page, GetCommentsParams params) {
-            return new Page<>(adminService.getReportedByUserComments(params.getUser()), 1, 1);
+            return adminService.getReportedByUserComments(page, params.getUser());
         }
     },
     LIKED_BY() {
@@ -32,7 +32,7 @@ public enum GetCommentsFilter {
 
         @Override
         public Page<Comment> getComments(CommentService commentService, AdminService adminService, int page, GetCommentsParams params) {
-            return new Page<>(commentService.getCommentsUpvotedByUser(params.getUser()), 1, 1);
+            return commentService.getCommentsUpvotedByUser(page, params.getUser());
         }
     },
     DISLIKED_BY() {
@@ -43,7 +43,7 @@ public enum GetCommentsFilter {
 
         @Override
         public Page<Comment> getComments(CommentService commentService, AdminService adminService, int page, GetCommentsParams params) {
-            return new Page<>(commentService.getCommentsDownvotedByUser(params.getUser()), 1, 1);
+            return commentService.getCommentsDownvotedByUser(page, params.getUser());
         }
     },
     REPORTED() {

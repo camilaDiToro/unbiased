@@ -19,10 +19,8 @@ export default function DeleteButton(props) {
         } else {
             const {success} = await api.deleteArticle(props.id)
             if (success) {
-                let splitted = router.pathname.split('/')
-                if (splitted[1] === 'news') {
+                if (router.pathname === '/article') {
                     await router.push('/', undefined, {shallow:true})
-
                 } else {
                     props.triggerEffect()
                 }

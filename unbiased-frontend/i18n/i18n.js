@@ -14,6 +14,7 @@ const es = {
 
     //Home
     "home.createArticle.button": "Crear artículo",
+    "home.emptyCategory.sorry": "Lo sentimos",
     "home.emptyCreators": "No ha habido actividad aún.",
     "home.topCreators": "Creadores populares",
     "home.type.article":"Noticias",
@@ -107,6 +108,8 @@ const es = {
     //Register
     "register.mail.address": "Dirección de mail",
     "register.password": "Contraseña",
+    "register.successful": "Correo de verificación enviado",
+
     "register.signUp": "Registrarse",
     "register.alreadyMemberQuestion": "¿Ya eres miembro?",
 
@@ -125,7 +128,10 @@ const es = {
     "login.error": "Hubo un error con los datos ingresados.",
     "login.mail.address": "Dirección de mail",
     "login.password": "Contraseña",
+    "login.succesful": "Autenticación exitosa",
+
     "login.rememberMe": "Recordarme",
+    "login.notMemberYet": "No eres un miembro todavía?",
     "login.signIn": "Iniciar Sesión",
     "login.emailNotVerified": "El email no se encuentra verificado.",
     "login.emailResended": "El link de confirmación fue reenviado.",
@@ -153,8 +159,8 @@ const es = {
     "moderation.searchAdmin": "Buscar en panel de administradores",
     "reportOrder.reportCountDesc": "Por Más Reportados",
     "reportOrder.reportCountAsc": "Por Menos Reportados",
-    "reportOrder.reportDateDesc": "Por Reportados más recientes",
-    "reportOrder.reportDateAsc": "Por Reportados más antiguos",
+    "reportOrder.reportDateDesc": "Por Reportados recientemente",
+    "reportOrder.reportDateAsc": "Por Reportados antiguamente",
     "report.inappropiate": "El contenido es inapropiado.",
     "report.notSerious": "El contenido no es serio.",
     "report.violent": "El contenido es violento.",
@@ -225,7 +231,8 @@ export const en = {
 
         //Home
         "home.createArticle.button": "Create",
-        "home.emptyCreators": "There hasn't been any activity yet.",
+    "home.emptyCategory.sorry": "We're sorry.",
+    "home.emptyCreators": "There hasn't been any activity yet.",
         "home.topCreators": "Top Creators",
         "home.type.article":"Articles",
         "home.type.creator":"Creators",
@@ -320,7 +327,9 @@ export const en = {
 
         //Register
         "register.mail.address": "Email address",
-        "register.password": "Password",
+    "register.successful": "Verification mail sent",
+
+    "register.password": "Password",
         "register.signUp": "Sign Up",
         "register.alreadyMemberQuestion": "Already a member?",
 
@@ -338,7 +347,9 @@ export const en = {
         "login.error": "There was an error with the inputted values",
         "login.mail.address": "Email address",
         "login.password": "Password",
+    "login.succesful": "Logged in succesfully",
         "login.rememberMe": "Remember me",
+    "login.notMemberYet": "Not a member yet?",
         "login.signIn": "Sign in",
         "login.emailNotVerified": "The email is not verified.",
         "login.emailResended": "The confirmation link has been resended.",
@@ -346,9 +357,9 @@ export const en = {
 
         //Moderation panel
         "moderation.panel": "Moderation Panel",
-        "moderation.emptyArticles": "There are no reported articles yet.",
+        "moderation.emptyArticles": "There are no articles to show.",
         "moderation.reportedComments": "Reported comments",
-        "moderation.emptyComments": "There are no reported comments yet.",
+        "moderation.emptyComments": "There are no comments to show.",
         "moderation.emptyAdmins": "There are no admins yet.",
         "moderation.emptyAdminsSearch":   `No admins match \"{{count}}\"`,
         "moderation.details": "View details",

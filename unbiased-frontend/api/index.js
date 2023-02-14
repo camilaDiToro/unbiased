@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import FormData from "form-data";
 import {useSnackbar} from "notistack";
 
-const log = true
+const log = false
 
 export const useApi = (loggedUser, axios) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -44,13 +44,13 @@ export class Api {
                     method: 'put',
                     url: 'users/0/pinnedNews',
                     auth: {username: email, password},
-                    params: {newsId: 0},
-                    hideError: true
+                    login: true,
+                    params: {newsId: 0}
                 })
             }
             catch(error) {
                 if (!error.response || !(error.response.status === 404)) {
-                    throw new Error("Error logging in")
+                    throw new Error(error)
                 }
             }
 
@@ -330,7 +330,8 @@ export class Api {
             }),{
                 headers: {
                     'Content-Type': 'application/vnd.unbiased.user.v1+json',
-                }
+                },
+                register: true
             })
         }
 

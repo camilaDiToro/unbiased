@@ -7,5 +7,5 @@ import ar.edu.itba.paw.model.user.User;
 
 @FunctionalInterface
 public interface GetNewsProfileFunction {
-    Page<News> getNews(int page, User user, NewsOrder ns, Long loggedUser);
+    Page<News> getNews(int page, User user, NewsOrder ns);
 }

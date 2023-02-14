@@ -43,7 +43,7 @@ public class AdminServiceImpl implements AdminService{
     @Transactional
     public ReportDetail reportNews(long userId, long newsId, ReportReason reportReason) {
         final User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        final News news = newsService.getById(user, newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         if(newsDao.isReportedByUser(news, user)){
             return null;
         }
@@ -56,13 +56,13 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public List<News> getReportedByUserNews(User user) {
-        return newsDao.getReportedByUserNews(user.getUserId());
+    public Page<News> getReportedByUserNews(int page, long userId) {
+        return newsDao.getReportedByUserNews(page, userId);
     }
 
     @Override
-    public List<Comment> getReportedByUserComments(User user) {
-        return commentDao.getReportedByUserComments(user.getUserId());
+    public Page<Comment> getReportedByUserComments(int page, User user) {
+        return commentDao.getReportedByUserComments(page, user.getUserId());
     }
 
     @Override

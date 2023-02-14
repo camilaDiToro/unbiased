@@ -89,7 +89,7 @@ export default function ShowNews() {
             </div>
           </div>
           <hr/>
-          {article.hasImage ? <img className="w-50 m-4 max-h-300px rounded mx-auto d-block img-thumbnail" src={article.image} alt=""/>
+          {article.hasImage ? <img className="max-w-50 m-4 max-h-600px rounded mx-auto d-block img-thumbnail" src={article.image} alt=""/>
               : <></>}
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex gap-1 align-items-center justify-content-between w-100">

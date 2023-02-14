@@ -21,7 +21,7 @@ export default function AddAdmin(props){
     const router = useRouter()
 
     const [details, setDetails] = useState(router.query.search|| '')
-    const [userList, setUserList] = useState([])
+    const [userList, setUserList] = useState(undefined)
     const [pagination, setPagination] = usePagination()
     const [addAdminMode, setAddAdminMode] = useState(!!router.query.add)
 
@@ -86,7 +86,7 @@ export default function AddAdmin(props){
 
                 <div className="flex-grow-1 d-flex flex-row">
 
-                    <ModerationPanel/>
+                    <ModerationPanel selected="manage-admins"/>
                     <div className="d-flex flex-column w-75 align-items-center">
                         <div className="w-100 my-3 d-flex flex-row justify-content-center">
                             <div className=" d-flex w-100 m-2 my-lg-0 ">
@@ -106,8 +106,8 @@ export default function AddAdmin(props){
                             {/*TODO: modal*/}
                         </div>
                         <div className="container-fluid">
-                            <MainCardsContainer rows={3}>
-                                {userList.map(c => <Creator toAdd={addAdminMode} admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)}
+                            <MainCardsContainer rows={3} loaded={userList}>
+                                {(userList || []).map(c => <Creator toAdd={addAdminMode} admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)}
                             </MainCardsContainer>
 
                         </div>

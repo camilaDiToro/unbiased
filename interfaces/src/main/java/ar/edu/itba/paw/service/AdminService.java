@@ -14,8 +14,8 @@ import java.util.List;
 public interface AdminService {
     ReportDetail reportNews(long userId, long newsId, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
-    List<News> getReportedByUserNews(User user);
-    List<Comment> getReportedByUserComments(User user);
+    Page<News> getReportedByUserNews(int page, long userId);
+    Page<Comment> getReportedByUserComments(int page, User user);
     ReportedComment reportComment(long userId, long commentId, ReportReason reportReason);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsIs);
     void deleteNews(long newsId);

@@ -59,7 +59,7 @@ public enum GetNewsFilter {
 
         @Override
         public Page<News> getNews(NewsService newsService, AdminService adminService, int page, GetNewsParams params) {
-            return new Page<>(adminService.getReportedByUserNews(params.getUser()), 1, 1);
+            return adminService.getReportedByUserNews(page, params.getUser().getUserId());
         }
     },
     REPORTED(){
@@ -123,10 +123,6 @@ public enum GetNewsFilter {
             return newsService.getNewsForUserProfile(Optional.empty(), page, params.getOrderObj(), params.getUser(), ProfileCategory.SAVED);
         }
     };
-
-    public String getInvalidParamsMsg(String search, Long id){
-        return String.format("Invalid params %s, %d", search, id);
-    }
 
     public abstract GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id);
 

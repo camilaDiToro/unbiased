@@ -2,7 +2,6 @@ package ar.edu.itba.paw.model.news;
 
 import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.admin.ReportDetail;
-import ar.edu.itba.paw.model.user.LoggedUserParameters;
 import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.Upvote;
 import ar.edu.itba.paw.model.user.User;
@@ -106,14 +105,15 @@ public class News implements Serializable {
     @JoinColumn(name = "creator", referencedColumnName = "user_id")
     private User creator;
 
+
+
     @Transient
     private Integer upvotes = 0;
 
     @Transient
     private Integer downvotes = 0;
 
-    @Transient
-    private LoggedUserParameters loggedUserParameters;
+
 
     @OneToMany(mappedBy="news",fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapKey(name = "userId")
@@ -166,21 +166,7 @@ public class News implements Serializable {
         creationDate = date.toLocalDateTime();
     }
 
-    public void setUserSpecificVariables(long userId) {
-        final Upvote upvote = upvoteMap.get(userId); // TODO fix
-        final Rating rating = upvote != null ? (upvote.isValue() ? Rating.UPVOTE : Rating.DOWNVOTE) : Rating.NO_RATING;
-        loggedUserParameters = new LoggedUserParameters(rating, usersSaved.containsKey(userId));
-    }
 
-    public boolean hasLoggedUserParameters() {
-        return loggedUserParameters != null;
-    }
-
-    public LoggedUserParameters getLoggedUserParameters() {
-
-
-        return loggedUserParameters;
-    }
 
     public News(NewsBuilder builder) {
         this.creator = builder.creator;

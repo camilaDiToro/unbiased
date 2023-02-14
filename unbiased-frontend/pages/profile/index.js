@@ -19,6 +19,8 @@ import {useTriggerEffect} from "../../utils"
 import Pagination from "../../components/Pagination";
 import usePagination from "../../pagination";
 import {getResourcePath} from "../../constants";
+import MainCardsContainer from "../../components/MainCardsContainer";
+import {use} from "i18next";
 
 
 
@@ -32,7 +34,7 @@ export default function Profile() {
   const [profileEffectTrigger, profileTriggerEffect] = useTriggerEffect()
   const [newsEffectTrigger, newsTriggerEffect] = useTriggerEffect()
 
-  const [useNews, setNews] = useState([])
+  const [useNews, setNews] = useState(undefined)
   const [pagination, setPagination] = usePagination()
   const [profileInfo, setProfileInfo] = useState(undefined)
   const [pinned, setPinned] = useState(undefined)
@@ -59,7 +61,8 @@ export default function Profile() {
       const {success, pagination, data} = res
       if (success) {
         setPagination(pagination)
-        setNews(data)
+        const finalData = data.filter(n => n.id !== pinned?.id)
+        setNews(finalData)
       }
     })
   }, [router.query, newsEffectTrigger])
@@ -85,7 +88,16 @@ export default function Profile() {
     })
   }, [newsEffectTrigger, id])
 
+  const getNews = () => {
+    let news = pinned ? [pinned] : []
 
+    // if (pinned) {
+    //   news = [pinned]
+    // }
+
+
+    return [...news, ...(useNews || [])]
+  }
 
   useEffect(() => {
     if (!id)
@@ -101,7 +113,7 @@ export default function Profile() {
       }
     })
 
-  }, [profileEffectTrigger, id])
+  }, [profileEffectTrigger,newsEffectTrigger, id])
 
 
   let submitHandlerArray = []
@@ -200,15 +212,15 @@ export default function Profile() {
         <TopNewTabs></TopNewTabs>
       </div>
       <div className="tab">
-        <div className="container-fluid">
-          <div className="row row-cols-1">
-            {pinned ? <Article pinned triggerEffect={newsTriggerEffect} profileArticle {...pinned} key={pinned.id} id={pinned.id}></Article> : <></>}
-
-            {useNews.map((n) => (
-                <Article triggerEffect={newsTriggerEffect} profileArticle {...n} key={n.id} id={n.id}></Article>
-            ))}
-          </div>
-        </div>
+        <MainCardsContainer loaded={useNews} rows={1}>
+            {/*{ <Article pinned triggerEffect={newsTriggerEffect} profileArticle {...pinned} key={pinned.id} id={pinned.id}></Article>}*/}
+          {getNews().map((n) => (
+              <Article triggerEffect={newsTriggerEffect} profileArticle {...n} key={n.id} id={n.id}></Article>
+          ))}
+            {/*{useNews.map((n) => (*/}
+            {/*    <Article triggerEffect={newsTriggerEffect} profileArticle {...n} key={n.id} id={n.id}></Article>*/}
+            {/*))}*/}
+        </MainCardsContainer>
       </div>
     </div>)
 

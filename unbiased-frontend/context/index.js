@@ -71,11 +71,18 @@ export default function AppWrapper({ children }) {
     }, async (error) => {
         setHeadersIfExist(error.response)
         const code = getErrorCode(error)
-        if (!error.config.hideError) {
-            showError(code)
+
+        if ((error.config.login || error.config.register) && error.response.status === 404) {
+            enqueueSnackbar(error.config.login ? I18n("login.succesful") : I18n("regoster.succesful"))
+        } else {
+            if (!error.config.hideError) {
+                showError(code)
+            }
         }
 
-        const loginURL = '/login'
+
+
+        const loginURL = '/login/'
         if (router.pathname !== loginURL) {
             if (code === 606 || code  === 603 || code  === 605|| code  === 600) {
                 jwtState[1]({})
@@ -87,7 +94,7 @@ export default function AppWrapper({ children }) {
                     return axios.request(config)
                 } else {
                     jwtState[1]({})
-                    localStorage.setItem('fromPage', 'true')
+
                     if (!error.config.authOptional) {
                         await router.push(loginURL)
                     }
