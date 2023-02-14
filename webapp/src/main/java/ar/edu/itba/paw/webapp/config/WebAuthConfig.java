@@ -146,6 +146,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().headers().cacheControl().disable().and().authorizeRequests()
                 .and().authorizeRequests()
                 .antMatchers("/users/{\\d+}/role").access("hasRole('OWNER')")
+                .antMatchers("/admin/manage-admins").access("hasRole('OWNER')")
+                .antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('OWNER')")
                 .antMatchers("/**")
                 .permitAll()
                 .and().addFilterBefore(abstractAuthFilter(), UsernamePasswordAuthenticationFilter.class)
