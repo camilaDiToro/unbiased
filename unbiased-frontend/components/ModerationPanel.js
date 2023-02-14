@@ -20,14 +20,14 @@ export default function ModerationPanel(props){
 
                     {
                         props.selected === 'reported-news' ?
-                            <Link className="mb-2 nav-link bold select pl-0" href="/admin/reported-news">
+                            <Link data-testid="reported-news-select" className="mb-2 nav-link bold select pl-0" href="/admin/reported-news">
                                 <img className="mb-2 moderation-img" src={getResourcePath("/img/warning-svgrepo-com.svg")} alt="..."/>
                                 {ctx.I18n("moderation.reportedArticles")}
                             </Link>
 
                             :
 
-                            <Link className="mb-2 nav-link selected bold pl-0" href="/admin/reported-news">
+                            <Link data-testid="reported-news-default" className="mb-2 nav-link selected bold pl-0" href="/admin/reported-news">
                                 <img className="mb-2 moderation-img" src={getResourcePath("/img/warning-svgrepo-com.svg")} alt="..."/>
                                 {ctx.I18n("moderation.reportedArticles")}
                             </Link>
@@ -46,7 +46,7 @@ export default function ModerationPanel(props){
 
                         :
 
-                        <Link className="mb-2 nav-link selected pl-0" href="/admin/reported-comments">
+                        <Link data-testid="reported-comments-default" className="mb-2 nav-link selected pl-0" href="/admin/reported-comments">
                             <img className="mb-2 moderation-img" src={getResourcePath("/img/cancel-comment.svg")} alt="..."/>
                             {ctx.I18n("moderation.reportedComments")}
                         </Link>
@@ -65,7 +65,7 @@ export default function ModerationPanel(props){
 
                         :
 
-                        <Link className="mb-2 nav-link selected pl-0" href="/admin/manage-admins">
+                        <Link data-testid="manage-admins-default" className="mb-2 nav-link selected pl-0" href="/admin/manage-admins">
                             <img className="mb-2 moderation-img" src={getResourcePath("/img/add-user-svgrepo-com.svg")} alt="..."/>
                             {ctx.I18n("moderation.manage")}
                         </Link>

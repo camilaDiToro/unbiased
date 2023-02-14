@@ -62,7 +62,7 @@ describe('Article test', ()=>{
     })
 
 
-    test('Check if all the readable props appear on the card', () => {
+    test('All the readable props appear on the card', () => {
 
         render(<Article {...propsMap}/>) //This wraps the Article component into our rendered context (it's a custom render of RTL)
 
