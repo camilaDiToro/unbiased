@@ -2,6 +2,7 @@ import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import Comment from "../../components/Comment";
 import i18n from "../../i18n/i18n";
+import {getDefaultLoggedUser} from "../test_utils/defaultLoggedUser";
 
 const {render, screen} = testingLibrary;
 
@@ -62,13 +63,20 @@ describe('Comment test', () => {
     })
 
     test('Show al visible components when comment is not deleted', ()=>{
+        const loggedUser =  getDefaultLoggedUser()
         propsMap = customPropsMap({body: "My body", deleted: false})
-        render(<Comment {...propsMap}/>)
+        render(<Comment {...propsMap}/>, {loggedUser})
         expect(screen.getByText(propsMap.body)).toBeInTheDocument()
         expect(screen.getByRole('button', {name: "Mocked delete button"})).toBeInTheDocument()
         expect(screen.getByRole('button', {name: "Mocked upvote button"})).toBeInTheDocument()
         expect(screen.getByRole('button', {name: "Mocked report flag button"})).toBeInTheDocument()
         expect(screen.queryByText("The comment has been deleted.")).toBeNull()
+    })
+
+    test('Do not show report flag when user is not logged', ()=>{
+        const loggedUser = null
+        render(<Comment {...propsMap}/>, {loggedUser})
+        expect(screen.queryByRole('button', {name: "Mocked report flag button"})).toBeNull()
     })
 
     test('Show delete message when comment is deleted', ()=>{

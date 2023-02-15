@@ -26,7 +26,7 @@ describe('Comment button test', ()=>{
             type: '',
         }
         render(<CommentButton {...propsMap}/>, {query})
-        expect(screen.getByTitle('comment-button-link').closest('a')).toHaveAttribute('href', `/article?id=${propsMap.id}?comment=true`)
+        expect(screen.getByTitle('comment-button-link').closest('a')).toHaveAttribute('href', `/article?id=${propsMap.id}&comment=true`)
     })
 
 })
