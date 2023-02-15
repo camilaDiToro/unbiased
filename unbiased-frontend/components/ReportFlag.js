@@ -4,7 +4,6 @@ import Tooltip from "./Tooltip";
 import Modal from "./Modal";
 import ReportForm from "./ReportForm";
 import ModalTrigger from "./ModalTrigger";
-import {useState} from "react";
 import {getResourcePath} from "../constants";
 import {useRouter} from "next/router";
 
@@ -31,8 +30,8 @@ export default function ReportFlag(props) {
                     />
                 </Tooltip>
             </ModalTrigger>
-            {props.reported ? <></> : <Modal noFooter onClickHandlerArray={handlerArray} title={I18n(props.comment ? "showNews.reportCommentQuestion" : "showNews.reportNewsQuestion")} id={`report${props.comment ? 'Comment' : 'Article'}${props.id}`}>
-                <ReportForm id={props.id} comment={props.comment} triggerEffect={props.triggerEffect} handlerArray={handlerArray}></ReportForm>
+            {props.reported ? <></> : <Modal noFooter title={I18n(props.comment ? "showNews.reportCommentQuestion" : "showNews.reportNewsQuestion")} id={`report${props.comment ? 'Comment' : 'Article'}${props.id}`}>
+                <ReportForm id={props.id} comment={props.comment} triggerEffect={props.triggerEffect} ></ReportForm>
             </Modal>}
         </div>
             : <Tooltip text={tooltipMap[`${!!props.reported}`]} position="bottom" >

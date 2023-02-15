@@ -111,7 +111,6 @@ const types = {
         id: PropTypes.string.isRequired,
         body: PropTypes.string,
         onClickHandler: PropTypes.func,
-        onClickHandlerArray: PropTypes.array,
         title: PropTypes.string.isRequired,
         acceptText: PropTypes.string
     },
@@ -189,7 +188,6 @@ const types = {
         triggerEffect: PropTypes.func.isRequired,
         comment: PropTypes.bool,
         id: PropTypes.number.isRequired,
-        handlerArray: PropTypes.array.isRequired
     },
     Tooltip: {
         onClickHandler: PropTypes.func,
