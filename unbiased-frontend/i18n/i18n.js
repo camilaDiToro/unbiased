@@ -141,9 +141,9 @@ const es = {
 
     //Moderation panel
     "moderation.panel": "Panel de moderación",
-    "moderation.emptyArticles": "No hay noticias reportadas todavía.",
+    "moderation.emptyArticles": "No hay noticias todavía.",
     "moderation.reportedComments": "Comentarios reportados",
-    "moderation.emptyComments": "No hay comentarios reportados todavía.",
+    "moderation.emptyComments": "No hay comentarios todavía.",
     "moderation.emptyAdmins": "No hay resultados.",
     "moderation.emptyAdminsSearch": `Ningún administrador coincide con \"{{count}}\"`,
     "moderation.details": "Ver detalles",
