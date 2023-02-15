@@ -1,11 +1,8 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.webapp.constraints.FileSize;
 import ar.edu.itba.paw.webapp.constraints.NotExistingNewsCategory;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.validation.constraints.NotNull;
 
@@ -13,19 +10,16 @@ public class CreateNewsForm {
 
     @NotNull
     @NotBlank
-    @Length(max=200)
+    @Length(max = 200)
     private String title;
     @NotNull
     @NotBlank
-    @Length(max=400)
+    @Length(max = 400)
     private String subtitle;
     @NotNull
     @NotBlank
-    @Length(max=10000000)
+    @Length(max = 10000000)
     private String body;
-//
-//    @FileSize
-//    private CommonsMultipartFile image;
     @NotExistingNewsCategory
     private String[] categories;
 
@@ -63,12 +57,4 @@ public class CreateNewsForm {
         this.body = body;
     }
 
-
-//    public MultipartFile getImage() {
-//        return image;
-//    }
-//
-//    public void setImage(CommonsMultipartFile image) {
-//        this.image = image;
-//    }
 }
