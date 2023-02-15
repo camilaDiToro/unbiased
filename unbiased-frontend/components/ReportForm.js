@@ -10,7 +10,6 @@ export default function ReportForm(props) {
     const reportReasons = ["report.inappropiate", "report.notSerious", "report.violent", "report.lie"]
 
 
-
     const handleChange = (e) => {
         const el = e.target
         if (el.checked) {

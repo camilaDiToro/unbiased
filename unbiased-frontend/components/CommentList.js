@@ -9,8 +9,14 @@ import types from "../types";
 export default function CommentList(props) {
   const {I18n, loggedUser, api}= useAppContext();
   const [comment, setComment] = useState({comment: ''})
+
+  const validForm = () => {
+    return !!comment.comment
+  }
   const submitComment = async (e) => {
     e.preventDefault()
+    if (!validForm())
+      return
     const {success} = await api.postComment(comment.comment, props.newsId)
     if (success) {
       setComment({comment: ''})
@@ -34,7 +40,7 @@ export default function CommentList(props) {
                             id="comment-input"
                             placeholder={I18n("showNews.comment")} />
               </div>
-              <button onClick={submitComment} className="btn btn-primary flex-grow-0 align-self-end" type="submit">
+              <button onClick={submitComment} className={`btn btn-primary flex-grow-0 align-self-end ${validForm() ? '' : 'disabled noHover'}`} type="submit">
                 {I18n("showNews.comment.submit")}
               </button>
             </div> :
@@ -46,11 +52,12 @@ export default function CommentList(props) {
             </h6>
           }
 
-          <TopNewTabs></TopNewTabs>
 
           {props.comments.length === 0 ?
             <h6  className="m-2 align-self-center">{I18n("showNews.emptyCommentsLogged")}</h6> :
             <>
+              <TopNewTabs></TopNewTabs>
+
               {props.comments.map(c => <Comment triggerEffect={props.triggerEffect} key={c.id} {...c}></Comment>)}
             </>
           }

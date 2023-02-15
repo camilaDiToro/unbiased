@@ -67,6 +67,10 @@ const authError = {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
+  [FORM_VALIDATION_ERROR]: {
+    es: "Error en los datos ingresados",
+    en: "Error in the validation of the form"
+  },
   [USER_DISABLED]: {
     es: "El usuario se encuentra deshabilitado",
     en: "The user is disabled"
@@ -98,6 +102,70 @@ export default {
   [REPORTNEWSFORM_REASON_NOTBLANK]: {
     es: "Se debe seleccionar una opción de reportado",
     en: "A report option must be selected"
+  },
+  [REPORTNEWSFORM_REASON_LENGTH]: {
+    es: "El motivo de reporte es demasiado largo",
+    en: "The report reason is too long"
+  },
+  [REPORTNEWSFORM_REASON_NOTFOUND]: {
+    es: "El motivo de reporte no es válido",
+    en: "The report reason is invalid"
+  },
+  [REPORTNEWSFORM_REASON_NOTNULL]: {
+    es: "El motivo de reporte no puede ser vacío",
+    en: "The report reason cannot be empty"
+  },
+  [CREATENEWSFORM_TITLE_NOTBLANK ]: {
+    es: "El título de la noticia no puede ser vacío",
+    en: "The news title cannot be empty"
+  },
+  [CREATENEWSFORM_TITLE_NOTNULL ]: {
+    es: "El título de la noticia no puede ser vacío",
+    en: "The news title cannot be empty"
+  },
+  [CREATENEWSFORM_TITLE_LENGTH ]: {
+    es: "El título de la noticia es demasiado largo",
+    en: "The news title is too long"
+  },
+  [CREATENEWSFORM_SUBTITLE_NOTBLANK ]: {
+    es: "El subtítulo de la noticia no puede ser vacío",
+    en: "The news subtitle cannot be empty"
+  },
+  [CREATENEWSFORM_SUBTITLE_NOTNULL ]: {
+    es: "El subtítulo de la noticia no puede ser vacío",
+    en: "The news subtitle cannot be empty"
+  },
+  [CREATENEWSFORM_SUBTITLE_LENGTH ]: {
+    es: "El subtítulo de la noticia es demasiado largo",
+    en: "The news subtitle is too long"
+  },
+  [CREATENEWSFORM_BODY_NOTBLANK ]: {
+    es: "El cuerpo de la noticia no puede ser vacío",
+    en: "The news body cannot be empty"
+  },
+  [CREATENEWSFORM_BODY_NOTNULL ]: {
+    es: "El cuerpo de la noticia no puede ser vacío",
+    en: "The news body cannot be empty"
+  },
+  [CREATENEWSFORM_BODY_LENGTH ]: {
+    es: "El cuerpo de la noticia es demasiado largo",
+    en: "The news body is too long"
+  },
+  [CREATENEWSFORM_CATEGORIES_NOTFOUND ]: {
+    es: "La categoría de la noticia es inválida",
+    en: "The news category is not valid"
+  },
+  [COMMENTNEWSFORM_COMMENT_NOTBLANK ]: {
+    es: "El comentario no puede ser vacío",
+    en: "The comment cannot be empty"
+  },
+  [COMMENTNEWSFORMM_COMMENT_NOTNULL ]: {
+    es: "El comentario no puede ser vacío",
+    en: "The comment cannot be empty"
+  },
+  [COMMENTNEWSFORM_COMMENT_LENGTH ]: {
+    es: "El comentario es demasiado largo",
+    en: "The comment is too long"
   },
   [ACCESS_DENIED]: {
     es: "Acceso denegado",

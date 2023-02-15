@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import FormData from "form-data";
 import {useSnackbar} from "notistack";
 
-const log = true
+const log = !process.env.isProd
 
 export const useApi = (loggedUser, axios) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -49,7 +49,6 @@ export class Api {
                 })
             }
             catch(error) {
-                console.log(error)
                 if (!error.response || !(error.response.status === 404)) {
                     throw new Error(error)
                 }
@@ -404,9 +403,7 @@ export class Api {
             let userInfo
             if (data && data.newsStats) {
                 const stats = await this.axios.get(data.newsStats)
-                console.log(stats.data)
                 data.newsStats = stats.data
-                // const withLoggedData = this.#fill
                 userInfo = userMapper(res.data)
             } else {
                 userInfo = res.data ? userMapper(res.data) : {}
@@ -610,6 +607,12 @@ export class Api {
                 f.set('image', image)
                 const fileRes = await this.axios.put(`users/${id}/image`, f)
             }
+
+            const r = await this.getUser(id)
+            if(r.error)
+                throw new Error(r)
+            else if(r.success)
+                return r
         }
 
         return await Api.#runRequest(action)
