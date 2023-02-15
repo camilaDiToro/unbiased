@@ -104,18 +104,18 @@ export default function AppWrapper({ children }) {
   const getErrorCodes = (error) => {
     if (error.code === "ERR_NETWORK") return CONN_TIMEOUT;
     if (error.status === 500) {
-      return SERVER_ERROR;
+      return [SERVER_ERROR];
     }
     if (
       !error.response ||
       !error.response.data
     ) {
-      return UNKNOWN;
+      return [UNKNOWN];
     }
     if (Array.isArray(error.response.data)) {
       return error.response.data.map(a => a.apiCode)
     }
-    return [error.response.data.apiCode]
+    return [error.response.data.apiCode ? error.response.data.apiCode : UNKNOWN]
   };
 
   const showError = (code) => {
@@ -205,7 +205,7 @@ export default function AppWrapper({ children }) {
     axios: axiosInstance,
     jwtState,
     setLoggedUser,
-    api: useApi(loggedUser, axiosInstance),
+    api: useApi(loggedUser, axiosInstance, I18n),
   };
 
   return (

@@ -6,18 +6,19 @@ import {useSnackbar} from "notistack";
 
 const log = !process.env.isProd
 
-export const useApi = (loggedUser, axios) => {
+export const useApi = (loggedUser, axios, I18n) => {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const router = useRouter()
-    return new Api(loggedUser, axios, router, enqueueSnackbar)
+    return new Api(loggedUser, axios, router, enqueueSnackbar, I18n)
 }
 
 export class Api {
-    constructor(loggedUser, axios, router, enqueueSnackbar) {
+    constructor(loggedUser, axios, router, enqueueSnackbar, I18n) {
         this.axios = axios
         this.loggedUser = loggedUser
         this.router = router
         this.enqueueSnackbar = enqueueSnackbar
+        this.I18n = I18n
     }
 
     async #getPagination(res) {
@@ -49,9 +50,20 @@ export class Api {
                 })
             }
             catch(error) {
-                if (!error.response || !(error.response.status === 404)) {
+                if (!error.response) {
                     throw new Error(error)
                 }
+                const {status} = error.response
+                if (status === 404)
+                    return
+
+                if (status === 401) {
+                    const {data} = await this.axios.get(`users/${email}/status`)
+                    if (data.userStatus === 'UNABLE') {
+                        this.enqueueSnackbar(this.I18n("login.emailResended"))
+                    }
+                }
+                throw new Error(error)
             }
 
 
@@ -573,15 +585,6 @@ export class Api {
             this.enqueueSnackbar("User not logged in")
             throw new Error("User not logged in")
         }
-    }
-
-    async getArticleReports(id) {
-        const action = async () => {
-            const res = await this.axios.get(`news/${id}/reports`)
-            return res.data || []
-        }
-
-        return await Api.#runRequest(action)
     }
 
     async getArticleReports(id) {

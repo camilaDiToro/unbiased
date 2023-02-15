@@ -136,7 +136,7 @@ const es = {
     "login.notMemberYet": "No eres un miembro todavía?",
     "login.signIn": "Iniciar Sesión",
     "login.emailNotVerified": "El email no se encuentra verificado.",
-    "login.emailResended": "El link de confirmación fue reenviado.",
+    "login.emailResended": "Correo no verificado. El link de confirmación fue reenviado.",
     "login.resendVerificationEmail.button": "Reenviar verificación de email",
 
     //Moderation panel
@@ -359,7 +359,7 @@ export const en = {
     "login.notMemberYet": "Not a member yet?",
         "login.signIn": "Sign in",
         "login.emailNotVerified": "The email is not verified.",
-        "login.emailResended": "The confirmation link has been resended.",
+        "login.emailResended": "Email not verified. The confirmation link has been resent.",
         "login.resendVerificationEmail.button": "Resend verification email",
 
         //Moderation panel
