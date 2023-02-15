@@ -15,11 +15,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(value = { CustomMediaType.ERROR_V1 })
 public class ImageNotFoundExceptionMapper implements ExceptionMapper<ImageNotFoundException> {
 
-    private static final String MESSAGE = "Image not found";
-
     @Override
     public Response toResponse(ImageNotFoundException e) {
-        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.IMAGE_NOT_FOUND, e.getMessage());
+        ApiErrorDto dto = new ApiErrorDto(ApiErrorCode.IMAGE_NOT_FOUND, e.getMessage());
         return Response.status(Response.Status.NOT_FOUND).entity(dto).build();
     }
 }

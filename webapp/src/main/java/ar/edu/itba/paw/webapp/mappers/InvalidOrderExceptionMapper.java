@@ -15,11 +15,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(value = { CustomMediaType.ERROR_V1 })
 public class InvalidOrderExceptionMapper implements ExceptionMapper<InvalidOrderException> {
 
-    private static final String MESSAGE = "Invalid order";
-
     @Override
     public Response toResponse(InvalidOrderException e) {
-        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.INVALID_ORDER, e.getMessage());
+        ApiErrorDto dto = new ApiErrorDto(ApiErrorCode.INVALID_ORDER, e.getMessage());
         return Response.status(Response.Status.BAD_REQUEST).entity(dto).build();
     }
 }

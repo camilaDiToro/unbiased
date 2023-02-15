@@ -16,11 +16,10 @@ import javax.ws.rs.ext.Provider;
 @Produces(value = { CustomMediaType.ERROR_V1 })
 public class NewsNotFoundExceptionMapper implements ExceptionMapper<NewsNotFoundException> {
 
-    private static final String MESSAGE = "Article not found";
 
     @Override
     public Response toResponse(NewsNotFoundException e) {
-        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.NEWS_NOT_FOUND, e.getMessage());
+        ApiErrorDto dto = new ApiErrorDto(ApiErrorCode.NEWS_NOT_FOUND, e.getMessage());
         return Response.status(Response.Status.NOT_FOUND).entity(dto).build();
     }
 }

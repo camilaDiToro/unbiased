@@ -7,19 +7,17 @@ import org.springframework.security.core.AuthenticationException;
 
 public class InvalidJwtTokenException extends AuthenticationException implements ApiErrorExceptionInt {
 
-    private static final String MSG = "Invalid JWT token: %s";
     private static final ApiErrorCode CODE = ApiErrorCode.INVALID_JWT_CLAIM;
     private static final HttpStatus STATUS = HttpStatus.UNAUTHORIZED;
-
     private final String details;
 
     public InvalidJwtTokenException(String s, Throwable t) {
-        super(String.format(MSG, s), t);
+        super(CODE.getErrorMsg() + ": " + s, t);
         this.details = s;
     }
 
     public InvalidJwtTokenException(String s) {
-        super(String.format(MSG, s));
+        super(CODE.getErrorMsg() + ": " + s);
         this.details = s;
     }
 
@@ -31,11 +29,6 @@ public class InvalidJwtTokenException extends AuthenticationException implements
     @Override
     public HttpStatus getHttpStatus() {
         return STATUS;
-    }
-
-    @Override
-    public String getApiErrorMessage() {
-        return String.format(MSG, details);
     }
 
     @Override

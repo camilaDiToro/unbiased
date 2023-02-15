@@ -7,18 +7,17 @@ import org.springframework.security.core.AuthenticationException;
 
 public class ExpiredJwtTokenException extends AuthenticationException implements ApiErrorExceptionInt {
 
-    private static final String MSG = "Invalid authentication JWT token";
     private static final ApiErrorCode CODE = ApiErrorCode.EXPIRED_JWT_TOKEN;
     private static final HttpStatus STATUS = HttpStatus.UNAUTHORIZED;
     private final String details;
 
     public ExpiredJwtTokenException(String s, Throwable t) {
-        super(MSG, t);
+        super(CODE.getErrorMsg() + ": " + s, t);
         this.details = s;
     }
 
     public ExpiredJwtTokenException(String s) {
-        super(MSG);
+        super(CODE.getErrorMsg() + ": " + s);
         this.details = s;
     }
 
@@ -32,10 +31,6 @@ public class ExpiredJwtTokenException extends AuthenticationException implements
         return STATUS;
     }
 
-    @Override
-    public String getApiErrorMessage() {
-        return MSG;
-    }
 
     @Override
     public String getDetails() {

@@ -6,21 +6,18 @@ public class ApiErrorException extends RuntimeException implements ApiErrorExcep
 
     private final HttpStatus status;
     private final ApiErrorCode code;
-    private final String msg;
     private final String details;
 
-    public ApiErrorException(HttpStatus status, ApiErrorCode code, String msg, String details) {
-        super(msg);
+    public ApiErrorException(HttpStatus status, ApiErrorCode code, String details) {
+        super(code.getErrorMsg());
         this.status = status;
         this.code = code;
-        this.msg = msg;
         this.details = details;
     }
-    public ApiErrorException(HttpStatus status, ApiErrorCode code, String msg, String details, Throwable t) {
-        super(msg,t);
+    public ApiErrorException(HttpStatus status, ApiErrorCode code, String details, Throwable t) {
+        super(code.getErrorMsg(),t);
         this.status = status;
         this.code = code;
-        this.msg = msg;
         this.details = details;
     }
 
@@ -34,10 +31,6 @@ public class ApiErrorException extends RuntimeException implements ApiErrorExcep
         return status;
     }
 
-    @Override
-    public String getApiErrorMessage() {
-        return msg;
-    }
 
     @Override
     public String getDetails() {

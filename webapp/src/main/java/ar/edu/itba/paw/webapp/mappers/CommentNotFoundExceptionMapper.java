@@ -15,11 +15,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(value = { CustomMediaType.ERROR_V1 })
 public class CommentNotFoundExceptionMapper implements ExceptionMapper<CommentNotFoundException> {
 
-    private static final String MESSAGE = "Comment not found";
-
     @Override
     public Response toResponse(CommentNotFoundException e) {
-        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.COMMENT_NOT_FOUND, e.getMessage());
+        ApiErrorDto dto = new ApiErrorDto(ApiErrorCode.COMMENT_NOT_FOUND, e.getMessage());
         return Response.status(Response.Status.NOT_FOUND).entity(dto).build();
     }
 }

@@ -7,18 +7,17 @@ import org.springframework.security.core.AuthenticationException;
 
 public class InvalidEmailTokenException extends AuthenticationException implements ApiErrorExceptionInt {
 
-    private static final String MSG = "Invalid authentication email token";
     private static final ApiErrorCode CODE = ApiErrorCode.INVALID_EMAIL_TOKEN;
     private static final HttpStatus STATUS = HttpStatus.UNAUTHORIZED;
     private final String details;
 
     public InvalidEmailTokenException(String s, Throwable t) {
-        super(MSG, t);
+        super(CODE.getErrorMsg() + ": " + s, t);
         this.details = s;
     }
 
     public InvalidEmailTokenException(String s) {
-        super(MSG);
+        super(CODE.getErrorMsg() + ": " + s);
         this.details = s;
     }
 
@@ -30,11 +29,6 @@ public class InvalidEmailTokenException extends AuthenticationException implemen
     @Override
     public HttpStatus getHttpStatus() {
         return STATUS;
-    }
-
-    @Override
-    public String getApiErrorMessage() {
-        return MSG;
     }
 
     @Override

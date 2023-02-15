@@ -7,18 +7,17 @@ import org.springframework.security.core.AuthenticationException;
 
 public class NotExistentEmailTokenException extends AuthenticationException implements ApiErrorExceptionInt {
 
-    private static final String MSG = "The sent token does not exist";
     private static final ApiErrorCode CODE = ApiErrorCode.NOT_EXISTENT_TOKEN;
     private static final HttpStatus STATUS = HttpStatus.UNAUTHORIZED;
     private final String details;
 
     public NotExistentEmailTokenException(String s, Throwable t) {
-        super(MSG, t);
+        super(CODE.getErrorMsg() + ": " + s, t);
         this.details = s;
     }
 
     public NotExistentEmailTokenException(String s) {
-        super(MSG);
+        super(CODE.getErrorMsg() + ": " + s);
         this.details = s;
     }
 
@@ -30,11 +29,6 @@ public class NotExistentEmailTokenException extends AuthenticationException impl
     @Override
     public HttpStatus getHttpStatus() {
         return STATUS;
-    }
-
-    @Override
-    public String getApiErrorMessage() {
-        return MSG;
     }
 
     @Override

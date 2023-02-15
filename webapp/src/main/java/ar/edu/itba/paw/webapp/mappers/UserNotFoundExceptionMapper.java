@@ -17,11 +17,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(value = { CustomMediaType.ERROR_V1 })
 public class UserNotFoundExceptionMapper implements ExceptionMapper<UserNotFoundException> {
 
-    private static final String MESSAGE = "User not found";
-
     @Override
     public Response toResponse(UserNotFoundException e) {
-        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.USER_NOT_FOUND, e.getMessage());
+        ApiErrorDto dto = new ApiErrorDto(ApiErrorCode.USER_NOT_FOUND, e.getMessage());
         return Response.status(Response.Status.NOT_FOUND).entity(dto).build();
     }
 }

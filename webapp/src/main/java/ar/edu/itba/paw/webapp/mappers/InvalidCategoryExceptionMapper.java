@@ -14,11 +14,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(value = { CustomMediaType.ERROR_V1 })
 public class InvalidCategoryExceptionMapper implements ExceptionMapper<InvalidCategoryException> {
 
-    private static final String MESSAGE = "Invalid category";
-
     @Override
     public Response toResponse(InvalidCategoryException e) {
-        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.INVALID_CATEGORY, e.getMessage());
+        ApiErrorDto dto = new ApiErrorDto(ApiErrorCode.INVALID_CATEGORY, e.getMessage());
         return Response.status(Response.Status.BAD_REQUEST).entity(dto).build();
     }
 }

@@ -15,11 +15,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(value = { CustomMediaType.ERROR_V1 })
 public class InvalidFilterExceptionMapper implements ExceptionMapper<InvalidFilterException> {
 
-    private static final String MESSAGE = "Invalid filter";
-
     @Override
     public Response toResponse(InvalidFilterException e) {
-        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.INVALID_FILTER, e.getMessage());
+        ApiErrorDto dto = new ApiErrorDto(ApiErrorCode.INVALID_FILTER, e.getMessage());
         return Response.status(Response.Status.BAD_REQUEST).entity(dto).build();
     }
 }

@@ -5,6 +5,5 @@ import org.springframework.http.HttpStatus;
 public interface ApiErrorExceptionInt {
     ApiErrorCode getApiCode();
     HttpStatus getHttpStatus();
-    String getApiErrorMessage();
     String getDetails();
 }

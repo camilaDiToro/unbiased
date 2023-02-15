@@ -31,7 +31,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         if (e instanceof ApiErrorExceptionInt) {
             apiErrorDto = ApiErrorDto.fromApiErrorException((ApiErrorExceptionInt) e);
         }else{
-            apiErrorDto = new ApiErrorDto("Access denied", ApiErrorCode.ACCESS_DENIED, e.getMessage());
+            apiErrorDto = new ApiErrorDto(ApiErrorCode.ACCESS_DENIED, e.getMessage());
         }
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

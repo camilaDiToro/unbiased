@@ -15,7 +15,7 @@ public class ApiErrorExceptionMapper implements ExceptionMapper<ApiErrorExceptio
 
     @Override
     public Response toResponse(ApiErrorException e) {
-        ApiErrorDto dto = new ApiErrorDto(e.getApiErrorMessage(), e.getApiCode(), e.getDetails());
+        ApiErrorDto dto = new ApiErrorDto(e.getApiCode(), e.getDetails());
         return Response.status(e.getHttpStatus().value()).entity(dto).build();
     }
 }

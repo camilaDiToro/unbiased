@@ -218,7 +218,6 @@ public class UserController {
         if(!role.equals(Role.ROLE_ADMIN.getRole())){
             throw new CustomBadRequestException(
                     ApiErrorCode.INVALID_ROLE,
-                    "Trying to add an invalid role to an user",
                     String.format("The role %s can not be manually added to the user of id %d", role, userId));
         }
         if(ownerService.makeUserAdmin(userId)){
@@ -234,7 +233,6 @@ public class UserController {
         if(!role.equals(Role.ROLE_ADMIN.getRole())){
             throw new CustomBadRequestException(
                     ApiErrorCode.INVALID_ROLE,
-                    "Trying to delete an invalid role from an user",
                     String.format("The role %s can not be manually deleted from the user of id %d", role, userId));
         }
         if(ownerService.deleteUserAdmin(userId)){

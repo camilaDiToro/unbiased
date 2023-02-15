@@ -14,11 +14,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(value = { CustomMediaType.ERROR_V1 })
 public class UserNotAuthorizedExceptionMapper implements ExceptionMapper<UserNotAuthorizedException> {
 
-    private static final String MESSAGE = "User unauthorized";
-
     @Override
     public Response toResponse(UserNotAuthorizedException e) {
-        ApiErrorDto dto = new ApiErrorDto(MESSAGE, ApiErrorCode.UNAUTHORIZED, e.getMessage());
+        ApiErrorDto dto = new ApiErrorDto(ApiErrorCode.UNAUTHORIZED, e.getMessage());
         return Response.status(Response.Status.UNAUTHORIZED).entity(dto).build();
     }
 }
