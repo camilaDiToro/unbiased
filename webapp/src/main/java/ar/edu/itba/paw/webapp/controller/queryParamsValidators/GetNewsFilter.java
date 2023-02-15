@@ -2,12 +2,14 @@ package ar.edu.itba.paw.webapp.controller.queryParamsValidators;
 
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.admin.ReportOrder;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TimeConstraint;
 import ar.edu.itba.paw.model.user.ProfileCategory;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.UserService;
@@ -24,13 +26,24 @@ public enum GetNewsFilter {
         @Override
         public GetNewsParams validateParams(UserService userService, String category, String order, String time, String search, Long id) {
             NewsOrder newsOrder = (order == null || order.equals("")) ? NewsOrder.TOP : NewsOrder.getByValue(order);
+            User user = null;
+            if(Category.FOR_ME.toString().equalsIgnoreCase(category)){
+                if(id == null){
+                    throw new InvalidRequestParamsException("The requested filter requires an \"id\" query param");
+                }
+                else if(id <= 0){
+                    throw new InvalidRequestParamsException("id param must be greater than 0");
+                }
+                user = userService.getUserById(id).orElseThrow(()->new UserNotFoundException(id));
+            }
+
             return new GetNewsParams(   Category.getByValue(category), newsOrder, null,
-                                        TimeConstraint.getByValue(time), search, null);
+                                        TimeConstraint.getByValue(time), search, user);
         }
 
         @Override
         public Page<News> getNews(NewsService newsService, AdminService adminService, int page, GetNewsParams params) {
-            return newsService.getNews(Optional.empty(), page, params.getCategoryObj(),
+            return newsService.getNews(params.getUser() == null ? Optional.empty() : Optional.of(params.getUser()), page, params.getCategoryObj(),
                     params.getOrderObj(), params.getTimeObj(), params.getSearch());
         }
     },
