@@ -44,7 +44,7 @@ const es = {
     //Profile
     "profile.edit": "Editar",
     "profile.modal.question": "¿Estás seguro de que quieres eliminar esta noticia?",
-    "profile.modal.msg": "Al eliminar de esta noticia no podra volver a recuperarla. ¿EstÃás seguro de que deseas continuar?",
+    "profile.modal.msg": "Al eliminar de esta noticia no podra volver a recuperarla. ¿Estás seguro de que deseas continuar?",
     "profile.modal.accept": "Confirmar",
     "profile.user.settings": "Ajustes de usuario",
     "profile.modal.save": "Guardar",
@@ -63,7 +63,7 @@ const es = {
     "profile.modal.disabled": "Deshabilitado",
     "profile.pin.question": "¿Estás seguro de que quieres fijar esta noticia?",
     "profile.pin.body": "Al fijar esta noticia podrás visualizarla sobre las demas noticias. ¿Estás seguro de que deseas continuar?",
-    "profile.unpin.question": "¿EstÃ¡s seguro de que quieres desfijar esta noticia?",
+    "profile.unpin.question": "¿Estás seguro de que quieres desfijar esta noticia?",
     "profile.unpin.body": "Al desfijar esta noticia no podrás visualizarla sobre las demas noticias. ¿Estás seguro de que deseas continuar?",
     "profile.followers": "Seguidores",
     "profileCategories.myPosts": "Noticias",
