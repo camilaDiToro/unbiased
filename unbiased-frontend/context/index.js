@@ -6,8 +6,9 @@ import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useApi } from "../api";
 import {
+  ACCESS_DENIED,
   CONN_TIMEOUT,
-  FORBIDDEN,
+  FORBIDDEN, INVALID_JWT_CLAIM,
   SERVER_ERROR,
   UNAUTHORIZED,
   UNKNOWN,
@@ -25,7 +26,7 @@ export default function AppWrapper({ children }) {
     };
   }
   const jwtState = useState(newJwt);
-  const [loggedUser, setLoggedUser] = useState(null);
+  const [loggedUser, setLoggedUser] = useState(undefined);
 
   const router = useRouter();
   const axiosInstance = axios.create({
@@ -51,6 +52,9 @@ export default function AppWrapper({ children }) {
   };
 
   useEffect(() => {
+    if(!router.isReady || loggedUser === undefined) {
+      return
+    }
     if (isAdminPath(router.pathname)) {
       if (!loggedUser) {
         showUnauthorized();
@@ -70,7 +74,7 @@ export default function AppWrapper({ children }) {
         showUnauthorized();
       }
     }
-  }, [loggedUser]);
+  }, [loggedUser,router.isReady]);
 
   const setHeadersIfExist = (response) => {
     if (response) {
@@ -97,20 +101,21 @@ export default function AppWrapper({ children }) {
     return config;
   });
 
-  const getErrorCode = (error) => {
+  const getErrorCodes = (error) => {
     if (error.code === "ERR_NETWORK") return CONN_TIMEOUT;
     if (error.status === 500) {
       return SERVER_ERROR;
     }
     if (
       !error.response ||
-      !error.response.data ||
-      !error.response.data.apiCode
+      !error.response.data
     ) {
       return UNKNOWN;
     }
-
-    return error.response.data.apiCode;
+    if (Array.isArray(error.response.data)) {
+      return error.response.data.map(a => a.apiCode)
+    }
+    return [error.response.data.apiCode]
   };
 
   const showError = (code) => {
@@ -126,7 +131,7 @@ export default function AppWrapper({ children }) {
     async (error) => {
       setHeadersIfExist(error.response);
 
-      const code = getErrorCode(error);
+      const codes = getErrorCodes(error);
 
       if (
         (error.config.login || error.config.register) &&
@@ -139,15 +144,17 @@ export default function AppWrapper({ children }) {
         );
       } else {
         if (!error.config.hideError) {
-          showError(code);
+          for (const code of codes) {
+            showError(code);
+          }
         }
       }
 
       const loginURL = "/login/";
       if (router.pathname !== loginURL) {
-        if (code === 606 || code === 603 || code === 605 || code === 600) {
+        if (codes.includes(UNAUTHORIZED) || codes.includes(INVALID_JWT_CLAIM) || codes.includes(FORBIDDEN) || codes.includes(ACCESS_DENIED)) {
           jwtState[1]({});
-        } else if (code === 604) {
+        } else if (codes.includes(604)) {
           if (jwt.accessToken) {
             jwtState[1]({ refreshToken: jwt.refreshToken });
             const config = error.config;
@@ -169,7 +176,6 @@ export default function AppWrapper({ children }) {
   const jwt = jwtState[0];
 
   useEffect(() => {
-    // alert('setting jwt to ' + JSON.stringify(jwt))
     if (jwt.accessToken) {
       localStorage.setItem("accessToken", jwt.accessToken);
     } else {
@@ -192,7 +198,6 @@ export default function AppWrapper({ children }) {
     if (!jwt.accessToken && !jwt.refreshToken) {
       setLoggedUser(null);
     }
-    // alert(JSON.stringify(jwt))
   }, [jwt]);
 
   let sharedState = {

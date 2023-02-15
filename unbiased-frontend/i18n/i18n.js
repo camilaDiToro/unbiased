@@ -109,6 +109,8 @@ const es = {
     "register.mail.address": "Dirección de mail",
     "register.password": "Contraseña",
     "register.successful": "Correo de verificación enviado",
+    "register.invalidEmail": "Correo inválido",
+
 
     "register.signUp": "Registrarse",
     "register.alreadyMemberQuestion": "¿Ya eres miembro?",
@@ -330,6 +332,8 @@ export const en = {
         //Register
         "register.mail.address": "Email address",
     "register.successful": "Verification mail sent",
+    "register.invalidEmail": "Invalid email address",
+
 
     "register.password": "Password",
         "register.signUp": "Sign Up",

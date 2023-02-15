@@ -12,7 +12,7 @@ export default function Login() {
     const I18n = ctx.I18n
     const { enqueueSnackbar }= useSnackbar()
     const [details, setDetails] = useState({
-        email: "",
+        email: undefined,
         password: ""
     })
     const [passwordType, setPasswordType] = useState("password");
@@ -40,14 +40,27 @@ export default function Login() {
         setPasswordType("password")
     }
 
+    const validEmail = () => {
+        const regex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}$/
+
+        return details.email && regex.test(details.email)
+    }
+    const validForm = () => {
+        return validEmail() && details.password
+    }
+
+
     async function handleSubmit(e) {
         e.preventDefault()
+        if(!validForm())
+            return
         const {success} = await api.registerUser(details.email, details.password)
         if (success) {
             enqueueSnackbar(I18n("verificationToken.succesfullySent"))
             await router.push('/login')
         }
     }
+
 
     return(
         <div className="d-flex flex-column justify-content-center align-items-center height-100vh">
@@ -62,10 +75,12 @@ export default function Login() {
 
                 <h1 className="h3 mb-4 font-weight-normal text-light">{ctx.I18n("navbar.register")}</h1>
 
-                <div className="d-flex mb-4">
+                <div className={`d-flex ${details.email === undefined || validEmail() ? 'mb-4' : 'mb-1'}`}>
                     <img className="size-img-modal-login align-self-center" src={getResourcePath("/img/profile-svgrepo-com.svg")} alt="..."/>
                     <input onChange={handleChange} type="text" id="email" name="email" placeholder="EmailAddress" className="sign-form-control" required="" autoFocus=""/>
                 </div>
+                {details.email === undefined || validEmail() ? <></> : <div className="text-danger mb-4">{I18n("register.invalidEmail")}</div>}
+
 
                 <div className="mb-2 mt-1 d-flex flex-row justify-content-center align-items-center position-relative">
                     <img src={getResourcePath("/img/lock-svgrepo-com.svg")} alt="..." className="size-img-modal-login align-self-center"/>
@@ -77,7 +92,7 @@ export default function Login() {
                 </div>
 
 
-                <button onClick={handleSubmit} type="submit" className="btn btn-md btn-info btn-block">{ctx.I18n("navbar.register")}</button>
+                <button onClick={handleSubmit} type="submit"className={`btn btn-md btn-info btn-block ${validForm() ? '' : 'disabled noHover'}`}>{ctx.I18n("navbar.register")}</button>
                 <div className="d-flex mt-2">
                     <div className="mr-2">
                         {I18n("register.alreadyMemberQuestion")}

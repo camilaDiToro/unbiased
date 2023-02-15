@@ -10,7 +10,6 @@ import {useRouter} from "next/router";
 
 export default function ReportFlag(props) {
 
-    let handlerArray= []
 
     const {I18n, loggedUser} = useAppContext()
     const router = useRouter()
@@ -32,7 +31,7 @@ export default function ReportFlag(props) {
                     />
                 </Tooltip>
             </ModalTrigger>
-            {props.reported ? <></> : <Modal onClickHandlerArray={handlerArray} title={I18n(props.comment ? "showNews.reportCommentQuestion" : "showNews.reportNewsQuestion")} id={`report${props.comment ? 'Comment' : 'Article'}${props.id}`}>
+            {props.reported ? <></> : <Modal noFooter onClickHandlerArray={handlerArray} title={I18n(props.comment ? "showNews.reportCommentQuestion" : "showNews.reportNewsQuestion")} id={`report${props.comment ? 'Comment' : 'Article'}${props.id}`}>
                 <ReportForm id={props.id} comment={props.comment} triggerEffect={props.triggerEffect} handlerArray={handlerArray}></ReportForm>
             </Modal>}
         </div>

@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useAppContext} from "../context";
 import types from "../types";
 
@@ -12,14 +12,24 @@ export default function EditProfileForm(props) {
 
     const [file, setFile] = useState(undefined)
 
+    const validForm = () => {
+        return settings.username
+    }
+
+    function handleCloseModal(){
+        document.getElementById(props.id).classList.remove("show", "d-block");
+        document.querySelectorAll(".modal-backdrop")
+            .forEach(el => el.classList.remove("modal-backdrop"));
+    }
+
     const handleEditFormSubmit = async (e) => {
+        if(!validForm())
+            return
         const {success} = await api.editUser(settings, file)
         if (success) {
             props.triggerEffect()
         }
     }
-
-    props.handlerArray[0] = handleEditFormSubmit
 
     const [filename, setFilename] = useState(I18n("createArticle.selectFile"))
 
@@ -98,6 +108,11 @@ export default function EditProfileForm(props) {
                 </label>
             </div>)}
 
+        </div>
+        <div className="modal-footer">
+            <button data-dismiss="modal" type="submit" className={`btn btn-primary ${validForm() ? '' : 'disabled noHover'}`} onClick={handleEditFormSubmit}>
+                {props.acceptText || I18n("profile.modal.accept")}
+            </button>
         </div>
     </>
 }
