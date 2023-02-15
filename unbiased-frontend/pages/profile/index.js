@@ -126,18 +126,6 @@ export default function Profile() {
       <div className="card right-card" id="right-card">
 
         <div className="profile">
-          {loggedUser && loggedUser.id == id? <ModalTrigger modalId="profileModal">
-          <span
-
-              className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
-              id="pencil_button">
-                        <div className="position-relative img-container-profile mr-1 d-flex justify-content-center align-items-center">
-                            <img className="position-relative object-fit-contain"
-                                 src={getResourcePath("/img/pencil-edit.png")} alt="..."/>
-                        </div>
-            {I18n("profile.edit")}
-                        </span>
-          </ModalTrigger>: <></>}
 
           <ProfilePic image={profileInfo.image} hasImage={profileInfo.hasImage} tier={profileInfo.tier}/>
         </div>
@@ -157,7 +145,21 @@ export default function Profile() {
 
         <img src={getResourcePath("/img/front-page-profile.png")} className="card-img-top" alt="..."/>
 
-        <div className="card-body">
+        <div className="card-body pt-0">
+
+          {loggedUser && loggedUser.id == id? <ModalTrigger modalId="profileModal">
+          <span
+
+              className="hover-hand pencil-edit badge-info badge-pill d-flex align-items-center justify-content-center"
+              id="pencil_button">
+                        <div className="position-relative img-container-profile mr-1 d-flex justify-content-center align-items-center">
+                            <img className="position-relative object-fit-contain"
+                                 src={getResourcePath("/img/pencil-edit.png")} alt="..."/>
+                        </div>
+            {I18n("profile.edit")}
+                        </span>
+          </ModalTrigger>: <></>}
+
           <h4 className="mb-0 card-title text-center">
             {profileInfo.username}
           </h4>

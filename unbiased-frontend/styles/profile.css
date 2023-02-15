@@ -60,10 +60,7 @@
 
 .pencil-edit{
     position: absolute;
-    top:120%;
-    right: -210px;
-    height: 20px;
-    width: fit-content;
+    right: 10px;
 }
 
 
