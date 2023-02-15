@@ -36,8 +36,6 @@ public enum ApiErrorCode {
     UNKNOWN(900, "Unknown error"),
 
     // Form validation
-    FORM_VALIDATION_ERROR(999, "Unkonwn validation error"),
-
     USERFORM_EMAIL_REPEATED(1000, "An user with this email already exists"),
     USERFORM_EMAIL_FORMAT(1001, "Invalid email format"),
     USERFORM_PASS_NOTBLAK(1012, "Password can not be blank"),
@@ -64,7 +62,9 @@ public enum ApiErrorCode {
 
     COMMENTNEWSFORM_COMMENT_NOTBLANK(1402,"The comment can not be blank"),
     COMMENTNEWSFORM_COMMENT_LENGTH(1403,"The comment can have up to 200 characters"),
-    COMMENTNEWSFORMM_COMMENT_NOTNULL(1405,"The comment can not be null");
+    COMMENTNEWSFORMM_COMMENT_NOTNULL(1405,"The comment can not be null"),
+
+    FORM_VALIDATION_ERROR(1999, "Unkonwn validation error");
 
 
     private final int errorCode;
