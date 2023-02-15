@@ -20,7 +20,6 @@ import Pagination from "../../components/Pagination";
 import usePagination from "../../pagination";
 import {getResourcePath} from "../../constants";
 import MainCardsContainer from "../../components/MainCardsContainer";
-import {use} from "i18next";
 
 
 
@@ -72,8 +71,8 @@ export default function Profile() {
       return
     api.getArticles({filter: 'PINNED_BY', id: id}).then(res => {
       const {data, success} = res
-
       if (success) {
+        data[0].pinned = true
         setPinned(data[0])
       }
 
@@ -89,7 +88,7 @@ export default function Profile() {
         setProfileInfo(i => ({...i, isLoggedUserFollowing}))
       }
     })
-  }, [newsEffectTrigger, id])
+  }, [newsEffectTrigger, id, profileEffectTrigger])
 
   const getNews = () => {
     let news = pinned ? [pinned] : []

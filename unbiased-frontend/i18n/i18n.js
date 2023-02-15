@@ -198,6 +198,7 @@ const es = {
     "tooltip.articleUnsave": "Deshacer guardado de noticia",
     "tooltip.commentArticle": "Comentar la noticia",
     "tooltip.pin": "Fijar noticia",
+    "tooltip.pinned": "Noticia fijada",
     "tooltip.unpin": "Desfijar noticia",
     "tooltip.info": "Información",
     "tooltip.infoDisabled": "Para habilitar esta caracteristica debes crear tu primer artículo",
@@ -423,6 +424,7 @@ export const en = {
         "tooltip.addAdmin": "Add admins",
         "tooltip.removeAdmin": "Remove admins",
         "tooltip.pin": "Pin article",
+    "tooltip.pinned": "Article pinned",
         "tooltip.unpin": "Unpin article",
         "tooltip.infoDisabled": "To enable this option you need to create your first article",
 

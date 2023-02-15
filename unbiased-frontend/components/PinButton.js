@@ -34,7 +34,14 @@ export default function PinButton(props) {
 
             </div>
 
-        </ModalTrigger></> : <></>
+        </ModalTrigger></> : (props.pinned ? <div className=" h-fit">
+
+        <Tooltip position="bottom" text={I18n("tooltip.pinned")} >
+            <img className="icon-profile svg-bookmark"
+                 src={getResourcePath(`/img/pin${props.pinned ? '-clicked' : ''}.svg`)} alt="pin-image" />
+        </Tooltip>
+
+    </div> : <></>)
 
 }
 
