@@ -78,7 +78,7 @@ export default function Login() {
                     <img src={getResourcePath("/img/lock-svgrepo-com.svg")} alt="..." className="size-img-modal-login align-self-center"/>
                     <input type={passwordType} onChange={handleChange} data-testid="password" name="password" placeholder="Password" className="sign-form-control h-fit mb-1"/>
                     <button className="btn  eye-button-properties" onClick={togglePassword}>
-                        { passwordType==="password"? <img alt="eye" src={getResourcePath("/img/eye.svg")}/> : <img alt="eyeSlash" src="/img/eye-slash.svg"/> }
+                        { passwordType==="password"? <img alt="eye" src={getResourcePath("/img/eye.svg")}/> : <img alt="eyeSlash" src={getResourcePath("/img/eye-slash.svg")}/> }
                     </button>
                 </div>
 
