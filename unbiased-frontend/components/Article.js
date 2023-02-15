@@ -38,7 +38,7 @@ export default function Article(props) {
                             <span className="font-weight-light"><FormattedDate timeAgo datetime={props.datetime}></FormattedDate></span>
 
                             <p className="text-sm-left text-secondary mb-0 d-flex justify-content-center align-content-center w-fit">
-                                <img width="15" height="15" src={getResourcePath("/img/clock-svgrepo-com.svg")}
+                                <img src={getResourcePath("/img/clock-svgrepo-com.svg")}
                                      className="read-clock mr-1"/>
                                 {I18n("home.read", [props.readTime])}
                             </p>

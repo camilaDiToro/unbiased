@@ -181,6 +181,7 @@ const es = {
     "showNews.commentLogged": " para comentar!",
 
     //Tooltips
+    "tooltip.completeFirst": "Complete el formulario para guardar",
     "tooltip.clickToGoBack": "Click para volver hacia atras",
     "tooltip.clickToGoHome": "Click para ir a la página principal",
 
@@ -399,9 +400,10 @@ export const en = {
         "showNews.commentLogged": " to comment!",
 
         //Tooltips
+        "tooltip.completeFirst": "Complete the form to save",
         "tooltip.clickToGoBack": "Click to go back",
-    "tooltip.clickToGoHome": "Click to go to the home page",
-    "tooltip.deleteNews": "Delete news",
+        "tooltip.clickToGoHome": "Click to go to the home page",
+        "tooltip.deleteNews": "Delete news",
         "tooltip.articleReported": "Article reported",
         "tooltip.commentReported": "Comment reported",
         "tooltip.reportComment": "Report comment",

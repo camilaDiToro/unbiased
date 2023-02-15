@@ -722,7 +722,7 @@ input:-webkit-autofill:focus {
 .read-clock {
     width: 15px;
     height: 15px;
-    margin-top: 1px
+    margin-top: 5px
 }
 
 #pencil_button:hover{
@@ -879,6 +879,11 @@ input:-webkit-autofill:focus {
     margin-bottom: 10px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+}
+
+.required-field{
+    color: #8ea7e8;
+    margin-left: 5px;
 }
 
 #form-login-index .form-control{
