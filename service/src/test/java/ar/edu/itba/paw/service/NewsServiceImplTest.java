@@ -76,21 +76,21 @@ public class NewsServiceImplTest {
 
     @Test
     public void testGetNewsLowerInvalidPage(){
-        Mockito.when(mockNewsDao.getTotalPagesAllNewsTop(Mockito.any(), Mockito.any())).thenReturn(TOTAL_PAGES);
+        Mockito.when(mockNewsDao.getTotalPagesAllNewsNew(Mockito.any())).thenReturn(TOTAL_PAGES);
         Page<News> returnValue = newsService.getNews(EMPTY_USER,LOWER_PAGE, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(1,returnValue.getCurrentPage());
     }
 
     @Test
     public void testGetNewsUpperInvalidPage(){
-        Mockito.when(mockNewsDao.getTotalPagesAllNewsTop(Mockito.any(), Mockito.any())).thenReturn(TOTAL_PAGES);
+        Mockito.when(mockNewsDao.getTotalPagesAllNewsNew(Mockito.any())).thenReturn(TOTAL_PAGES);
         Page<News> returnValue = newsService.getNews(EMPTY_USER,UPPER_PAGE, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(TOTAL_PAGES,returnValue.getCurrentPage());
     }
 
     @Test
     public void testGetNewsQueryMatch(){
-        Mockito.when(mockNewsDao.getTotalPagesAllNewsTop(Mockito.matches(QUERY), Mockito.any())).thenReturn(TOTAL_PAGES);
+        Mockito.when(mockNewsDao.getTotalPagesAllNewsNew(Mockito.matches(QUERY))).thenReturn(TOTAL_PAGES);
         Page<News> returnValue = newsService.getNews(EMPTY_USER,1, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(TOTAL_PAGES,returnValue.getTotalPages());
     }
@@ -115,7 +115,6 @@ public class NewsServiceImplTest {
         Mockito.when(NEWS_1.getUpvoteMap()).thenReturn(upvoteMap);
         Mockito.when(mockUser.getId()).thenReturn(ID_1);
         Mockito.when(NEWS_1.getPositivityStats()).thenReturn(new PositivityStats(0,0));
-        Mockito.when(userService.getUserById(ID_1)).thenReturn(Optional.of(mockUser));
         Mockito.when(mockNewsDao.getById(NEWS_ID)).thenReturn(Optional.of(NEWS_1));
         newsService.setRating(mockUser.getId(), NEWS_ID,Rating.UPVOTE);
         assertTrue(upvoteMap.get(ID_1).isValue());
@@ -128,7 +127,6 @@ public class NewsServiceImplTest {
         Mockito.when(NEWS_1.getUpvoteMap()).thenReturn(upvoteMap);
         Mockito.when(mockUser.getId()).thenReturn(ID_1);
         Mockito.when(NEWS_1.getPositivityStats()).thenReturn(new PositivityStats(0,0));
-        Mockito.when(userService.getUserById(ID_1)).thenReturn(Optional.of(mockUser));
         Mockito.when(mockNewsDao.getById(NEWS_ID)).thenReturn(Optional.of(NEWS_1));
         newsService.setRating(mockUser.getId(), NEWS_ID,Rating.NO_RATING);
         assertEquals(0, upvoteMap.size());

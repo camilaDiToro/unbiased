@@ -96,7 +96,6 @@ public class UserServiceImplTest {
 
     @Test
     public void testResendUserVerificationAlreadyVerified() {
-        Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(mockUser));
         Mockito.when(mockUser.getStatus()).thenReturn(UserStatus.REGISTERED);
 
         assertEquals(VerificationToken.Status.ALREADY_VERIFIED, userService.resendEmailVerification(mockUser));
