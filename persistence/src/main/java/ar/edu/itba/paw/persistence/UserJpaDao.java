@@ -199,11 +199,12 @@ public class UserJpaDao implements UserDao{
 
         page = Math.max(page, 1);
         search = search == null ? "" : search;
-        final int totalPages = getTotalPagesGetAdmins(search);
+        final int totalPages = getTotalPagesGetNotAdmins(search);
         page = Math.min(page, totalPages);
 
-        final Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query escape '\\'  or LOWER(u.email) LIKE :query escape '\\' ) "+
-                "              and u.status <> 'UNABLE' and user_id not in (select user_id from user_role where user_role = 'ROLE_ADMIN' or user_role = 'ROLE_OWNER') LIMIT :pageSize OFFSET :offset").setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%");
+        final Query queryObj = entityManager.createNativeQuery("SELECT user_id FROM users u WHERE (LOWER(u.username) LIKE :query escape '\\'  or LOWER(u.email) LIKE :query escape '\\' ) "+
+                "              and u.status <> 'UNABLE' and user_id not in (select user_id from user_role where user_role = 'ROLE_ADMIN' or user_role = 'ROLE_OWNER') LIMIT :pageSize OFFSET :offset")
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%");
 
         final List<User> users = getUsersOfPage(queryObj, page, SEARCH_PAGE_SIZE);
         return new Page<>(users, page,totalPages);
@@ -301,6 +302,13 @@ public class UserJpaDao implements UserDao{
         final BigInteger count = (BigInteger) entityManager.createNativeQuery("SELECT count(distinct user_id) FROM users u NATURAL JOIN user_role WHERE (LOWER(u.username) LIKE :query escape '\\'  or LOWER(u.email) LIKE :query  escape '\\') " +
                         "and u.status != 'UNABLE' and user_role.user_role = 'ROLE_ADMIN'")
                         .setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%").getResultList().get(0);
+        return Page.getPageCount(count.longValue(), SEARCH_PAGE_SIZE);
+    }
+
+    private int getTotalPagesGetNotAdmins(String search){
+        final BigInteger count = (BigInteger) entityManager.createNativeQuery("SELECT count(*) FROM users u WHERE (LOWER(u.username) LIKE :query escape '\\'  or LOWER(u.email) LIKE :query escape '\\' ) "+
+                        "              and u.status <> 'UNABLE' and user_id not in (select user_id from user_role where user_role = 'ROLE_ADMIN' or user_role = 'ROLE_OWNER')")
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(search.toLowerCase()) + "%").getResultList().get(0);
         return Page.getPageCount(count.longValue(), SEARCH_PAGE_SIZE);
     }
 }
