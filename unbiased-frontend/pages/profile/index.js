@@ -64,7 +64,7 @@ export default function Profile() {
         setNews(finalData)
       }
     })
-  }, [router.query, newsEffectTrigger])
+  }, [router.query, newsEffectTrigger,profileEffectTrigger])
 
   useEffect(() => {
     if (!id)
