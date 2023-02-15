@@ -28,6 +28,17 @@ public class ApiErrorDto {
         errorMapper.put("reportnewsform.reason.length", REPORTNEWSFORM_REASON_LENGTH);
         errorMapper.put("reportnewsform.reason.notfound", REPORTNEWSFORM_REASON_NOTFOUND);
         errorMapper.put("reportnewsform.reason.notnull", REPORTNEWSFORM_REASON_NOTNULL);
+
+        errorMapper.put("createnewsform.title.notblank", CREATENEWSFORM_TITLE_NOTBLANK);
+        errorMapper.put("createnewsform.title.length", CREATENEWSFORM_TITLE_LENGTH);
+        errorMapper.put("createnewsform.title.notnull", CREATENEWSFORM_TITLE_NOTNULL);
+        errorMapper.put("createnewsform.subtitle.notblank", CREATENEWSFORM_SUBTITLE_NOTBLANK);
+        errorMapper.put("createnewsform.subtitle.length", CREATENEWSFORM_SUBTITLE_LENGTH);
+        errorMapper.put("createnewsform.subtitle.notnull", CREATENEWSFORM_SUBTITLE_NOTNULL);
+        errorMapper.put("createnewsform.body.notblank", CREATENEWSFORM_BODY_NOTBLANK);
+        errorMapper.put("createnewsform.body.length", CREATENEWSFORM_BODY_LENGTH);
+        errorMapper.put("createnewsform.body.notnull", CREATENEWSFORM_BODY_NOTNULL);
+        errorMapper.put("createnewsform.categories.notfound", CREATENEWSFORM_CATEGORIES_NOTFOUND);
     }
 
     public ApiErrorDto(ApiErrorCode apiCode, String details) {

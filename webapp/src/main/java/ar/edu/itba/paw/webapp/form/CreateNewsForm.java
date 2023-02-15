@@ -8,19 +8,22 @@ import javax.validation.constraints.NotNull;
 
 public class CreateNewsForm {
 
-    @NotNull
-    @NotBlank
-    @Length(max = 200)
+    @NotNull(message = "createnewsform.title.notnull")
+    @NotBlank(message = "createnewsform.title.notblank")
+    @Length(max = 200, message = "createnewsform.title.length")
     private String title;
-    @NotNull
-    @NotBlank
-    @Length(max = 400)
+
+    @NotNull(message = "createnewsform.subtitle.notnull")
+    @NotBlank(message = "createnewsform.subtitle.notblank")
+    @Length(max = 400, message = "createnewsform.subtitle.length")
     private String subtitle;
-    @NotNull
-    @NotBlank
-    @Length(max = 10000000)
+
+    @NotNull(message = "createnewsform.body.notnull")
+    @NotBlank(message = "createnewsform.body.notblank")
+    @Length(max = 10000000, message = "createnewsform.body.length")
     private String body;
-    @NotExistingNewsCategory
+
+    @NotExistingNewsCategory(message = "createnewsform.categories.notfound")
     private String[] categories;
 
 

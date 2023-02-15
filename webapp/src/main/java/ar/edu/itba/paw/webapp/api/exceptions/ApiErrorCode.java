@@ -22,7 +22,6 @@ public enum ApiErrorCode {
     INVALID_GET_COMMENTS_FILTER(706, "Invalid get comments filter"),
     MISSING_ARGUMENTS(710, "Missing arguments"),
 
-
     //Backend
     USER_NOT_FOUND(801, "User not found"),
     NEWS_NOT_FOUND(802, "Article not found"),
@@ -50,7 +49,18 @@ public enum ApiErrorCode {
     REPORTNEWSFORM_REASON_NOTBLANK(1202, "The report reason can not be blank"),
     REPORTNEWSFORM_REASON_LENGTH(1203,"The report reason can have up to 400 characters"),
     REPORTNEWSFORM_REASON_NOTFOUND(1204,"The provided report reason option is invalid"),
-    REPORTNEWSFORM_REASON_NOTNULL(1205,"The reported reason can not be null");
+    REPORTNEWSFORM_REASON_NOTNULL(1205,"The reported reason can not be null"),
+
+    CREATENEWSFORM_TITLE_NOTBLANK(1302,"The title can not be blank"),
+    CREATENEWSFORM_TITLE_LENGTH(1303,"The title can have up to 200 characters"),
+    CREATENEWSFORM_TITLE_NOTNULL(1305,"The title can not be null"),
+    CREATENEWSFORM_SUBTITLE_NOTBLANK(1312,"The subtitle can not be blank"),
+    CREATENEWSFORM_SUBTITLE_LENGTH(1313,"The subtitle have up to 400 characters"),
+    CREATENEWSFORM_SUBTITLE_NOTNULL(1315,"The subtitle can not be null"),
+    CREATENEWSFORM_BODY_NOTBLANK(1322,"The body of the article can not be blank"),
+    CREATENEWSFORM_BODY_LENGTH(1323,"The body of the article can have up to 10000000 characters"),
+    CREATENEWSFORM_BODY_NOTNULL(1325,"The body of the article can not be null"),
+    CREATENEWSFORM_CATEGORIES_NOTFOUND(1334,"The provided category option is invalid");
 
 
     private final int errorCode;
