@@ -183,6 +183,7 @@ const es = {
     "showNews.commentLogged": " para comentar!",
 
     //Tooltips
+    "tooltip.obligatoryField": "Campo obligatorio",
     "tooltip.completeFirst": "Complete el formulario para guardar",
     "tooltip.clickToGoBack": "Click para volver hacia atras",
     "tooltip.clickToGoHome": "Click para ir a la página principal",
@@ -404,6 +405,7 @@ export const en = {
         "showNews.commentLogged": " to comment!",
 
         //Tooltips
+        "tooltip.obligatoryField": "Obligatory field",
         "tooltip.completeFirst": "Complete the form to save",
         "tooltip.clickToGoBack": "Click to go back",
         "tooltip.clickToGoHome": "Click to go to the home page",

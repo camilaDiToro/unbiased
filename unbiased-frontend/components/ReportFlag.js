@@ -26,7 +26,9 @@ export default function ReportFlag(props) {
                 <Tooltip text={tooltipMap[`${!!props.reported}`]} position="bottom" >
                     <img data-testid="flag-img" id="save"
                          className={`icon-index ${props.reported ? '' : 'svg-btn'} svg-bookmark`}
-                         src={getResourcePath(`/img/flag${props.reported ? '-clicked' : ''}.svg`)}/>
+                         src={getResourcePath(`/img/flag${props.reported ? '-clicked' : ''}.svg`)}
+                         alt="..."
+                    />
                 </Tooltip>
             </ModalTrigger>
             {props.reported ? <></> : <Modal noFooter onClickHandlerArray={handlerArray} title={I18n(props.comment ? "showNews.reportCommentQuestion" : "showNews.reportNewsQuestion")} id={`report${props.comment ? 'Comment' : 'Article'}${props.id}`}>
@@ -36,8 +38,9 @@ export default function ReportFlag(props) {
             : <Tooltip text={tooltipMap[`${!!props.reported}`]} position="bottom" >
             <img data-testid="flag-img" id="save"
                  className={`icon-index ${props.reported ? '' : 'svg-btn'} svg-bookmark`}
-                 src={'/img/flag.svg'}
+                 src={getResourcePath('/img/flag.svg')}
                  onClick={handleClick}
+                 alt="..."
             />
             </Tooltip>
 
