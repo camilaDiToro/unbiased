@@ -23,6 +23,11 @@ public class ApiErrorDto {
         errorMapper.put("userprofileform.username.repeated", USERPROFILEFORM_USERNAME_REPEATED);
         errorMapper.put("userprofileform.username.length", USERPROFILEFORM_USERNAME_LENGTH);
         errorMapper.put("userprofileform.mailoptions.notfound", USERPROFILEFORM_MAILOPTIONS_NOTFOUND);
+
+        errorMapper.put("reportnewsform.reason.not.blank", REPORTNEWSFORM_REASON_NOTBLANK);
+        errorMapper.put("reportnewsform.reason.length", REPORTNEWSFORM_REASON_LENGTH);
+        errorMapper.put("reportnewsform.reason.notfound", REPORTNEWSFORM_REASON_NOTFOUND);
+        errorMapper.put("reportnewsform.reason.notnull", REPORTNEWSFORM_REASON_NOTNULL);
     }
 
     public ApiErrorDto(ApiErrorCode apiCode, String details) {

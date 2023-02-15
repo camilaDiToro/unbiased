@@ -16,10 +16,10 @@ public class ReportNewsForm {
         this.reason = reason;
     }
 
-    @NotNull
-    @NotBlank
-    @Length(max=400)
-    @NotExistingReportReason
+    @NotNull(message = "reportnewsform.reason.notnull")
+    @NotBlank(message = "reportnewsform.reason.not.blank")
+    @Length(max=400, message = "reportnewsform.reason.length")
+    @NotExistingReportReason(message = "reportnewsform.reason.notfound")
     private String reason = "INAP";
 
     private int userId;

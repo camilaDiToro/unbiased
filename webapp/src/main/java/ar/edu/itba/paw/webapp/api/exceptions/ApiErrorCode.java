@@ -45,7 +45,12 @@ public enum ApiErrorCode {
 
     USERPROFILEFORM_USERNAME_REPEATED(1100, "The provided username already exists"),
     USERPROFILEFORM_USERNAME_LENGTH(1103, "The username can have up to 50 characters"),
-    USERPROFILEFORM_MAILOPTIONS_NOTFOUND(1114, "The provided mail option is invalid");
+    USERPROFILEFORM_MAILOPTIONS_NOTFOUND(1114, "The provided mail option is invalid"),
+
+    REPORTNEWSFORM_REASON_NOTBLANK(1202, "The report reason can not be blank"),
+    REPORTNEWSFORM_REASON_LENGTH(1203,"The report reason can have up to 400 characters"),
+    REPORTNEWSFORM_REASON_NOTFOUND(1204,"The provided report reason option is invalid"),
+    REPORTNEWSFORM_REASON_NOTNULL(1205,"The reported reason can not be null");
 
 
     private final int errorCode;
