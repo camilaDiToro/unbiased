@@ -9,13 +9,12 @@ import javax.validation.constraints.NotNull;
 
 public class UserForm {
 
-    @NotExistingEmail(message = "existing.email")
-    @Email(regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$", message = "invalid.email")
+    @NotExistingEmail(message = "userform.email.repeated")
+    @Email(regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$", message = "userform.email.invalid")
     // source: https://www.w3resource.com/javascript/form/email-validation.php
     private String email;
 
-    @NotNull(message = "not.null")
-    @NotBlank(message = "not.blank")
+    @NotBlank(message = "userform.pass.not.blank")
     private String password;
 
     public String getEmail() {

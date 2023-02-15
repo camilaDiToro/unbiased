@@ -37,10 +37,10 @@ public enum ApiErrorCode {
     UNKNOWN(900, "Unknown error"),
 
     // Form validation
-    USERFORM_EMAIL_NOTBLANK(1000, "Email can not be blank"),
+    FORM_VALIDATION_ERROR(999, "Unkonwn validation error"),
+    USERFORM_EMAIL_REPEATEDEMAIL(1000, "An user with this email already exists"),
     USERFORM_EMAIL_FORMAT(1001, "Invalid email format"),
-    USERFORM_PASS_NOTNULL(1002, "Password can not be null"),
-    USERFORM_PASS_NOTBLAK(1003, "Password can not be blank")
+    USERFORM_PASS_NOTBLAK(1012, "Password can not be blank")
     ;
 
 
