@@ -72,8 +72,12 @@ export default function Profile() {
     api.getArticles({filter: 'PINNED_BY', id: id}).then(res => {
       const {data, success} = res
       if (success) {
-        data[0].pinned = true
-        setPinned(data[0])
+        if (!data[0])
+          setPinned(undefined)
+        else {
+          data[0].pinned = true
+          setPinned(data[0])
+        }
       }
 
     })
