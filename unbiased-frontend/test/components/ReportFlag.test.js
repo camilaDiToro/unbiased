@@ -38,8 +38,8 @@ describe('ReportFlag test', ()=>{
         expect(img.getAttribute('src')).toEqual(getResourcePath(`/img/flag.svg`))
     })
 
-    test('Shows report common report flag when user is not logged', ()=>{
+    test('Report flag redirects to log in if it is not a logged user', ()=>{
         render(<ReportFlag {...propsMap}/>)
-        expect(screen.getByTestId('flag-img')).toBeInTheDocument()
+        expect(screen.getByTestId('flag-img').closest('a')).toHaveAttribute('href', '/login')
     })
 })
