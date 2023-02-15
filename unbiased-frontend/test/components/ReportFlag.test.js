@@ -1,11 +1,9 @@
 import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
-import Tooltip from "../../components/Tooltip";
-import PropTypes from "prop-types";
 import ReportFlag from "../../components/ReportFlag";
 import {getResourcePath} from "../../constants";
 
-const {render, screen, fireEvent} = testingLibrary;
+const {render, screen} = testingLibrary;
 
 
 let propsMap;
@@ -24,17 +22,24 @@ const customPropsMap = (options = {}) => {
 describe('ReportFlag test', ()=>{
 
     propsMap = customPropsMap()
-    test('Test for correct image shown when reported', ()=>{
+    test('Test for correct image shown when reported and it is a logged user', ()=>{
+        const loggedUser = customPropsMap()
         propsMap.reported = true
-        render(<ReportFlag {...propsMap}> </ReportFlag>)
+        render(<ReportFlag {...propsMap}/>, {loggedUser})
         const img = screen.getByTestId('flag-img')
         expect(img.getAttribute('src')).toEqual(getResourcePath(`/img/flag-clicked.svg`))
     })
 
-    test('Test for correct image shown when reported', ()=>{
+    test('Test for correct image shown when reported and it is a logged user', ()=>{
+        const loggedUser = customPropsMap()
         propsMap.reported = false
-        render(<ReportFlag {...propsMap}> </ReportFlag>)
+        render(<ReportFlag {...propsMap}/>, {loggedUser})
         const img = screen.getByTestId('flag-img')
         expect(img.getAttribute('src')).toEqual(getResourcePath(`/img/flag.svg`))
+    })
+
+    test('Shows report common report flag when user is not logged', ()=>{
+        render(<ReportFlag {...propsMap}/>)
+        expect(screen.getByTestId('flag-img')).toBeInTheDocument()
     })
 })

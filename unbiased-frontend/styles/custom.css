@@ -1079,6 +1079,10 @@ input:checked + .slider:before {
     border-radius: 30px;
 }
 
+.opacity-50{
+    opacity: 50%;
+}
+
 .gap-4px {
     gap: 4px;
 }
