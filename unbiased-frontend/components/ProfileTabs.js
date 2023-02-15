@@ -7,7 +7,7 @@ import types from "../types";
 export default function ProfileTabs(props) {
     const {I18n, loggedUser} = useAppContext()
     const router = useRouter()
-    const orders = [
+    let orders = [
         { text: I18n("profileCategories.myPosts"), params: {cat: 'MY_POSTS'} },
         { text: I18n("profileCategories.saved"), params: {cat: 'SAVED'}},
         { text: I18n("profileCategories.upvoted"), params: {cat: 'UPVOTED'}},
@@ -15,7 +15,7 @@ export default function ProfileTabs(props) {
     ];
 
     if (!loggedUser || loggedUser.id !== props.userId) {
-        orders.splice(1, 0)
+        orders = orders.filter(o => o.params.cat !== 'SAVED')
     }
 
     const orderMap = orders.reduce((a,v) => ({...a, [v.params.cat]: v.text}), {})
