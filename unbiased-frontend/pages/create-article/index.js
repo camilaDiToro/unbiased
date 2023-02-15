@@ -102,7 +102,12 @@ export default function CreateArticle(props) {
             <div id="custom-form-group" className="h-auto w-50">
 
                 <div>
-                    <label htmlFor="title">{I18n("createArticle.title")}<span className="required-field">*</span></label>
+                    <label className="d-flex" htmlFor="title">{I18n("createArticle.title")}
+                        <Tooltip position="right" text={I18n("tooltip.obligatoryField")}>
+                            <span className="required-field">*</span>
+                        </Tooltip>
+                    </label>
+
                     <div className="form-group">
                         <div className="input-group mb-3">
 
@@ -115,7 +120,11 @@ export default function CreateArticle(props) {
 
 
                 <div>
-                    <label htmlFor="subtitle">{I18n("createArticle.description")}<span className="required-field">*</span></label>
+                    <label className="d-flex" htmlFor="subtitle">{I18n("createArticle.description")}
+                        <Tooltip position="right" text={I18n("tooltip.obligatoryField")}>
+                            <span className="required-field">*</span>
+                        </Tooltip>
+                    </label>
                     <div className="form-group">
                         <div className="input-group mb-3">
 
@@ -128,7 +137,11 @@ export default function CreateArticle(props) {
 
 
                 <div>
-                    <label htmlFor="body">{I18n("createArticle.body")}<span className="required-field">*</span></label>
+                    <label className="d-flex" htmlFor="body">{I18n("createArticle.body")}
+                        <Tooltip position="right" text={I18n("tooltip.obligatoryField")}>
+                            <span className="required-field">*</span>
+                        </Tooltip>
+                    </label>
                     <div className="form-group" data-color-mode="dark">
 
                         <div className="wmde-markdown-var"> </div>
