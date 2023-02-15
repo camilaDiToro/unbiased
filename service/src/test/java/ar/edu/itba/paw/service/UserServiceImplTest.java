@@ -94,18 +94,12 @@ public class UserServiceImplTest {
     }
 
 
-    @Test(expected= UserNotFoundException.class)
-    public void testResendUserVerificationInvalidEmail() {
-        Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.empty());
-        assertEquals(VerificationToken.Status.NOT_EXISTS, userService.resendEmailVerification(ID));
-    }
-
     @Test
     public void testResendUserVerificationAlreadyVerified() {
         Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(mockUser));
         Mockito.when(mockUser.getStatus()).thenReturn(UserStatus.REGISTERED);
 
-        assertEquals(VerificationToken.Status.ALREADY_VERIFIED, userService.resendEmailVerification(ID));
+        assertEquals(VerificationToken.Status.ALREADY_VERIFIED, userService.resendEmailVerification(mockUser));
     }
 
 

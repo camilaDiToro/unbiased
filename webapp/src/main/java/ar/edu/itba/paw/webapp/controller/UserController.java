@@ -117,12 +117,12 @@ public class UserController {
     }
 
     @GET
-    @Path("/{userId:[0-9]+}/status")
+    @Path("/{email}/status")
     @Produces(value = { CustomMediaType.USER_STATUS_V1})
-    public Response getUserStatus(@PathParam("userId") final long userId){
-        User user = userService.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
+    public Response getUserStatus(@PathParam("email") final String email){
+        User user = userService.findByEmail(email).orElseThrow( () -> new UserNotFoundException(email));
         if (user.getStatus().equals(UserStatus.UNABLE)) {
-            userService.resendEmailVerification(userId);
+            userService.resendEmailVerification(user);
             return Response.ok(StatusDto.fromStatus(UserStatus.UNABLE)).build();
         }
         return Response.ok(StatusDto.fromStatus(UserStatus.REGISTERED)).build();

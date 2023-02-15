@@ -18,7 +18,7 @@ public interface UserService {
     User create(User.UserBuilder userBuilder);
     Optional<User> findByEmail(String email);
     VerificationToken.Status verifyUserEmail(String token);
-    VerificationToken.Status resendEmailVerification(long userId);
+    VerificationToken.Status resendEmailVerification( User user );
     void addRole(long userId, Role role);
     void updateProfile(long userId, String username, byte[] bytes, String dataType, String description);
     Optional<User> findByUsername(String username);
