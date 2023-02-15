@@ -6,8 +6,9 @@ import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useApi } from "../api";
 import {
+  ACCESS_DENIED,
   CONN_TIMEOUT,
-  FORBIDDEN,
+  FORBIDDEN, INVALID_JWT_CLAIM,
   SERVER_ERROR,
   UNAUTHORIZED,
   UNKNOWN,
@@ -151,9 +152,9 @@ export default function AppWrapper({ children }) {
 
       const loginURL = "/login/";
       if (router.pathname !== loginURL) {
-        if (code === 606 || code === 603 || code === 605 || code === 600) {
+        if (codes.includes(UNAUTHORIZED) || codes.includes(INVALID_JWT_CLAIM) || codes.includes(FORBIDDEN) || codes.includes(ACCESS_DENIED)) {
           jwtState[1]({});
-        } else if (code === 604) {
+        } else if (codes.includes(604)) {
           if (jwt.accessToken) {
             jwtState[1]({ refreshToken: jwt.refreshToken });
             const config = error.config;

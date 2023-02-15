@@ -67,6 +67,10 @@ const authError = {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
+  [USER_DISABLED]: {
+    es: "El usuario se encuentra deshabilitado",
+    en: "The user is disabled"
+  },
   [USERFORM_EMAIL_REPEATED]: {
     es: "El correo ya está en uso",
     en: "The email has already been used"
