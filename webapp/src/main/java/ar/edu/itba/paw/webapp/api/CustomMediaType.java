@@ -15,6 +15,7 @@ public class CustomMediaType {
     public static final String NEWS_LIST_V1 = "application/vnd.unbiased.newsList.v1+json";
     public static final String NEWS_REPORT_V1 = "application/vnd.unbiased.newsReport.v1+json";
     public static final String NEWS_REPORT_LIST_V1 = "application/vnd.unbiased.newsReportList.v1+json";
+    public static final String USER_STATUS_V1 = "application/vnd.unbiased.userStatus.v1+json";
     private CustomMediaType(){
 
     }

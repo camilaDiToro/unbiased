@@ -109,17 +109,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public VerificationToken.Status resendEmailVerification(String email) {
+    public VerificationToken.Status resendEmailVerification(long userId) {
 
-        final Optional<User> mayBeUser = userDao.findByEmail(email);
+        final Optional<User> mayBeUser = userDao.getUserById(userId);
         if(!mayBeUser.isPresent()){
-            LOGGER.info("Trying to resend verification email to {}, but this email does not exist", email);
-            return VerificationToken.Status.NOT_EXISTS;
+            LOGGER.info("Trying to resend verification email to user of id {}, but it does not exist", userId);
+            throw new UserNotFoundException(userId);
         }
 
         final User user = mayBeUser.get();
         if(!user.getStatus().equals(UserStatus.UNABLE)){
-            LOGGER.info("Trying to resend verification email to {}, but this email is already registered", email);
+            LOGGER.info("Trying to resend verification email to {}, but this email is already registered", user.getEmail());
             return VerificationToken.Status.ALREADY_VERIFIED;
         }
 

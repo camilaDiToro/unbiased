@@ -11,6 +11,7 @@ import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
+import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.OwnerService;
 import ar.edu.itba.paw.service.SecurityService;
@@ -21,6 +22,7 @@ import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetUsersFilter;
 import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
 import ar.edu.itba.paw.webapp.api.CustomMediaType;
 import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
+import ar.edu.itba.paw.webapp.dto.StatusDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
@@ -112,6 +114,18 @@ public class UserController {
                 .map(c -> CategoryStatisticsDto.fromCategoryStatistic(uriInfo, c, userId)).collect(Collectors.toList());
         final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CategoryStatisticsDto>>(newsStats) {});
         return responseBuilder.build();
+    }
+
+    @GET
+    @Path("/{userId:[0-9]+}/status")
+    @Produces(value = { CustomMediaType.USER_STATUS_V1})
+    public Response getUserStatus(@PathParam("userId") final long userId){
+        User user = userService.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
+        if (user.getStatus().equals(UserStatus.UNABLE)) {
+            userService.resendEmailVerification(userId);
+            return Response.ok(StatusDto.fromStatus(UserStatus.UNABLE)).build();
+        }
+        return Response.ok(StatusDto.fromStatus(UserStatus.REGISTERED)).build();
     }
 
 
