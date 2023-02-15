@@ -93,8 +93,7 @@ export default function Profile() {
 
   const getNews = () => {
     let news = pinned ? [pinned] : []
-
-    return [...news, ...(useNews || [])]
+    return [...news, ...(useNews || []).filter(n => n.id !== pinned?.id)]
   }
 
   useEffect(() => {
