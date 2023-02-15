@@ -15,6 +15,7 @@ import DeleteButton from "../../components/DeleteButton";
 import PinButton from "../../components/PinButton";
 import usePagination from "../../pagination";
 import {getResourcePath} from "../../constants";
+import Link from "next/link";
 
 
 export default function ShowNews() {
@@ -111,7 +112,15 @@ export default function ShowNews() {
               <div className="ml-2 d-flex justify-content-center align-items-center">
                 {loggedUser && loggedUser.id === article.creator.id ? <PinButton triggerEffect={articleTriggerEffect} creatorId={article.creator?.id} id={parseInt(id)} pinned={article.pinned}></PinButton> : <></>}
               </div>
-            </div>: <></>}
+            </div>: <div className="d-flex flex-row align-items-center gap-4px">
+                <Link href="/login" className="ml-2 d-flex justify-content-center align-items-center">
+                  <Bookmark id={article.id} triggerEffect={articleTriggerEffect} saved={article.saved} ></Bookmark>
+                </Link>
+                <Link href="/login" className="ml-2 d-flex justify-content-center align-items-center">
+                  <ReportFlag reported={article.reported} triggerEffect={articleTriggerEffect} id={article.id}></ReportFlag>
+                </Link>
+              </div>
+              }
           </div>
 
           <p className="text-sm-left text-secondary mr-1">

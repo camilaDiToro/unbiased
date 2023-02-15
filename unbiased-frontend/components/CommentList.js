@@ -38,12 +38,18 @@ export default function CommentList(props) {
                 {I18n("showNews.comment.submit")}
               </button>
             </div> :
-            <h6 className="m-2 align-self-center">
-              <Link href={`/login`} className="link text-underline">{I18n("navbar.logIn")}</Link>{" "}
-              o{" "}
-              <Link href={`/register`} className="link text-underline">{I18n("navbar.register")}</Link>
-              {I18n("showNews.commentLogged")}
-            </h6>
+
+              <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center w-fit p-2 bg-black rounded-comment">
+                  <h6 className="m-2 align-self-center">
+                    <Link href={`/login`} className="link text-underline blue-text">{I18n("navbar.logIn")}</Link>{" "}
+                    {I18n("conditional.or")}{" "}
+                    <Link href={`/register`} className="link text-underline blue-text">{I18n("navbar.register")}</Link>
+                    {I18n("showNews.commentLogged")}
+                  </h6>
+                </div>
+              </div>
+
           }
 
           <TopNewTabs></TopNewTabs>
