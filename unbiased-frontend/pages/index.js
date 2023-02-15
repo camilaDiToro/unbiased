@@ -23,12 +23,14 @@ export default function Home(props) {
   const [useUsers, setUsers] = useState(undefined)
   const [topCreators, setTopCreators] = useState([])
   const [pagination, setPagination] = usePagination()
-  const {I18n,  api} = useAppContext()
+  const {I18n,  api, loggedUser} = useAppContext()
 
 
 
   useEffect(() => {
-    const params = {...router.query, filter:  'NO_FILTER' }
+    if (!router.isReady)
+      return
+    const params = {...router.query, filter:  'NO_FILTER'}
     delete params['type']
     if (router.query.search && router.query.type === 'creator') {
 
@@ -41,6 +43,12 @@ export default function Home(props) {
       })
 
     } else {
+      if (params.cat === 'FOR_ME') {
+        if(loggedUser === undefined)
+          return
+        params.id = loggedUser.id
+      }
+
         api.getArticles(params).then(r => {
           const {success, data, pagination} = r
           if (success) {
@@ -50,7 +58,7 @@ export default function Home(props) {
 
         })
       }
-  }, [router.query, newsEffectTrigger])
+  }, [router.query, newsEffectTrigger, router.isReady])
 
   useEffect(() => {
     const params = {...router.query, filter: 'TOP_CREATORS'}
