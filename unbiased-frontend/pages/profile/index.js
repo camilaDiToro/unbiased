@@ -113,7 +113,6 @@ export default function Profile() {
 
   }, [profileEffectTrigger,newsEffectTrigger, id])
 
-  let submitHandlerArray = []
 
   const RightSide = () => {
     if (!profileInfo)
@@ -200,8 +199,8 @@ export default function Profile() {
 
         </div>
       </div> : <></>}
-      <Modal noFooter  onClickHandlerArray={submitHandlerArray} id="profileModal" title={I18n("profile.user.settings")}>
-        <EditProfileForm triggerEffect={profileTriggerEffect} handlerArray={submitHandlerArray} {...profileInfo}></EditProfileForm>
+      <Modal noFooter  id="profileModal" title={I18n("profile.user.settings")}>
+        <EditProfileForm triggerEffect={profileTriggerEffect} {...profileInfo}></EditProfileForm>
       </Modal>
     </div>
   }
