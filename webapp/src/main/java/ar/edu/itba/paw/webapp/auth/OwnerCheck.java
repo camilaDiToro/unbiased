@@ -4,6 +4,7 @@ import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.NewsService;
@@ -95,8 +96,8 @@ public class OwnerCheck {
         return mayBeUser.filter(user -> user.getId() == reportNewsForm.getUserId()).isPresent();
     }
 
-    public boolean canGetSavedNews(String filter, Long userId){
-        if(!GetNewsFilter.SAVED_BY.toString().equalsIgnoreCase(filter)){
+    public boolean canGetNews(String filter, Long userId, String category){
+        if(!GetNewsFilter.SAVED_BY.toString().equalsIgnoreCase(filter) && !Category.FOR_ME.toString().equalsIgnoreCase(category)){
             return true;
         }
         if(userId == null){

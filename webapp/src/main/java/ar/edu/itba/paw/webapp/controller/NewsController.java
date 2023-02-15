@@ -81,7 +81,7 @@ public class NewsController {
     }
 
     @GET
-    @PreAuthorize("@ownerCheck.canGetSavedNews(#filter, #id)")
+    @PreAuthorize("@ownerCheck.canGetNews(#filter, #id, #category)")
     @Produces(value = {CustomMediaType.NEWS_LIST_V1})
     public Response listNews(@QueryParam("page") @DefaultValue("1") final int page,
                              @QueryParam("filter") @DefaultValue("NO_FILTER") final String filter,
