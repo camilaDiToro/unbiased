@@ -19,12 +19,12 @@ public class ApiErrorDto {
     static{
         errorMapper.put("userform.email.repeated", USERFORM_EMAIL_REPEATED);
         errorMapper.put("userform.email.invalid", USERFORM_EMAIL_FORMAT);
-        errorMapper.put("userform.pass.not.blank", USERFORM_PASS_NOTBLAK);
+        errorMapper.put("userform.pass.notblank", USERFORM_PASS_NOTBLAK);
         errorMapper.put("userprofileform.username.repeated", USERPROFILEFORM_USERNAME_REPEATED);
         errorMapper.put("userprofileform.username.length", USERPROFILEFORM_USERNAME_LENGTH);
         errorMapper.put("userprofileform.mailoptions.notfound", USERPROFILEFORM_MAILOPTIONS_NOTFOUND);
 
-        errorMapper.put("reportnewsform.reason.not.blank", REPORTNEWSFORM_REASON_NOTBLANK);
+        errorMapper.put("reportnewsform.reason.notblank", REPORTNEWSFORM_REASON_NOTBLANK);
         errorMapper.put("reportnewsform.reason.length", REPORTNEWSFORM_REASON_LENGTH);
         errorMapper.put("reportnewsform.reason.notfound", REPORTNEWSFORM_REASON_NOTFOUND);
         errorMapper.put("reportnewsform.reason.notnull", REPORTNEWSFORM_REASON_NOTNULL);
@@ -39,6 +39,10 @@ public class ApiErrorDto {
         errorMapper.put("createnewsform.body.length", CREATENEWSFORM_BODY_LENGTH);
         errorMapper.put("createnewsform.body.notnull", CREATENEWSFORM_BODY_NOTNULL);
         errorMapper.put("createnewsform.categories.notfound", CREATENEWSFORM_CATEGORIES_NOTFOUND);
+
+        errorMapper.put("commentnewsform.comment.notblank", COMMENTNEWSFORM_COMMENT_NOTBLANK);
+        errorMapper.put("commentnewsform.comment.length", COMMENTNEWSFORM_COMMENT_LENGTH);
+        errorMapper.put("commentnewsform.comment.notnull", COMMENTNEWSFORMM_COMMENT_NOTNULL);
     }
 
     public ApiErrorDto(ApiErrorCode apiCode, String details) {

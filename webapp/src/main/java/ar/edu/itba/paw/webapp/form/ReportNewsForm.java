@@ -17,7 +17,7 @@ public class ReportNewsForm {
     }
 
     @NotNull(message = "reportnewsform.reason.notnull")
-    @NotBlank(message = "reportnewsform.reason.not.blank")
+    @NotBlank(message = "reportnewsform.reason.notblank")
     @Length(max=400, message = "reportnewsform.reason.length")
     @NotExistingReportReason(message = "reportnewsform.reason.notfound")
     private String reason = "INAP";

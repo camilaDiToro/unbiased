@@ -14,7 +14,7 @@ public class UserForm {
     // source: https://www.w3resource.com/javascript/form/email-validation.php
     private String email;
 
-    @NotBlank(message = "userform.pass.not.blank")
+    @NotBlank(message = "userform.pass.notblank")
     private String password;
 
     public String getEmail() {

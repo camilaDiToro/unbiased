@@ -60,7 +60,11 @@ public enum ApiErrorCode {
     CREATENEWSFORM_BODY_NOTBLANK(1322,"The body of the article can not be blank"),
     CREATENEWSFORM_BODY_LENGTH(1323,"The body of the article can have up to 10000000 characters"),
     CREATENEWSFORM_BODY_NOTNULL(1325,"The body of the article can not be null"),
-    CREATENEWSFORM_CATEGORIES_NOTFOUND(1334,"The provided category option is invalid");
+    CREATENEWSFORM_CATEGORIES_NOTFOUND(1334,"The provided category option is invalid"),
+
+    COMMENTNEWSFORM_COMMENT_NOTBLANK(1402,"The comment can not be blank"),
+    COMMENTNEWSFORM_COMMENT_LENGTH(1403,"The comment can have up to 200 characters"),
+    COMMENTNEWSFORMM_COMMENT_NOTNULL(1405,"The comment can not be null");
 
 
     private final int errorCode;

@@ -6,17 +6,10 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class CommentNewsForm {
-    public String getComment() {
-        return comment;
-    }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    @NotNull
-    @NotBlank
-    @Length(max=400)
+    @NotNull(message = "commentnewsform.comment.notnull")
+    @NotBlank(message = "commentnewsform.comment.notblank")
+    @Length(max=400, message = "commentnewsform.comment.length")
     private String comment;
 
     public long getNewsId() {
@@ -27,6 +20,13 @@ public class CommentNewsForm {
         this.newsId = newsId;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     private long newsId;
-    
 }
