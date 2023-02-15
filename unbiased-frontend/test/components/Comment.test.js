@@ -2,6 +2,7 @@ import React from 'react'
 import * as testingLibrary from "../test_utils/contextRender";
 import Comment from "../../components/Comment";
 import i18n from "../../i18n/i18n";
+import {getDefaultLoggedUser} from "../test_utils/defaultLoggedUser";
 
 const {render, screen} = testingLibrary;
 
