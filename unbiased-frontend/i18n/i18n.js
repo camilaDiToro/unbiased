@@ -181,6 +181,7 @@ const es = {
     "showNews.deletedComment": "El comentario ha sido eliminado.",
     "showNews.reportCommentQuestion": "¿Estás seguro de que quieres reportar este comentario?",
     "showNews.commentLogged": " para comentar!",
+    "conditional.or": "o",
 
     //Tooltips
     "tooltip.obligatoryField": "Campo obligatorio",
@@ -403,6 +404,7 @@ export const en = {
         "showNews.deletedComment": "The comment has been deleted.",
         "showNews.reportCommentQuestion": "Are you sure you want to report the comment?",
         "showNews.commentLogged": " to comment!",
+        "conditional.or": "or",
 
         //Tooltips
         "tooltip.obligatoryField": "Obligatory field",

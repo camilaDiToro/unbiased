@@ -27,17 +27,17 @@ describe('Bookmark test', ()=>{
         propsMap = customPropsMap()
     })
 
-    test('Bookmark show up if it is a loggedUser', ()=>{
+    test('Bookmark show up if it is a logged user', ()=>{
 
         const loggedUser = getDefaultLoggedUser()
         render(<Bookmark {...propsMap}/>, {loggedUser})
         expect(screen.getByRole('tooltip', {name: 'Mocked tooltip'})).toBeInTheDocument()
     })
 
-    test('Bookmark does not show up if it is not a loggedUser', ()=>{
+    test('Bookmark redirects to log in if it is not a logged user', ()=> {
 
         render(<Bookmark {...propsMap}/>)
-        expect(screen.queryByRole('tooltip', {name: 'Mocked tooltip'})).toBeNull()
+        expect(screen.getByRole('tooltip', {name: 'Mocked tooltip'}).closest('a')).toHaveAttribute('href', '/login')
     })
 
 })
