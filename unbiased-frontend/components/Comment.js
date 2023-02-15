@@ -47,12 +47,12 @@ export default function Comment(props) {
                 triggerEffect={props.triggerEffect}
             ></DeleteButton>
 
-            {loggedUser ? <ReportFlag
+            <ReportFlag
                 id={props.id}
                 reported={props.reported}
                 comment
                 triggerEffect={props.triggerEffect}
-            ></ReportFlag> : <></>}
+            ></ReportFlag>
           </>}
         </div>
       </div>
