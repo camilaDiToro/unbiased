@@ -35,7 +35,8 @@ describe('Pin Button test', ()=>{
   })
 
   test('Pin Button does not show up if it is not my profile', ()=>{
-    const loggedUser = getDefaultLoggedUser({id: 2})
+    propsMap.pinned = false
+    const loggedUser = getDefaultLoggedUser({id: 2, creatorId: 4})
     render(<PinButton {...propsMap}/>, {loggedUser})
     expect(screen.queryByAltText('pin-image')).toBeNull()
   })
