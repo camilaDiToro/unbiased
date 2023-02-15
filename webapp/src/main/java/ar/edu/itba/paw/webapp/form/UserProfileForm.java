@@ -8,16 +8,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class UserProfileForm {
 
-//    @FileSize
-//    private MultipartFile image;
-
-    @NotExistingUsername
-    @Length(max=50)
+    @NotExistingUsername(message = "userprofileform.username.repeated")
+    @Length(max=50, message = "userprofileform.username.length")
     private String username;
 
     private String description;
 
-    @NotExistingMailOption
+    @NotExistingMailOption(message = "userprofileform.mailoptions.notfound")
     private String[] mailOptions;
 
 
@@ -28,14 +25,6 @@ public class UserProfileForm {
     public void setMailOptions(String[] mailOptions) {
         this.mailOptions = mailOptions;
     }
-
-//    public MultipartFile getImage() {
-//        return image;
-//    }
-//
-//    public void setImage(MultipartFile image) {
-//        this.image = image;
-//    }
 
     public String getUsername() {
         return username;

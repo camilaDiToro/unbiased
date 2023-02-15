@@ -17,9 +17,12 @@ public class ApiErrorDto {
 
     static Map<String, ApiErrorCode> errorMapper = new HashMap<>();
     static{
-        errorMapper.put("userform.email.repeated", USERFORM_EMAIL_REPEATEDEMAIL);
+        errorMapper.put("userform.email.repeated", USERFORM_EMAIL_REPEATED);
         errorMapper.put("userform.email.invalid", USERFORM_EMAIL_FORMAT);
         errorMapper.put("userform.pass.not.blank", USERFORM_PASS_NOTBLAK);
+        errorMapper.put("userprofileform.username.repeated", USERPROFILEFORM_USERNAME_REPEATED);
+        errorMapper.put("userprofileform.username.length", USERPROFILEFORM_USERNAME_LENGTH);
+        errorMapper.put("userprofileform.mailoptions.notfound", USERPROFILEFORM_MAILOPTIONS_NOTFOUND);
     }
 
     public ApiErrorDto(ApiErrorCode apiCode, String details) {

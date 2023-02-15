@@ -38,10 +38,14 @@ public enum ApiErrorCode {
 
     // Form validation
     FORM_VALIDATION_ERROR(999, "Unkonwn validation error"),
-    USERFORM_EMAIL_REPEATEDEMAIL(1000, "An user with this email already exists"),
+
+    USERFORM_EMAIL_REPEATED(1000, "An user with this email already exists"),
     USERFORM_EMAIL_FORMAT(1001, "Invalid email format"),
-    USERFORM_PASS_NOTBLAK(1012, "Password can not be blank")
-    ;
+    USERFORM_PASS_NOTBLAK(1012, "Password can not be blank"),
+
+    USERPROFILEFORM_USERNAME_REPEATED(1100, "The provided username already exists"),
+    USERPROFILEFORM_USERNAME_LENGTH(1103, "The username can have up to 50 characters"),
+    USERPROFILEFORM_MAILOPTIONS_NOTFOUND(1114, "The provided mail option is invalid");
 
 
     private final int errorCode;
