@@ -79,10 +79,17 @@ public class CategoryStatistics {
             return percentage;
         }
 
+        public double getProportion() {
+            if (total == 0.0)
+                return 0.0;
+            return ((double) qty) /total;
+        }
+
         private final int percentage;
+        private final double total;
         private Statistic(long qty, long total) {
             this.qty = qty;
-            double hola = ((double) qty) /total;
+            this.total = total;
             this.percentage = (int) Math.round((((double) qty) /total)*100);
         }
     }

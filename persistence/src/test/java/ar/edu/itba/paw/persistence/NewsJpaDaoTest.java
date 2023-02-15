@@ -160,7 +160,7 @@ public class NewsJpaDaoTest {
     public void testGetNewsById() {
         addCreatorToTable();
         addTheNewsToTable();
-        Optional<News> optionalNews = newsJpaDao.getById(NEWS_ID, CREATOR_ID);
+        Optional<News> optionalNews = newsJpaDao.getById(NEWS_ID);
 
         assertEquals(NEWS_ID, optionalNews.get().getNewsId());
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
@@ -170,7 +170,7 @@ public class NewsJpaDaoTest {
     public void testFindByCreatorId() {
         addCreatorToTable();
         addTheNewsToTable();
-        Optional<News> optionalFullNews = newsJpaDao.getById(NEWS_ID, CREATOR_ID);
+        Optional<News> optionalFullNews = newsJpaDao.getById(NEWS_ID);
 
         assertEquals(optionalFullNews.get().getCreatorId(), NEWS_ID);
         assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, NEWS_TABLE));
@@ -195,7 +195,7 @@ public class NewsJpaDaoTest {
         addTheNewsToTable();
         addCategoryToTheNews();
 
-        List<News> newsList = newsJpaDao.getNewsByCategoryNew(PAGE_SIZE, CATEGORY, CREATOR_ID);
+        List<News> newsList = newsJpaDao.getNewsByCategoryNew(PAGE_SIZE, CATEGORY);
 
         assertEquals(1, newsList.size());
         assertTrue(newsList.get(0).getCategories().contains(CATEGORY));
@@ -209,7 +209,7 @@ public class NewsJpaDaoTest {
         addOldNews();
         addCategoryToOldNews();
 
-        List<News> newsList = newsJpaDao.getNewsByCategoryTop(PAGE_SIZE, CATEGORY, CREATOR_ID, TimeConstraint.DAY);
+        List<News> newsList = newsJpaDao.getNewsByCategoryTop(PAGE_SIZE, CATEGORY, TimeConstraint.DAY);
 
         assertEquals(1, newsList.size());
         assertTrue(newsList.get(0).getCategories().contains(CATEGORY));

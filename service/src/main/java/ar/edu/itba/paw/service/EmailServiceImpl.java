@@ -19,6 +19,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
 
     private String getUrl(String subdir){
         try {
-            return new URL(environment.getRequiredProperty("mail.url.schema"), environment.getRequiredProperty("mail.url.domain"), environment.getRequiredProperty("mail.url.baseDir") + subdir).toString();
+            return new URL(environment.getRequiredProperty("url.schema"), environment.getRequiredProperty("url.domain"), environment.getRequiredProperty("url.baseDir") + subdir).toString();
         } catch (MalformedURLException e) {
             LOGGER.warn("Malformed url exeption in email verification {}", e);
         }
@@ -57,7 +58,8 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendVerificationEmail(final User user, final VerificationToken token, Locale locale) {
         final String to = user.getEmail();
-        final String url = getUrl("verify_email?token=" + token.getToken());
+        final String encodedToken = Base64.getEncoder().encodeToString((to + ":" + token.getToken()).getBytes());
+        final String url = getUrl("verify-email?token=" + encodedToken);
         final String subject = messageSource.getMessage("email.verification.subject",null,locale);
         final Map<String, Object> data = new HashMap<>();
         data.put("verificationUrl",url);
@@ -75,7 +77,7 @@ public class EmailServiceImpl implements EmailService {
         final String to = user.getEmail();
         final String subject = messageSource.getMessage("email.admin.subject",null,locale);
         final Map<String, Object> data = new HashMap<>();
-        final String url = getUrl("admin/reported_news/REP_COUNT_DESC");
+        final String url = getUrl("admin/reported-news");
         data.put("username", user.getUsername());
         data.put("urlToAdminPanel",url);
         try {
@@ -107,7 +109,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendNewFollowerEmail(final User user, final User follower, Locale locale) {
         final String to = user.getEmail();
         final String subject = messageSource.getMessage("email.newFollower.subject",null,locale);
-        final String url = getUrl("create_article");
+        final String url = getUrl("profile/?id="+follower.getUserId());
         final Map<String, Object> data = new HashMap<>();
         data.put("urlToCreateArticle",url);
         try {
@@ -123,7 +125,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendNewCommentEmail(final User newsOwner, final News commentedNews, Locale locale) {
         final String to = newsOwner.getEmail();
         final String subject = messageSource.getMessage("email.newComment.subject",null,locale);
-        final String url = getUrl("news/"+commentedNews.getNewsId());
+        final String url = getUrl("article/?id="+commentedNews.getNewsId());
         final Map<String, Object> data = new HashMap<>();
         data.put("urlToCommentedNews",url);
         try {
@@ -139,7 +141,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendNewsPositivityChanged(final User newsOwner, final News news, Locale locale) {
         final String to = newsOwner.getEmail();
         final String subject = messageSource.getMessage("email.newPositivity.subject",null,locale);
-        final String url = getUrl("news/"+news.getNewsId());
+        final String url = getUrl("article/?id="+news.getNewsId());
         final Map<String, Object> data = new HashMap<>();
         data.put("urlToArticle",url);
         try {
@@ -157,7 +159,7 @@ public class EmailServiceImpl implements EmailService {
         final Object[] args
                 = { publishedNews.getCreator().toString() };
         final String subject = messageSource.getMessage("email.newsAddedByfollowing.subject",args,locale);
-        final String url = getUrl("news/"+ publishedNews.getNewsId());
+        final String url = getUrl("article/?id="+ publishedNews.getNewsId());
         final Map<String, Object> data = new HashMap<>();
         data.put("urlToCreatedArticle",url);
         try {

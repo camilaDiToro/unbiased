@@ -1,233 +1,258 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotAuthorizedException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Category;
 import ar.edu.itba.paw.model.news.CategoryStatistics;
 import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
-import ar.edu.itba.paw.model.news.TextType;
-import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.MailOption;
-import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.model.user.VerificationToken;
+import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.service.NewsService;
+import ar.edu.itba.paw.service.OwnerService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.form.ResendVerificationEmail;
+import ar.edu.itba.paw.webapp.api.exceptions.ApiErrorCode;
+import ar.edu.itba.paw.webapp.api.exceptions.CustomBadRequestException;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetUsersFilter;
+import ar.edu.itba.paw.webapp.dto.CategoryStatisticsDto;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.dto.SimpleMessageDto;
+import ar.edu.itba.paw.webapp.dto.StatusDto;
+import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import ar.edu.itba.paw.webapp.form.UserProfileForm;
-import ar.edu.itba.paw.webapp.model.MyModelAndView;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
+import org.springframework.stereotype.Component;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Optional;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-@Controller
+@Path("/users")
+@Component
 public class UserController {
 
     private final UserService userService;
     private final NewsService newsService;
-
-
     private final SecurityService securityService;
+    private final OwnerService ownerService;
+
+    @Context
+    private UriInfo uriInfo;
 
     @Autowired
-    public UserController(UserService userService, SecurityService securityService, NewsService newsService) {
-        this.securityService = securityService;
+    public UserController(UserService userService, NewsService newsService, SecurityService securityService, OwnerService ownerService) {
         this.userService = userService;
         this.newsService = newsService;
-
+        this.securityService = securityService;
+        this.ownerService = ownerService;
     }
 
-    @RequestMapping("/login")
-    public ModelAndView login() {
-        return new ModelAndView("login");
-    }
+    @GET
+    @Produces(value = {CustomMediaType.USER_LIST_V1})
+    public Response listUsers(@QueryParam("page") @DefaultValue("1") final int page,
+                              @QueryParam("filter") @DefaultValue("NO_FILTER") final String filter,
+                              @QueryParam("search") final String search,
+                              @QueryParam("id") final Long id) {
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public ModelAndView createForm(@ModelAttribute("registerForm") final UserForm userForm) {
-        return new MyModelAndView.Builder("register", "pageTitle.register", TextType.INTERCODE)
-                .build();
-    }
+        final GetUsersFilter objFilter = GetUsersFilter.fromString(filter);
+        objFilter.validateParams(search,id);
+        Page<User> userPage = objFilter.getUsers(userService,page,search,id);
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ModelAndView create(@Valid @ModelAttribute("registerForm") final UserForm userForm, final BindingResult errors) {
-
-        if (errors.hasErrors()) {
-            return createForm(userForm);
+        if(userPage.getContent().isEmpty()){
+            return Response.noContent().build();
         }
 
-        final User.UserBuilder userBuilder = new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword());
+        final List<UserDto> allUsers = userPage.getContent().stream().map(u -> UserDto.fromUser(uriInfo, u)).collect(Collectors.toList());
 
-        userService.create(userBuilder);
-        return new ModelAndView("email_verification_pending");
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<UserDto>>(allUsers) {});
+        return ResponseHeadersUtils.pagedResponse(userPage, responseBuilder, uriInfo);
     }
 
-    @RequestMapping(value = "/profile/{userId:[0-9]+}/pingNews/{newsId:[0-9]+}", method = RequestMethod.POST)
-    public ModelAndView pingNews(@PathVariable("userId") final long userId, @PathVariable("newsId") final long newsId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-        userService.pingNewsToggle(currentUser, newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new));
+    @Consumes({CustomMediaType.USER_V1})
+    @POST
+    public Response createUser(@Valid final UserForm userForm){
+        final User newUser = userService.create(new User.UserBuilder(userForm.getEmail()).pass(userForm.getPassword()));
 
-        return new ModelAndView("redirect:/profile/" + userId);
+        final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(newUser.getId())).build();
+        return Response.created(location).build();
     }
 
-    @RequestMapping(value = "/profile/{userId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView profileRedirect(@PathVariable("userId") long userId) {
-        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
+    @GET
+    @Path("/{userId:[0-9]+}")
+    @Produces(value = {CustomMediaType.USER_V1})
+    public Response getUser(@PathParam("userId") final long userId) {
+        User user = userService.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
+
+        UserDto userDto = UserDto.fromUser(uriInfo, user);
+        return Response.ok(userDto).build();
     }
 
-
-    @PreAuthorize("@ownerCheck.checkSavedNewsAccess(#category, #userId)")
-    @RequestMapping(value = "/profile/{userId:[0-9]+}/{newsOrder}", method = RequestMethod.GET)
-    public ModelAndView profile(@PathVariable("userId") long userId,
-                                @PathVariable("newsOrder") String newsOrder,
-                                @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm,
-                                @RequestParam(name = "page", defaultValue = "1") int page,
-                                @RequestParam(name = "category", defaultValue = "") String category,
-                                @RequestParam(name = "hasErrors", defaultValue = "false") boolean hasErrors) {
-        final Optional<User> user =  securityService.getCurrentUser();
-        final User profileUser = userService.getRegisteredUserById(userId).orElseThrow(UserNotFoundException::new);
-
-        final CategoryStatistics categoryStatistics = newsService.getCategoryStatistics(userId);
-
-        final Iterable<ProfileCategory> profileCategoryList = newsService.getProfileCategories(user, profileUser);
-        final ProfileCategory catObject;
-        if (category.equals("")){
-            catObject = profileCategoryList.iterator().next();
-        }
-        else {
-            catObject = userService.getProfileCategory(user, ProfileCategory.getByValue(category), profileUser);
+    @GET
+    @Path("/{userId:[0-9]+}/news-stats")
+    @Produces(value = { CustomMediaType.CATEGORY_STATISTICS_V1})
+    public Response getUserNewsStats(@PathParam("userId") final long userId){
+        User user = userService.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
+        if (!user.getRoles().contains(Role.ROLE_JOURNALIST)) {
+            return Response.noContent().build();
         }
 
-        final Page<News> fullNews = newsService.getNewsForUserProfile(user, page, NewsOrder.getByValue(newsOrder), profileUser, catObject);
-        final boolean isMyProfile = profileUser.equals(user.orElse(null));
-
-        MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("profile", "pageTitle.profile", TextType.INTERCODE)
-                .withObject("orders", NewsOrder.values())
-                .withObject("orderBy", newsOrder)
-                .withObject("categories", profileCategoryList)
-                .withObject("newsPage", fullNews)
-                .withObject("statisticsMap", categoryStatistics.getStatiscticsMap())
-                .withObject("isMyProfile", isMyProfile)
-                .withObject("profileUser", profileUser)
-                .withObject("newsCategories", Category.getTrueCategories())
-                .withObject("userId", userId)
-                .withObject("mailOptions", MailOption.values())
-                .withObject("hasErrors", hasErrors)
-                .withObject("profileFollowing", userService.getFollowingCount(userId))
-                .withObject("profileFollowers", userService.getFollowersCount(userId))
-                .withObject("isJournalist", profileUser.getRoles().contains(Role.ROLE_JOURNALIST))
-                .withStringParam(profileUser.toString());
-        if (user.isPresent()) {
-            final User loggedUser = user.get();
-            mavBuilder.withObject("isFollowing", userService.isFollowing(loggedUser, userId));
-            EmailSettings emailSettings = loggedUser.getEmailSettings();
-            if (emailSettings != null && isMyProfile)
-                mavBuilder.withObject("getMailOptionByEnum", loggedUser.getEmailSettings().getValueByEnum());
-        }
-
-        Optional<News> pingedNews = newsService.getPingedNews(user, profileUser);
-
-        pingedNews.ifPresent(news -> mavBuilder.withObject("pingedNews", news));
-
-        mavBuilder.withObject("category", catObject);
-
-        return mavBuilder.build();
-
+        Map<Category, CategoryStatistics.Statistic> newsCategoryMap = newsService.getCategoryStatistics(user.getUserId()).getStatiscticsMap();
+        List<CategoryStatisticsDto> newsStats = newsCategoryMap.entrySet().stream()
+                .map(c -> CategoryStatisticsDto.fromCategoryStatistic(uriInfo, c, userId)).collect(Collectors.toList());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<CategoryStatisticsDto>>(newsStats) {});
+        return responseBuilder.build();
     }
 
-    @RequestMapping(value = "/profile/{userId:[0-9]+}/follow", method = RequestMethod.GET)
-    public ModelAndView profileFollow(@PathVariable("userId") long userId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-        userService.followUser(currentUser, userId);
-        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
+    @GET
+    @Path("/{email}/status")
+    @Produces(value = { CustomMediaType.USER_STATUS_V1})
+    public Response getUserStatus(@PathParam("email") final String email){
+        User user = userService.findByEmail(email).orElseThrow( () -> new UserNotFoundException(email));
+        if (user.getStatus().equals(UserStatus.UNABLE)) {
+            userService.resendEmailVerification(user);
+            return Response.ok(StatusDto.fromStatus(UserStatus.UNABLE)).build();
+        }
+        return Response.ok(StatusDto.fromStatus(UserStatus.REGISTERED)).build();
     }
 
-    @RequestMapping(value = "/profile", method = RequestMethod.POST)
-    public ModelAndView profilePicture(@Valid @ModelAttribute("userProfileForm") final UserProfileForm userProfileForm, final BindingResult errors) throws IOException {
-        final User user = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-        final long userId = user.getId();
-        if (errors.hasErrors()) {
-            return profile(userId, "NEW",userProfileForm, 1, "MY_POSTS", true);
-        }
+
+    @PUT
+    @Path("/{userId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @Produces(value = { CustomMediaType.USER_V1})
+    public Response editUser(@PathParam("userId") final long userId, @Valid final UserProfileForm userProfileForm) {
+        User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
 
         userService.updateProfile(userId, userProfileForm.getUsername(),
-                userProfileForm.getImage().getBytes(), userProfileForm.getImage().getContentType(), userProfileForm.getDescription());
-        userService.updateEmailSettings(user, MailOption.getEnumCollection(userProfileForm.getMailOptions()));
-        return new ModelAndView("redirect:/profile/" + user.getUserId());
-    }
-
-    @RequestMapping("/verify_email")
-    public ModelAndView verifyEmail(@RequestParam(name = "token") final String token) {
-        final VerificationToken.Status status = userService.verifyUserEmail(token);
-        final ModelAndView mav;
-        if (status.equals(VerificationToken.Status.SUCCESFFULLY_VERIFIED)){
-            mav = new MyModelAndView.Builder("email_verified", "pageTitle.emailVerified", TextType.INTERCODE)
-                    .build();
-        } else {
-            mav = new ModelAndView("redirect:/email_not_verified/"+status.getStatus().toLowerCase(Locale.ROOT));
-        }
-        return mav;
-    }
-
-    @RequestMapping(value = "/profile/{userId:[0-9]+}/unfollow", method = RequestMethod.GET)
-    public ModelAndView profileUnfollow(@PathVariable("userId") long userId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotFoundException::new);
-        userService.unfollowUser(currentUser, userId);
-        return new ModelAndView("redirect:/profile/" + userId + "/TOP");
-    }
-
-    @RequestMapping(value = "/email_not_verified/{status:expired|not_exists}", method = RequestMethod.GET)
-    public ModelAndView resendVerificationEmail(@ModelAttribute("resendEmailForm") final ResendVerificationEmail userForm, @PathVariable("status") String status) {
-
-        final MyModelAndView.Builder mavBuilder = new MyModelAndView.Builder("email_not_verified", "pageTitle.emailVerified", TextType.INTERCODE)
-                .withObject("status",status);
-
-        if (status.equals("expired")){
-            mavBuilder.withObject("errorMsg",VerificationToken.Status.EXPIRED.getCode());
-        } else {
-            mavBuilder.withObject("errorMsg",VerificationToken.Status.NOT_EXISTS.getCode());
-        }
-        return mavBuilder.build();
-    }
-
-    @RequestMapping(value = "/email_not_verified/{status:expired|not_exists}", method = RequestMethod.POST)
-    public ModelAndView resendVerificationEmail(@Valid @ModelAttribute("resendEmailForm") final ResendVerificationEmail userForm, final BindingResult errors, @PathVariable("status") String status) {
-        if (errors.hasErrors()) {
-            return resendVerificationEmail(userForm, status);
+                null, null, userProfileForm.getDescription());
+        if(userProfileForm.getMailOptions()!=null){
+            userService.updateEmailSettings(user, MailOption.getEnumCollection(userProfileForm.getMailOptions()));
         }
 
-        final VerificationToken.Status s = userService.resendEmailVerification(userForm.getEmail());
-        if (s.equals(VerificationToken.Status.ALREADY_VERIFIED)){
-            return new ModelAndView("email_already_verified");
+        return Response.ok(UserDto.fromUser(uriInfo, user)).build();
+    }
+
+    @PUT
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("/{userId:[0-9]+}/image")
+    public Response updateUserImage(@PathParam("userId") long userId,
+                                    @FormDataParam("image") final FormDataBodyPart imageBodyPart,
+                                    @FormDataParam("image") byte[] bytes) {
+        final String imageType = imageBodyPart.getMediaType().toString();
+        userService.setUserImage(userId, bytes, imageType);
+        final URI location = uriInfo.getAbsolutePathBuilder().build();
+        return Response.created(location).build();
+    }
+
+    @GET
+    @Path("/{userId:[0-9]+}/image")
+    public Response profileImage(@PathParam("userId") final long userId,
+                                 @Context javax.ws.rs.core.Request request) {
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (!user.hasImage()){
+            return Response.noContent().build();
         }
-        return new ModelAndView("email_verification_pending");
+
+        final Image image = user.getImage();
+        return ResponseHeadersUtils.conditionalCacheImageResponse(image, request);
     }
 
 
-
-    @RequestMapping( value = "/profile/{userId:[0-9]+}/image", method = {RequestMethod.GET},
-            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    @ResponseBody
-    public byte[] profileImage(@PathVariable("userId") long userId) {
-        return userService.getUserById(userId).orElseThrow(UserNotFoundException::new).getImage().getBytes();
+    @PUT
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.newsOwnership(#newsId, #userId)")
+    @Path(value = "/{userId:[0-9]+}/pinnedNews")
+    public Response pinNews(@PathParam("userId") final long userId, @QueryParam("newsId") final long newsId) {
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        final News news =  newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        userService.pinNews(user, news);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s pinned the article of id %d", user.getUsername(), news.getNewsId()))).build();
     }
 
+    @DELETE
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    @Path(value = "/{userId:[0-9]+}/pinnedNews")
+    public Response unpinNews(@PathParam("userId") final long userId) {
+        final User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        userService.unpinNews(user);
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s has no pinned article", user.getUsername()))).build();
+    }
+
+
+    @POST
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#followerId)")
+    @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
+    public Response followUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
+        final User currentUser = securityService.getCurrentUser().orElseThrow(() -> new UserNotFoundException(userId));
+        if(userService.followUser(currentUser, userId)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] already followed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
+    }
+
+
+    @DELETE
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#followerId)")
+    @Path(value = "/{userId:[0-9]+}/followers/{followerId:[0-9]+}")
+    public Response unfollowUser(@PathParam("userId") final long userId, @PathParam("followerId") final long followerId) {
+        final User currentUser = securityService.getCurrentUser().orElseThrow(()->new UserNotAuthorizedException("User should be logged in"));
+        if(userService.unfollowUser(currentUser, userId)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] unfollowed user of id %d", currentUser, currentUser.getUserId(), userId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("User %s [id %d] did not follow user of id %d", currentUser, currentUser.getUserId(), userId))).build();
+    }
+
+
+    /// ------------------------------------------------------------------------------------------
+    /// -------------------------------- OWNER ---------------------------------------------------
+    /// ------------------------------------------------------------------------------------------
+
+    @PUT
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path(value = "/{userId:[0-9]+}/role")
+    public Response addRole(@PathParam("userId") final long userId, @QueryParam("role") final String role) {
+        if(!role.equals(Role.ROLE_ADMIN.getRole())){
+            throw new CustomBadRequestException(
+                    ApiErrorCode.INVALID_ROLE,
+                    String.format("The role %s can not be manually added to the user of id %d", role, userId));
+        }
+        if(ownerService.makeUserAdmin(userId)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("User of id %d is now admin", userId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("User of id %d was already admin", userId))).build();
+    }
+
+    @DELETE
+    @Produces(value = {CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path(value = "/{userId:[0-9]+}/role")
+    public Response deleteRole(@PathParam("userId") final long userId, @QueryParam("role") final String role) {
+        if(!role.equals(Role.ROLE_ADMIN.getRole())){
+            throw new CustomBadRequestException(
+                    ApiErrorCode.INVALID_ROLE,
+                    String.format("The role %s can not be manually deleted from the user of id %d", role, userId));
+        }
+        if(ownerService.deleteUserAdmin(userId)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("User of id %d is not admin anymore", userId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("User of id %d was not an admin", userId))).build();
+    }
 }
+

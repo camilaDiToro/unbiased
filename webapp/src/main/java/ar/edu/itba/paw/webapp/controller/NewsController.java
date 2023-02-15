@@ -1,255 +1,278 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.model.Image;
 import ar.edu.itba.paw.model.Page;
 import ar.edu.itba.paw.model.Rating;
+
+import ar.edu.itba.paw.model.admin.ReportDetail;
 import ar.edu.itba.paw.model.admin.ReportReason;
-import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
-import ar.edu.itba.paw.model.exeptions.UserNotAuthorized;
-import ar.edu.itba.paw.model.news.Category;
-import ar.edu.itba.paw.model.news.Comment;
-import ar.edu.itba.paw.model.news.CommentUpvoteAction;
-import ar.edu.itba.paw.model.news.News;
-import ar.edu.itba.paw.model.news.NewsOrder;
-import ar.edu.itba.paw.model.news.TextType;
-import ar.edu.itba.paw.model.news.TextUtils;
-import ar.edu.itba.paw.model.news.UpvoteActionResponse;
-import ar.edu.itba.paw.model.user.SavedResult;
-import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.exeptions.ImageNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.news.Category;
+import ar.edu.itba.paw.model.news.News;
+import ar.edu.itba.paw.model.news.TextUtils;
+import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.service.AdminService;
 import ar.edu.itba.paw.service.ImageService;
 import ar.edu.itba.paw.service.NewsService;
 import ar.edu.itba.paw.service.SecurityService;
 import ar.edu.itba.paw.service.UserService;
-import ar.edu.itba.paw.webapp.form.CommentNewsForm;
+import ar.edu.itba.paw.webapp.api.CustomMediaType;
+import ar.edu.itba.paw.webapp.api.exceptions.InvalidRequestParamsException;
+import ar.edu.itba.paw.webapp.api.exceptions.MissingArgumentException;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetNewsFilter;
+import ar.edu.itba.paw.webapp.controller.queryParamsValidators.GetNewsParams;
+import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.CreateNewsForm;
 import ar.edu.itba.paw.webapp.form.ReportNewsForm;
-import ar.edu.itba.paw.webapp.model.MyModelAndView;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Component;
+
 import javax.validation.Valid;
-import java.io.IOException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Controller
-public class NewsController{
+@Path("/news")
+@Component
+public class NewsController {
 
-    private final NewsService newsService;
-    private final ImageService imageService;
-    private final AdminService adminService;
     private final UserService userService;
-
+    private final NewsService newsService;
     private final SecurityService securityService;
 
 
+    private final ImageService imageService;
+    private final AdminService adminService;
+
+
+    @Context
+    private UriInfo uriInfo;
+
     @Autowired
-    public NewsController(AdminService adminService, UserService userService, NewsService newsService, ImageService imageService, SecurityService ss){
-        this.securityService = ss;
+    public NewsController(AdminService adminService, UserService userService, NewsService newsService, SecurityService securityService, ImageService imageService) {
+        this.userService = userService;
         this.newsService = newsService;
+        this.securityService = securityService;
         this.imageService = imageService;
         this.adminService = adminService;
-        this.userService = userService;
     }
 
+    @GET
+    @PreAuthorize("@ownerCheck.canGetNews(#filter, #id, #category)")
+    @Produces(value = {CustomMediaType.NEWS_LIST_V1})
+    public Response listNews(@QueryParam("page") @DefaultValue("1") final int page,
+                             @QueryParam("filter") @DefaultValue("NO_FILTER") final String filter,
+                             @QueryParam("search") @DefaultValue("") final String search,
+                             @QueryParam("cat") @DefaultValue("ALL") final String category,
+                             @QueryParam("order") final String order,
+                             @QueryParam("time") @DefaultValue("WEEK") final String time,
+                             @QueryParam("id") final Long id) {
+        final GetNewsFilter objFilter = GetNewsFilter.fromString(filter);
+        final GetNewsParams params = objFilter.validateParams(userService, category, order, time, search, id);
+        final Page<News> newsPage = objFilter.getNews(newsService, adminService, page, params);
 
+        if(newsPage.getContent().isEmpty()){
+            return Response.noContent().build();
+        }
+
+        final List<NewsDto> allNews = newsPage.getContent().stream().map(n -> NewsDto.fromNews(uriInfo, n)).collect(Collectors.toList());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsDto>>(allNews) {});
+        return ResponseHeadersUtils.pagedResponse(newsPage, responseBuilder, uriInfo);
+    }
+
+    @GET
+    @Path("/{newsId:[0-9]+}")
+    @Produces(value = {CustomMediaType.NEWS_V1})
+    public Response getNews(@PathParam("newsId") final long newsId){
+        News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        NewsDto newsDto = NewsDto.fromNews(uriInfo, news);
+        return Response.ok(newsDto).build();
+    }
+
+    @GET
+    @Path("/{newsId:[0-9]+}/reports")
+    @Produces(value = {CustomMediaType.NEWS_REPORT_LIST_V1})
+    public Response getNewsReportDetail(@PathParam("newsId") final long newsId, @QueryParam("page") @DefaultValue("1") int page){
+        Page<ReportDetail> reportedNewsDetail = adminService.getReportedNewsDetail(page, newsId);
+        if(reportedNewsDetail.getContent().isEmpty()){
+            return Response.noContent().build();
+        }
+        List<NewsReportDetailDto> reportList = reportedNewsDetail.getContent().stream().map(n -> NewsReportDetailDto.fromReportDetail(uriInfo, n)).collect(Collectors.toList());
+        final Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<NewsReportDetailDto>>(reportList) {});
+        return ResponseHeadersUtils.pagedResponse(reportedNewsDetail, responseBuilder, uriInfo);
+    }
+
+    @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @PreAuthorize("@ownerCheck.checkNewsOwnership(#newsId)")
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/delete", method = RequestMethod.POST)
-    public ModelAndView deleteNews(@PathVariable("newsId") long newsId) {
-        final News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
-        newsService.deleteNews(news);
-        return new ModelAndView("redirect:/profile/" + news.getCreatorId());
+    @Path("/{newsId:[0-9]+}/image")
+    public Response updateNewsImage(@PathParam("newsId") long newsId,
+                                 @FormDataParam("image") final FormDataBodyPart newsBodyPart,
+                                 @FormDataParam("image") byte[] bytes) {
+        final String imageType = newsBodyPart.getMediaType().toString();
+        newsService.setNewsImage(newsId, bytes, imageType);
+        final URI location = uriInfo.getAbsolutePathBuilder().build();
+        return Response.created(location).build();
     }
 
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/report", method = RequestMethod.POST)
-    public ModelAndView reportNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
-                                   final BindingResult errors) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        if (errors.hasErrors()) {
-            return showNews(newsId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
+    @POST
+    @Path("/{newsId:[0-9]+}/likes")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response like(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
+        if(newsService.setRating(userId, newsId, Rating.UPVOTE)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d liked the article of id %d",
+                    userId, newsId))).build();
         }
-        adminService.reportNews(currentUser, newsId, ReportReason.valueOf(reportNewsFrom.getReason()));
-        return new ModelAndView("redirect:/news/" + newsId);
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d already liked the article of id %d",
+                userId, newsId))).build();
     }
 
-    @PreAuthorize("@ownerCheck.checkCommentOwnership(#commentId)")
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/delete", method = RequestMethod.POST)
-    public ModelAndView deleteComment(@PathVariable("newsId") long newsId, @PathVariable("commentId") long commentId) {
-        newsService.deleteComment(commentId);
-        return new ModelAndView("redirect:/news/" + newsId);
-    }
-
-    @RequestMapping(value = "/news/{newsId:[0-9]+}", method = RequestMethod.GET)
-    public ModelAndView showNews(@PathVariable("newsId") long newsId,@ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
-                                 @ModelAttribute("commentNewsForm") final CommentNewsForm commentNewsFrom,
-                                 @RequestParam(name="hasErrors", defaultValue="false") boolean hasErrors,
-    @RequestParam(name="page", defaultValue="1") int page,
-                                 @RequestParam(name="order", defaultValue="TOP") String orderBy){
-        final Optional<User> loggedUser = securityService.getCurrentUser();
-
-        final News news = newsService.getById(loggedUser,newsId).orElseThrow(NewsNotFoundException::new);
-        final Locale locale = LocaleContextHolder.getLocale();
-        final NewsOrder orderByObj = NewsOrder.getByValue(orderBy);
-        final long followers = userService.getFollowersCount(news.getCreatorId());
-
-        final Page<Comment> comments = newsService.getComments(newsId, page, orderByObj);
-        final Map<Long, Rating> commentRatings = newsService.getCommentsRating(comments.getContent(), loggedUser);
-        final Map<Long, Long> commentCreatorsFollowers = new HashMap<>();
-        comments.getContent().forEach(c -> commentCreatorsFollowers.put(c.getUser().getUserId(), userService.getFollowersCount(c.getUser().getUserId())));
-
-        final MyModelAndView.Builder builder =  new MyModelAndView.Builder("show_news", news.getTitle(), TextType.LITERAL)
-                .withObject("date", news.getFormattedDate(locale))
-                .withObject("fullNews", news)
-                .withObject("reportReasons", ReportReason.values())
-                .withObject("reportNewsForm", reportNewsFrom)
-                .withObject("commentNewsForm", commentNewsFrom)
-                .withObject("hasErrors", hasErrors)
-                .withObject("commentCreatorsFollowers", commentCreatorsFollowers)
-                .withObject("creatorFollowers", followers)
-                .withObject("locale", locale)
-                .withObject("orders", NewsOrder.values())
-                .withObject("orderBy", orderBy)
-                .withObject("commentRatings", commentRatings)
-                .withObject("commentsPage", newsService.getComments(newsId,page, orderByObj));
-
-
-
-        final Map<Long, Boolean> hasReportedComment;
-        if (loggedUser.isPresent()) {
-            hasReportedComment = new HashMap<>();
-            final User user = loggedUser.get();
-            comments.getContent().forEach(c -> hasReportedComment.put(c.getId(), user.hasReportedComment(c)));
-            builder.withObject("hasReportedCommentMap", hasReportedComment)
-                    .withObject("myNews", news.getCreator().equals(user))
-                    .withObject("pinned", news.equals(user.getPingedNews()))
-                    .withObject("hasReported", adminService.hasReported(user.getId(), news.getNewsId()));
+    @POST
+    @Path("/{newsId:[0-9]+}/dislikes")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response dislike(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
+        if(newsService.setRating(userId, newsId, Rating.DOWNVOTE)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d disliked the article of id %d",
+                    userId, newsId))).build();
         }
-
-        return builder.build();
-
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d already disliked the article of id %d",
+                userId, newsId))).build();
     }
 
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment/{commentId:[0-9]+}/report", method = RequestMethod.POST)
-    public ModelAndView reportComment(@PathVariable("commentId") long commentId,@Valid @ModelAttribute("reportNewsForm") final ReportNewsForm reportNewsFrom,
-                                      final BindingResult errors, @PathVariable("newsId") long newsId){
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-
-        if (errors.hasErrors()) {
-            return showNews(commentId, reportNewsFrom,new CommentNewsForm(),true, 1, "TOP");
+    @DELETE
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @Path("/{newsId:[0-9]+}")
+    @PreAuthorize("@ownerCheck.canDeleteNews(#newsId)")
+    public Response delete(@PathParam("newsId")  long newsId){
+        Optional<News> news = newsService.getById(newsId);
+        if(!news.isPresent()){
+            return Response.noContent().build();
         }
-
-        adminService.reportComment(currentUser, commentId, ReportReason.valueOf(reportNewsFrom.getReason()));
-        return new ModelAndView("redirect:/news/" + newsId + "#" + "comment-" + commentId);
+        newsService.deleteNews(news.get());
+        return Response.ok(SimpleMessageDto.fromString(String.format("The article of id %d has been deleted", newsId))).build();
     }
 
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/comment", method = RequestMethod.POST)
-    public ModelAndView commentNews(@PathVariable("newsId") long newsId,@Valid @ModelAttribute("commentNewsForm")
-    final CommentNewsForm commentNewsForm, final BindingResult errors,
-                                    @RequestParam(name = "order") final String order) {
-        final NewsOrder newsOrder = NewsOrder.getByValue(order);
-        if (errors.hasErrors()) {
-            return showNews(newsId, new ReportNewsForm(),commentNewsForm, false, 1, "TOP");
+    @POST
+    @Produces({CustomMediaType.NEWS_REPORT_V1})
+    @Path("/{newsId:[0-9]+}/reports")
+    @PreAuthorize("@ownerCheck.userMatches(#reportForm.userId)")
+    public Response report(@PathParam("newsId")  long newsId, @Valid final ReportNewsForm reportForm){
+        if(reportForm == null){
+            throw new MissingArgumentException("Missing body, userId and reporting reason required");
         }
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        newsService.addComment(currentUser, newsId, commentNewsForm.getComment());
-        return new ModelAndView("redirect:/news/" + newsId + "?order=" + newsOrder.name());
-    }
-
-    @RequestMapping( value = "/news/{imageId:[0-9]+}/image", method = {RequestMethod.GET},
-            produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    @ResponseBody
-    public byte[] newsImage(@PathVariable("imageId") long imageId) {
-         return imageService.getImageById(imageId).orElseThrow(ImageNotFoundException::new).getBytes();
-    }
-
-    @RequestMapping(value = "/create_article", method = RequestMethod.GET)
-    public ModelAndView createArticle(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm){
-        return new MyModelAndView.Builder("create_article", "pageTitle.createArticle", TextType.INTERCODE)
-                .withObject("categories", Category.getTrueCategories())
-                .withObject("validate", false).build();
-    }
-
-
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/save", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<SavedResult> saveNews(@PathVariable("newsId") long newsId){
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        final SavedResult savedResult = new SavedResult(newsService.toggleSaveNews(currentUser, newsId));
-        return new ResponseEntity<>(savedResult, HttpStatus.OK);
-    }
-
-    private ModelAndView createArticleAndValidate(@ModelAttribute("createNewsForm") final CreateNewsForm createNewsForm, final BindingResult errors){
-        final ModelAndView mav = new ModelAndView("create_article");
-        mav.addObject("categories", Category.values());
-        mav.addObject("errors", errors);
-        mav.addObject("validate", true);
-        return mav;
-    }
-
-    @RequestMapping(value = "/create_article", method = RequestMethod.POST)
-    public ModelAndView postArticle(@Valid @ModelAttribute("createNewsForm") final CreateNewsForm createNewsFrom,
-                                     final BindingResult errors) throws IOException {
-        if(errors.hasErrors()){
-            return createArticleAndValidate(createNewsFrom, errors);
+        ReportDetail reportDetail = adminService.reportNews(reportForm.getUserId(), newsId, ReportReason.getByValue(reportForm.getReason()));
+        if(reportDetail == null){
+            throw new InvalidRequestParamsException("Each user can report an article just once");
         }
+        return Response.ok(NewsReportDetailDto.fromReportDetail(uriInfo, reportDetail)).build();
+    }
 
+    @DELETE
+    @Path("/{newsId:[0-9]+}/likes")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response removeLike(@QueryParam("userId")  long userId, @PathParam("newsId")  long newsId){
+        if(newsService.setRating(userId, newsId, Rating.NO_RATING)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The like of the user of id %d to the article of id %d has been removed",
+                    userId, newsId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d did not have an interaction with the article of id %d",
+                userId, newsId))).build();
+    }
+
+    @DELETE
+    @Path("/{newsId:[0-9]+}/dislikes")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response removeDislike(@QueryParam("userId")  long userId, @PathParam("newsId")  long newsId){
+        if(newsService.setRating(userId, newsId, Rating.NO_RATING)){
+            return Response.ok(SimpleMessageDto.fromString(String.format("The dislike of the user of id %d to the article of id %d has been removed",
+                    userId, newsId))).build();
+        }
+        return Response.ok(SimpleMessageDto.fromString(String.format("The user of id %d did not have an interaction with the article of id %d",
+                userId, newsId))).build();
+    }
+
+    @DELETE
+    @Path("/{newsId:[0-9]+}/bookmarks")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response removeBookmark(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
+        if (!newsService.isSavedByUser(newsId, userId)) {
+            return Response.ok(String.format("The user of id %d did not have the article of id %d saved",userId, newsId)).build();
+        }
+        newsService.unsaveNews(userId, newsId);
+        return Response.ok(String.format("The user of id %d unsaved the article of id %d",userId, newsId)).build();
+    }
+
+    @POST
+    @Path("/{newsId:[0-9]+}/bookmarks")
+    @Produces({CustomMediaType.SIMPLE_MESSAGE_V1})
+    @PreAuthorize("@ownerCheck.userMatches(#userId)")
+    public Response save(@QueryParam("userId") long userId, @PathParam("newsId") long newsId){
+        if (newsService.isSavedByUser(newsId, userId)) {
+            return Response.ok(String.format("The user of id %d had already saved the article of id %d",userId, newsId)).build();
+        }
+        newsService.saveNews(userId, newsId);
+        return Response.ok(String.format("The user of id %d saved the article of id %d",userId, newsId)).build();
+    }
+
+    @Consumes({CustomMediaType.NEWS_V1})
+    @POST
+    public Response createNews(@Valid final CreateNewsForm createNewsFrom) {
         final User user = securityService.getCurrentUser().get();
         final News.NewsBuilder newsBuilder = new News.NewsBuilder(user, TextUtils.convertMarkdownToHTML(createNewsFrom.getBody()), createNewsFrom.getTitle(), createNewsFrom.getSubtitle());
+        List<Category> categories;
+        if (createNewsFrom.getCategories() == null) {
+            categories = new ArrayList<>();
+        } else {
+            categories = Arrays.stream(createNewsFrom.getCategories()).map(Category::getByCode).collect(Collectors.toList());
+        }
+        final News news = newsService.create(newsBuilder, categories);
 
-        if(!createNewsFrom.getImage().isEmpty() && 0 != createNewsFrom.getImage().getBytes().length){
-            newsBuilder.imageId(imageService.uploadImage(createNewsFrom.getImage().getBytes(), createNewsFrom.getImage().getContentType()));
+        final URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(news.getNewsId())).build();
+        return Response.created(location).build();
+    }
+
+    @GET
+    @Path("/{newsId:[0-9]+}/image")
+    public Response profileImage(@PathParam("newsId") final long newsId,
+                                 @Context javax.ws.rs.core.Request request) {
+        final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        final Optional<Long> maybeImageId = news.getImageId();
+
+        if (!maybeImageId.isPresent()){
+            return Response.noContent().build();
         }
 
-        final News news = newsService.create(newsBuilder, Arrays.stream(createNewsFrom.getCategories()).map(Category::getByCode).collect(Collectors.toList()));
-        return new ModelAndView("redirect:/news/" + news.getNewsId());
+        final Image image = imageService.getImageById(maybeImageId.get()).orElseThrow(()-> new ImageNotFoundException(maybeImageId.get()));
+        return ResponseHeadersUtils.conditionalCacheImageResponse(image, request);
     }
 
-    @RequestMapping(value = "/news/{newsId:[0-9]+}/pingNews", method = RequestMethod.POST)
-    public ModelAndView pingNews(@PathVariable("newsId") final long newsId) {
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        userService.pingNewsToggle(currentUser, newsService.getById(newsId).orElseThrow(NewsNotFoundException::new));
-
-        return new ModelAndView("redirect:/news/" + newsId);
-    }
-
-    private ResponseEntity<UpvoteActionResponse> toggleHandler(CommentUpvoteAction payload, Rating action) {
-        final long commentId = payload.getCommentId();
-        final boolean isActive = payload.isActive();
-        final User currentUser = securityService.getCurrentUser().orElseThrow(UserNotAuthorized::new);
-        final Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
-        newsService.setCommentRating(currentUser, comment, isActive ? action : Rating.NO_RATING);
-
-        return new ResponseEntity<>(new UpvoteActionResponse(comment.getPositivityStats().getNetUpvotes(), isActive), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/change-comment-upvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
-    @ResponseBody
-    public ResponseEntity<UpvoteActionResponse>  toggleUpvote(@RequestBody CommentUpvoteAction payload){
-        return toggleHandler(payload, Rating.UPVOTE);
-    }
-
-    @RequestMapping(value = "/change-comment-downvote", method = RequestMethod.POST, produces="application/json", consumes = "application/json")
-    @ResponseBody
-    public ResponseEntity<UpvoteActionResponse>  toggleDownvote(@RequestBody CommentUpvoteAction payload){
-        return toggleHandler(payload, Rating.DOWNVOTE);
-    }
 }
+

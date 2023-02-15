@@ -7,6 +7,7 @@ import ar.edu.itba.paw.model.admin.ReportReason;
 import ar.edu.itba.paw.model.admin.ReportedComment;
 import ar.edu.itba.paw.model.exeptions.CommentNotFoundException;
 import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
@@ -17,6 +18,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -26,20 +28,26 @@ public class AdminServiceImpl implements AdminService{
     private final NewsService newsService;
     private final EmailService emailService;
     private final NewsDao newsDao;
+    private final UserService userService;
 
     @Autowired
-    public AdminServiceImpl(final CommentDao commentDao, final NewsService newsService, final SecurityService securityService, final EmailService emailService, final NewsDao newsDao) {
+    public AdminServiceImpl(final CommentDao commentDao, final NewsService newsService, final UserService userService, final EmailService emailService, final NewsDao newsDao) {
         this.commentDao = commentDao;
         this.newsService = newsService;
         this.emailService = emailService;
         this.newsDao = newsDao;
+        this.userService = userService;
     }
 
     @Override
     @Transactional
-    public void reportNews(final User currentUser, long newsId, ReportReason reportReason) {
-        final News news = newsService.getById(currentUser, newsId).orElseThrow(NewsNotFoundException::new);
-        newsDao.reportNews(news,currentUser,reportReason);
+    public ReportDetail reportNews(long userId, long newsId, ReportReason reportReason) {
+        final User user = userService.getUserById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
+        if(newsDao.isReportedByUser(news, user)){
+            return null;
+        }
+        return newsDao.reportNews(news,user,reportReason);
     }
 
     @Override
@@ -48,15 +56,24 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    @Transactional
-    public void reportComment(final User currentUser, long commentId, ReportReason reportReason) {
-        final Comment comment = newsService.getCommentById(commentId).orElseThrow(CommentNotFoundException::new);
-        commentDao.reportComment(comment,currentUser,reportReason);
+    public Page<News> getReportedByUserNews(int page, long userId) {
+        return newsDao.getReportedByUserNews(page, userId);
     }
 
     @Override
-    public Page<Comment> getReportedComments(int page, ReportOrder reportOrder) {
-        return commentDao.getReportedComment(page, reportOrder);
+    public Page<Comment> getReportedByUserComments(int page, User user) {
+        return commentDao.getReportedByUserComments(page, user.getUserId());
+    }
+
+    @Override
+    @Transactional
+    public ReportedComment reportComment(long userId, long commentId, ReportReason reportReason) {
+        final Comment comment = newsService.getCommentById(commentId).orElseThrow(()-> new CommentNotFoundException(commentId));
+        final User user = userService.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        if(!commentDao.isReportedByUser(commentId, userId)){
+            return commentDao.reportComment(comment,user,reportReason);
+        }
+        return null;
     }
 
     @Override
@@ -70,14 +87,9 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public boolean hasReported(long userId, long newsId) {
-        return newsDao.hasReported(newsId, userId);
-    }
-
-    @Override
     public void deleteNews(long newsId) {
 
-        final News news = newsService.getById(newsId).orElseThrow(NewsNotFoundException::new);
+        final News news = newsService.getById(newsId).orElseThrow(()-> new NewsNotFoundException(newsId));
         User creator = news.getCreator();
         final Locale locale = creator.getEmailSettings() != null ? creator.getEmailSettings().getLocale() :  LocaleContextHolder.getLocale();
         emailService.sendNewsDeletedEmail(creator, news, locale);

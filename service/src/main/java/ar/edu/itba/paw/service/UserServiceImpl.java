@@ -7,6 +7,7 @@ import ar.edu.itba.paw.model.user.EmailSettings;
 import ar.edu.itba.paw.model.user.MailOption;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
+import ar.edu.itba.paw.model.user.PositivityStats;
 import ar.edu.itba.paw.model.user.ProfileCategory;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
@@ -37,17 +38,22 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+
     private final VerificationTokenService verificationTokenService;
 
+    private final ImageService imageService;
+
+    private static final int TOP_CREATORS_COUNT = 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    public UserServiceImpl(final UserDao userDao, final PasswordEncoder passwordEncoder,final EmailService emailService,
+    public UserServiceImpl(final ImageService imageService, final UserDao userDao, final PasswordEncoder passwordEncoder,final EmailService emailService,
                            final VerificationTokenService verificationTokenService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.verificationTokenService = verificationTokenService;
+        this.imageService = imageService;
     }
 
 
@@ -96,24 +102,16 @@ public class UserServiceImpl implements UserService {
             return VerificationToken.Status.EXPIRED;
         }
         userDao.verifyEmail(vt.getUserId());
-        login(vt.getUserId());
         verificationTokenService.deleteEmailToken(vt.getUserId());
         return VerificationToken.Status.SUCCESFFULLY_VERIFIED;
     }
 
+
     @Override
     @Transactional
-    public VerificationToken.Status resendEmailVerification(String email) {
-
-        final Optional<User> mayBeUser = userDao.findByEmail(email);
-        if(!mayBeUser.isPresent()){
-            LOGGER.info("Trying to resend verification email to {}, but this email does not exist", email);
-            return VerificationToken.Status.NOT_EXISTS;
-        }
-
-        final User user = mayBeUser.get();
+    public VerificationToken.Status resendEmailVerification(User user) {
         if(!user.getStatus().equals(UserStatus.UNABLE)){
-            LOGGER.info("Trying to resend verification email to {}, but this email is already registered", email);
+            LOGGER.info("Trying to resend verification email to {}, but this email is already registered", user.getEmail());
             return VerificationToken.Status.ALREADY_VERIFIED;
         }
 
@@ -127,13 +125,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addRole(long userId, Role role) {
-        userDao.getUserById(userId).orElseThrow(UserNotFoundException::new).addRole(role);
+        userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
     }
 
     @Override
     @Transactional
     public void updateProfile(long userId, String username, final byte[] bytes, String dataType, String description) {
-        final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+        final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         if(bytes!=null && bytes.length != 0){
             userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
         }
@@ -154,19 +152,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void followUser(final User currentUser, long userId) {
-        final User following = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
+    public boolean followUser(final User currentUser, long userId) {
+        if(isFollowing(currentUser,userId)){
+            return false;
+        }
+        final User following = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         userDao.addFollow(currentUser.getId(), userId);
         final EmailSettings emailSettings = following.getEmailSettings();
         if(emailSettings!= null && emailSettings.isFollow()){
             emailService.sendNewFollowerEmail(following,currentUser,emailSettings.getLocale());
         }
+        return true;
     }
 
     @Override
     @Transactional
-    public void unfollowUser(final User currentUser, long userId) {
-        userDao.unfollow(currentUser.getId(), userId);
+    public boolean unfollowUser(final User currentUser, long userId) {
+        if(isFollowing(currentUser,userId)){
+            userDao.unfollow(currentUser.getId(), userId);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -199,29 +205,78 @@ public class UserServiceImpl implements UserService {
         return userDao.isFollowing(currentUser.getId(), userId);
     }
 
-    /*https://www.baeldung.com/spring-security-auto-login-user-after-registration*/
-    private void login(long userId) {
-        final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        final Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPass(), new ArrayList<>());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        LOGGER.debug("User {} has loged in automatically", user);
-    }
-
-    @Override
-    public List<User> getTopCreators(int qty) {
-        return userDao.getTopCreators(qty);
-    }
-
     @Override
     public Page<User> searchUsers(int page, String search) {
         return userDao.searchUsers(page, search);
     }
 
+    @Override
+    public Page<User> getAdmins(int page, String search) {
+        return userDao.getAdmins(page,search);
+    }
+
+    @Override
+    public Page<User> getNotAdmins(int page, String search) {
+        return userDao.getNotAdmins(page,search);
+    }
+
+    @Override
+    public boolean isUserEnabled(String email) {
+        Optional<User> mayBeUser = userDao.findByEmail(email);
+        if(!mayBeUser.isPresent()){
+            return false;
+        }
+        return mayBeUser.get().getStatus().equals(UserStatus.REGISTERED);
+    }
+
+    @Override
+    public Page<User> getTopCreators() {
+        return new Page<>(userDao.getTopCreators(TOP_CREATORS_COUNT), 1, 1);
+    }
+
 
     @Override
     @Transactional
-    public void pingNewsToggle(final User currentUser,final News news) {
-        userDao.pingNewsToggle(currentUser, news);
+    public boolean pingNewsToggle(final User currentUser,final News news) {
+        return userDao.pingNewsToggle(currentUser, news);
+    }
+
+    @Override
+    @Transactional
+    public void pinNews(final User user, final News news) {
+        userDao.pinNews(user, news);
+    }
+
+    @Override
+    @Transactional
+    public void setUserImage(final long userId, final byte[] bytes,String dataType) {
+        final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
+        if(bytes!=null && bytes.length != 0){
+            userDao.updateImage(user, new Image(bytes, dataType), user.getImage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void unpinNews(final User user, final News news) {
+        userDao.unpinNews(user, news);
+    }
+
+    @Override
+    @Transactional
+    public void unpinNews(final User user) {
+        userDao.unpinNews(user);
+    }
+
+    @Override
+    public Page<User> getFollowing(int page, long userId) {
+        userDao.getUserById(userId).orElseThrow(()->new UserNotFoundException(userId));
+        return userDao.getFollowing(page, userId);
+    }
+
+    @Override
+    public List<User> getFollowedBy(User user) {
+        return userDao.getFollowedBy(user.getUserId());
     }
 
     @Override
@@ -229,12 +284,12 @@ public class UserServiceImpl implements UserService {
 
 
         if (!profile.getRoles().contains(Role.ROLE_JOURNALIST) && category.equals(ProfileCategory.MY_POSTS)){
-            throw new InvalidFilterException();
+            throw new InvalidFilterException(String.format("The user %s is not a journalist, so it is not posible to retrieve his posts", profile.toString()));
         }
 
         if (category.equals(ProfileCategory.SAVED) &&
                 !(maybeCurrentUser.isPresent() && maybeCurrentUser.get().equals(profile))){
-            throw new InvalidFilterException();
+            throw new InvalidFilterException("Saved articles can just be retrieved by the user who saved them");
         }
 
         return category;
@@ -256,6 +311,8 @@ public class UserServiceImpl implements UserService {
         if(user == null)
             return false;
         final Collection<Role> roles = user.getRoles();
+        if (roles == null)
+            return false;
         return roles.contains(Role.ROLE_ADMIN) || roles.contains(Role.ROLE_OWNER);
     }
 }

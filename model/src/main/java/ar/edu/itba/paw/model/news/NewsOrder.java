@@ -5,7 +5,6 @@ import ar.edu.itba.paw.model.exeptions.InvalidOrderException;
 public enum NewsOrder {
 
     NEW("NEW", " creation_date desc", "order.new"),
-
     TOP("TOP", " accesses desc", "order.top");
 
     private final String description;
@@ -47,7 +46,7 @@ public enum NewsOrder {
         try{
             return NewsOrder.valueOf(value);
         }catch (IllegalArgumentException e){
-            throw new InvalidOrderException(e);
+            throw new InvalidOrderException(value,e);
         }
     }
 }

@@ -63,15 +63,7 @@ public class NewsJpaDao implements NewsDao {
         return news;
     }
 
-    @Override
-    public List<News> getNewNews(int page, String query, long loggedUser) {
-        final List<News> newsList = getNewNews(page, query);
 
-        newsList.forEach(n -> n.setUserSpecificVariables(loggedUser));
-
-
-        return newsList;
-    }
 
     @Override
     public List<News> getNewNews(int page, String query) {
@@ -83,14 +75,7 @@ public class NewsJpaDao implements NewsDao {
         return news;
     }
 
-    @Override
-    public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint, long loggedUser) {
-        final List<News> newsList = getTopNews(page, query, timeConstraint);
 
-        newsList.forEach(n -> n.setUserSpecificVariables(loggedUser));
-
-        return newsList;
-    }
 
     @Override
     public List<News> getTopNews(int page, String query, TimeConstraint timeConstraint) {
@@ -104,45 +89,32 @@ public class NewsJpaDao implements NewsDao {
 
 
     @Override
-    public int getTotalPagesAllNews(String query, TimeConstraint timeConstraint) {
-        final long elemCount = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE LOWER(title) LIKE :query escape '\\'  AND creation_date >= " +timeConstraint.getMinimumDateQuery())
-                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%")
-                .getFirstResult();
+    public int getTotalPagesAllNewsTop(String query, TimeConstraint timeConstraint) {
+        final Number elemCount = (Number) entityManager.createNativeQuery("SELECT count(*) FROM news f WHERE LOWER(title) LIKE :query escape '\\'  AND creation_date >= " +timeConstraint.getMinimumDateQuery())
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%").getSingleResult();
 
-        return Page.getPageCount(elemCount, PAGE_SIZE);
+        return Page.getPageCount(elemCount.longValue(), PAGE_SIZE);
     }
 
     @Override
-    public Optional<News> getById(long id, long loggedUser) {
-        final Optional<News> news = getById(id);
+    public int getTotalPagesAllNewsNew(String query) {
+        final Number elemCount = (Number) entityManager.createNativeQuery("SELECT count(*) FROM news f WHERE LOWER(title) LIKE :query escape '\\' " )
+                .setParameter("query", "%" + JpaUtils.escapeSqlLike(query.toLowerCase()) + "%").getSingleResult();
 
-        news.ifPresent(n -> n.setUserSpecificVariables(loggedUser));
-
-        return news;
-
+        return Page.getPageCount(elemCount.longValue(), PAGE_SIZE);
     }
+
 
     @Override
     public Optional<News> getById(long id) {
         final TypedQuery<News> typedQuery = entityManager.createQuery("SELECT f from News f WHERE f.newsId = :newsId ",News.class).setParameter("newsId", id);
         final Optional<News> news = typedQuery.getResultList().stream().findFirst();
 
-
-        return news;
-
-    }
-
-
-
-    @Override
-    public List<News> getNewsByCategoryNew(int page, Category category, long loggedUser) {
-
-        final List<News> news = getNewsByCategoryNew(page, category);
-
-        news.forEach(n -> n.setUserSpecificVariables(loggedUser));
-
         return news;
     }
+
+
+
 
     @Override
     public List<News> getNewsByCategoryNew(int page, Category category) {
@@ -155,14 +127,7 @@ public class NewsJpaDao implements NewsDao {
         return news;
     }
 
-    @Override
-    public List<News> getNewsByCategoryTop(int page, Category category, long loggedUser, TimeConstraint timeConstraint) {
 
-        final List<News> news = getNewsByCategoryTop(page, category, timeConstraint);
-        news.forEach(n -> n.setUserSpecificVariables(loggedUser));
-
-        return news;
-    }
 
     @Override
     public List<News> getNewsByCategoryTop(int page, Category category, TimeConstraint timeConstraint) {
@@ -192,11 +157,11 @@ public class NewsJpaDao implements NewsDao {
 
     @Override
     public int getTotalPagesCategoryTop(Category category, TimeConstraint timeConstraint) {
-        final long elemCount = entityManager.createNativeQuery("SELECT count(*) from news NATURAL JOIN news_category f WHERE category = :category AND" +
+        final Number elemCount = (Number) entityManager.createNativeQuery("SELECT count(f) from news NATURAL JOIN news_category f WHERE category_id = :category AND" +
                         " creation_date >= " + timeConstraint.getMinimumDateQuery())
-                .setParameter("category", category).getFirstResult();
+                .setParameter("category", category.getId()).getSingleResult();
 
-        return Page.getPageCount(elemCount, PAGE_SIZE);
+        return Page.getPageCount(elemCount.longValue(), PAGE_SIZE);
     }
 
     @Override
@@ -227,15 +192,14 @@ public class NewsJpaDao implements NewsDao {
 
 
     @Override
-    public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, Optional<User> loggedUser, ProfileCategory profileCategory) {
+    public Page<News> getNewsFromProfile(int page, User user, NewsOrder ns, ProfileCategory profileCategory) {
         page = Math.max(page, 1);
-        return profileFunctions.get(profileCategory).getNews(page, user, ns, loggedUser.map(User::getUserId).orElse(null));
+        return profileFunctions.get(profileCategory).getNews(page, user, ns);
     }
 
     @Override
     public void removeSaved(News news, User user) {
         user.getSavedNews().remove(new Saved(news, user.getId()));
-
     }
 
     @Override
@@ -365,85 +329,68 @@ public class NewsJpaDao implements NewsDao {
     }
 
 
-    Page<News> getAllNewsFromUser(int page, User user, NewsOrder ns, Long loggedUser) {
+    private Page<News> getAllNewsFromUser(int page, User user, NewsOrder ns) {
 
         final int totalPages = getTotalPagesNewsFromUser(user);
         page = Math.min(page, totalPages);
 
-        final Query query  = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE creator = :userId AND news_id <> (SELECT COALESCE(pinged_news, -1) FROM users WHERE user_id = :userId) order by " + ns.getQueryPaged())
+        final Query query  = entityManager.createNativeQuery("SELECT news_id FROM news f WHERE creator = :userId order by " + ns.getQueryPaged())
                 .setParameter("userId", user.getId());
         final List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
 
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
 
         return new Page<>(news, page, totalPages);
     }
 
-    Page<News> getSavedNews(int page, User user, NewsOrder ns, Long loggedUser) {
+    private Page<News> getSavedNews(int page, User user, NewsOrder ns) {
 
         final int totalPages = getTotalPagesNewsFromUserSaved(user);
         page = Math.min(page, totalPages);
 
-        final Query query = entityManager.createNativeQuery("SELECT news_id FROM saved_news NATURAL JOIN news f WHERE user_id = :userId AND news_id <> (SELECT COALESCE(pinged_news, -1) FROM users WHERE user_id = :userId) order by " + ns.getQueryPaged())
+        final Query query = entityManager.createNativeQuery("SELECT news_id FROM saved_news NATURAL JOIN news f  WHERE user_id = :userId order by " + ns.getQueryPaged())
                 .setParameter("userId", user.getId());
         final List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
 
         return new Page<>(news, page, totalPages);
     }
 
 
 
-    private Page<News> getNewsWithRatingFromUser(int page, User user, NewsOrder ns, Long loggedUser, boolean upvote) {
+    private Page<News> getNewsWithRatingFromUser(int page, User user, NewsOrder ns,  boolean upvote) {
         final int totalPages = getTotalPagesNewsFromUserRating(user.getId(), upvote);
         page = Math.min(page, totalPages);
 
-        final Query query = entityManager.createNativeQuery("SELECT news_id FROM upvotes NATURAL JOIN news f WHERE upvote = :value AND user_id = :userId AND news_id <> (SELECT COALESCE(pinged_news, -1) FROM users WHERE user_id = :userId) order by " + ns.getQueryPaged())
+        final Query query = entityManager.createNativeQuery("SELECT news_id FROM upvotes NATURAL JOIN news f WHERE upvote = :value AND user_id = :userId order by " + ns.getQueryPaged())
                 .setParameter("value", upvote).setParameter("userId", user.getId());
         final List<News> news = getNewsOfPage(query, page, PROFILE_PAGE_SIZE);
-        if (loggedUser != null)
-            news.forEach(n -> n.setUserSpecificVariables(loggedUser));
+
 
         return new Page<>(news, page, totalPages);
     }
 
-    Page<News> getNewsUpvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
-        return getNewsWithRatingFromUser(page, user, ns, loggedUser, true);
+    private Page<News> getNewsUpvotedByUser(int page, User user, NewsOrder ns) {
+        return getNewsWithRatingFromUser(page, user, ns,  true);
     }
 
-    Page<News> getNewsDownvotedByUser(int page, User user, NewsOrder ns, Long loggedUser) {
-        return getNewsWithRatingFromUser(page, user, ns, loggedUser, false);
+    private Page<News> getNewsDownvotedByUser(int page, User user, NewsOrder ns) {
+        return getNewsWithRatingFromUser(page, user, ns,  false);
 
     }
 
-    int getTotalPagesNewsFromUser(User user) {
-        final Long elemCount =  entityManager.createQuery("SELECT count(f) from News f WHERE f.creator = :user AND NOT (f IN (SELECT pingedNews FROM User WHERE userId = :user))",Long.class)
+    private int getTotalPagesNewsFromUser(User user) {
+        final Long elemCount =  entityManager.createQuery("SELECT count(f) from News f WHERE f.creator = :user ",Long.class)
                 .setParameter("user", user) .getSingleResult();
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
     }
 
 
-    int getTotalPagesNewsFromUserRating(long userId, boolean upvoted) {
-        final Long elemCount =  entityManager.createQuery("SELECT count(u) from Upvote u WHERE u.userId = :user AND u.value = :value AND NOT (u.news IN (SELECT pingedNews FROM User WHERE userId = :user))",Long.class)
+    private int getTotalPagesNewsFromUserRating(long userId, boolean upvoted) {
+        final Long elemCount =  entityManager.createQuery("SELECT count(u) from Upvote u WHERE u.userId = :user AND u.value = :value",Long.class)
                 .setParameter("user", userId)
                 .setParameter("value", upvoted).getSingleResult();
         return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
-    }
-
-    int getTotalPagesNewsFromUserSaved(User user) {
-        final int elemCount =  entityManager.createQuery("SELECT u.savedNews.size - (case when EXISTS (select s FROM Saved s WHERE s.news = u.pingedNews AND s.userId = :user) THEN 1 ELSE 0 END) from User u WHERE u.userId = :user ",Integer.class)
-                .setParameter("user", user.getId())
-                .getSingleResult();
-        return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
-    }
-
-    @Override
-    public void reportNews(News news, User reporter, ReportReason reportReason) {
-        final ReportDetail reportDetail = new ReportDetail(news, reporter, LocalDateTime.now(), reportReason);
-        entityManager.persist(reportDetail);
-        LOGGER.debug("News {} with id {} reported. The reason is {}", news.getTitle(), news.getNewsId(), reportReason.getDescription());
     }
 
     @Override
@@ -461,7 +408,75 @@ public class NewsJpaDao implements NewsDao {
 
         final TypedQuery<News> objectQuery = entityManager.createQuery("SELECT n from News n WHERE n.newsId IN :ids ", News.class);
 
-       return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, News::getNewsId);
+        return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, News::getNewsId);
+    }
+
+    @Override
+    public Page<News> getReportedByUserNews(int page, long userId) {
+
+        page = Math.min(page,1);
+        final int totalPages = getTotalReportedByUserNews(userId);
+        page = Math.min(page, totalPages);
+
+        final Query idsQuery = entityManager.createNativeQuery("SELECT news_id FROM report n WHERE user_id = :userId LIMIT :limit OFFSET :offset")
+                .setParameter("userId", userId)
+                .setParameter("limit",PAGE_SIZE)
+                .setParameter("offset",(page-1)*PAGE_SIZE);
+
+        final TypedQuery<News> objectQuery = entityManager.createQuery("SELECT n from News n WHERE n.newsId IN :ids ", News.class);
+
+        return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, News::getNewsId);
+    }
+
+    private int getTotalReportedByUserNews(long userId) {
+        final long count = entityManager.createQuery("SELECT COUNT(distinct r.news) FROM ReportDetail r WHERE r.reporter.userId = :userId", Long.class)
+                .setParameter("userId", userId)
+                .getSingleResult();
+        return Page.getPageCount(count, PAGE_SIZE);
+    }
+
+    @Override
+    public Optional<News> getPinnedByUserNews(long userId) {
+        Query query = entityManager.createNativeQuery("SELECT pinged_news FROM users n WHERE user_id = :userId")
+                .setParameter("userId", userId);
+        @SuppressWarnings("unchecked")
+        final Object maybeId = query.getSingleResult();
+
+        if (maybeId == null)
+            return Optional.empty();
+
+        return Optional.of(entityManager.createQuery("SELECT n from News n WHERE n.newsId = :id", News.class).setParameter("id", ((Number) maybeId).longValue()).getSingleResult());
+    }
+
+    private int getTotalPagesNewsFromUserSaved(User user) {
+        final int elemCount =  entityManager.createQuery("SELECT u.savedNews.size from User u WHERE u.userId = :user ",Integer.class)
+                .setParameter("user", user.getId())
+                .getSingleResult();
+        return Page.getPageCount(elemCount, PROFILE_PAGE_SIZE);
+    }
+
+    @Override
+    public ReportDetail reportNews(News news, User reporter, ReportReason reportReason) {
+        final ReportDetail reportDetail = new ReportDetail(news, reporter, LocalDateTime.now(), reportReason);
+        entityManager.persist(reportDetail);
+        LOGGER.debug("News {} with id {} reported. The reason is {}", news.getTitle(), news.getNewsId(), reportReason.getDescription());
+        return reportDetail;
+    }
+
+    @Override
+    public boolean isReportedByUser(final News news,final User user){
+        int value = ((Number)entityManager.createNativeQuery("SELECT count(*) FROM report WHERE user_id = :userId and news_id = :newsId")
+                     .setParameter("userId", user.getId()).setParameter("newsId", news.getNewsId())
+                     .getSingleResult()).intValue();
+        return value >= 1;
+    }
+
+    @Override
+    public boolean isSavedByUser(long newsId, long userId) {
+        int value = ((Number) entityManager.createNativeQuery("SELECT count(*) FROM saved_news WHERE user_id = :userId and news_id = :newsId")
+                .setParameter("userId", userId).setParameter("newsId", newsId)
+                .getSingleResult()).intValue();
+        return value >= 1;
     }
 
     @Override
@@ -495,13 +510,5 @@ public class NewsJpaDao implements NewsDao {
         final long count = entityManager.createQuery("SELECT COUNT(distinct r.news) FROM ReportDetail r", Long.class)
                 .getSingleResult();
         return Page.getPageCount(count, PAGE_SIZE);
-    }
-
-    @Override
-    public boolean hasReported(long newsId, long loggedUser) {
-        final long elemCount = entityManager.createQuery("SELECT COUNT(r) FROM ReportDetail r WHERE r.news.newsId = :news_id AND r.reporter.userId = :user_id",Long.class)
-                .setParameter("news_id", newsId)
-                .setParameter("user_id", loggedUser).getSingleResult();
-        return elemCount > 0;
     }
 }

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.service;
 
 import ar.edu.itba.paw.model.Page;
+import ar.edu.itba.paw.model.exeptions.NewsNotFoundException;
 import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.User;
@@ -26,20 +27,26 @@ public class OwnerServiceImpl implements OwnerService{
 
     @Override
     @Transactional
-    public void makeUserAdmin(String email) {
-        final User user = userDao.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public boolean makeUserAdmin(long userId) {
+        final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
         if(!user.getRoles().contains(Role.ROLE_ADMIN)){
-            user.addRole(Role.ROLE_ADMIN);
+            userDao.makeUserAdmin(userId);
             final Locale locale = user.getEmailSettings() != null ? user.getEmailSettings().getLocale() : LocaleContextHolder.getLocale();
             emailService.sendAdminEmail(user, locale);
+            return true;
         }
+        return false;
     }
 
     @Override
     @Transactional
-    public void deleteUserAdmin(long userId) {
-        final User user = userDao.getUserById(userId).orElseThrow(UserNotFoundException::new);
-        user.removeAdminRole();
+    public boolean deleteUserAdmin(long userId) {
+        final User user = userDao.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
+        if(!user.getRoles().contains(Role.ROLE_ADMIN)){
+            return false;
+        }
+        userDao.removeUserAdmin(userId);
+        return true;
     }
 
     @Override

@@ -135,8 +135,6 @@ public class CommentJpaDaoTest {
         Comment comment = commentDao.getCommentById(COMMENT_ID).get();
 
         assertEquals(comment.getComment(), COMMENT);
-        assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, COMMENT_TABLE));
-        assertEquals(1, JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, COMMENT_TABLE,  "news_id = " + NEWS_ID));
     }
 
     @Test

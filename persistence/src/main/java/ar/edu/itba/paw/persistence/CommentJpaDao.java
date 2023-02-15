@@ -15,7 +15,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -34,9 +37,10 @@ public class CommentJpaDao implements CommentDao{
     }
 
     @Override
-    public void addComment(User user, News news, String comment) {
+    public Comment addComment(User user, News news, String comment) {
         final Comment commentObj = new Comment(user, comment, news);
         entityManager.persist(commentObj);
+        return commentObj;
     }
 
     @Override
@@ -57,6 +61,7 @@ public class CommentJpaDao implements CommentDao{
 
     @Override
     public Page<Comment> getTopComments(long newsId, int page) {
+        page = Math.max(1,page);
         final int totalPages = getTotalPagesComments(newsId);
         page = Math.min(page, totalPages);
 
@@ -65,6 +70,69 @@ public class CommentJpaDao implements CommentDao{
                         "GROUP BY comments.id) SELECT id from net_upvotes_by_comment ORDER BY upvotes DESC LIMIT :pageSize OFFSET :offset")
                 .setParameter("newsId", newsId);
         return getCommentsOfPage(query, page, COMMENT_PAGE_SIZE, totalPages);
+    }
+
+    @Override
+    public Page<Comment> getReportedByUserComments(int page, long userId) {
+
+        page = Math.max(1,page);
+        final int totalPages = getTotalPagesReportedByUserComments(userId);
+        page = Math.min(page, totalPages);
+
+        final Query query = entityManager.createNativeQuery(
+                "SELECT comment_id FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false and comment_report.user_id = :userId LIMIT :pageSize OFFSET :offset")
+                .setParameter("userId", userId);
+        return getCommentsOfPage(query, page, COMMENT_PAGE_SIZE, totalPages);
+    }
+
+    @Override
+    public Page<Comment> getCommentsUpvotedByUser(int page, User user) {
+        page = Math.max(1,page);
+        final int totalPages = getTotalPagesUpvotedByUserComments(user.getId());
+        page = Math.min(page, totalPages);
+
+        final Query query = entityManager.createNativeQuery(
+                "SELECT comment_id FROM comment_upvotes WHERE user_id = :userId AND upvote = true LIMIT :pageSize OFFSET :offset")
+                .setParameter("userId", user.getUserId());
+
+        return getCommentsOfPage(query, page, COMMENT_PAGE_SIZE, totalPages);
+    }
+
+    @Override
+    public Page<Comment> getCommentsDownvotedByUser(int page, User user) {
+
+        page = Math.max(1,page);
+        final int totalPages = getTotalPagesDownvotedByUserComments(user.getId());
+        page = Math.min(page, totalPages);
+
+        final Query query = entityManager.createNativeQuery(
+                "SELECT comment_id FROM comment_upvotes WHERE user_id = :userId AND upvote = false LIMIT :pageSize OFFSET :offset")
+                .setParameter("userId", user.getUserId());
+        return getCommentsOfPage(query, page, COMMENT_PAGE_SIZE, totalPages);
+    }
+
+    private int getTotalPagesDownvotedByUserComments(long userId) {
+        final int count =  ((Number) entityManager.createNativeQuery(
+                        "SELECT count(distinct comment_id) FROM comment_upvotes WHERE user_id = :userId AND upvote = false")
+                .setParameter("userId", userId)
+                .getSingleResult()).intValue();
+        return Page.getPageCount(count, COMMENT_PAGE_SIZE);
+    }
+
+    private int getTotalPagesUpvotedByUserComments(long userId) {
+        final int count =  ((Number) entityManager.createNativeQuery(
+                        "SELECT count(distinct comment_id) FROM comment_upvotes WHERE user_id = :userId AND upvote = true")
+                .setParameter("userId", userId)
+                .getSingleResult()).intValue();
+        return Page.getPageCount(count, COMMENT_PAGE_SIZE);
+    }
+
+    private int getTotalPagesReportedByUserComments(long userId) {
+        final int count =  ((Number) entityManager.createNativeQuery(
+                "SELECT count(distinct comment_id) FROM comment_report JOIN comments n ON n.id = comment_report.comment_id WHERE deleted = false and comment_report.user_id = :userId")
+                .setParameter("userId", userId)
+                .getSingleResult()).intValue();
+        return Page.getPageCount(count, COMMENT_PAGE_SIZE);
     }
 
     private int getTotalPagesComments(long newsId) {
@@ -83,10 +151,11 @@ public class CommentJpaDao implements CommentDao{
     }
 
     @Override
-    public void reportComment(Comment comment, User reporter, ReportReason reportReason) {
+    public ReportedComment reportComment(Comment comment, User reporter, ReportReason reportReason) {
         final ReportedComment reportedComment = new ReportedComment(comment, reporter, reportReason);
         entityManager.persist(reportedComment);
         LOGGER.debug("Comment from {} with id {} reported. The reason is {}", comment.getUser(), comment.getId(), reportReason.getDescription());
+        return reportedComment;
     }
 
     @Override
@@ -119,7 +188,7 @@ public class CommentJpaDao implements CommentDao{
 
     @Override
     public Page<ReportedComment> getReportedCommentDetail(int page, long commentId) {
-        page = Math.min(page,1);
+        page = Math.max(page,1);
         final int totalPages = getReportedCommentDetailPageCount(commentId);
         page = Math.min(page, totalPages);
         final Query idsQuery = entityManager.createNativeQuery(
@@ -132,6 +201,14 @@ public class CommentJpaDao implements CommentDao{
         final TypedQuery<ReportedComment> objectQuery = entityManager.createQuery("SELECT n from ReportedComment n WHERE n.id IN :ids " , ReportedComment.class);
 
         return JpaUtils.getPage(page, totalPages, idsQuery, objectQuery, ReportedComment::getId);
+    }
+
+    @Override
+    public boolean isReportedByUser(long commentId, long userId) {
+        int value = ((Number)entityManager.createNativeQuery("SELECT count(*) FROM comment_report WHERE user_id = :userId and comment_id = :commentId")
+                .setParameter("userId", userId).setParameter("commentId", commentId)
+                .getSingleResult()).intValue();
+        return value >= 1;
     }
 
 }

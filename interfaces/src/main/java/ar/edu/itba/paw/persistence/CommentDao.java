@@ -8,15 +8,20 @@ import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CommentDao {
     Optional<Comment> getCommentById(long id);
-    void addComment(final User user,final News news, String comment);
+    Comment addComment(final User user,final News news, String comment);
     void deleteComment(long commentId);
     Page<Comment> getTopComments(long newsId, int page);
     Page<Comment> getNewComments(long newsId, int page);
-    void reportComment(final Comment comment,final User reporter, ReportReason reportReason);
+    Page<Comment> getReportedByUserComments(int page, long userId);
+    ReportedComment reportComment(final Comment comment, final User reporter, ReportReason reportReason);
     Page<Comment> getReportedComment(int page, ReportOrder reportOrder);
     Page<ReportedComment> getReportedCommentDetail(int page, long commentId);
+    Page<Comment> getCommentsUpvotedByUser(int page, User user);
+    Page<Comment> getCommentsDownvotedByUser(int page, User user);
+    boolean isReportedByUser(long commentId, long userId);
 }

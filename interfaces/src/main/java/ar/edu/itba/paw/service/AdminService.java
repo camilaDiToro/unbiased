@@ -9,14 +9,16 @@ import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.user.User;
 
+import java.util.List;
+
 public interface AdminService {
-    void reportNews(final User currentUser, long newsId, ReportReason reportReason);
+    ReportDetail reportNews(long userId, long newsId, ReportReason reportReason);
     Page<News> getReportedNews(int page, ReportOrder reportOrder);
-    void reportComment(final User currentUser, long commentId, ReportReason reportReason);
-    Page<Comment> getReportedComments(int page, ReportOrder reportOrder);
+    Page<News> getReportedByUserNews(int page, long userId);
+    Page<Comment> getReportedByUserComments(int page, User user);
+    ReportedComment reportComment(long userId, long commentId, ReportReason reportReason);
     Page<ReportDetail> getReportedNewsDetail(int page, long newsIs);
     void deleteNews(long newsId);
     void deleteComment(long commentId);
     Page<ReportedComment> getReportedCommentDetail(int page, long commentId);
-    boolean hasReported(long userId, long newsId);
 }

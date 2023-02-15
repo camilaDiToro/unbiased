@@ -2,10 +2,13 @@ package ar.edu.itba.paw.model.exeptions;
 
 public class NewsNotFoundException extends RuntimeException {
 
-    public NewsNotFoundException() {
+    private static final String ID_MSG = "Article of id %d not found";
+
+    public NewsNotFoundException(long id) {
+        super(String.format(ID_MSG, id));
     }
 
-    public NewsNotFoundException(Throwable var1) {
-        super(var1);
+    public NewsNotFoundException(long id, Throwable var1) {
+        super(String.format(ID_MSG, id),var1);
     }
 }

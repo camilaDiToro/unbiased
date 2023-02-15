@@ -1,0 +1,43 @@
+{
+  "name": "unbiased-frontend",
+  "version": "0.1.0",
+  "private": false,
+  "scripts": {
+    "dev": "next dev",
+    "build": "(export ENV=prod && next build)",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest --watch",
+    "export": "next export"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.11.8",
+    "axios": "^1.2.2",
+    "axios-digest": "^0.3.0",
+    "form-data": "^4.0.0",
+    "i18next": "^22.4.9",
+    "i18next-browser-languagedetector": "^7.0.1",
+    "javascript-time-ago": "^2.5.9",
+    "next": "13.1.1",
+    "next-remove-imports": "^1.0.8",
+    "notistack": "^2.0.8",
+    "parse-link-header": "^2.0.0",
+    "prettier": "^2.8.1",
+    "prop-types": "^15.8.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-i18next": "^12.1.5",
+    "react-simplemde-editor": "^5.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
+    "eslint": "8.22.0",
+    "eslint-config-next": "13.1.1",
+    "jest": "^29.3.1",
+    "jest-environment-jsdom": "^29.3.1"
+  }
+}

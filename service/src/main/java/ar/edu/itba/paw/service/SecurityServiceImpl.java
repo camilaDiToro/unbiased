@@ -27,6 +27,8 @@ public class SecurityServiceImpl implements SecurityService {
         }
         return Optional.empty();
     }
+
+
     @Cacheable
     @Override
     public Optional<User> getCurrentUser() {

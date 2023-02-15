@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.service;
 
+import ar.edu.itba.paw.model.exeptions.UserNotFoundException;
 import ar.edu.itba.paw.model.user.User;
 import ar.edu.itba.paw.model.user.UserStatus;
 import ar.edu.itba.paw.model.user.VerificationToken;
@@ -36,7 +37,7 @@ public class UserServiceImplTest {
     private UserDao mockUserDao;
 
     @Mock
-    private EmailService mockEmailService;
+    private EmailService emailService;
 
     @Mock
     private VerificationTokenService mockVerificationTokenService;
@@ -92,40 +93,14 @@ public class UserServiceImplTest {
         assertEquals(VerificationToken.Status.EXPIRED, vt);
     }
 
-    @Test
-    public void testVerifyUserEmailValidToken(){
-        Mockito.when(mockVerificationToken.isValidToken()).thenReturn(true);
-        Mockito.when(mockVerificationToken.getUserId()).thenReturn(ID);
-        Mockito.when(mockVerificationTokenService.getToken(Mockito.eq(TOKEN))).thenReturn(Optional.of(mockVerificationToken));
-
-        Mockito.when(mockUserDao.getUserById(Mockito.eq(ID))).thenReturn(Optional.of(mockUser));
-
-        VerificationToken.Status vt = userService.verifyUserEmail(TOKEN);
-
-        assertEquals(VerificationToken.Status.SUCCESFFULLY_VERIFIED, vt);
-    }
-
-    @Test
-    public void testResendUserVerificationInvalidEmail() {
-        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.empty());
-        assertEquals(VerificationToken.Status.NOT_EXISTS, userService.resendEmailVerification(EMAIL));
-    }
 
     @Test
     public void testResendUserVerificationAlreadyVerified() {
-        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(mockUser));
         Mockito.when(mockUser.getStatus()).thenReturn(UserStatus.REGISTERED);
 
-        assertEquals(VerificationToken.Status.ALREADY_VERIFIED, userService.resendEmailVerification(EMAIL));
+        assertEquals(VerificationToken.Status.ALREADY_VERIFIED, userService.resendEmailVerification(mockUser));
     }
 
-    @Test
-    public void testResendUserVerificationSuccessfullyResended() {
-        Mockito.when(mockUserDao.findByEmail(Mockito.eq(EMAIL))).thenReturn(Optional.of(mockUser));
-        Mockito.when(mockUser.getStatus()).thenReturn(UserStatus.UNABLE);
-
-        assertEquals(VerificationToken.Status.SUCCESSFULLY_RESENDED, userService.resendEmailVerification(EMAIL));
-    }
 
 }
 

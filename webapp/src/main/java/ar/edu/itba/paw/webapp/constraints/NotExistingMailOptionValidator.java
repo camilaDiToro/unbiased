@@ -15,6 +15,9 @@ public class NotExistingMailOptionValidator implements ConstraintValidator<NotEx
 
     @Override
     public boolean isValid(String[] value, ConstraintValidatorContext context) {
+        if(value == null){
+            return true;
+        }
         for (String val : value) {
             if(Arrays.stream(MailOption.values()).map(MailOption::getInterCode).noneMatch(s -> s.equals(val)))
                 return false;

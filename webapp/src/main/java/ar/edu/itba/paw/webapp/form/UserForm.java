@@ -4,20 +4,15 @@ import ar.edu.itba.paw.webapp.constraints.NotExistingEmail;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotNull;
-
-
 public class UserForm {
 
-    @NotExistingEmail
-    @Email(regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$")
+    @NotExistingEmail(message = "userform.email.repeated")
+    @Email(regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$", message = "userform.email.invalid")
     // source: https://www.w3resource.com/javascript/form/email-validation.php
     private String email;
 
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "userform.pass.notblank")
     private String password;
-
 
     public String getEmail() {
         return email;

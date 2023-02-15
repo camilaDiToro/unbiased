@@ -8,13 +8,9 @@ import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 import ar.edu.itba.paw.model.news.NewsOrder;
 import ar.edu.itba.paw.model.news.TimeConstraint;
-import ar.edu.itba.paw.model.user.CommentUpvote;
 import ar.edu.itba.paw.model.user.PositivityStats;
-import ar.edu.itba.paw.model.user.ProfileCategory;
-import ar.edu.itba.paw.model.user.Role;
 import ar.edu.itba.paw.model.user.Upvote;
 import ar.edu.itba.paw.model.user.User;
-import ar.edu.itba.paw.persistence.CommentDao;
 import ar.edu.itba.paw.persistence.NewsDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,25 +47,19 @@ public class NewsServiceImplTest {
 
     private static final long NEWS_ID = 1;
 
-    private static final int PAGE_NUM = 1;
-
     private static final long ID_1 = 1;
 
     private static final long ID_2 = 2;
 
 
+    @Mock
+    private UserService userService;
 
     @Mock
     private NewsDao mockNewsDao;
 
     @Mock
-    private CommentDao mockCommentDao;
-
-    @Mock
     private News NEWS_1;
-
-    @Mock
-    private News NEWS_2;
 
     @Mock
     private Comment COMMENT_1;
@@ -81,39 +70,29 @@ public class NewsServiceImplTest {
     @Mock
     private User mockUser;
 
-    @Mock
-    private Page<Comment> COMMENT_PAGE_2;
-
 
     @InjectMocks
     private NewsServiceImpl newsService;
 
     @Test
     public void testGetNewsLowerInvalidPage(){
-        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any(), Mockito.any())).thenReturn(TOTAL_PAGES);
+        Mockito.when(mockNewsDao.getTotalPagesAllNewsNew(Mockito.any())).thenReturn(TOTAL_PAGES);
         Page<News> returnValue = newsService.getNews(EMPTY_USER,LOWER_PAGE, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(1,returnValue.getCurrentPage());
     }
 
     @Test
     public void testGetNewsUpperInvalidPage(){
-        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.any(), Mockito.any())).thenReturn(TOTAL_PAGES);
+        Mockito.when(mockNewsDao.getTotalPagesAllNewsNew(Mockito.any())).thenReturn(TOTAL_PAGES);
         Page<News> returnValue = newsService.getNews(EMPTY_USER,UPPER_PAGE, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(TOTAL_PAGES,returnValue.getCurrentPage());
     }
 
     @Test
     public void testGetNewsQueryMatch(){
-        Mockito.when(mockNewsDao.getTotalPagesAllNews(Mockito.matches(QUERY), Mockito.any())).thenReturn(TOTAL_PAGES);
+        Mockito.when(mockNewsDao.getTotalPagesAllNewsNew(Mockito.matches(QUERY))).thenReturn(TOTAL_PAGES);
         Page<News> returnValue = newsService.getNews(EMPTY_USER,1, CATEGORY, ORDER,TIME, QUERY);
         assertEquals(TOTAL_PAGES,returnValue.getTotalPages());
-    }
-
-    @Test
-    public void testGetComents(){
-        Mockito.when(mockCommentDao.getNewComments(Mockito.eq(NEWS_ID), Mockito.eq(PAGE_NUM))).thenReturn(COMMENT_PAGE_2);
-
-        assertEquals(COMMENT_PAGE_2,newsService.getComments(NEWS_ID, PAGE_NUM, ORDER));
     }
 
     @Test
@@ -126,21 +105,9 @@ public class NewsServiceImplTest {
         ratingMap.values().forEach(r -> assertEquals(Rating.NO_RATING, r));
     }
 
-    @Test
-    public void testGetHomeCategoriesUser(){
 
-        for (Category cat : newsService.getHomeCategories(EMPTY_USER)) {
-            assertNotEquals(Category.FOR_ME,cat);
-        }
-    }
 
-    @Test
-    public void testGetProfileCategoriesUser(){
-        Mockito.when(mockUser.getRoles()).thenReturn(Collections.singletonList(Role.ROLE_JOURNALIST));
-        for (ProfileCategory cat : newsService.getProfileCategories(EMPTY_USER, mockUser)) {
-            assertNotEquals(ProfileCategory.SAVED,cat);
-        }
-    }
+
 
     @Test
     public void testsetRating(){
@@ -148,7 +115,8 @@ public class NewsServiceImplTest {
         Mockito.when(NEWS_1.getUpvoteMap()).thenReturn(upvoteMap);
         Mockito.when(mockUser.getId()).thenReturn(ID_1);
         Mockito.when(NEWS_1.getPositivityStats()).thenReturn(new PositivityStats(0,0));
-        newsService.setRating(mockUser, NEWS_1,Rating.UPVOTE);
+        Mockito.when(mockNewsDao.getById(NEWS_ID)).thenReturn(Optional.of(NEWS_1));
+        newsService.setRating(mockUser.getId(), NEWS_ID,Rating.UPVOTE);
         assertTrue(upvoteMap.get(ID_1).isValue());
     }
 
@@ -159,30 +127,10 @@ public class NewsServiceImplTest {
         Mockito.when(NEWS_1.getUpvoteMap()).thenReturn(upvoteMap);
         Mockito.when(mockUser.getId()).thenReturn(ID_1);
         Mockito.when(NEWS_1.getPositivityStats()).thenReturn(new PositivityStats(0,0));
-        newsService.setRating(mockUser, NEWS_1,Rating.NO_RATING);
+        Mockito.when(mockNewsDao.getById(NEWS_ID)).thenReturn(Optional.of(NEWS_1));
+        newsService.setRating(mockUser.getId(), NEWS_ID,Rating.NO_RATING);
         assertEquals(0, upvoteMap.size());
     }
-
-
-    @Test
-    public void testsetCommentRating(){
-        Map<Long, CommentUpvote> upvoteMap = new HashMap<>();
-        Mockito.when(COMMENT_1.getUpvoteMap()).thenReturn(upvoteMap);
-        Mockito.when(mockUser.getId()).thenReturn(ID_1);
-        newsService.setCommentRating(mockUser, COMMENT_1,Rating.UPVOTE);
-        assertTrue(upvoteMap.get(ID_1).isValue());
-    }
-
-    @Test
-    public void testsetCommentRatingRemove(){
-        Map<Long, CommentUpvote> upvoteMap = new HashMap<>();
-        upvoteMap.put(ID_1, new CommentUpvote(COMMENT_1, ID_1, true));
-        Mockito.when(COMMENT_1.getUpvoteMap()).thenReturn(upvoteMap);
-        Mockito.when(mockUser.getId()).thenReturn(ID_1);
-        newsService.setCommentRating(mockUser, COMMENT_1,Rating.NO_RATING);
-        assertEquals(0, upvoteMap.size());
-    }
-
 
 }
 

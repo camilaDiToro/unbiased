@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.model.user;
 
 import ar.edu.itba.paw.model.Image;
+import ar.edu.itba.paw.model.Rating;
 import ar.edu.itba.paw.model.news.Comment;
 import ar.edu.itba.paw.model.news.News;
 
@@ -25,7 +26,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -39,6 +45,14 @@ public class User implements Serializable {
 
     public News getPingedNews() {
         return pingedNews;
+    }
+
+    public long getFollowerCount() {
+        return followers.size();
+    }
+
+    public long getFollowingCount() {
+        return following.size();
     }
 
     public void setPingedNews(final News pingedNews) {
@@ -56,6 +70,18 @@ public class User implements Serializable {
 
     @Column(unique = true, length = 100, nullable = false)
     private String email;
+
+    public Set<News> getPublishedNews() {
+        return publishedNews;
+    }
+
+    public void setPublishedNews(Set<News> publishedNews) {
+        this.publishedNews = publishedNews;
+    }
+
+    @OneToMany(mappedBy = "creator")
+//    @JoinColumn(name = "user_id", referencedColumnName = "creator")
+    private Set<News> publishedNews;
 
     @Column(unique = true, length = 50)
     private String username;
@@ -108,6 +134,23 @@ public class User implements Serializable {
     @OneToMany(mappedBy="userId",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Follow> following;
 
+    public Set<Follow> getFollowers() {
+        return followers;
+    }
+
+    public Tier getTier() {
+        return Tier.getTier(followers.size());
+    }
+
+    public void setFollowers(Set<Follow> followers) {
+        this.followers = followers;
+    }
+
+    @OneToMany(mappedBy="follows",fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Follow> followers;
+
+
+
 
     /* package */ User() {
         //Just for Hibernate
@@ -123,13 +166,27 @@ public class User implements Serializable {
 
     @PostLoad
     private void setPositivity() {
+
+        Set<News> publishedNews = getPublishedNews();
+
+        if (publishedNews == null)
+            return;
+
+        Collection<Upvote> upvoteSet = publishedNews.stream().map(n -> {
+            Map<Long, Upvote> map = n.getUpvoteMap();
+            Collection<Upvote> toReturn = map == null ? Collections.emptySet() : map.values();
+            return toReturn;
+        }).reduce(new HashSet<>(),(a, b) -> {
+            a.addAll(b);
+            return a;
+        });
         final int upvotes = upvoteSet
                 .stream().map(upvote -> upvote.isValue() ? 1 : 0)
                 .reduce(0, Integer::sum);
         final int downvotes = upvoteSet
                 .stream().map(upvote -> upvote.isValue() ? 0 : 1)
                 .reduce(0, Integer::sum);
-        positivityStats = new PositivityStats(upvotes, downvotes);
+            positivityStats = new PositivityStats(upvotes, downvotes);
     }
 
     public void removeAdminRole(){
@@ -274,6 +331,9 @@ public class User implements Serializable {
     }
 
     public EmailSettings getEmailSettings() {
+        if (emailSettings == null)
+            return new EmailSettings();
+        
         return emailSettings;
     }
 

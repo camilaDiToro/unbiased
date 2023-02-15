@@ -161,6 +161,7 @@ CREATE TABLE IF NOT EXISTS email_settings (
 );
 
 alter table comment_report DROP constraint IF EXISTS uk_6fqa4f7msp9o6kjnooeedi6f5;
+alter table comment_report DROP constraint IF EXISTS fkbmdfk1ft515bgayvqj9rdrq8l;
 
 
 
