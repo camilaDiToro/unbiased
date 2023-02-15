@@ -93,7 +93,7 @@ public class UserController {
     @GET
     @Path("/{userId:[0-9]+}")
     @Produces(value = {CustomMediaType.USER_V1})
-    public Response getUser(@PathParam("userId") final long userId){
+    public Response getUser(@PathParam("userId") final long userId) {
         User user = userService.getUserById(userId).orElseThrow( () -> new UserNotFoundException(userId));
 
         UserDto userDto = UserDto.fromUser(uriInfo, user);

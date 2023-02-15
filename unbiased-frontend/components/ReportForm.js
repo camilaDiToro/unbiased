@@ -21,7 +21,13 @@ export default function ReportForm(props) {
 
     }
 
+    const formValid = () => {
+        return !!reason
+    }
+
     const handler = async (e) => {
+        if (!formValid())
+            return;
         if (props.comment) {
             const {success} = await api.reportComment(props.id, reason)
             if (success) {
@@ -35,7 +41,6 @@ export default function ReportForm(props) {
         }
     }
 
-    props.handlerArray[0] = handler
 
     return <>
         <div className="input-group">
@@ -49,6 +54,11 @@ export default function ReportForm(props) {
             </div>)}
 
 
+        </div>
+        <div className="modal-footer">
+            <button onClick={handler} data-dismiss="modal" type="submit" className={`btn btn-primary ${formValid() ? '' : 'disabled noHover '}`} >
+                {props.acceptText || I18n("profile.modal.accept")}
+            </button>
         </div>
     </>
 }

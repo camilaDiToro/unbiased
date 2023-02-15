@@ -25,23 +25,9 @@ export default function AddAdmin(props){
     const [userList, setUserList] = useState(undefined)
     const [pagination, setPagination] = usePagination()
     const [addAdminMode, setAddAdminMode] = useState(!!router.query.add)
-    const [actualUserList, setActualUserList] = useState(undefined)
 
 
     const [effectTrigger, triggerEffect] = useTriggerEffect()
-    useEffect(() => {
-        const params = {...router.query, filter: addAdminMode ? 'NOT_ADMINS' : 'ADMINS'}
-
-        api.getUsers(params).then(res => {
-            const {success, data, pagination} = res
-            setPagination(pagination)
-            if (success) {
-                setUserList(data)
-            }
-
-        })
-
-    }, [router.query, effectTrigger])
 
     const search = (e) => {
         if (e.key === 'Enter') {
@@ -57,33 +43,41 @@ export default function AddAdmin(props){
     }
 
     useEffect(() => {
-        setActualUserList(userList)
-    }, [addAdminMode])
+        router.push({
+                ...router,
+                query: { ...router.query, add: addAdminMode }
+            },
+            undefined, { shallow: true }
+        )
+    } ,[addAdminMode])
 
+    useEffect(() => {
 
-    const showNotAdmins = async () => {
-        const params = {...router.query, filter: addAdminMode ? 'NOT_ADMINS' : 'ADMINS'}
+        if (!router.isReady)
+            return
 
-        api.getUsers(params).then( res => {
+        const params = {...router.query, filter: addAdminMode ?   'NOT_ADMINS' : 'ADMINS'}
+
+        api.getUsers(params).then(res => {
             const {success, data, pagination} = res
+            setPagination(pagination)
             if (success) {
-                setAddAdminMode(a => !a)
                 setUserList(data)
-                setPagination(pagination)
-                router.push({
-                        ...router,
-                        query: { ...router.query, add: !addAdminMode }
-                    },
-                    undefined, { shallow: true }
-                )
             }
 
         })
+
+    }, [addAdminMode, router.query.search, router.isReady, effectTrigger])
+
+
+    const showNotAdmins = async () => {
+
+        setAddAdminMode(a => !a)
     }
 
     const showUsers = () => {
         const aux = addAdminMode
-        return (actualUserList || []).map(c => <Creator toAdd={aux} admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)
+        return (userList || []).map(c => <Creator toAdd={aux} admin triggerEffect={triggerEffect} key={`creator${c.id}`} {...c}></Creator>)
     }
 
     if (!loggedUser || !loggedUser.authorities || !loggedUser.authorities.includes('ROLE_OWNER'))

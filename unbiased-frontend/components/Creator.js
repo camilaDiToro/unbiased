@@ -6,9 +6,11 @@ import ModalTrigger from "./ModalTrigger";
 import Modal from "./Modal";
 import {useAppContext} from "../context";
 import {getResourcePath} from "../constants";
+import {useState} from "react";
 
 export default function Creator(props) {
     const {I18n, api} = useAppContext()
+    const [toAdd, setToAdd] = useState(props.toAdd)
     const onDeleteOrAdd = async () => {
         let successValue = false
         if (props.toAdd) {
@@ -25,12 +27,12 @@ export default function Creator(props) {
 
 return <>
     <div className="col mb-4">
-        {props.admin ?         <Modal title={I18n(`owner.${props.toAdd ? 'add': 'remove'}AdminTitle`)} body={I18n(`owner.${props.toAdd ? 'add': 'remove'}AdminMsg`)} onClickHandler={onDeleteOrAdd} id={`user${props.id}modal`}></Modal>
+        {props.admin ?         <Modal title={I18n(`owner.${toAdd ? 'add': 'remove'}AdminTitle`)} body={I18n(`owner.${toAdd ? 'add': 'remove'}AdminMsg`)} onClickHandler={onDeleteOrAdd} id={`user${props.id}modal`}></Modal>
          : <></>}        <div className="text-decoration-none">
 
             <div className="card h-100 d-flex flex-row">
                 {props.hasPositivity ? <PositivityIndicator {...props.stats}></PositivityIndicator> : <></>}
-                {props.admin ?                 <ModalTrigger  modalId={`user${props.id}modal`} className="svg-btn w-fit h-fit flex-grow-0 py-1 px-2">{props.toAdd ? '+' : '✕'}</ModalTrigger>
+                {props.admin ?                 <ModalTrigger  modalId={`user${props.id}modal`} className="svg-btn w-fit h-fit flex-grow-0 py-1 px-2">{toAdd ? '+' : '✕'}</ModalTrigger>
                  : <></>}
                 <div className="d-flex justify-content-between p-2 w-100">
                     <div className="d-flex align-items-center w-auto gap-1">

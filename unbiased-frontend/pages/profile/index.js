@@ -113,7 +113,6 @@ export default function Profile() {
 
   }, [profileEffectTrigger,newsEffectTrigger, id])
 
-
   let submitHandlerArray = []
 
   const RightSide = () => {
@@ -201,7 +200,7 @@ export default function Profile() {
 
         </div>
       </div> : <></>}
-      <Modal  onClickHandlerArray={submitHandlerArray} id="profileModal" title={I18n("profile.user.settings")}>
+      <Modal noFooter  onClickHandlerArray={submitHandlerArray} id="profileModal" title={I18n("profile.user.settings")}>
         <EditProfileForm triggerEffect={profileTriggerEffect} handlerArray={submitHandlerArray} {...profileInfo}></EditProfileForm>
       </Modal>
     </div>
@@ -213,13 +212,9 @@ export default function Profile() {
       </div>
       <div className="tab">
         <MainCardsContainer loaded={useNews} rows={1}>
-            {/*{ <Article pinned triggerEffect={newsTriggerEffect} profileArticle {...pinned} key={pinned.id} id={pinned.id}></Article>}*/}
           {getNews().map((n) => (
               <Article triggerEffect={newsTriggerEffect} profileArticle {...n} key={n.id} id={n.id}></Article>
           ))}
-            {/*{useNews.map((n) => (*/}
-            {/*    <Article triggerEffect={newsTriggerEffect} profileArticle {...n} key={n.id} id={n.id}></Article>*/}
-            {/*))}*/}
         </MainCardsContainer>
       </div>
     </div>)

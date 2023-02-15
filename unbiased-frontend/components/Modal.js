@@ -1,6 +1,7 @@
 import {useAppContext} from "../context";
 import PropTypes from "prop-types";
 import types from "../types";
+import {useEffect, useState} from "react";
 
 
 export default function Modal(props) {
@@ -34,11 +35,11 @@ export default function Modal(props) {
                         {props.body}
                         {props.children}
                     </div>
-                    <div className="modal-footer">
-                        <button data-dismiss="modal" type="submit" className="btn btn-primary" onClick={handler}>
-                        {props.acceptText || I18n("profile.modal.accept")}
-                    </button>
-                    </div>
+                    {props.noFooter ? <></> : <div className="modal-footer">
+                        <button data-dismiss="modal" type="submit" className={`btn btn-primary`} onClick={handler}>
+                            {props.acceptText || I18n("profile.modal.accept")}
+                        </button>
+                    </div>}
                 </div>
             </div>
         </div>
