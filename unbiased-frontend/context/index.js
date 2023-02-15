@@ -178,13 +178,7 @@ export default function AppWrapper({ children }) {
   useEffect(() => {
     if (jwt.accessToken) {
       localStorage.setItem("accessToken", jwt.accessToken);
-    } else {
-      localStorage.removeItem("accessToken");
-    }
-    if (jwt.refreshToken) {
-      localStorage.setItem("refreshToken", jwt.refreshToken);
-      const loggedUser = JSON.parse(atob(jwt.refreshToken.split(".")[1]));
-      console.log(loggedUser);
+      const loggedUser = JSON.parse(atob(jwt.accessToken.split(".")[1]));
       setLoggedUser({
         ...loggedUser,
         nameOrEmail: loggedUser.username,
@@ -192,6 +186,11 @@ export default function AppWrapper({ children }) {
         image: loggedUser.imageLink,
         id: loggedUser.userId,
       });
+    } else {
+      localStorage.removeItem("accessToken");
+    }
+    if (jwt.refreshToken) {
+      localStorage.setItem("refreshToken", jwt.refreshToken);
     } else {
       localStorage.removeItem("refreshToken");
     }
@@ -205,6 +204,7 @@ export default function AppWrapper({ children }) {
     loggedUser,
     axios: axiosInstance,
     jwtState,
+    setLoggedUser,
     api: useApi(loggedUser, axiosInstance),
   };
 

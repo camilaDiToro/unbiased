@@ -3,7 +3,7 @@ import {useAppContext} from "../context";
 import types from "../types";
 
 export default function EditProfileForm(props) {
-    const {I18n, api} = useAppContext()
+    const {I18n, api, loggedUser, setLoggedUser} = useAppContext()
     const [settings, setSettings] = useState({
         username: props.username,
         description: props.description,
@@ -16,17 +16,16 @@ export default function EditProfileForm(props) {
         return settings.username
     }
 
-    function handleCloseModal(){
-        document.getElementById(props.id).classList.remove("show", "d-block");
-        document.querySelectorAll(".modal-backdrop")
-            .forEach(el => el.classList.remove("modal-backdrop"));
-    }
 
     const handleEditFormSubmit = async (e) => {
         if(!validForm())
             return
-        const {success} = await api.editUser(settings, file)
+        const {success, data} = await api.editUser(settings, file)
         if (success) {
+            setLoggedUser({
+                ...loggedUser,
+                ...data
+            });
             props.triggerEffect()
         }
     }
