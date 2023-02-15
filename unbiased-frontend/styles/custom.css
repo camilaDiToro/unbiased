@@ -881,6 +881,11 @@ input:-webkit-autofill:focus {
     border-top-right-radius: 0;
 }
 
+.required-field{
+    color: #8ea7e8;
+    margin-left: 5px;
+}
+
 #form-login-index .form-control{
     border: none;
     border-radius: 0px;

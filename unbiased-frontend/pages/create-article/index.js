@@ -102,7 +102,7 @@ export default function CreateArticle(props) {
             <div id="custom-form-group" className="h-auto w-50">
 
                 <div>
-                    <label htmlFor="title">{I18n("createArticle.title")}</label>
+                    <label htmlFor="title">{I18n("createArticle.title")}<span className="required-field">*</span></label>
                     <div className="form-group">
                         <div className="input-group mb-3">
 
@@ -115,7 +115,7 @@ export default function CreateArticle(props) {
 
 
                 <div>
-                    <label htmlFor="subtitle">{I18n("createArticle.description")}</label>
+                    <label htmlFor="subtitle">{I18n("createArticle.description")}<span className="required-field">*</span></label>
                     <div className="form-group">
                         <div className="input-group mb-3">
 
@@ -128,7 +128,7 @@ export default function CreateArticle(props) {
 
 
                 <div>
-                    <label htmlFor="body">{I18n("createArticle.body")}</label>
+                    <label htmlFor="body">{I18n("createArticle.body")}<span className="required-field">*</span></label>
                     <div className="form-group" data-color-mode="dark">
 
                         <div className="wmde-markdown-var"> </div>
@@ -152,7 +152,7 @@ export default function CreateArticle(props) {
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {I18n("createArticle.category.choose")}
                     </button>
-                    <div className="dropdown-menu bg-dropdown" aria-labelledby="dropdownMenuButton">
+                    <div className="dropdown-menu bg-dropdown" aria-labelledby="dropdownMenuButton" onClick={(e) => e.stopPropagation()}>
 
                         {categories.map(c => <div key={c.value} className="form-check  w-100">
                             <input onChange={handleChange} checked={!!(article.categories.find(cat => cat === c.value))} className="mr-1" id="categories.tourism" name="categories" type="checkbox" value={c.value}/>
@@ -167,7 +167,13 @@ export default function CreateArticle(props) {
                 </div>
 
                 <div className="w-100 d-flex justify-content-end">
-                    <button onClick={handleSubmit} role="button" className={`btn btn-info ${validForm() ? '' : 'disabled noHover'}`}>{I18n("createArticle.save")}</button>
+                    {validForm() ?
+                        <button onClick={handleSubmit} role="button" className="btn btn-info">{I18n("createArticle.save")}</button>
+                    :
+                        <Tooltip text={I18n("tooltip.completeFirst")} position="top">
+                            <button onClick={handleSubmit} role="button" className="btn btn-info disabled noHover">{I18n("createArticle.save")}</button>
+                        </Tooltip>
+                    }
                 </div>
             </div>
 
